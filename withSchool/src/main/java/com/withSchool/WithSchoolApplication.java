@@ -1,13 +1,13 @@
-package com.bibimbap;
+package com.withSchool;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BibimbapApplication {
+public class WithSchoolApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BibimbapApplication.class, args);
+		SpringApplication.run(WithSchoolApplication.class, args);
 	}
 
 }
