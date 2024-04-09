@@ -24,7 +24,7 @@ jobs:
     name: Notification
     runs-on: ubuntu-latest
     if: ${{ always() }}
-    needs: [build, deploy]
+    needs: [build]
     steps:
       - uses: martialonline/workflow-status@v3
         id: check
