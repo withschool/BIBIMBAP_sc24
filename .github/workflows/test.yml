@@ -2,8 +2,7 @@ name: test
 
 on:
   push:
-    branches:
-      - gw
+    branches: [gw]
 
 jobs:
   build:
