@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: SSH-TEST
@@ -19,4 +19,4 @@ jobs:
           port: ${{secrets.SERVER_PORT}}
 
           script: |
-            whoami > d.txt
+            echo 20240409 > d.txt
