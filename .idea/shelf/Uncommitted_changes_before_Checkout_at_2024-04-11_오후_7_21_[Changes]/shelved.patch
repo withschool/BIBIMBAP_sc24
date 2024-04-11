@@ -1,0 +1,35 @@
+Index: withSchool/src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>spring.application.name=withSchool\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/withSchool/src/main/resources/application.properties b/withSchool/src/main/resources/application.properties
+--- a/withSchool/src/main/resources/application.properties	(revision 2f6dc0b69012658180e193423d84b88d7c5ee33a)
++++ b/withSchool/src/main/resources/application.properties	(date 1712830810647)
+@@ -1,1 +1,1 @@
+-spring.application.name=withSchool
++spring.application.name=withSchool
+\ No newline at end of file
+Index: withSchool/src/main/java/com/withSchool/WithSchoolApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.withSchool;\r\n\r\nimport org.springframework.boot.SpringApplication;\r\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\r\n\r\n@SpringBootApplication\r\npublic class WithSchoolApplication {\r\n\r\n\tpublic static void main(String[] args) {\r\n\t\tSpringApplication.run(WithSchoolApplication.class, args);\r\n\t}\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/withSchool/src/main/java/com/withSchool/WithSchoolApplication.java b/withSchool/src/main/java/com/withSchool/WithSchoolApplication.java
+--- a/withSchool/src/main/java/com/withSchool/WithSchoolApplication.java	(revision 2f6dc0b69012658180e193423d84b88d7c5ee33a)
++++ b/withSchool/src/main/java/com/withSchool/WithSchoolApplication.java	(date 1712830810657)
+@@ -2,8 +2,10 @@
+ 
+ import org.springframework.boot.SpringApplication;
+ import org.springframework.boot.autoconfigure.SpringBootApplication;
++import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+ 
+ @SpringBootApplication
++@EnableJpaAuditing
+ public class WithSchoolApplication {
+ 
+ 	public static void main(String[] args) {
