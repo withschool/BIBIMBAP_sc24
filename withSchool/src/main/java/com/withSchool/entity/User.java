@@ -1,6 +1,8 @@
 package com.withSchool.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,12 +12,14 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Table(name = "User")
+@Builder
+@AllArgsConstructor
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", unique = true, nullable = false)
-    private String userId;
+    private Long userId;
 
     @Column(name = "id", unique = true, nullable = false)
     private String id;
