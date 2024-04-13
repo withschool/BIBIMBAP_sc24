@@ -1,6 +1,7 @@
 package com.withSchool.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "id", unique = true, nullable = false)
     private String id;
 
+    @Setter
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -58,6 +60,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "parent_code", unique = true)
     private String parentCode;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
