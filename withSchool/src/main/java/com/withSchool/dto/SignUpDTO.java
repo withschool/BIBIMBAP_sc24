@@ -1,4 +1,4 @@
-package com.withSchool.dto;
+package com.withSchool.DTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
