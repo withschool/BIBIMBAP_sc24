@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.DTO.SignUpDTO;
+import com.withSchool.dto.SignUpDTO;
 import com.withSchool.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
@@ -34,6 +33,7 @@ public class UserService {
     public void register(SignUpDTO signUpDTO) {
         // DTO에서 엔티티로 변환
         User user = User.builder()
+                .id(signUpDTO.getId())
                 .email(signUpDTO.getEmail())
                 .name(signUpDTO.getName())
                 .sex(signUpDTO.getSex())
@@ -43,11 +43,11 @@ public class UserService {
                 .accountType(signUpDTO.getAccountType())
                 .userCode(signUpDTO.getUserCode())
                 .parentCode(signUpDTO.getParentCode())
-                .build();
-
         // 비밀번호 암호화
-        String hashedPassword = passwordEncoder.encode(signUpDTO.getPassword());
-        user.setPassword(hashedPassword);
+//        String hashedPassword = passwordEncoder.encode(signUpDTO.getPassword());
+//        user.setPassword(hashedPassword);
+                .password(passwordEncoder.encode(signUpDTO.getPassword()))
+                .build();
 
         // 회원가입
         userRepository.save(user);

@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
@@ -34,8 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getId())
-                // password 부분은 Bcrypt로 DB에 저장되면 그냥 user.getPassword()로 수정하면 될듯
-                .password(passwordEncoder.encode(user.getPassword()))
+                .password(user.getPassword())
                 .roles(auth)
                 .build();
     }

@@ -1,11 +1,10 @@
 package com.withSchool.controller;
 
-import com.withSchool.DTO.SignUpDTO;
+import com.withSchool.dto.SignUpDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import com.withSchool.DTO.SignInDTO;
+import com.withSchool.dto.SignInDTO;
 import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/test")
-    public String test(){
+    public String test() {
         return "Success";
     }
 }

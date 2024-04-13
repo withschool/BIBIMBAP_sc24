@@ -32,7 +32,7 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers("/user/signIn").permitAll()
                                 .requestMatchers("/user/test").hasRole("TEACHER")
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
