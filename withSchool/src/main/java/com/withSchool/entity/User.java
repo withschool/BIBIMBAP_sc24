@@ -56,7 +56,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "user_code", unique = true, nullable = false)
     private String userCode;
 
-    @Column(name = "parent_code", unique = true, nullable = false)
+    @Column(name = "parent_code", unique = true)
     private String parentCode;
 
     @Override
@@ -94,5 +94,13 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+  
+    public void changeUserInfo(String id, String password, String email,String phoneNumber, String address){
+        this.id = id;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 }
