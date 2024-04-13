@@ -1,11 +1,7 @@
 package com.withSchool.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,6 +20,7 @@ public class User extends BaseEntity {
     @Column(name = "id", unique = true, nullable = false)
     private String id;
 
+    @Setter
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -53,4 +50,4 @@ public class User extends BaseEntity {
 
     @Column(name = "parent_code", unique = true, nullable = false)
     private String parentCode;
-}
+    }
