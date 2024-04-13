@@ -1,6 +1,6 @@
 package com.withSchool.controller;
 
-import com.withSchool.dto.SignUpDTO;
+import com.withSchool.DTO.SignUpDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +26,9 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody SignUpDTO userDto) {
         userService.register(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully.");
-      
+        return ResponseEntity.status(HttpStatus.CREATED).body("User.java registered successfully.");
+    }
+
     @PostMapping("/signIn")
     public JwtToken signIn(@RequestBody SignInDTO signInDTO) {
         String id = signInDTO.getId();

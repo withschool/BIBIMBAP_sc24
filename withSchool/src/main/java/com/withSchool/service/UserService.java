@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.SignUpDTO;
+import com.withSchool.DTO.SignUpDTO;
 import com.withSchool.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,14 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Slf4j
 public class UserService {
-
-
     private final UserRepository userRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
-  
-    @Autowired
-    private UserRepository userRepository;
+
+//    @Autowired
+//    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -54,7 +52,7 @@ public class UserService {
         // 회원가입
         userRepository.save(user);
     }
-  
+
     @Transactional
     public JwtToken signIn(String id, String password) {
         // 입력받은 사용자 정보를 바탕으로 authentication token을 생성
