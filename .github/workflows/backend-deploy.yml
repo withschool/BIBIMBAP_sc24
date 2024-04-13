@@ -1,0 +1,56 @@
+name: Auto Deploy to NCP
+
+on:
+  push:
+    branches: [backend]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH-TEST
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USER}}
+          password: ${{secrets.PW}}
+          port: ${{secrets.PORT}}
+
+          script: |
+            # Git 디렉토리로 이동 후 PULL
+            cd ./BIBIMBAP_sc24
+            git pull origin backend
+
+            # backend 디렉토리로 이동 후 appilcation.properties 불러오기
+            cd ./withSchool
+            touch ./src/main/resources/application.properties
+            echo "${{secrets.APPLICATION_PROPERTIES}}" > ./src/main/resources/application.properties
+
+            # BUILD
+            chmod +x ./gradlew
+            ./gradlew clean build -x test
+
+            rm ./src/main/resources/application.properties
+
+            # 빌드파일 실행
+            cd ./build/libs
+            nohup java -jar withSchool-0.0.1-SNAPSHOT.jar &
+
+  notification:
+    name: Notification
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [build]
+    steps:
+      - uses: martialonline/workflow-status@v3
+        id: check
+      - name: action-slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ steps.check.outputs.status }}
+          author_name: Github Action Bot
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()

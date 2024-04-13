@@ -19,6 +19,7 @@
     </content>
     <content url="file://$MODULE_DIR$/../../withSchool/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../withSchool/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../withSchool/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../withSchool/src/main/resources" type="java-resource" />
     </content>
     <orderEntry type="inheritedJdk" />

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c6d5d7bb-a474-40f8-bd28-00723d18bc68" name="Changes" comment="" />
+    <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,6 +18,9 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
+        <task path="$PROJECT_DIR$/withSchool">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
             <expand>
@@ -40,6 +43,20 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "mindongmindong"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="bf9e7191-f7d3-4dbe-9d72-aa0d0c314794" />
+        <option name="url" value="https://github.com/dradra0905/BIBIMBAP_sc24.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -47,6 +64,7 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2eofcLgS7xYUi5d7mZm7D0Y3sKz" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -61,7 +79,6 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.WithSchoolApplication.executor": "Run",
-    "git-widget-placeholder": "mindong",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Min Dong Hyeun/spring_study/guestbook",
     "node.js.detected.package.eslint": "true",
