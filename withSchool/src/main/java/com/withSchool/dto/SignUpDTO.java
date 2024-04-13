@@ -1,4 +1,4 @@
-package com.withSchool.DTO;
+package com.withSchool.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 
 public class SignUpDTO {
-    private Long userId;
+    private String id;
     private String email;
     private String password;
     private String name;
