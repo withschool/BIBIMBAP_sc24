@@ -61,48 +61,52 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "parent_code", unique = true)
     private String parentCode;
 
-@Override
-public Collection<? extends GrantedAuthority> getAuthorities() {
-    String auth = "ROLE_";
-    if (this.accountType == 0) auth += "STUDENT";
-    else if(this.accountType == 1) auth += "PARENT";
-    else if(this.accountType == 2) auth += "TEACHER";
-    else if(this.accountType == 3) auth += "ADMIN";
-    else if(this.accountType == 4) auth += "SUPER";
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "school_information")
+    private SchoolInformation schoolInformation;
 
-    return Collections.singletonList(new SimpleGrantedAuthority(auth));
-}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        String auth = "ROLE_";
+        if (this.accountType == 0) auth += "STUDENT";
+        else if (this.accountType == 1) auth += "PARENT";
+        else if (this.accountType == 2) auth += "TEACHER";
+        else if (this.accountType == 3) auth += "ADMIN";
+        else if (this.accountType == 4) auth += "SUPER";
 
-@Override
-public String getUsername() {
-    return this.getId();
-}
+        return Collections.singletonList(new SimpleGrantedAuthority(auth));
+    }
 
-@Override
-public boolean isAccountNonExpired() {
-    return true;
-}
+    @Override
+    public String getUsername() {
+        return this.getId();
+    }
 
-@Override
-public boolean isAccountNonLocked() {
-    return true;
-}
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-@Override
-public boolean isCredentialsNonExpired() {
-    return true;
-}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-@Override
-public boolean isEnabled() {
-    return true;
-}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-public void changeUserInfo(String id, String password, String email,String phoneNumber, String address){
-    this.id = id;
-    this.password = password;
-    this.email = email;
-    this.phoneNumber = phoneNumber;
-    this.address = address;
-}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void changeUserInfo(String id, String password, String email, String phoneNumber, String address) {
+        this.id = id;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
 }
