@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,11 +26,14 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Autowired
-//    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public User findById(String id){
+        Optional<User> user = userRepository.findById(id);
+        return user.orElse(null);
+    }
 
     public void register(SignUpDTO signUpDTO) {
         // DTO에서 엔티티로 변환
@@ -43,9 +48,6 @@ public class UserService {
                 .accountType(signUpDTO.getAccountType())
                 .userCode(signUpDTO.getUserCode())
                 .parentCode(signUpDTO.getParentCode())
-        // 비밀번호 암호화
-//        String hashedPassword = passwordEncoder.encode(signUpDTO.getPassword());
-//        user.setPassword(hashedPassword);
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .build();
 

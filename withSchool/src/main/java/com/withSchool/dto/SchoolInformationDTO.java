@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
 
-@Setter
+@Builder
+@Data
 @Getter
 @ToString
 @AllArgsConstructor
