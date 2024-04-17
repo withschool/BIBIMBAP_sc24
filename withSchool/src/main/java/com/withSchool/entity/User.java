@@ -17,7 +17,7 @@ import java.util.Collections;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "User")
+@Table(name = "user")
 @Builder
 @AllArgsConstructor
 public class User extends BaseEntity implements UserDetails {

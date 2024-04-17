@@ -1,24 +1,26 @@
-package com.withSchool.controller;
+package com.withSchool.controller.superadmin;
 
 import com.withSchool.dto.SchoolInformationDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.service.SchoolInformationService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/school")
-public class SchoolInformationController {
+@RequiredArgsConstructor
+@RequestMapping("/super")
+public class SuperController {
+    private final SchoolInformationService schoolInformationService;
 
-    @Autowired
-    private SchoolInformationService schoolInformationService;
-
-    @PostMapping("/save")
-    private ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO) {
+    @PostMapping("/schools/save")
+    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO) {
         SchoolInformation schoolInformation = schoolInformationService.save(schoolInformationService.dtoToEntity(schoolInformationDTO));
 
         if(schoolInformation == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
