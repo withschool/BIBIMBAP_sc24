@@ -9,5 +9,8 @@ import java.util.Optional;
 @Repository
 public interface SchoolInformationRepository extends JpaRepository<SchoolInformation, Long> {
 
+    // 시도교육청코드 + 행정표준코드
     Optional<SchoolInformation> findByAtptOfcdcScCodeAndSdSchulCode(String atptOfcdcScCode, String sdSchulCode);
+
+
 }

@@ -1,11 +1,13 @@
 package com.withSchool.service;
 
 import com.withSchool.dto.SignUpDTO;
+import com.withSchool.entity.SchoolInformation;
 import com.withSchool.entity.User;
+import com.withSchool.dto.SchoolInformationDTO;
+import com.withSchool.repository.SchoolInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.withSchool.JWT.JwtToken;
 import com.withSchool.JWT.JwtTokenProvider;
 import com.withSchool.repository.UserRepository;
@@ -16,6 +18,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,12 +29,8 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @Autowired
-//    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
+    private final PasswordEncoder passwordEncoder;
+    private final SchoolInformationRepository  schoolInformationRepository;
     public void register(SignUpDTO signUpDTO) {
         // DTO에서 엔티티로 변환
         User user = User.builder()
@@ -43,14 +44,25 @@ public class UserService {
                 .accountType(signUpDTO.getAccountType())
                 .userCode(signUpDTO.getUserCode())
                 .parentCode(signUpDTO.getParentCode())
-        // 비밀번호 암호화
-//        String hashedPassword = passwordEncoder.encode(signUpDTO.getPassword());
-//        user.setPassword(hashedPassword);
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .build();
 
         // 회원가입
         userRepository.save(user);
+    }
+    public void registerAdmin(SchoolInformationDTO dto) throws Exception{
+        Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
+        if(result.isPresent()) {
+                SchoolInformation schoolInformation = result.get();
+                User admin = User.builder()
+                        .id(schoolInformation.getEngSchulNm() + " admin")
+                        .password("1234")  // 초기 비밀번호 설정이여서 암호화 필요없을듯
+                        .name("관리자")
+                        .accountType(3)
+                        .schoolInformation(schoolInformation)
+                        .build();
+                userRepository.save(admin);
+        }
     }
 
     @Transactional

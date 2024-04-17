@@ -34,28 +34,28 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
-    @Column(name = "sex", nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(name = "sex", columnDefinition = "TINYINT(1)")
     private Boolean sex;
 
-    @Column(name = "phone_number", unique = true, nullable = false)
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date")
     private LocalDateTime birthDate;
 
     @Column(name = "account_type", nullable = false)
     private int accountType;
 
-    @Column(name = "user_code", unique = true, nullable = false)
+    @Column(name = "user_code", unique = true)
     private String userCode;
 
     @Column(name = "parent_code", unique = true)

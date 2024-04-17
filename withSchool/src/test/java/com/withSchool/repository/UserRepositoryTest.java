@@ -17,21 +17,19 @@ public class UserRepositoryTest {
 
     @Test
     public void registerUserTest(){
-        IntStream.rangeClosed(1,10).forEach(i->{
             User user = User.builder()
-                    .id("id"+i)
-                    .password("abc"+i)
-                    .email("abc"+i+"@ajou.ac.kr")
-                    .name("황근출"+i)
+                    .id("GAMA ELEMENTARY SCHOOL admin")
+                    .password("abc")
+                    .email("abc@ajou.ac.kr")
+                    .name("학교 어드민")
                     .sex(false)
-                    .phoneNumber("0109485718"+i%10)
-                    .address("아주대학교"+i+"동")
+                    .phoneNumber("01011112222")
+                    .address("아주대학교")
                     .birthDate(LocalDateTime.now())
-                    .accountType(i%4)
-                    .userCode("asdas12as"+i)
-                    .parentCode("asda"+i)
+                    .accountType(3)
+                    .userCode("asdas12as")
+                    .parentCode("asda")
                     .build();
             userRepository.save(user);
-        });
     }
 }

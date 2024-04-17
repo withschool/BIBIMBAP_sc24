@@ -2,14 +2,18 @@ package com.withSchool.service;
 
 import com.withSchool.dto.UserInfoDTO;
 import com.withSchool.dto.UserUpdateDTO;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 
 @SpringBootTest
-public class UserUpdateServiceTest {
+public class UserServiceTest {
     @Autowired
     private UserUpdateService userUpdateService;
+    @Autowired
+    private UserService userService;
 
     @Test
     public void getUserInfoTest(){
@@ -27,5 +31,13 @@ public class UserUpdateServiceTest {
                 .address("new address")
                 .build();
         userUpdateService.updateUserInfo(dto);
+    }
+    @Test
+    @Transactional
+    public void registerAdminTest() throws Exception {
+       com.withSchool.dto.SchoolInformationDTO dto = com.withSchool.dto.SchoolInformationDTO.builder()
+               .ENG_SCHUL_NM("GAMA ELEMENTARY SCHOOL")
+               .build();
+       userService.registerAdmin(dto);
     }
 }
