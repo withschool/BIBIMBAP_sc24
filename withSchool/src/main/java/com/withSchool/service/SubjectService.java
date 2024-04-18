@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.SubjectInfoDTO;
+import com.withSchool.DTO.SubjectInfoDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.entity.StudentSubject;
 import com.withSchool.entity.Subject;

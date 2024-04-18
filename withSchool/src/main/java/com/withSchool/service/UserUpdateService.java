@@ -1,7 +1,7 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.UserInfoDTO;
-import com.withSchool.dto.UserUpdateDTO;
+import com.withSchool.DTO.UserInfoDTO;
+import com.withSchool.DTO.UserUpdateDTO;
 import com.withSchool.entity.User;
 
 public interface UserUpdateService {
