@@ -14,6 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +30,18 @@ public class SecurityConfig {
         return httpSecurity
                 .httpBasic(HttpBasicConfigurer::disable)
                 .csrf(CsrfConfigurer::disable)
+                .cors(c -> {
+                    CorsConfigurationSource source = request -> {
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.setAllowedOrigins(List.of("http://localhost:3000", "https://withschool.site", "https://withschool.github.io"));
+                        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                        config.setAllowCredentials(true);
+
+                        return config;
+                    };
+                    c.configurationSource(source);
+                })
                 // jwt를 사용하기 때문에 session을 사용하지 않는다.
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
