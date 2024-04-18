@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "student_subject")
-public class StudentSubject extends BaseEntity{
+public class StudentSubject extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ssid", unique = true, nullable = false)

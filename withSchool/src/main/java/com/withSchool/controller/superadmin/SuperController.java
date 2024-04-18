@@ -1,6 +1,6 @@
 package com.withSchool.controller.superadmin;
 
-import com.withSchool.DTO.SchoolInformationDTO;
+import com.withSchool.dto.SchoolInformationDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.service.SchoolInformationService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,8 @@ public class SuperController {
     public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO) {
         SchoolInformation schoolInformation = schoolInformationService.save(schoolInformationService.dtoToEntity(schoolInformationDTO));
 
-        if(schoolInformation == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
+        if (schoolInformation == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
         else return ResponseEntity.status(HttpStatus.CREATED).body(schoolInformation.getSchulNm() + "가 생성되었습니다.");
     }
 }

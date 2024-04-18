@@ -1,5 +1,6 @@
 package com.withSchool.service;
-import com.withSchool.DTO.ClassDTO;
+
+import com.withSchool.dto.ClassDTO;
 import com.withSchool.entity.ClassInformation;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.repository.ClassRepository;
@@ -22,7 +23,7 @@ public class ClassService {
 
     // 반 정보 저장
     @PreAuthorize("hasRole('ADMIN')")
-    public ClassInformation saveClassInformation(ClassDTO classDTO){
+    public ClassInformation saveClassInformation(ClassDTO classDTO) {
 
         ClassInformation newClass = classBuilder(classDTO);
 
@@ -34,6 +35,7 @@ public class ClassService {
     public List<ClassInformation> findBySchoolInformation_SchoolId(Long schoolId) {
         return classRepository.findBySchoolInformation_SchoolId(schoolId);
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public List<ClassInformation> findBySchoolInformation_SchoolIdAndGrade(Long schoolId, int grade) {
         return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
@@ -66,8 +68,7 @@ public class ClassService {
         classRepository.deleteById(classId);
     }
 
-    public ClassInformation classBuilder(ClassDTO classDTO)
-    {
+    public ClassInformation classBuilder(ClassDTO classDTO) {
         SchoolInformation schoolInformation = schoolInformationRepository.findById(classDTO.getSchoolId())
                 .orElseThrow(() -> new RuntimeException("School not found with id: " + classDTO.getSchoolId()));
 

@@ -25,10 +25,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private UserDetails createUserDetails(User user) {
         String auth = "";
         if (user.getAccountType() == 0) auth = "STUDENT";
-        else if(user.getAccountType() == 1) auth = "PARENT";
-        else if(user.getAccountType() == 2) auth = "TEACHER";
-        else if(user.getAccountType() == 3) auth = "ADMIN";
-        else if(user.getAccountType() == 4) auth = "SUPER";
+        else if (user.getAccountType() == 1) auth = "PARENT";
+        else if (user.getAccountType() == 2) auth = "TEACHER";
+        else if (user.getAccountType() == 3) auth = "ADMIN";
+        else if (user.getAccountType() == 4) auth = "SUPER";
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getId())

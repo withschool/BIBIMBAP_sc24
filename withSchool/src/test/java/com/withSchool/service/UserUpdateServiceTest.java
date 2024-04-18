@@ -1,7 +1,7 @@
 package com.withSchool.service;
 
-import com.withSchool.DTO.UserInfoDTO;
-import com.withSchool.DTO.UserUpdateDTO;
+import com.withSchool.dto.UserInfoDTO;
+import com.withSchool.dto.UserUpdateDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

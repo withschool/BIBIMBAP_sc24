@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
         return null;
     }
-    
+
     // 토큰이 있는지 확인하며, 있다면 유효한지 검증
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

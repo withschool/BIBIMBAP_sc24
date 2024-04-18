@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.DTO.SchoolInformationDTO;
+import com.withSchool.dto.SchoolInformationDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.repository.SchoolInformationRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +34,7 @@ public class SchoolInformationService {
     public SchoolInformation save(SchoolInformation schoolInformation) {
         if (isDuplicateSchool(schoolInformation.getAtptOfcdcScCode(), schoolInformation.getSdSchulCode())) {
             return null;
-        }
-        else return schoolInformationRepository.save(schoolInformation);
+        } else return schoolInformationRepository.save(schoolInformation);
     }
 
     public SchoolInformation dtoToEntity(SchoolInformationDTO dto) {
