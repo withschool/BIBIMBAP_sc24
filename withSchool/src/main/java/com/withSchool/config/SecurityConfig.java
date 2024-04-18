@@ -30,19 +30,21 @@ public class SecurityConfig {
         return httpSecurity
                 .httpBasic(HttpBasicConfigurer::disable)
                 .csrf(CsrfConfigurer::disable)
-                .cors(c -> {
-                    CorsConfigurationSource source = request -> {
-                        CorsConfiguration config = new CorsConfiguration();
-//                        config.setAllowedOrigins(List.of("http://localhost:3000", "https://withschool.site", "https://withschool.github.io"));
-                        config.setAllowedOrigins(List.of("*"));
-                        config.setAllowedMethods(List.of("*"));
-                        config.setAllowedHeaders(List.of("*"));
-                        config.setAllowCredentials(true);
-
-                        return config;
-                    };
-                    c.configurationSource(source);
-                })
+//                .cors(c -> {
+//                    CorsConfigurationSource source = request -> {
+//                        CorsConfiguration config = new CorsConfiguration();
+////                        config.setAllowedOrigins(List.of("http://localhost:3000", "https://withschool.site", "https://withschool.github.io"));
+//                        config.setAllowedOrigins(List.of("*"));
+//                        config.setAllowedMethods(List.of("*"));
+//                        config.setAllowedHeaders(List.of("*"));
+//                        config.setAllowCredentials(true);
+//
+//                        return config;
+//                    };
+//                    c.configurationSource(source);
+//                })
+                .cors()
+                .and()
                 // jwt를 사용하기 때문에 session을 사용하지 않는다.
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
