@@ -20,9 +20,9 @@ const LoginMain = ({handleLoginSuccess}) => {
       const user = await auth.login(inputId, inputPw);
 
       // 로그인 성공 시 정보 로컬 스토리지에 저장
-      localStorage.setItem('token', user.token);
+      localStorage.setItem('token', user.accessToken);
       localStorage.setItem('id', inputId);
-      localStorage.setItem('login', user.token? true: false);
+      localStorage.setItem('login', user.accessToken? true: false);
 
       handleLoginSuccess();
     } catch (error) {

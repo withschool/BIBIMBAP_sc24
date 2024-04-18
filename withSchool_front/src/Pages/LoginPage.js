@@ -4,7 +4,7 @@ import LoginMain from '../Components/LoginMain';
 const LoginPage = () => {
 
   const handleLoginSuccess = () => {
-    
+    alert("Success Login")
   }
 
   return (

@@ -7,7 +7,7 @@ exports.login = async (id, password) => {
       id : id,
       password : password
     };
-    const response = await fetch(`${url}/login`, {
+    const response = await fetch(`${url}/sign-in`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ exports.login = async (id, password) => {
     });
     const data = await response.json();
     if (response.status === 200) {
-      // console.log('Login successful:', data);
+      console.log('Login successful:', data);
       return data;
     } else {
       console.error('Login failed:', data.message);
