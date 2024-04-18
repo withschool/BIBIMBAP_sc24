@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import auth from '../Services/Auth.js'
+import auth from '../Services/Auth.js';
 
 const LoginMain = ({handleLoginSuccess}) => {
   const [inputId, setInputId] = useState('');
@@ -24,82 +24,66 @@ const LoginMain = ({handleLoginSuccess}) => {
       localStorage.setItem('id', inputId);
       localStorage.setItem('login', user.accessToken? true: false);
 
+      // 메인 페이지 이동
       handleLoginSuccess();
+
     } catch (error) {
       alert("로그인 실패: " + error.message);
     }
   };
 
   return(
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form className="space-y-6" action="#" method="POST">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-            아이디
+      <form className="flex relative flex-col px-14 pt-10 pb-20 mt-28 mb-8 max-w-full bg-white rounded-3xl border-0 border-solid border-zinc-400 w-[630px] max-md:px-5 max-md:mt-10">
+        <h1 className="self-center mt-10 text-3xl font-bold tracking-normal text-center text-neutral-800">
+          로그인
+        </h1>
+        <p className="self-center mt-9 font-semibold tracking-normal text-center text-neutral-800">
+          생성하신 아이디와 비밀번호를 입력하여 로그인해주세요.
+        </p>
+        <label htmlFor="username" className="mt-10 font-semibold tracking-normal text-neutral-800 max-md:max-w-full">
+          아이디
+        </label>
+        <input
+          type="text"
+          id="username"
+          placeholder="아이디를 입력하세요."
+          className="justify-center items-start px-4 py-5 mt-5 font-semibold tracking-normal whitespace-nowrap rounded-lg border border-solid bg-slate-100 border-zinc-300 text-neutral-400 max-md:pr-5 max-md:max-w-full"
+          onChange={handleInputId}
+        />
+        <div className="flex gap-5 mt-11 font-semibold tracking-normal text-neutral-800 max-md:flex-wrap max-md:mt-10 max-md:max-w-full">
+          <label htmlFor="password">비밀번호</label>
+          <a href="#" className="flex-auto text-right">
+            비밀번호를 잊으셨나요?
+          </a>
+        </div>
+        <input
+          type="password"
+          id="password"
+          placeholder="비밀번호를 입력하세요."
+          className="justify-center items-start px-4 py-5 mt-5 font-semibold tracking-normal whitespace-nowrap rounded-lg border border-solid bg-slate-100 border-zinc-300 text-neutral-400 max-md:pr-5 max-md:max-w-full"
+          onChange={handleInputPw}
+        />
+        <div className="flex gap-3 self-start mt-6 font-semibold tracking-normal text-neutral-800">
+          <input type="checkbox" id="rememberMe" className="shrink-0 w-6 aspect-square" />
+          <label htmlFor="rememberMe" className="flex-auto my-auto">
+            비밀번호 기억하기
           </label>
-          <div className="mt-2">
-            <input
-              id="email"
-              name="input_id"
-              type="email"
-              autoComplete="email"
-              required
-              className="block w-full rounded-md border-0 px-1.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-main-color
-              sm:text-sm sm:leading-6"
-              placeholder="아이디"
-              value={inputId}
-              onChange={handleInputId}
-            />
-          </div>
         </div>
-
-        <div>
-          <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-              비밀번호
-            </label>
-          </div>
-          <div className="mt-2">
-            <input
-              id="password"
-              name="input_pw"
-              type="password"
-              autoComplete="current-password"
-              required
-              className="block w-full rounded-md border-0 px-1.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-main-color sm:text-sm sm:leading-6"
-              placeholder="비밀번호" 
-              value={inputPw}
-              onChange={handleInputPw}
-            />
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="button"
-            onClick={onClickLogin}
-            className="flex w-full justify-center rounded-md bg-main-color px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            로그인
-          </button>
+        <button
+          type="submit"
+          className="justify-center items-center self-center px-16 py-5 mt-14 max-w-full text-xl font-bold tracking-normal text-center text-white bg-blue-500 rounded-lg w-[418px] max-md:px-5 max-md:mt-10"
+          onClick={onClickLogin}
+        >
+          로그인 하기
+        </button>
+        <div className="flex gap-5 justify-between self-center mt-5 mb-3.5 tracking-normal">
+          <p className="font-semibold text-center text-neutral-800">학교랑 계정이 없으신가요?</p>
+          <a href="#" className="font-bold text-right text-blue-400 underline">
+            계정 생성하기
+          </a>
         </div>
       </form>
-
-      <div className="mt-10 flex items-center justify-center gap-x-6">
-          <a href="/login/findId" className="text-sm font-semibold text-gray-900 hover:text-main-color"
-              >
-              아이디 찾기
-          </a>
-        <a href="/login/findPassword" className="text-sm font-semibold text-gray-900 hover:text-main-color"
-          >
-          비밀번호 찾기
-        </a>
-        <a href="/login/join" className="text-sm font-semibold text-gray-900 hover:text-main-color">
-          회원 가입
-        </a>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default LoginMain;

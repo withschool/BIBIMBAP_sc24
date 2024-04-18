@@ -1,18 +1,17 @@
-const url = 'http://223.130.134.181:8080/';
+const url = 'http://223.130.134.181:8080';
 
 exports.login = async (id, password) => {
   try {
-    const token = localStorage.getItem('token');
     const body = {
-      id : id,
-      password : password
+      "id" : id,
+      "password" : password
     };
     const response = await fetch(`${url}/sign-in`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const data = await response.json();
     if (response.status === 200) {
@@ -31,7 +30,9 @@ exports.logout = async () => {
   try {
     const response = await fetch(`${url}/logout`, {
       method: 'POST',
-      withCredentials:true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     const data = await response.json();
     if (response.status === 200) {
