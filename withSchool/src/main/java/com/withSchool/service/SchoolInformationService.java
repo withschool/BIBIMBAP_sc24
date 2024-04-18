@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.SchoolInformationDTO;
+import com.withSchool.DTO.SchoolInformationDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.repository.SchoolInformationRepository;
 import lombok.RequiredArgsConstructor;

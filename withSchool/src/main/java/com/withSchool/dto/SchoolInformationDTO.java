@@ -1,4 +1,4 @@
-package com.withSchool.dto;
+package com.withSchool.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;

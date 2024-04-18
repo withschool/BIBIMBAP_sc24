@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.SignUpDTO;
+import com.withSchool.DTO.SignUpDTO;
 import com.withSchool.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,6 +35,14 @@ public class UserService {
         return user.orElse(null);
     }
 
+    public User findByUsername(String username){
+        Optional<User> user = userRepository.findByName(username);
+        return user.orElse(null);
+    }
+    public User findByEmail(String email){
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
+    }
     public void register(SignUpDTO signUpDTO) {
         // DTO에서 엔티티로 변환
         User user = User.builder()
