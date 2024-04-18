@@ -62,7 +62,7 @@ public class User extends BaseEntity implements UserDetails {
     private String parentCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_information")
+    @JoinColumn(name = "school_id")
     private SchoolInformation schoolInformation;
 
     @Override

@@ -3,6 +3,8 @@ package com.withSchool.service;
 import com.withSchool.dto.SchoolInformationDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.repository.SchoolInformationRepository;
+import com.withSchool.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class SchoolInformationService {
 
     private final SchoolInformationRepository schoolInformationRepository;
+    private final UserRepository userRepository;
 
     public List<SchoolInformation> findAll() {
         return schoolInformationRepository.findAll();
@@ -68,8 +71,9 @@ public class SchoolInformationService {
                 .build();
     }
 
+    @Transactional
     public void delete(Long id) {
-
+        userRepository.deleteAllUsersBySchoolId(id);
         schoolInformationRepository.deleteById(id);
     }
 }
