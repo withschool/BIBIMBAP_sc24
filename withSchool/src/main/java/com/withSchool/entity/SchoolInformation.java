@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -119,4 +122,5 @@ public class SchoolInformation extends BaseEntity {
     @Column(name = "LOAD_DTM")
     @Comment("수정일자")
     private String loadDtm;
+
 }
