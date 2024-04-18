@@ -1,6 +1,6 @@
 package com.withSchool.controller.user;
 
-import com.withSchool.dto.SubjectInfoDTO;
+import com.withSchool.DTO.SubjectInfoDTO;
 import com.withSchool.entity.User;
 import com.withSchool.service.SubjectService;
 import com.withSchool.service.UserService;

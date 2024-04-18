@@ -1,7 +1,7 @@
 package com.withSchool.feat_8_3;
 
 import com.google.gson.Gson;
-import com.withSchool.dto.SchoolInformationDTO;
+import com.withSchool.DTO.SchoolInformationDTO;
 import com.withSchool.entity.SchoolInformation;
 import com.withSchool.repository.SchoolInformationRepository;
 import com.withSchool.service.SchoolInformationService;

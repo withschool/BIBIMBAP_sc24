@@ -1,11 +1,11 @@
 package com.withSchool.controller;
 
-import com.withSchool.dto.SignUpDTO;
+import com.withSchool.DTO.SignUpDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.withSchool.dto.SignInDTO;
+import com.withSchool.DTO.SignInDTO;
 import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.UserService;
 import lombok.extern.slf4j.Slf4j;
