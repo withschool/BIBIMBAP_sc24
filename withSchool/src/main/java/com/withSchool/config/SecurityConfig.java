@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .cors(c -> {
                     CorsConfigurationSource source = request -> {
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(List.of("http://localhost:3000", "https://withschool.site", "https://withschool.github.io"));
+//                        config.setAllowedOrigins(List.of("http://localhost:3000", "https://withschool.site", "https://withschool.github.io"));
+                        config.setAllowedOrigins(List.of("*"));
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                         config.setAllowCredentials(true);
