@@ -36,7 +36,7 @@ public class SecurityConfig {
 //                        config.setAllowedOrigins(List.of("http://localhost:3000", "https://withschool.site", "https://withschool.github.io"));
                         config.setAllowedOrigins(List.of("*"));
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                        config.setAllowedHeaders(List.of("*"));
                         config.setAllowCredentials(true);
 
                         return config;
