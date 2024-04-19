@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class SubjectNoticeFile extends BaseFileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subjectNoticeId;
+    private Long subjectNoticeFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_notice_id")
