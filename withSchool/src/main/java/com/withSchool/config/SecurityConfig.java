@@ -33,7 +33,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 .requestMatchers("/sign-in", "/sign-up", "/connectionTest").permitAll()
                                 .requestMatchers("/test").hasAnyRole("ADMIN", "SUPER", "TEACHER")
-                                .requestMatchers("/super/**").hasRole("SUPER")
+                                .requestMatchers("/super/**").permitAll()
                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPER")
                                 .anyRequest().authenticated()
                 )

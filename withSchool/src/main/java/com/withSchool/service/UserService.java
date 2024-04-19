@@ -1,7 +1,10 @@
 package com.withSchool.service;
 
+import com.withSchool.dto.SchoolInformationDTO;
 import com.withSchool.dto.SignUpDTO;
+import com.withSchool.entity.SchoolInformation;
 import com.withSchool.entity.User;
+import com.withSchool.repository.SchoolInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import java.util.Optional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final SchoolInformationRepository schoolInformationRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -43,6 +47,20 @@ public class UserService {
     public User findByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
+    }
+    public void registerAdmin(SchoolInformationDTO dto) throws Exception{
+        Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
+        if(result.isPresent()) {
+            SchoolInformation schoolInformation = result.get();
+            User admin = User.builder()
+                    .id(schoolInformation.getEngSchulNm() + " admin")
+                    .password("1234")  // 초기 비밀번호 설정이여서 암호화 필요없을듯
+                    .name("관리자")
+                    .accountType(3)
+                    .schoolInformation(schoolInformation)
+                    .build();
+            userRepository.save(admin);
+        }
     }
 
     public void register(SignUpDTO signUpDTO) {
