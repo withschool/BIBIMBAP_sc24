@@ -12,16 +12,16 @@ import org.hibernate.annotations.Comment;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "school_record")
-public class SchoolRecord extends BasePostEntity {
+@Table(name = "class_notice_file")
+public class ClassNoticeFile extends BaseFileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "school_record_id", nullable = false, unique = true)
-    @Comment("생활기록부 PK")
-    private Long schoolRecordId;
+    @Column(name = "class_notice_file_id", nullable = false, unique = true)
+    @Comment("반 공지 파일 PK")
+    private Long classNoticeFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @Comment("생활기록부 주인 학생 PK")
-    private User user;
+    @JoinColumn(name = "class_notice_id", nullable = false)
+    @Comment("반 공지 PK")
+    private ClassNotice classNotice;
 }
