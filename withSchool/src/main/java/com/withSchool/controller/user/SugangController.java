@@ -27,12 +27,12 @@ public class SugangController {
     // TODO: 2024. 4. 17 수강신청 API 구현하기 - ㅇㄱㅁ
     //  파라미터 정의부터 리턴타입도 다 정해야함
     @PostMapping
-    public ResponseEntity<String> enrolment(){
+    public ResponseEntity<String> enrolment() {
         return null;
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentSubjectDTO>> findOnesSugang(){
+    public ResponseEntity<List<StudentSubjectDTO>> findOnesSugang() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
         if (user == null) return null;

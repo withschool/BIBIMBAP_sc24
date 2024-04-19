@@ -3,32 +3,26 @@ package com.withSchool.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "student_subject")
-public class StudentSubject extends BaseEntity {
+public class SubjectNotice extends BasePostEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ssid", unique = true, nullable = false)
-    private Long ssid;
-
-    @Column(name = "midterm_score")
-    private int midtermScore;
-
-    @Column(name = "final_score")
-    private int finalScore;
+    private Long subjectNoticeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name="user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_id")
+    @JoinColumn(name="subject_id")
     private Subject subject;
+
 }

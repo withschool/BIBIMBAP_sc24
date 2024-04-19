@@ -1,14 +1,16 @@
 package com.withSchool.controller.admin;
 
-import com.withSchool.DTO.ClassDTO;
+import com.withSchool.dto.ClassDTO;
 import com.withSchool.entity.ClassInformation;
 import com.withSchool.service.ClassService;
 import com.withSchool.entity.Subject;
 import com.withSchool.entity.User;
 import com.withSchool.service.SubjectService;
 import com.withSchool.service.UserService;
+
 import java.util.List;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -32,9 +34,9 @@ public class AdminController {
     public ResponseEntity<String> createSubject(@RequestParam String subjectName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if(user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당하는 유저가 없습니다.");
+        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당하는 유저가 없습니다.");
 
-        Subject subject =  subjectService.saveSubject(subjectName, user);
+        Subject subject = subjectService.saveSubject(subjectName, user);
 
         return ResponseEntity.ok().body(subject.getSubjectName() + " 수업이 생성되었습니다.");
 

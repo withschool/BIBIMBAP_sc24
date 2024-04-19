@@ -19,7 +19,7 @@ public class StudentSubjectService {
     private final SubjectRepository subjectRepository;
 
     @Transactional
-    public List<StudentSubjectDTO> findOnesSugang(User user){
+    public List<StudentSubjectDTO> findOnesSugang(User user) {
         List<StudentSubject> studentSubjects = studentSubjectRepository.findByStudent(user);
         List<StudentSubjectDTO> studentSubjectDTOS = new ArrayList<>();
 

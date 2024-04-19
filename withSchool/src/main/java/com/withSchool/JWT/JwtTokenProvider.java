@@ -61,7 +61,7 @@ public class JwtTokenProvider {
     }
 
     // 권한 정보가 담겨있는 claim을 파싱하여 정보를 확인하는 메서드
-    private Claims parseClaims(String accessToken){
+    private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -77,7 +77,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
 
-        if(claims.get("auth") == null){
+        if (claims.get("auth") == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 

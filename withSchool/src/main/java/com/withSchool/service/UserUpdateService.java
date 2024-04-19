@@ -1,7 +1,7 @@
 package com.withSchool.service;
 
-import com.withSchool.DTO.UserInfoDTO;
-import com.withSchool.DTO.UserUpdateDTO;
+import com.withSchool.dto.UserInfoDTO;
+import com.withSchool.dto.UserUpdateDTO;
 import com.withSchool.entity.User;
 
 public interface UserUpdateService {
@@ -9,7 +9,7 @@ public interface UserUpdateService {
 
     void updateUserInfo(UserUpdateDTO dto);
 
-    default User DtoToEntity(UserUpdateDTO dto){ // 클라이언트에서 받은 수정된 정보DTO들을 엔티티로 변환
+    default User DtoToEntity(UserUpdateDTO dto) { // 클라이언트에서 받은 수정된 정보DTO들을 엔티티로 변환
         User user = User.builder()
                 .userId(dto.getUserId())
                 .id(dto.getId())
@@ -20,7 +20,8 @@ public interface UserUpdateService {
                 .build();
         return user;
     }
-    default UserInfoDTO EntityToDTO(User user){
+
+    default UserInfoDTO EntityToDTO(User user) {
         UserInfoDTO userInfoDTO = UserInfoDTO.builder()
                 .userId(user.getUserId())
                 .id(user.getId())

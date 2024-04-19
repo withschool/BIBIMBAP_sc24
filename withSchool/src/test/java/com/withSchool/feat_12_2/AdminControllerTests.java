@@ -1,5 +1,5 @@
 package com.withSchool.feat_12_2;
-import com.withSchool.DTO.ClassDTO;
+import com.withSchool.dto.ClassDTO;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;

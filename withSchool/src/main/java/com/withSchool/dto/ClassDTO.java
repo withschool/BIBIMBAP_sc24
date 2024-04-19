@@ -1,4 +1,4 @@
-package com.withSchool.DTO;
+package com.withSchool.dto;
 
 import lombok.*;
 
@@ -7,6 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 
 public class ClassDTO {
 

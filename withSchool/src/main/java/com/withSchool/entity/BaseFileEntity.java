@@ -1,4 +1,3 @@
-
 package com.withSchool.entity;
 
 import jakarta.persistence.Column;

@@ -45,7 +45,7 @@ public class SubjectController {
 
     // 과목 기본 정보 + 수강 인원을 리턴
     @GetMapping("/{subjectId}")
-    public ResponseEntity<Map<String,Object>> findOneSubject(@PathVariable Long subjectId) {
+    public ResponseEntity<Map<String, Object>> findOneSubject(@PathVariable Long subjectId) {
         Map<String, Object> response = new HashMap<>();
 
         try {
@@ -65,8 +65,7 @@ public class SubjectController {
             response.put("students", studentListDTOS);
 
             return ResponseEntity.ok().body(response);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             response.put("errorMessage", e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
