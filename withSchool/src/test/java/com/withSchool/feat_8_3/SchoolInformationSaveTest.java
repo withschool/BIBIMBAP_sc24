@@ -1,10 +1,10 @@
 package com.withSchool.feat_8_3;
 
 import com.google.gson.Gson;
-import com.withSchool.dto.SchoolInformationDTO;
-import com.withSchool.entity.SchoolInformation;
-import com.withSchool.repository.SchoolInformationRepository;
-import com.withSchool.service.SchoolInformationService;
+import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.repository.school.SchoolInformationRepository;
+import com.withSchool.service.school.SchoolInformationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

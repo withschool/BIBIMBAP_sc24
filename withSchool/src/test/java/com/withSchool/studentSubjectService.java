@@ -1,9 +1,11 @@
 package com.withSchool;
 
-import com.withSchool.dto.StudentListDTO;
-import com.withSchool.dto.SubjectInfoDTO;
-import com.withSchool.entity.User;
-import com.withSchool.service.*;
+import com.withSchool.dto.user.StudentListDTO;
+import com.withSchool.dto.subject.SubjectInfoDTO;
+import com.withSchool.entity.user.User;
+import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.subject.SubjectService;
+import com.withSchool.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

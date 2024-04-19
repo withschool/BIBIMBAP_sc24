@@ -1,11 +1,11 @@
 package com.withSchool.controller.user;
 
-import com.withSchool.dto.StudentListDTO;
-import com.withSchool.dto.SubjectInfoDTO;
-import com.withSchool.entity.User;
-import com.withSchool.service.StudentSubjectService;
-import com.withSchool.service.SubjectService;
-import com.withSchool.service.UserService;
+import com.withSchool.dto.user.StudentListDTO;
+import com.withSchool.dto.subject.SubjectInfoDTO;
+import com.withSchool.entity.user.User;
+import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.subject.SubjectService;
+import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

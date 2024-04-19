@@ -1,9 +1,9 @@
 package com.withSchool.controller.superadmin;
 
-import com.withSchool.dto.SchoolInformationDTO;
-import com.withSchool.entity.SchoolInformation;
-import com.withSchool.service.SchoolInformationService;
-import com.withSchool.service.UserService;
+import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.service.school.SchoolInformationService;
+import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
