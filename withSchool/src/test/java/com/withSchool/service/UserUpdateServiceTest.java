@@ -1,15 +1,20 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.UserInfoDTO;
-import com.withSchool.dto.UserUpdateDTO;
+import com.withSchool.dto.user.UserInfoDTO;
+import com.withSchool.dto.user.UserUpdateDTO;
+import com.withSchool.service.user.UserUpdateService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest
 public class UserUpdateServiceTest {
     @Autowired
     private UserUpdateService userUpdateService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     public void getUserInfoTest(){
@@ -21,7 +26,7 @@ public class UserUpdateServiceTest {
         UserUpdateDTO dto = UserUpdateDTO.builder()
                 .userId(18L)
                 .id("id new")
-                .password("new password")
+                .password(passwordEncoder.encode("newpassword"))
                 .email("newemail@ajou.ac.kr")
                 .phoneNumber("01012345678")
                 .address("new address")

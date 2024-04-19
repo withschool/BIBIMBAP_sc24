@@ -1,10 +1,10 @@
 package com.withSchool.feat_12_2;
-import com.withSchool.dto.ClassDTO;
+import com.withSchool.dto.classes.ClassDTO;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.withSchool.controller.admin.AdminController;
-import com.withSchool.service.ClassService;
+import com.withSchool.service.classes.ClassService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,8 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AdminController.class)

@@ -1,17 +1,19 @@
 package com.withSchool.repository;
 
-import com.withSchool.entity.User;
-import jakarta.transaction.Transactional;
+import com.withSchool.entity.user.User;
+import com.withSchool.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.stream.IntStream;
 
 @SpringBootTest
 public class UserRepositoryTest {
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepository userRepository;
 
@@ -19,7 +21,7 @@ public class UserRepositoryTest {
     public void registerUserTest(){
             User user = User.builder()
                     .id("idas")
-                    .password("abc")
+                    .password(passwordEncoder.encode("dd1"))
                     .email("abc@ajou.ac.kr")
                     .name("관리자")
                     .sex(false)

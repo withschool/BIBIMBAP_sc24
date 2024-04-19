@@ -1,12 +1,12 @@
 package com.withSchool.controller.admin;
 
-import com.withSchool.dto.ClassDTO;
-import com.withSchool.entity.ClassInformation;
-import com.withSchool.service.ClassService;
-import com.withSchool.entity.Subject;
-import com.withSchool.entity.User;
-import com.withSchool.service.SubjectService;
-import com.withSchool.service.UserService;
+import com.withSchool.dto.classes.ClassDTO;
+import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.service.classes.ClassService;
+import com.withSchool.entity.subject.Subject;
+import com.withSchool.entity.user.User;
+import com.withSchool.service.subject.SubjectService;
+import com.withSchool.service.user.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,17 +36,23 @@ public class AdminController {
         User user = userService.findById(authentication.getName());
         if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당하는 유저가 없습니다.");
 
-        Subject subject = subjectService.saveSubject(subjectName, user);
-
-        return ResponseEntity.ok().body(subject.getSubjectName() + " 수업이 생성되었습니다.");
+        try {
+            Subject subject = subjectService.saveSubject(subjectName, user);
+            return ResponseEntity.ok().body(subject.getSubjectName() + " 수업이 생성되었습니다.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
 
     }
 
     @DeleteMapping("/subjects/{subjectId}")
     public ResponseEntity<String> deleteOneSubject(@PathVariable Long subjectId) {
-        subjectService.deleteById(subjectId);
-
-        return ResponseEntity.ok().body("해당 과목이 삭제되었습니다.");
+        try {
+            subjectService.deleteById(subjectId);
+            return ResponseEntity.ok().body("해당 과목이 삭제되었습니다.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/classes/add")
