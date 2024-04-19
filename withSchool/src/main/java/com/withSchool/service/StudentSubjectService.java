@@ -25,11 +25,13 @@ public class StudentSubjectService {
 
         for (StudentSubject ss : studentSubjects) {
             StudentSubjectDTO studentSubjectDTO = StudentSubjectDTO.builder()
-                    .ssid(ss.getSsid())
+                    .studentSubjectId(ss.getStudentSubjectId())
                     .student(ss.getUser())
                     .subject(ss.getSubject())
                     .midtermScore(ss.getMidtermScore())
                     .finalScore(ss.getFinalScore())
+                    .activityScore(ss.getActivityScore())
+                    .totalScore(ss.getTotalScore())
                     .regDate(ss.getRegDate())
                     .build();
 

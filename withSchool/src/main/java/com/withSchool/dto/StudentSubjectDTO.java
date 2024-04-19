@@ -11,9 +11,11 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 public class StudentSubjectDTO {
-    private Long ssid;
+    private Long studentSubjectId;
     private int midtermScore;
     private int finalScore;
+    private int activityScore;
+    private int totalScore;
     private User student;
     private Subject subject;
     private LocalDateTime regDate;
