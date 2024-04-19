@@ -28,4 +28,9 @@ public class ClassHomeworkSubmit extends BaseEntity {
     @JoinColumn(name = "class_homework_id", nullable = false)
     @Comment("반 과제 PK")
     private ClassHomework classHomework;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", nullable = false)
+    @Comment("과제 제출 학생 PK")
+    private User student;
 }
