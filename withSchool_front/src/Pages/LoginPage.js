@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import LoginMain from '../Components/LoginMain';
 
-const LoginPage = () => {
-
-  const handleLoginSuccess = () => {
-    alert("Success Login")
-  }
+const LoginPage = ({handleLoginSuccess}) => {
 
   function Logo() {
     return (

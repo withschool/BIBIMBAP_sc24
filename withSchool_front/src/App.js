@@ -1,10 +1,10 @@
-import LoginPage from "./Pages/LoginPage";
+import Router from './Pages/Router';
 
 function App() {
   return (
-    <div className="Main">
-      <LoginPage/>
-    </div>
+    <>
+      <Router/>
+    </>
   );
 }
 
