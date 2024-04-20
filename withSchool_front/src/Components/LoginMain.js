@@ -78,7 +78,7 @@ const LoginMain = ({handleLoginSuccess}) => {
         </button>
         <div className="flex gap-5 justify-between self-center mt-5 mb-3.5 tracking-normal">
           <p className="font-semibold text-center text-neutral-800">학교랑 계정이 없으신가요?</p>
-          <a href="#" className="font-bold text-right text-blue-400 underline">
+          <a href="/register" className="font-bold text-right text-blue-400 underline">
             계정 생성하기
           </a>
         </div>

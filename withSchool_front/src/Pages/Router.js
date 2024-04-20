@@ -4,6 +4,7 @@ import LoginPage from './LoginPage.js';
 import MainPage from './MainPage.js';
 import PrivateRoute from './PrivateRoute.js';
 import Scroll from '../Components/Scroll.js';
+import RegisterPage from './RegisterPage.js';
 
 const Router = () => {
     const access = localStorage.getItem('login');
@@ -19,6 +20,7 @@ const Router = () => {
         <Scroll/>
         <Routes>
             <Route index element={access === "true" ? <Navigate to={`/${userId}`} /> : <LoginPage handleLoginSuccess={handleLoginSuccess} />} path="/login/*" />
+            <Route path="/register/*" element={<RegisterPage/>} />
             <Route path="/*" element={<PrivateRoute authenticated={access} component={<MainPage />} />} />
         </Routes>
         </>

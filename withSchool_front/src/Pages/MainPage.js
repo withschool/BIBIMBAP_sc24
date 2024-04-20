@@ -11,7 +11,7 @@ const MainPage = () => {
     }
 
     return (
-        <div className="flex flex-col justify-center text-lg bg-white">
+        <div>
         <h1>MainPage</h1>
         <button onClick={setlogout}>logout</button>
         </div>
