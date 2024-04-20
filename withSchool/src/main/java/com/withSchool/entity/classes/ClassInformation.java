@@ -23,7 +23,7 @@ public class ClassInformation extends BaseEntity {
     private Long classId;
 
     @Column(name = "year")
-    @Comment("반이 생서된 연도")
+    @Comment("반이 생성된 연도")
     private int year;
 
     @Column(name = "grade")

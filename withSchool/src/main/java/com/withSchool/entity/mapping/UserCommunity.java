@@ -20,7 +20,7 @@ public class UserCommunity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_community_id", unique = true, nullable = false)
     @Comment("유저커뮤니티ID")
-    private Long ucId;
+    private Long userCommunityId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

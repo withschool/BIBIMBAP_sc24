@@ -17,7 +17,7 @@ public class SchoolMeals {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "school_meals_id", unique = true, nullable = false)
     @Comment("급식ID")
-    private Long smId;
+    private Long schoolMealsId;
 
     @Column(name = "ATPT_OFCDC_SC_CODE")
     @Comment("시도교육청코드")

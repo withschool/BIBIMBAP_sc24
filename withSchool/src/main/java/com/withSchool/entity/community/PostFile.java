@@ -18,7 +18,7 @@ public class PostFile extends BaseFileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_file_id", unique = true, nullable = false)
     @Comment("게시글파일ID")
-    private Long schoolNoticeFileId;
+    private Long postFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

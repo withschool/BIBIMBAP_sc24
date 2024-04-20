@@ -28,7 +28,7 @@ public class Reply extends BaseEntity {
 
     @Column(name = "like_count", nullable = false, columnDefinition = "int default 0")
     @Comment("좋아요 수")
-    private int like_count;
+    private int likeCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_reply_id")
