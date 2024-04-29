@@ -71,6 +71,11 @@ public class UserService {
     }
 
     public void register(SignUpDTO signUpDTO) {
+        // 중복된 아이디 체크
+        if (userRepository.existsById(signUpDTO.getId())) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+
         // DTO에서 엔티티로 변환
         User user = User.builder()
                 .id(signUpDTO.getId())
@@ -89,6 +94,7 @@ public class UserService {
         // 회원가입
         userRepository.save(user);
     }
+
 
     @Transactional
     public JwtToken signIn(String id, String password) {

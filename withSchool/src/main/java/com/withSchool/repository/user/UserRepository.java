@@ -18,8 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    boolean existsById(String id);
 
     @Modifying
     @Query("delete from User u where u.schoolInformation.schoolId = :id")
     void deleteAllUsersBySchoolId(Long id);
+
 }
