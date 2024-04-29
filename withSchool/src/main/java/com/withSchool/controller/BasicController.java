@@ -1,6 +1,9 @@
 package com.withSchool.controller;
 
+import com.withSchool.JWT.JwtTokenProvider;
 import com.withSchool.dto.user.SignUpDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +12,8 @@ import com.withSchool.dto.user.SignInDTO;
 import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BasicController {
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/sign-up")
     public ResponseEntity<String> registerUser(@RequestBody SignUpDTO userDto) {
@@ -33,6 +39,20 @@ public class BasicController {
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         return jwtToken;
+    }
+
+    @PostMapping("/sign-out")
+    public ResponseEntity<?> signOut(HttpServletRequest request) {
+        // 현재 요청에 사용된 토큰을 가져옴
+        String token = jwtTokenProvider.resolveToken(request);
+
+        // 블랙리스트에 토큰 추가
+        jwtTokenProvider.addToBlacklist(token);
+
+        // 현재 사용자의 컨텍스트를 비움
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @PostMapping("/test")
