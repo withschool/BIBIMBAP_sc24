@@ -62,6 +62,11 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/classes/add")
+    public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
+        classService.saveClassInformation(classDTO);
+        return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
+    }
     @GetMapping("/classes/byUser")
     public ResponseEntity<List<ClassInformation>> getAllClasses() {
         List<ClassInformation> classes = classService.findBySchoolInformation_SchoolId();
@@ -86,13 +91,13 @@ public class AdminController {
         return ResponseEntity.ok().body(classInfo);
     }
 
-    @PatchMapping("/classes/{classId}/update")
+    @PatchMapping("/classes/{classId}")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
         return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
     }
 
-    @DeleteMapping("/classes/{classId}/delete")
+    @DeleteMapping("/classes/{classId}")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");
