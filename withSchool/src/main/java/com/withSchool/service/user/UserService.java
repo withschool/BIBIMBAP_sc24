@@ -55,6 +55,13 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
+
+    public SchoolInformation getSchoolInformationByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        return user.getSchoolInformation();
+    }
+
     public void registerAdmin(SchoolInformationDTO dto) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
@@ -110,4 +117,5 @@ public class UserService {
 
         return jwtToken;
     }
+
 }
