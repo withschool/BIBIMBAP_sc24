@@ -1,6 +1,7 @@
 package com.withSchool.service.school;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +22,11 @@ public class SchoolInformationService {
     private final SchoolInformationRepository schoolInformationRepository;
     private final UserRepository userRepository;
 
-    public List<SchoolInformation> findAll() {
-        return schoolInformationRepository.findAll();
+    public List<SchoolInformationListDTO> findAll() {
+        List<SchoolInformationListDTO> result = schoolInformationRepository.findAll().stream().map(schoolInformation -> new SchoolInformationListDTO(
+                schoolInformation.getOrgRdnda()
+        )).collect(Collectors.toList());
+        return result;
     }
 
     public Optional<SchoolInformation> findById(Long id) {
