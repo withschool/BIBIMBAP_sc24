@@ -7,7 +7,7 @@ import com.withSchool.entity.user.User;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ClassService {
 
-    @Autowired
-    private ClassRepository classRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private SchoolInformationRepository schoolInformationRepository;
+    private final ClassRepository classRepository;
+
+    private final UserRepository userRepository;
+
+    private final SchoolInformationRepository schoolInformationRepository;
 
     // 반 정보 저장
     @PreAuthorize("hasRole('ADMIN')")
