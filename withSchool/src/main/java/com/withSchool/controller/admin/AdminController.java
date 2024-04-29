@@ -55,43 +55,37 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/classes/add")
-    public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
-        classService.saveClassInformation(classDTO);
-        return ResponseEntity.ok().body("해당 수업이 생성되었습니다.");
-    }
-
-    @GetMapping("/classes/bySchool/{schoolId}")
-    public ResponseEntity<List<ClassInformation>> getAllClassesBySchoolId(@PathVariable Long schoolId) {
-        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolId(schoolId);
+    @GetMapping("/classes/byUser")
+    public ResponseEntity<List<ClassInformation>> getAllClasses() {
+        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolId();
         return ResponseEntity.ok().body(classes);
     }
 
-    @GetMapping("/classes/bySchool/{schoolId}/{grade}")
-    public ResponseEntity<List<ClassInformation>> getAllClassesBySchoolIdAndGrade(@PathVariable Long schoolId, @PathVariable int grade) {
-        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
+    @GetMapping("/classes/byUser/{grade}")
+    public ResponseEntity<List<ClassInformation>> getAllClassesByGrade(@PathVariable int grade) {
+        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolIdAndGrade(grade);
         return ResponseEntity.ok().body(classes);
     }
 
-    @GetMapping("/classes//bySchool/{schoolId}/{grade}/{inClass}")
-    public ResponseEntity<Optional<ClassInformation>> getAllClassesBySchoolIdAndGrade(@PathVariable Long schoolId, @PathVariable int grade, @PathVariable int inClass) {
-        Optional<ClassInformation> searched_class = classService.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
-        return ResponseEntity.ok().body(searched_class);
+    @GetMapping("/classes/byUser/{grade}/{inClass}")
+    public ResponseEntity<Optional<ClassInformation>> getClassByGradeAndInClass(@PathVariable int grade, @PathVariable int inClass) {
+        Optional<ClassInformation> searchedClass = classService.findBySchoolInformation_SchoolIdAndGradeAndInClass(grade, inClass);
+        return ResponseEntity.ok().body(searchedClass);
     }
 
-    @GetMapping("/classes/bySchool/{classId}")
+    @GetMapping("/classes/{classId}")
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
         return ResponseEntity.ok().body(classInfo);
     }
 
-    @PatchMapping("/classes/byClass/{classId}/update")
+    @PatchMapping("/classes/{classId}/update")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
         return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
     }
 
-    @DeleteMapping("/classes/byClass/{classId}/delete")
+    @DeleteMapping("/classes/{classId}/delete")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");
