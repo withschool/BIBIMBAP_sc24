@@ -61,37 +61,37 @@ public class AdminController {
         return ResponseEntity.ok().body("해당 수업이 생성되었습니다.");
     }
 
-    @GetMapping("/classes/{schoolId}")
+    @GetMapping("/classes/bySchool/{schoolId}")
     public ResponseEntity<List<ClassInformation>> getAllClassesBySchoolId(@PathVariable Long schoolId) {
         List<ClassInformation> classes = classService.findBySchoolInformation_SchoolId(schoolId);
         return ResponseEntity.ok().body(classes);
     }
 
-    @GetMapping("/classes/{schoolId}/{grade}")
+    @GetMapping("/classes/bySchool/{schoolId}/{grade}")
     public ResponseEntity<List<ClassInformation>> getAllClassesBySchoolIdAndGrade(@PathVariable Long schoolId, @PathVariable int grade) {
         List<ClassInformation> classes = classService.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
         return ResponseEntity.ok().body(classes);
     }
 
-    @GetMapping("/classes/{schoolId}/{grade}/{inClass}")
+    @GetMapping("/classes//bySchool/{schoolId}/{grade}/{inClass}")
     public ResponseEntity<Optional<ClassInformation>> getAllClassesBySchoolIdAndGrade(@PathVariable Long schoolId, @PathVariable int grade, @PathVariable int inClass) {
         Optional<ClassInformation> searched_class = classService.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
         return ResponseEntity.ok().body(searched_class);
     }
 
-    @GetMapping("/classes/{classId}")
+    @GetMapping("/classes/bySchool/{classId}")
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
         return ResponseEntity.ok().body(classInfo);
     }
 
-    @PatchMapping("/classes/{classId}/update")
+    @PatchMapping("/classes/byClass/{classId}/update")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
         return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
     }
 
-    @DeleteMapping("/classes/{classId}/delete")
+    @DeleteMapping("/classes/byClass/{classId}/delete")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");
