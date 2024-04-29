@@ -69,6 +69,9 @@ public class UserService {
     }
 
     public void register(SignUpDTO signUpDTO) {
+        if (userRepository.existsById(signUpDTO.getId())) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
         // DTO에서 엔티티로 변환
         User user = User.builder()
                 .id(signUpDTO.getId())
