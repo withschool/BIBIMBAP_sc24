@@ -24,6 +24,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final SchoolInformationRepository schoolInformationRepository;
@@ -34,6 +35,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);

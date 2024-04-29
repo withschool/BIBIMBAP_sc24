@@ -1,16 +1,17 @@
 package com.withSchool.entity.base;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-@Setter
+@SuperBuilder
 @Getter
 @MappedSuperclass
+@AllArgsConstructor
+@NoArgsConstructor
 public class BasePostEntity extends BaseEntity {
     @Column(name = "title", nullable = false)
     @Comment("제목")

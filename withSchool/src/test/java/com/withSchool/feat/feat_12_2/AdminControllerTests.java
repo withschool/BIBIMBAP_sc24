@@ -1,4 +1,4 @@
-package com.withSchool.feat_12_2;
+package com.withSchool.feat.feat_12_2;
 import com.withSchool.dto.classes.ClassDTO;
 import org.junit.jupiter.api.Test;
 

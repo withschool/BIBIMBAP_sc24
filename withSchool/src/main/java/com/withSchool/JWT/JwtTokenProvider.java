@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
         long now = (new Date()).getTime();
 
-        Date accessTokenExpire = new Date(now + 86400000);
+        Date accessTokenExpire = new Date(now + 3600000);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
@@ -48,8 +48,9 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        Date refreshTokenExpire = new Date(now + 86400000);
         String refreshToken = Jwts.builder()
-                .setExpiration(accessTokenExpire)
+                .setExpiration(refreshTokenExpire)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

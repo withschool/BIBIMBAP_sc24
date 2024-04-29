@@ -7,12 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @Builder
 public class SubjectNotice extends BasePostEntity {
     @Id

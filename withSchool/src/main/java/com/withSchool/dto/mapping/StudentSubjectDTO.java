@@ -1,7 +1,5 @@
 package com.withSchool.dto.mapping;
 
-import com.withSchool.entity.subject.Subject;
-import com.withSchool.entity.user.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +14,7 @@ public class StudentSubjectDTO {
     private int finalScore;
     private int activityScore;
     private int totalScore;
-    private User student;
-    private Subject subject;
+    private String student;
+    private String subject;
     private LocalDateTime regDate;
 }
