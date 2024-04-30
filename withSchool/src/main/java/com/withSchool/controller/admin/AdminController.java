@@ -67,22 +67,11 @@ public class AdminController {
         classService.saveClassInformation(classDTO);
         return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
     }
+
     @GetMapping("/classes/byUser")
-    public ResponseEntity<List<ClassInformation>> getAllClasses() {
-        List<ClassInformation> classes = classService.findBySchoolInformation();
-        return ResponseEntity.ok().body(classes);
-    }
-
-    @GetMapping("/classes/byUser/grade")
-    public ResponseEntity<List<ClassInformation>> getAllClassesByGrade(@RequestParam int grade) {
-        List<ClassInformation> classes = classService.findBySchoolInformation(grade);
-        return ResponseEntity.ok().body(classes);
-    }
-
-    @GetMapping("/classes/byUser/gradeAndInClass")
-    public ResponseEntity<Optional<ClassInformation>> getClassByGradeAndInClass(@RequestParam int grade, @RequestParam int inClass) {
-        Optional<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
-        return ResponseEntity.ok().body(searchedClass);
+    public ResponseEntity<List<ClassInformation>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
+            List<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
+            return ResponseEntity.ok().body(searchedClass);
     }
 
     @GetMapping("/classes/{classId}")

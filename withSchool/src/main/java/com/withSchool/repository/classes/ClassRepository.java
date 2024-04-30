@@ -17,6 +17,6 @@ public interface ClassRepository extends JpaRepository<ClassInformation, Long> {
     List<ClassInformation> findBySchoolInformation_SchoolIdAndGrade(Long schoolId, int grade);
 
     // 특정 학교의 특정 학년의 특정 반 조회
-    Optional<ClassInformation> findBySchoolInformation_SchoolIdAndGradeAndInClass(Long schoolId, int grade, int inClass);
+    List<ClassInformation> findBySchoolInformation_SchoolIdAndGradeAndInClass(Long schoolId, int grade, int inClass);
 
 }
