@@ -65,25 +65,13 @@ public class AdminController {
     @PostMapping("/classes/add")
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
         classService.saveClassInformation(classDTO);
-        return ResponseEntity.ok().body("해당 수업이 생성되었습니다.");
+        return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
     }
 
-    @GetMapping("/classes/{schoolId}")
-    public ResponseEntity<List<ClassInformation>> getAllClassesBySchoolId(@PathVariable Long schoolId) {
-        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolId(schoolId);
-        return ResponseEntity.ok().body(classes);
-    }
-
-    @GetMapping("/classes/{schoolId}/{grade}")
-    public ResponseEntity<List<ClassInformation>> getAllClassesBySchoolIdAndGrade(@PathVariable Long schoolId, @PathVariable int grade) {
-        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
-        return ResponseEntity.ok().body(classes);
-    }
-
-    @GetMapping("/classes/{schoolId}/{grade}/{inClass}")
-    public ResponseEntity<Optional<ClassInformation>> getAllClassesBySchoolIdAndGrade(@PathVariable Long schoolId, @PathVariable int grade, @PathVariable int inClass) {
-        Optional<ClassInformation> searched_class = classService.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
-        return ResponseEntity.ok().body(searched_class);
+    @GetMapping("/classes/byUser")
+    public ResponseEntity<List<ClassInformation>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
+            List<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
+            return ResponseEntity.ok().body(searchedClass);
     }
 
     @GetMapping("/classes/{classId}")
@@ -92,13 +80,13 @@ public class AdminController {
         return ResponseEntity.ok().body(classInfo);
     }
 
-    @PatchMapping("/classes/{classId}/update")
+    @PatchMapping("/classes/{classId}")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
         return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
     }
 
-    @DeleteMapping("/classes/{classId}/delete")
+    @DeleteMapping("/classes/{classId}")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");

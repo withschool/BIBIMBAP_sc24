@@ -55,6 +55,7 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
+
     public void registerAdmin(SchoolInformationDTO dto) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
@@ -110,4 +111,5 @@ public class UserService {
 
         return jwtToken;
     }
+
 }
