@@ -4,16 +4,16 @@ import com.withSchool.entity.user.User;
 import com.withSchool.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class HomeworkSubmit extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

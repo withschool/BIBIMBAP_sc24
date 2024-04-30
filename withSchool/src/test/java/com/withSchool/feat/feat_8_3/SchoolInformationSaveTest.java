@@ -1,11 +1,10 @@
-package com.withSchool.feat_8_3;
+package com.withSchool.feat.feat_8_3;
 
 import com.google.gson.Gson;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.service.school.SchoolInformationService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +34,7 @@ public class SchoolInformationSaveTest {
         }
     }
 
-    @AfterEach
+//    @AfterEach
     public void clean(){
         schoolInformationRepository.deleteAll();
     }
