@@ -37,19 +37,19 @@ public class ClassService {
     }
     // 반 정보 조회
     @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation_SchoolId() {
+    public List<ClassInformation> findBySchoolInformation() {
         Long schoolId = getCurrentUserSchoolId();
         return classRepository.findBySchoolInformation_SchoolId(schoolId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation_SchoolIdAndGrade(int grade) {
+    public List<ClassInformation> findBySchoolInformation(int grade) {
         Long schoolId = getCurrentUserSchoolId();
         return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Optional<ClassInformation> findBySchoolInformation_SchoolIdAndGradeAndInClass(int grade, int inClass) {
+    public Optional<ClassInformation> findBySchoolInformation(int grade, int inClass) {
         Long schoolId = getCurrentUserSchoolId();
         return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
     }

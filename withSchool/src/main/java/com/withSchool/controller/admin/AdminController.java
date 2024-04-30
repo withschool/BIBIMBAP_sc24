@@ -62,19 +62,19 @@ public class AdminController {
     }
     @GetMapping("/classes/byUser")
     public ResponseEntity<List<ClassInformation>> getAllClasses() {
-        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolId();
+        List<ClassInformation> classes = classService.findBySchoolInformation();
         return ResponseEntity.ok().body(classes);
     }
 
-    @GetMapping("/classes/byUser/{grade}")
-    public ResponseEntity<List<ClassInformation>> getAllClassesByGrade(@PathVariable int grade) {
-        List<ClassInformation> classes = classService.findBySchoolInformation_SchoolIdAndGrade(grade);
+    @GetMapping("/classes/byUser/grade")
+    public ResponseEntity<List<ClassInformation>> getAllClassesByGrade(@RequestParam int grade) {
+        List<ClassInformation> classes = classService.findBySchoolInformation(grade);
         return ResponseEntity.ok().body(classes);
     }
 
-    @GetMapping("/classes/byUser/{grade}/{inClass}")
-    public ResponseEntity<Optional<ClassInformation>> getClassByGradeAndInClass(@PathVariable int grade, @PathVariable int inClass) {
-        Optional<ClassInformation> searchedClass = classService.findBySchoolInformation_SchoolIdAndGradeAndInClass(grade, inClass);
+    @GetMapping("/classes/byUser/gradeAndInClass")
+    public ResponseEntity<Optional<ClassInformation>> getClassByGradeAndInClass(@RequestParam int grade, @RequestParam int inClass) {
+        Optional<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
         return ResponseEntity.ok().body(searchedClass);
     }
 
