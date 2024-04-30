@@ -36,22 +36,15 @@ public class ClassService {
         return classRepository.save(newClass);
     }
     // 반 정보 조회
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation() {
+    public List<ClassInformation> findBySchoolInformation(Integer grade, Integer inClass) {
         Long schoolId = getCurrentUserSchoolId();
-        return classRepository.findBySchoolInformation_SchoolId(schoolId);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation(int grade) {
-        Long schoolId = getCurrentUserSchoolId();
-        return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public Optional<ClassInformation> findBySchoolInformation(int grade, int inClass) {
-        Long schoolId = getCurrentUserSchoolId();
-        return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+        if (grade != null && inClass != null) {
+            return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+        } else if (grade != null) {
+            return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
+        } else {
+            return classRepository.findBySchoolInformation_SchoolId(schoolId);
+        }
     }
 
     // 특정 반 정보 조회
