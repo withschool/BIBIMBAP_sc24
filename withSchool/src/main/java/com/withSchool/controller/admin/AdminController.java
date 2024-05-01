@@ -93,7 +93,7 @@ public class AdminController {
     }
 
 
-    @PostMapping("/school-notices")
+    @PostMapping("/schools/notices")
     public ResponseEntity<Map<String, Object>> createNotice(@RequestBody ClientSchoolNoticeDTO request) {
         Map<String, Object> response = new HashMap<>();
 
@@ -129,7 +129,7 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping("/school-notices/{notice-id}")
+    @PatchMapping("/schools/notices/{notice-id}")
     public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @RequestBody ClientSchoolNoticeDTO request){
         Map<String, Object> response = new HashMap<>();
 
@@ -142,7 +142,7 @@ public class AdminController {
         return ResponseEntity.ok().body(response);
     }
 
-    @DeleteMapping("/school-notices/{notice-id}")
+    @DeleteMapping("/schools/notices/{notice-id}")
     public ResponseEntity<Map<String, Object>> deleteOneNotice(@PathVariable(name = "notice-id") Long noticeId) {
         Map<String, Object> response = new HashMap<>();
 
