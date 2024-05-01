@@ -4,6 +4,7 @@ import com.withSchool.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -19,7 +20,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
 
+    // 학교 모델 지우기 전에 관련 모든 유저 정보 삭제
     @Modifying
     @Query("delete from User u where u.schoolInformation.schoolId = :id")
     void deleteAllUsersBySchoolId(Long id);
+
+    // 어드민이 유저 삭제
+    @Modifying
+    void deleteUserByUserId(Long userId);
+
 }

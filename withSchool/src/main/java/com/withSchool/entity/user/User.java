@@ -1,6 +1,7 @@
 package com.withSchool.entity.user;
 
 import com.withSchool.entity.base.BaseEntity;
+import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
 @Table(name = "user")
 @Builder
@@ -27,16 +28,16 @@ public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", unique = true, nullable = false)
+    @Column(name = "user_id", unique = true)
     @Comment("사용자 PK")
     private Long userId;
 
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id", unique = true)
     @Comment("로그인 ID")
     private String id;
 
     @Setter
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     @Comment("비밀번호")
     private String password;
 
@@ -65,9 +66,9 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("주소")
     private String address;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date",length = 6)
     @Comment("생일")
-    private LocalDateTime birthDate;
+    private String birthDate;
 
     @Column(name = "account_type")
     @Comment("""
@@ -93,6 +94,11 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "school_id")
     @Comment("사용자가 속한 학교 PK")
     private SchoolInformation schoolInformation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classs_id")
+    @Comment("사용자가 속한 반")
+    private ClassInformation classInformation;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

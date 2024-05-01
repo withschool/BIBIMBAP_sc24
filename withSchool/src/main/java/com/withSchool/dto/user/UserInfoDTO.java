@@ -18,6 +18,6 @@ public class UserInfoDTO { // 사용자 기본 정보들
     private Boolean sex;
     private String phoneNumber;
     private String address;
-    private LocalDateTime birthDate;
+    private String birthDate;
     private int accountType;
 }

@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @SpringBootTest
 public class UserRepositoryTest {
@@ -20,18 +21,26 @@ public class UserRepositoryTest {
     @Test
     public void registerUserTest(){
             User user = User.builder()
-                    .id("idas")
+                    .id("실험")
                     .password(passwordEncoder.encode("dd1"))
-                    .email("abc@ajou.ac.kr")
+                    .email("abc123@ajou.ac.kr")
                     .name("관리자")
                     .sex(false)
-                    .phoneNumber("0109485718")
+                    .phoneNumber("01094857112")
                     .address("아주대학교동")
-                    .birthDate(LocalDateTime.now())
+                    .birthDate("991108")
                     .accountType(3)
-                    .userCode("asdas12as")
-                    .parentCode("asda")
+                    .userCode("asdas12asasd")
+                    .parentCode("asda123")
                     .build();
             userRepository.save(user);
+    }
+
+    @Test
+    public void find(){
+        Optional<User> user=  userRepository.findById("dd1");
+        if(user.isPresent()){
+            System.out.println(user.get().getName());
+        }
     }
 }
