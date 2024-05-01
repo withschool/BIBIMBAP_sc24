@@ -24,4 +24,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("delete from User u where u.schoolInformation.schoolId = :id")
     void deleteAllUsersBySchoolId(Long id);
 
+    Optional<User> findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode);
 }

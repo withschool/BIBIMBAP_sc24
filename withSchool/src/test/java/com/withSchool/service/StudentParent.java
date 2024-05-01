@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -115,7 +114,7 @@ public class StudentParent {
                     .sex(true)
                     .phoneNumber("123-456-78" + i)
                     .address("123 Street, City, Country")
-                    .birthDate(LocalDateTime.of(1990, 5, 15, 0, 0)) // Example birth date
+                    .birthDate("900515") // Example birth date
                     .accountType(i)
                     .userCode("user123" + i)
                     .parentCode("parent456" + i)

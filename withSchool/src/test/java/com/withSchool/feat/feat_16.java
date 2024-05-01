@@ -17,7 +17,7 @@ import java.util.Map;
 
 @SpringBootTest
 public class feat_16 {
-    // TODO: feat 16 공지 처리 로직 구현
+    // DONE: feat 16 공지 처리 로직 구현
     //  어드민의 학교 공지 생성/조회/수정/삭제 로직 구현
 
     @Autowired

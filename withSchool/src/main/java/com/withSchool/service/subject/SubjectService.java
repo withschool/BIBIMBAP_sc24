@@ -74,7 +74,7 @@ public class SubjectService {
         return subjectInfoDTOs;
     }
 
-    // TODO(DONE) 자식의 수강 정보 가져오는 메서드
+    // (DONE) 자식의 수강 정보 가져오는 메서드
     //  1. 부모-학생 매핑 테이블 참조해서 학생 정보 가져오기
     //  2. 학생 정보를 이용해서 듣는 수업을 호출하는
     //    public List<SubjectInfoDTO> findAllSugangByUser(User user) 메서드 호출하기 끝.
