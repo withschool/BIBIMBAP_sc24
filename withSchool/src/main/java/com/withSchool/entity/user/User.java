@@ -66,9 +66,9 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("주소")
     private String address;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", length = 6)
     @Comment("생일")
-    private LocalDateTime birthDate;
+    private String birthDate;
 
     @Column(name = "account_type")
     @Comment("""

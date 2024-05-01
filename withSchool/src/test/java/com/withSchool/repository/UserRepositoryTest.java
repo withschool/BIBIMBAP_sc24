@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 
 @SpringBootTest
 public class UserRepositoryTest {
@@ -27,7 +26,7 @@ public class UserRepositoryTest {
                     .sex(false)
                     .phoneNumber("0109485718")
                     .address("아주대학교동")
-                    .birthDate(LocalDateTime.now())
+                    .birthDate("999999")
                     .accountType(3)
                     .userCode("asdas12as")
                     .parentCode("asda")

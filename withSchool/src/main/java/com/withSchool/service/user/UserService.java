@@ -24,7 +24,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final SchoolInformationRepository schoolInformationRepository;
@@ -112,4 +111,9 @@ public class UserService {
         return jwtToken;
     }
 
+    @Transactional
+    public User findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode) {
+        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
+        return user.orElse(null);
+    }
 }
