@@ -112,14 +112,14 @@ public class AdminController {
     public ResponseEntity<String> handleFileUpload(@RequestBody MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당하는 유저가 없습니다.");
+        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("no user.");
 
         CsvRequestDTO dto = CsvRequestDTO.builder()
                 .id(user.getId())
                 .file(file)
                 .build();
         csvService.registerUser(dto);
-        return ResponseEntity.ok().body("파일 업로드 및 처리 성공");
+        return ResponseEntity.ok().body("file upload");
     }
 
     // 유저 리스트를 받아서 다 삭제
