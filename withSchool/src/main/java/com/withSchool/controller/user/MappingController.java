@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @EnableAutoConfiguration
-@RequestMapping("/student-parent-mapping")
-public class StudentParentMappingController {
+@RequestMapping("/mapping")
+public class MappingController {
     private final UserService userService;
     private final StudentParentService studentParentService;
 
-    @PostMapping("/map")
+    @PostMapping("/student-parent")
     public ResponseEntity<?> mapStudentWithParent(@RequestParam String userCode) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
