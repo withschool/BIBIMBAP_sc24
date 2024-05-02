@@ -1,6 +1,8 @@
 package com.withSchool.controller.admin;
 
 import com.withSchool.dto.classes.ClassDTO;
+import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.dto.school.ClientSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.classes.ClassInformation;
@@ -8,6 +10,11 @@ import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassService;
 import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
+import com.withSchool.service.csv.CsvService;
+import com.withSchool.service.subject.SubjectService;
+import com.withSchool.service.user.UserService;
+
+import java.io.IOException;
 import com.withSchool.service.school.SchoolNoticeService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
@@ -25,6 +32,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @RestController
@@ -35,6 +45,7 @@ public class AdminController {
     private final SubjectService subjectService;
     private final UserService userService;
     private final ClassService classService;
+    private final CsvService csvService;
     private final SchoolNoticeService schoolNoticeService;
 
     @PostMapping("/subjects")
@@ -45,8 +56,8 @@ public class AdminController {
 
         try {
             Subject subject = subjectService.saveSubject(subjectName, user);
-            return ResponseEntity.ok().body(subject.getSubjectName() + " 수업이 생성되었습니다.");
-        } catch (Exception e){
+            return ResponseEntity.ok().body(subject.getSubjectName() + " 과목이 생성되었습니다.");
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
@@ -57,15 +68,20 @@ public class AdminController {
         try {
             subjectService.deleteById(subjectId);
             return ResponseEntity.ok().body("해당 과목이 삭제되었습니다.");
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @PostMapping("/classes/add")
+    @PostMapping("/classes")
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
-        classService.saveClassInformation(classDTO);
-        return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
+
+        try {
+            classService.saveClassInformation(classDTO);
+            return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @GetMapping("/classes/byUser")
@@ -92,6 +108,26 @@ public class AdminController {
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");
     }
 
+    @PostMapping("/users-file")
+    public ResponseEntity<String> handleFileUpload(@RequestBody MultipartFile file) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findById(authentication.getName());
+        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("no user.");
+
+        CsvRequestDTO dto = CsvRequestDTO.builder()
+                .id(user.getId())
+                .file(file)
+                .build();
+        csvService.registerUser(dto);
+        return ResponseEntity.ok().body("file upload");
+    }
+
+    // 유저 리스트를 받아서 다 삭제
+    @DeleteMapping("/users")
+    public ResponseEntity<String> deleteUsers(@RequestBody UserDeleteRequestDTO dto){
+        userService.delete(dto);
+        return ResponseEntity.ok().body("삭제 완료");
+    }
 
     @PostMapping("/schools/notices")
     public ResponseEntity<Map<String, Object>> createNotice(@RequestBody ClientSchoolNoticeDTO request) {

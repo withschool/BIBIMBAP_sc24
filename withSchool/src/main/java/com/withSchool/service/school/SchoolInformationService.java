@@ -25,7 +25,8 @@ public class SchoolInformationService {
     public List<SchoolInformationListDTO> findAll() {
         return schoolInformationRepository.findAll().stream().map(schoolInformation -> new SchoolInformationListDTO(
                 schoolInformation.getSchoolId(),
-                schoolInformation.getOrgRdnda()
+                schoolInformation.getSchulNm(),
+                schoolInformation.getOrgRdnma()
         )).collect(Collectors.toList());
     }
 

@@ -2,8 +2,10 @@ package com.withSchool.service.user;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.user.SignUpDTO;
+import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
+import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +32,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final SchoolInformationRepository schoolInformationRepository;
+    private final StudentSubjectRepository studentSubjectRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -54,6 +58,11 @@ public class UserService {
 
     public User findByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
+        return user.orElse(null);
+    }
+
+    public User findByUserCode(String userCode) {
+        Optional<User> user = userRepository.findByUserCode(userCode);
         return user.orElse(null);
     }
 
@@ -89,12 +98,20 @@ public class UserService {
                 .birthDate(signUpDTO.getBirthDate())
                 .accountType(signUpDTO.getAccountType())
                 .userCode(signUpDTO.getUserCode())
-                .parentCode(signUpDTO.getParentCode())
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .build();
 
         // 회원가입
         userRepository.save(user);
+    }
+    @Transactional
+    public void delete(UserDeleteRequestDTO dto){
+        List<Long> userId = dto.getUserId();
+        userId.stream().forEach(u->{
+            studentSubjectRepository.deleteSsByUserId(u);
+            userRepository.deleteUserByUserId(u);
+        });
+
     }
 
 
