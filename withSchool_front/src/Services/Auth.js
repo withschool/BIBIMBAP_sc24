@@ -51,7 +51,8 @@ exports.certify = async (schoolId, userName, birthDate, userCode) => {
     });
     const data = await response.json();
     if (response.status === 200) {
-      console.log('Certify Success:', data.message);
+      console.log('Certify Success:', data);
+      return data;
     } else {
       console.error('Certify failed:', data.message);
     }

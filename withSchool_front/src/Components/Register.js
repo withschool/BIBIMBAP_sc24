@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import auth from '../Services/Auth.js';
 import school from '../Services/School.js';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [individualCode, setIndividualCode] = useState('');
@@ -53,15 +54,18 @@ const Register = () => {
         setuserInfo(e.target.value);
     }
 
+    const navigate = useNavigate();
+
     const handleSubmit = async () => {
-        console.log(individualCode);
-        console.log(selectedSchool);
         const birthDate = `${year % 100}${month}${day}`;
-        console.log(birthDate);
-        console.log(name);
         try {
-            const data = await auth.certify(selectedSchool, name, birthDate, individualCode); 
+            const data = await auth.certify(selectedSchool, name, birthDate, individualCode);
+            if(data.message == "해당하는 유저가 없습니다.") {
+                alert("해당하는 유저가 없습니다.");
+                throw new SyntaxError("Can't find a user");
+            }
             setuserInfo(data); // 가져온 학교 목록을 상태에 저장
+            navigate('/register/sign-in');
         } catch (error) {
             console.error('Error during certifying:', error);
         }
