@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import auth from '../Services/Auth.js';
 import school from '../Services/School.js';
@@ -12,7 +12,7 @@ const Register = () => {
     const [month, setMonth] = useState('01');
     const [day, setDay] = useState('01');
     const [name, setName] = useState('');
-    const [userInfo, setuserInfo] = useState('');
+    const [userInfo, setUserInfo] = useState('');
  
     useEffect(() => {
         const fetchSchools = async () => {
@@ -25,6 +25,11 @@ const Register = () => {
         };
         fetchSchools(); // 학교 목록을 가져오는 함수 호출
     }, []);
+
+    useEffect(() => {
+        console.log("바꿨다");
+        console.log(userInfo);
+    }, [userInfo]);
 
     const handleIndividualCode = (e) => {
         setIndividualCode(e.target.value);
@@ -50,8 +55,11 @@ const Register = () => {
         setName(e.target.value);
     }
 
-    const handleuserInfo = (e) => {
-        setuserInfo(e.target.value);
+    const handleUserInfo = (data) => {
+        const paramData = JSON.stringify(data);
+        console.log(paramData);
+        setUserInfo(paramData);
+        console.log(userInfo);
     }
 
     const navigate = useNavigate();
@@ -63,13 +71,13 @@ const Register = () => {
             if(data.message == "해당하는 유저가 없습니다.") {
                 alert("해당하는 유저가 없습니다.");
                 throw new SyntaxError("Can't find a user");
-            }
-            setuserInfo(data); // 가져온 학교 목록을 상태에 저장
-            navigate('/register/sign-in');
+            };
+            handleUserInfo(data);
+            console.log("userInfo 값:", userInfo); // 변경된 userInfo 값을 바로 확인
+            navigate('/register/sign-in', { state : userInfo });
         } catch (error) {
             console.error('Error during certifying:', error);
         }
-
     }
 
     return (
@@ -90,7 +98,7 @@ const Register = () => {
                     <option value="">학교 선택</option>
                     {schoolList && // 학교 목록이 있을 때만 map() 함수 실행
                         schoolList.map(school => (
-                            <option key={school.schoolId} value={school.schoolId}>{school.org_RDNDA}</option>
+                            <option key={school.schoolId} value={school.schoolId}>{school.schoolName}&#40;{school.schoolAddress}&#41;</option>
                         ))}
                 </select>
             </div>
