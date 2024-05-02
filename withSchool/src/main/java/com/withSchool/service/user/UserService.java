@@ -84,7 +84,6 @@ public class UserService {
                 .birthDate(signUpDTO.getBirthDate())
                 .accountType(signUpDTO.getAccountType())
                 .userCode(signUpDTO.getUserCode())
-                .parentCode(signUpDTO.getParentCode())
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .build();
 

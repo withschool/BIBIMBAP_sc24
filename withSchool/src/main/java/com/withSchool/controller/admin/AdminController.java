@@ -46,7 +46,7 @@ public class AdminController {
 
         try {
             Subject subject = subjectService.saveSubject(subjectName, user);
-            return ResponseEntity.ok().body(subject.getSubjectName() + " 수업이 생성되었습니다.");
+            return ResponseEntity.ok().body(subject.getSubjectName() + " 반이 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -63,7 +63,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/classes/add")
+    @PostMapping("/classes")
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
         try {
             classService.saveClassInformation(classDTO);
@@ -97,13 +97,13 @@ public class AdminController {
         return ResponseEntity.ok().body(classInfo);
     }
 
-    @PatchMapping("/classes/{classId}/update")
+    @PatchMapping("/classes/{classId}")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
         return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
     }
 
-    @DeleteMapping("/classes/{classId}/delete")
+    @DeleteMapping("/classes/{classId}")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");

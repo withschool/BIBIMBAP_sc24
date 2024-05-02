@@ -60,7 +60,6 @@ public class CsvService {
                                             .classInformation(classInformation.get())
                                             .schoolInformation(schoolInformation.get())
                                             .userCode(RandomStringUtils.randomAlphanumeric(8))
-                                            .parentCode(RandomStringUtils.randomAlphanumeric(8))
                                             .build();
                                     userRepository.save(newUser);
                                     Arrays.stream(line).skip(5).forEach(s->{
