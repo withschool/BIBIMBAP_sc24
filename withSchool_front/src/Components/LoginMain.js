@@ -18,17 +18,17 @@ const LoginMain = ({handleLoginSuccess}) => {
     try {
       // 로그인 요청
       const user = await auth.login(inputId, inputPw);
-
+      
       // 로그인 성공 시 정보 로컬 스토리지에 저장
       localStorage.setItem('token', user.accessToken);
       localStorage.setItem('id', inputId);
-      localStorage.setItem('login', user.accessToken? true: false);
+      localStorage.setItem('login', user.accessToken ? true : false);
 
       // 메인 페이지 이동
       handleLoginSuccess();
 
     } catch (error) {
-      alert("로그인 실패: " + error.message);
+      alert("로그인 실패 : " + error.message);
     }
   };
 
@@ -70,7 +70,7 @@ const LoginMain = ({handleLoginSuccess}) => {
           </label>
         </div>
         <button
-          type="submit"
+          type="button"
           className="justify-center items-center self-center px-16 py-5 mt-14 max-w-full text-xl font-bold tracking-normal text-center text-white bg-blue-500 rounded-lg w-[418px] max-md:px-5 max-md:mt-10"
           onClick={onClickLogin}
         >

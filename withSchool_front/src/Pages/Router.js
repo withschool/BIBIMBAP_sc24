@@ -8,20 +8,19 @@ import RegisterPage from './RegisterPage.js';
 
 const Router = () => {
     const access = localStorage.getItem('login');
-    const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
 
     const handleLoginSuccess = () => {
-      navigate(`/${userId}`);
+      navigate(`/`);
     }
 
     return (
         <>
         <Scroll/>
         <Routes>
-            <Route index element={access === "true" ? <Navigate to={`/${userId}`} /> : <LoginPage handleLoginSuccess={handleLoginSuccess} />} path="/login/*" />
+            <Route index element={access === "true" ? <Navigate to={`/main`} /> : <LoginPage handleLoginSuccess={handleLoginSuccess} />} path="/login/*" />
             <Route path="/register/*" element={<RegisterPage/>} />
-            <Route path="/*" element={<PrivateRoute authenticated={access} component={<MainPage />} />} />
+            <Route path="/*" element={<PrivateRoute authenticated={access} component={<MainPage/>} />}/>
         </Routes>
         </>
     );
