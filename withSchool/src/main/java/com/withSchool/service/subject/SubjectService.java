@@ -9,9 +9,11 @@ import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.mapping.StudentParentService;
+import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class SubjectService {
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
     private final StudentParentService studentParentService;
+    private final UserService userService;
 
     public List<SubjectInfoDTO> findAllSubjectBySchool(User user) {
         SchoolInformation schoolInformation = user.getSchoolInformation();
@@ -117,6 +120,28 @@ public class SubjectService {
 
     public void deleteById(Long subjectId) {
         subjectRepository.deleteById(subjectId);
+    }
+
+    public List<SubjectInfoDTO> findSubjectsByGradeAndYear(String grade, String year, User user) {
+        SchoolInformation schoolInformation = user.getSchoolInformation();
+        List<Subject> subjects = subjectRepository.findBySchoolAndGradeAndYear(schoolInformation, grade, year);
+        return mapToSubjectInfoDTOList(subjects);
+    }
+
+    public List<SubjectInfoDTO> findSubjectsByGradeAndYearAndSemester(String grade, String year, String semester, User user) {
+        SchoolInformation schoolInformation = user.getSchoolInformation();
+        List<Subject> subjects = subjectRepository.findBySchoolAndGradeAndYearAndSemester(schoolInformation, grade, year, semester);
+        return mapToSubjectInfoDTOList(subjects);
+    }
+
+    private List<SubjectInfoDTO> mapToSubjectInfoDTOList(List<Subject> subjects) {
+        return subjects.stream()
+                .map(subject -> SubjectInfoDTO.builder()
+                        .subjectId(subject.getSubjectId())
+                        .subjectName(subject.getSubjectName())
+                        .regDate(subject.getRegDate())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }

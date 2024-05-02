@@ -6,6 +6,8 @@ import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -116,4 +118,24 @@ public class UserService {
         Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
         return user.orElse(null);
     }
+    public SchoolInformation getCurrentUserSchoolInformation() {
+        // 현재 로그인된 사용자의 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        // 사용자의 학교 정보에서 schoolId를 반환
+        SchoolInformation schoolInformation = user.getSchoolInformation();
+        if (schoolInformation == null) {
+            throw new IllegalStateException("User is not associated with any school");
+        }
+        return schoolInformation;
+    }
+
+    public Long getCurrentUserSchoolId() {
+        SchoolInformation schoolInformation = getCurrentUserSchoolInformation();
+        return schoolInformation.getSchoolId();
+    }
+
 }

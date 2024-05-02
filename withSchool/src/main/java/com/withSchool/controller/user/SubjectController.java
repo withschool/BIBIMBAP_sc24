@@ -2,6 +2,7 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
+import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
 import com.withSchool.service.subject.SubjectService;
@@ -71,4 +72,21 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+    @GetMapping("/options")
+    public ResponseEntity<List<SubjectInfoDTO>> findSubjectsByOptions(
+            @RequestParam String grade,
+            @RequestParam String year,
+            @RequestParam(required = false) String semester
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findById(authentication.getName());
+        if (user == null) return ResponseEntity.notFound().build();
+
+        if (semester == null) {
+            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
+        } else {
+            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
+        }
+    }
+
 }
