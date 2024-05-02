@@ -128,7 +128,6 @@ public class AdminController {
         userService.delete(dto);
         return ResponseEntity.ok().body("삭제 완료");
     }
-}
 
     @PostMapping("/schools/notices")
     public ResponseEntity<Map<String, Object>> createNotice(@RequestBody ClientSchoolNoticeDTO request) {
