@@ -1,9 +1,11 @@
 package com.withSchool.controller;
 
+import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.dto.user.PreSignUpRequestDTO;
 import com.withSchool.dto.user.PreSignUpReturnDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.entity.user.User;
+import com.withSchool.service.school.SchoolInformationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -23,6 +26,7 @@ import java.util.Map;
 @RequestMapping("/basic")
 public class BasicController {
     private final UserService userService;
+    private final SchoolInformationService schoolInformationService;
 
     @PostMapping("/pre-sign-up")
     public ResponseEntity<Map<String, Object>> preRegisterUser(@RequestBody PreSignUpRequestDTO preSignUpRequestDTO) {
@@ -61,6 +65,10 @@ public class BasicController {
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         return jwtToken;
+    }
+    @GetMapping("/schools")
+    public ResponseEntity<List<SchoolInformationListDTO>> listSchool(){
+        return ResponseEntity.status(HttpStatus.OK).body(schoolInformationService.findAll());
     }
 
     @PostMapping("/test")
