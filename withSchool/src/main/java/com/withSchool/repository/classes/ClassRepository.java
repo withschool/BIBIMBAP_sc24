@@ -2,6 +2,7 @@ package com.withSchool.repository.classes;
 
 import com.withSchool.entity.classes.ClassInformation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface ClassRepository extends JpaRepository<ClassInformation, Long> {
     // 특정 학교의 특정 학년의 특정 반 조회
     List<ClassInformation> findBySchoolInformation_SchoolIdAndGradeAndInClass(Long schoolId, int grade, int inClass);
 
+    @Query("SELECT c FROM ClassInformation c JOIN FETCH c.schoolInformation WHERE c.classId = :id ")
+    Optional<ClassInformation> findById(Long id);
 }
