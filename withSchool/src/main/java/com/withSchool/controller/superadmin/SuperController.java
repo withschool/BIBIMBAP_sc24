@@ -34,10 +34,6 @@ public class SuperController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(schoolInformation.getSchulNm()+ ", 학교어드민 계정이 생성되었습니다.");
     }
-    @GetMapping("/schools")
-    public ResponseEntity<List<SchoolInformationListDTO>> listSchool(){
-        return ResponseEntity.status(HttpStatus.OK).body(schoolInformationService.findAll());
-    }
     @DeleteMapping("/schools/{schoolId}")
     public ResponseEntity<String> removeSchool(@PathVariable("schoolId") Long id){
         try{

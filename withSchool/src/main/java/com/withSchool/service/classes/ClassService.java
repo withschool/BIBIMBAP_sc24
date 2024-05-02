@@ -3,23 +3,29 @@ package com.withSchool.service.classes;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.entity.user.User;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.withSchool.repository.user.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ClassService {
 
-    @Autowired
-    private ClassRepository classRepository;
+    private final ClassRepository classRepository;
 
-    @Autowired
-    private SchoolInformationRepository schoolInformationRepository;
+    private final UserRepository userRepository;
+
+    private final SchoolInformationRepository schoolInformationRepository;
 
     // 반 정보 저장
     @PreAuthorize("hasRole('ADMIN')")
@@ -31,21 +37,16 @@ public class ClassService {
         }
         throw new Exception("이미 존재하는 반입니다");
     }
-
     // 반 정보 조회
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation_SchoolId(Long schoolId) {
-        return classRepository.findBySchoolInformation_SchoolId(schoolId);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation_SchoolIdAndGrade(Long schoolId, int grade) {
-        return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public Optional<ClassInformation> findBySchoolInformation_SchoolIdAndGradeAndInClass(Long schoolId, int grade, int inClass) {
-        return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+    public List<ClassInformation> findBySchoolInformation(Integer grade, Integer inClass) {
+        Long schoolId = getCurrentUserSchoolId();
+        if (grade != null && inClass != null) {
+            return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+        } else if (grade != null) {
+            return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
+        } else {
+            return classRepository.findBySchoolInformation_SchoolId(schoolId);
+        }
     }
 
     // 특정 반 정보 조회
@@ -82,6 +83,21 @@ public class ClassService {
                 .inClass(classDTO.getInClass())
                 .schoolInformation(schoolInformation)
                 .build();
+    }
+
+    public Long getCurrentUserSchoolId() {
+        // 현재 로그인된 사용자의 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        // 사용자의 학교 정보에서 schoolId를 반환
+        SchoolInformation schoolInformation = user.getSchoolInformation();
+        if (schoolInformation == null) {
+            throw new IllegalStateException("User is not associated with any school");
+        }
+        return schoolInformation.getSchoolId();
     }
 }
 

@@ -2,7 +2,6 @@ package com.withSchool.dto.user;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor

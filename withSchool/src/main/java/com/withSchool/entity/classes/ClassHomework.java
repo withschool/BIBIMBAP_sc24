@@ -3,12 +3,13 @@ package com.withSchool.entity.classes;
 import com.withSchool.entity.base.BasePostEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

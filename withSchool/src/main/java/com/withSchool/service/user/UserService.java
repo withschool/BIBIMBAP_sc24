@@ -38,6 +38,7 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Transactional
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
@@ -57,6 +58,7 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
+
     public void registerAdmin(SchoolInformationDTO dto) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
@@ -73,6 +75,11 @@ public class UserService {
     }
 
     public void register(SignUpDTO signUpDTO) {
+        // 중복된 아이디 체크
+        if (userRepository.existsById(signUpDTO.getId())) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+
         // DTO에서 엔티티로 변환
         User user = User.builder()
                 .id(signUpDTO.getId())
@@ -100,6 +107,7 @@ public class UserService {
 
     }
 
+
     @Transactional
     public JwtToken signIn(String id, String password) {
         // 입력받은 사용자 정보를 바탕으로 authentication token을 생성
@@ -113,5 +121,11 @@ public class UserService {
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
         return jwtToken;
+    }
+
+    @Transactional
+    public User findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode) {
+        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
+        return user.orElse(null);
     }
 }

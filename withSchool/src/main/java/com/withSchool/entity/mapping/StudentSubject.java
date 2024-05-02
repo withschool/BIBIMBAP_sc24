@@ -5,16 +5,16 @@ import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Table(name = "student_subject")
 public class StudentSubject extends BaseEntity {
     @Id

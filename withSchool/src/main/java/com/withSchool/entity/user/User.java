@@ -6,9 +6,9 @@ import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,8 +22,9 @@ import java.util.Collections;
 @Data
 @NoArgsConstructor
 @Table(name = "user")
-@Builder
+@SuperBuilder
 @AllArgsConstructor
+@ToString
 public class User extends BaseEntity implements UserDetails {
 
     @Id
@@ -66,7 +67,8 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("주소")
     private String address;
 
-    @Column(name = "birth_date",length = 6)
+    @Column(name = "birth_date", length = 6)
+
     @Comment("생일")
     private String birthDate;
 
