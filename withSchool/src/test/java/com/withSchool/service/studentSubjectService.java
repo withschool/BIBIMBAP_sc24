@@ -1,4 +1,4 @@
-package com.withSchool;
+package com.withSchool.service;
 
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;

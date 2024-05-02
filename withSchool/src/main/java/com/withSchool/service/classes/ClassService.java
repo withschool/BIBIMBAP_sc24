@@ -29,11 +29,13 @@ public class ClassService {
 
     // 반 정보 저장
     @PreAuthorize("hasRole('ADMIN')")
-    public ClassInformation saveClassInformation(ClassDTO classDTO) {
+    public ClassInformation saveClassInformation(ClassDTO classDTO) throws Exception {
 
-        ClassInformation newClass = classBuilder(classDTO);
-
-        return classRepository.save(newClass);
+        if(!classRepository.checkDuplicate(classDTO.getGrade(), classDTO.getInClass(), classDTO.getYear())){
+            ClassInformation newClass = classBuilder(classDTO);
+            return classRepository.save(newClass);
+        }
+        throw new Exception("이미 존재하는 반입니다");
     }
     // 반 정보 조회
     public List<ClassInformation> findBySchoolInformation(Integer grade, Integer inClass) {
@@ -52,6 +54,7 @@ public class ClassService {
     public Optional<ClassInformation> getClassById(Long classId) {
         return classRepository.findById(classId);
     }
+
 
     // 반 정보 수정
     @PreAuthorize("hasRole('ADMIN')")

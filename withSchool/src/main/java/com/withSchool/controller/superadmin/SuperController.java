@@ -21,7 +21,7 @@ public class SuperController {
     private final SchoolInformationService schoolInformationService;
     private final UserService userService;
 
-    @PostMapping("/schools/save")
+    @PostMapping("/schools")
     public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO) {
         SchoolInformation schoolInformation = schoolInformationService.save(schoolInformationService.dtoToEntity(schoolInformationDTO));
         if (schoolInformation == null)

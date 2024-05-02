@@ -26,6 +26,7 @@ public class Subject extends BaseEntity {
     @Comment("과목 이름")
     private String subjectName;
 
+
     @Column(name = "year" ,length = 4)
     @Comment("과목 해당 연도")
     private String year;
