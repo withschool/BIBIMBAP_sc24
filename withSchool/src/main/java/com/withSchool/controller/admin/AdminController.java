@@ -46,7 +46,7 @@ public class AdminController {
 
         try {
             Subject subject = subjectService.saveSubject(subjectName, user);
-            return ResponseEntity.ok().body(subject.getSubjectName() + " 반이 생성되었습니다.");
+            return ResponseEntity.ok().body(subject.getSubjectName() + " 과목이 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -67,7 +67,7 @@ public class AdminController {
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
         try {
             classService.saveClassInformation(classDTO);
-            return ResponseEntity.ok().body("해당 수업이 생성되었습니다.");
+            return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
