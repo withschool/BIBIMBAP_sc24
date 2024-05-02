@@ -3,17 +3,13 @@ package com.withSchool.service.classes;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
-import com.withSchool.entity.user.User;
 import com.withSchool.service.user.UserService;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,8 +21,6 @@ public class ClassService {
     private final UserService userService;
 
     private final ClassRepository classRepository;
-
-    private final UserRepository userRepository;
 
     private final SchoolInformationRepository schoolInformationRepository;
 

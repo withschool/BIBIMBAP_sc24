@@ -2,7 +2,6 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
-import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
 import com.withSchool.service.subject.SubjectService;
