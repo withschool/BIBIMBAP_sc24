@@ -23,10 +23,10 @@ public class SchoolInformationService {
     private final UserRepository userRepository;
 
     public List<SchoolInformationListDTO> findAll() {
-        List<SchoolInformationListDTO> result = schoolInformationRepository.findAll().stream().map(schoolInformation -> new SchoolInformationListDTO(
+        return schoolInformationRepository.findAll().stream().map(schoolInformation -> new SchoolInformationListDTO(
+                schoolInformation.getSchoolId(),
                 schoolInformation.getOrgRdnda()
         )).collect(Collectors.toList());
-        return result;
     }
 
     public Optional<SchoolInformation> findById(Long id) {
