@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByUserCode(String userCode);
+
     boolean existsById(String id);
 
     // 학교 모델 지우기 전에 관련 모든 유저 정보 삭제

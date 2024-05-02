@@ -59,6 +59,11 @@ public class UserService {
         return user.orElse(null);
     }
 
+    public User findByUserCode(String userCode) {
+        Optional<User> user = userRepository.findByUserCode(userCode);
+        return user.orElse(null);
+    }
+
     public void registerAdmin(SchoolInformationDTO dto) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {

@@ -18,5 +18,4 @@ public class SignUpDTO {
     private String birthDate;
     private int accountType;
     private String userCode;
-    private String parentCode;
 }
