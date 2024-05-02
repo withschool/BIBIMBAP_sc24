@@ -86,10 +86,6 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("사용자 코드")
     private String userCode;
 
-    @Column(name = "parent_code", unique = true)
-    @Comment("부모 코드")
-    private String parentCode;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     @Comment("사용자가 속한 학교 PK")
