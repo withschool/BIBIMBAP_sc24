@@ -6,7 +6,6 @@ import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.service.user.UserService;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
-import com.withSchool.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
