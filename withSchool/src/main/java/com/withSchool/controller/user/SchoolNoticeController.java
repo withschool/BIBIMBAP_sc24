@@ -23,13 +23,13 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @EnableAutoConfiguration
-@RequestMapping("/school-notices")
+@RequestMapping("/schools/notices")
 public class SchoolNoticeController {
     private final UserService userService;
     private final SchoolNoticeService schoolNoticeService;
 
-    @GetMapping("/{notice-id}")
-    public ResponseEntity<Map<String, Object>> showOneNotice(@PathVariable(name = "notice-id") Long noticeId) {
+    @GetMapping("/{noticeId}")
+    public ResponseEntity<Map<String, Object>> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
         Map<String, Object> response = new HashMap<>();
 
         SchoolNoticeToClientDTO schoolNoticeToClientDTO = schoolNoticeService.findById(noticeId);
