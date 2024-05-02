@@ -71,4 +71,21 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+    @GetMapping("/options")
+    public ResponseEntity<List<SubjectInfoDTO>> findSubjectsByOptions(
+            @RequestParam String grade,
+            @RequestParam String year,
+            @RequestParam(required = false) String semester
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findById(authentication.getName());
+        if (user == null) return ResponseEntity.notFound().build();
+
+        if (semester == null) {
+            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
+        } else {
+            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
+        }
+    }
+
 }
