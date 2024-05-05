@@ -1,5 +1,7 @@
 package com.withSchool.controller;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.dto.user.PreSignUpRequestDTO;
 import com.withSchool.dto.user.PreSignUpReturnDTO;
@@ -7,6 +9,7 @@ import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,10 +18,13 @@ import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @Slf4j
 @RestController
@@ -79,5 +85,26 @@ public class BasicController {
     @GetMapping("/connectionTest")
     public String ct() {
         return "connection test success";
+    }
+
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.credentials.bucket}")
+    private String bucket;
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            String fileName = file.getOriginalFilename();
+            String fileUrl = "https://kr.object.ncloudstorage.com/" +  bucket + "/" +  fileName;
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(file.getContentType());
+            metadata.setContentLength(file.getSize());
+            amazonS3Client.putObject(bucket,fileName,file.getInputStream(),metadata);
+            return ResponseEntity.ok(fileUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
