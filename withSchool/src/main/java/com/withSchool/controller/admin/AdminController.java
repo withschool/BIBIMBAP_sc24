@@ -130,27 +130,17 @@ public class AdminController {
     }
 
     @PostMapping("/schools/notices")
-    public ResponseEntity<Map<String, Object>> createNotice(@RequestBody ClientSchoolNoticeDTO request) {
+    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ClientSchoolNoticeDTO request,  @RequestParam("file") List<MultipartFile> files) {
         Map<String, Object> response = new HashMap<>();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User admin = userService.findById(authentication.getName());
-        if (admin == null) {
-            String e = "해당하는 유저가 없습니다.";
-            response.put("err", e);
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        } else if (admin.getAccountType() != 3) {
-            String e = "유저가 admin이 아닙니다.";
-            response.put("err", e);
-
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-        }
 
         SchoolNoticeDTO schoolNoticeDto = SchoolNoticeDTO.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .user(admin)
+                .file(files)
                 .school(admin.getSchoolInformation())
                 .build();
 

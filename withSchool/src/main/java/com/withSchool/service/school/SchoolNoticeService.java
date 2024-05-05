@@ -1,15 +1,20 @@
 package com.withSchool.service.school;
 
+import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.school.ClientSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeToClientDTO;
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.entity.school.SchoolNotice;
+import com.withSchool.entity.school.SchoolNoticeFile;
+import com.withSchool.repository.file.NoticeFileRepository;
 import com.withSchool.repository.school.SchoolNoticeRepository;
+import com.withSchool.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +25,8 @@ import java.util.Optional;
 @Slf4j
 public class SchoolNoticeService {
     private final SchoolNoticeRepository schoolNoticeRepository;
+    private final NoticeFileRepository noticeFileRepository;
+    private final FileService fileService;
 
     @Transactional
     public SchoolNotice save(SchoolNoticeDTO schoolNoticeDTO) {
@@ -29,13 +36,24 @@ public class SchoolNoticeService {
                 .user(schoolNoticeDTO.getUser())
                 .schoolInformation(schoolNoticeDTO.getSchool())
                 .build();
-
+        // schoolNoticeDTO의 MultiPartFile 리스트를 가져와서 s3 스토리지에 저장하는 로직 구현
+        List<MultipartFile> files = schoolNoticeDTO.getFile();
+        if(!files.isEmpty()){
+            for(MultipartFile s : files){
+                FileDTO fileDTO = FileDTO.builder()
+                        .file(s)
+                        .masterId(schoolNoticeDTO.getSchool().getSchoolId())
+                        .build();
+                fileService.saveFile(fileDTO);
+            }
+        }
         return schoolNoticeRepository.save(schoolNotice);
     }
 
     @Transactional
     public SchoolNoticeToClientDTO findById(Long schoolNoticeId) {
         Optional<SchoolNotice> schoolNoticeOptional = schoolNoticeRepository.findById(schoolNoticeId);
+        Optional<SchoolNoticeFile> schoolNoticeFile = noticeFileRepository.findBySchoolNoticeId(schoolNoticeId);
 
         if(schoolNoticeOptional.isEmpty())return null;
         SchoolNotice schoolNotice = schoolNoticeOptional.get();

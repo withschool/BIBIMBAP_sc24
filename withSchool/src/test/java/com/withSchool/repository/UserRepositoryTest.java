@@ -32,7 +32,6 @@ public class UserRepositoryTest {
                     .birthDate("991108")
                     .accountType(3)
                     .userCode("asdas12asasd")
-                    .parentCode("asda123")
                     .build();
             userRepository.save(user);
     }
