@@ -9,7 +9,6 @@ import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.mapping.StudentParentService;
-import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class SubjectService {
     private final StudentSubjectRepository studentSubjectRepository;
     private final StudentParentService studentParentService;
 
-    public List<SubjectInfoDTO> findAllSubjectBySchool(User user) {
+    public List<SubjectInfoDTO> findAllSubjectByUserSchool(User user) {
         SchoolInformation schoolInformation = user.getSchoolInformation();
 
         List<Subject> subjects = subjectRepository.findBySchool(schoolInformation);

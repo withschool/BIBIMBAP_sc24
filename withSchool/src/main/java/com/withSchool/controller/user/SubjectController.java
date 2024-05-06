@@ -37,7 +37,7 @@ public class SubjectController {
         if (user.getAccountType() == 0 || user.getAccountType() == 2) {
             return ResponseEntity.ok().body(subjectService.findAllSugangByUser(user));
         } else if (user.getAccountType() == 3 || user.getAccountType() == 4) {
-            return ResponseEntity.ok().body(subjectService.findAllSubjectBySchool(user));
+            return ResponseEntity.ok().body(subjectService.findAllSubjectByUserSchool(user));
         } else if (user.getAccountType() == 1) {
             return ResponseEntity.ok().body(subjectService.findChildSubjects(user));
         } else return null;
