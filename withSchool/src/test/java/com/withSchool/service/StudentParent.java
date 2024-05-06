@@ -117,7 +117,6 @@ public class StudentParent {
                     .birthDate("900515") // Example birth date
                     .accountType(i)
                     .userCode("user123" + i)
-                    .parentCode("parent456" + i)
                     .schoolInformation(savedSchool)
                     .build();
 
