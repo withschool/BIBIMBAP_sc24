@@ -7,4 +7,4 @@ import React from 'react';
   )
  }
 
- export default PrivateRoute 
+ export default PrivateRoute

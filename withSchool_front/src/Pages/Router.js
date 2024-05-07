@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import LoginPage from './LoginPage.js';
 import MainPage from './MainPage.js';
 import PrivateRoute from './PrivateRoute.js';
-import Scroll from '../Components/Scroll.js';
+import Scroll from '../components/Scroll.js';
 import RegisterPage from './RegisterPage.js';
 
 const Router = () => {
