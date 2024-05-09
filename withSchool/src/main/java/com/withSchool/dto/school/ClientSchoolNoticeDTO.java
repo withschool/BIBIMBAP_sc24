@@ -10,7 +10,8 @@ import java.util.List;
 @Data
 @Getter
 @ToString
-public class ClientSchoolNoticeDTO implements Serializable {
+public class ClientSchoolNoticeDTO{
     String title;
     String content;
+    List<MultipartFile> file;
 }

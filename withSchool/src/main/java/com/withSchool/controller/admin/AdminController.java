@@ -130,7 +130,7 @@ public class AdminController {
     }
 
     @PostMapping("/schools/notices")
-    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ClientSchoolNoticeDTO request,  @RequestParam("file") List<MultipartFile> files) {
+    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ClientSchoolNoticeDTO request) {
         Map<String, Object> response = new HashMap<>();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -140,7 +140,7 @@ public class AdminController {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .user(admin)
-                .file(files)
+                .file(request.getFile())
                 .school(admin.getSchoolInformation())
                 .build();
 
@@ -156,7 +156,7 @@ public class AdminController {
     }
 
     @PatchMapping("/schools/notices/{notice-id}")
-    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @RequestBody ClientSchoolNoticeDTO request){
+    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ClientSchoolNoticeDTO request){
         Map<String, Object> response = new HashMap<>();
 
         SchoolNotice schoolNotice = schoolNoticeService.updateById(noticeId, request);
@@ -164,6 +164,7 @@ public class AdminController {
         response.put("id", schoolNotice.getSchoolNoticeId());
         response.put("title", schoolNotice.getTitle());
         response.put("content", schoolNotice.getContent());
+
 
         return ResponseEntity.ok().body(response);
     }

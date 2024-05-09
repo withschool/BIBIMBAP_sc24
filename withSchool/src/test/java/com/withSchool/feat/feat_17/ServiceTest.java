@@ -36,7 +36,7 @@ public class ServiceTest {
                     .file(s)
                     .masterId(schoolInformation.getSchoolId())
                     .build();
-            fileService.saveFile(fileDTO);
+            fileService.saveSchoolNoticeFile(fileDTO);
         }
     }
 
