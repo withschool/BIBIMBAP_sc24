@@ -13,6 +13,7 @@ import IconInstagram from '../../components/Icon/IconInstagram';
 import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
 import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
+import base64 from "base-64";
 
 const LoginBoxed = () => {
 
@@ -39,9 +40,17 @@ const LoginBoxed = () => {
         try {
             const user = await login(email, password);
             if (user && user.accessToken) {
-                localStorage.setItem('token', user.accessToken);
+
+                let token = user.accessToken;
+                let payload = token.substring(token.indexOf('.')+1,token.lastIndexOf('.'));
+
+                let dec = base64.decode(payload);
+                const userinfo = JSON.parse(dec);
+                
+                localStorage.setItem('userinfo',userinfo);
+                localStorage.setItem('token', token);
                 localStorage.setItem('id', email);
-                localStorage.setItem('login', user.accessToken ? 'true' : 'false');
+                localStorage.setItem('login', token ? 'true' : 'false');
                 navigate('/');
             } else {
                 setLoginError('Login failed');
@@ -72,7 +81,7 @@ const LoginBoxed = () => {
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
                                 <div>
-                                    <label htmlFor="Email">Email</label>
+                                    <label htmlFor="Email">ID</label>
                                     <div className="relative text-white-dark">
                                         <input id="Email" placeholder="이메일을 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange}  />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
