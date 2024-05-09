@@ -109,7 +109,6 @@ module.exports = {
             strategy: 'class',
         }),
         require('@tailwindcss/typography'),
-        require('daisyui'),
         rotateX,
     ],
 };

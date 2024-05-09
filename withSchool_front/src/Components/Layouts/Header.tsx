@@ -68,30 +68,30 @@ const Header = () => {
         {
             id: 1,
             image: '<span className="grid place-content-center w-9 h-9 rounded-full bg-success-light dark:bg-success text-success dark:text-success-light"><svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>',
-            title: 'Congratulations!',
-            message: 'Your OS has been updated.',
-            time: '1hr',
+            title: '메시지 1',
+            message: '메시지 1 내용',
+            time: '1시간 전',
         },
         {
             id: 2,
             image: '<span className="grid place-content-center w-9 h-9 rounded-full bg-info-light dark:bg-info text-info dark:text-info-light"><svg g xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></span>',
-            title: 'Did you know?',
-            message: 'You can switch between artboards.',
-            time: '2hr',
+            title: '메시지 2',
+            message: '메시지 2 내용',
+            time: '2시간 전',
         },
         {
             id: 3,
             image: '<span className="grid place-content-center w-9 h-9 rounded-full bg-danger-light dark:bg-danger text-danger dark:text-danger-light"> <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>',
-            title: 'Something went wrong!',
-            message: 'Send Reposrt',
-            time: '2days',
+            title: '메시지 3',
+            message: '메시지 3 내용',
+            time: '2일 전',
         },
         {
             id: 4,
             image: '<span className="grid place-content-center w-9 h-9 rounded-full bg-warning-light dark:bg-warning text-warning dark:text-warning-light"><svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">    <circle cx="12" cy="12" r="10"></circle>    <line x1="12" y1="8" x2="12" y2="12"></line>    <line x1="12" y1="16" x2="12.01" y2="16"></line></svg></span>',
-            title: 'Warning',
-            message: 'Your password strength is low.',
-            time: '5days',
+            title: '메시지 4',
+            message: '메시지 4 내용',
+            time: '5일 전',
         },
     ]);
 
@@ -103,20 +103,14 @@ const Header = () => {
         {
             id: 1,
             profile: 'user-profile.jpeg',
-            message: '<strong className="text-sm mr-1">John Doe</strong>invite you to <strong>Prototyping</strong>',
-            time: '45 min ago',
+            message: '<strong className="text-sm mr-1">[수행 평가]</strong> 영어 목차 2 수행평가 안내',
+            time: '45분 전',
         },
         {
             id: 2,
             profile: 'profile-34.jpeg',
-            message: '<strong className="text-sm mr-1">Adam Nolan</strong>mentioned you to <strong>UX Basics</strong>',
-            time: '9h Ago',
-        },
-        {
-            id: 3,
-            profile: 'profile-16.jpeg',
-            message: '<strong className="text-sm mr-1">Anna Morgan</strong>Upload a file',
-            time: '9h Ago',
+            message: '<strong className="text-sm mr-1">[시험]</strong> 국어 중간고사 안내',
+            time: '9시간 전',
         },
     ]);
 
@@ -322,7 +316,7 @@ const Header = () => {
                                             </li>
                                             <li className="border-t border-white-light text-center dark:border-white/10 mt-5">
                                                 <button type="button" className="text-primary font-semibold group dark:text-gray-400 justify-center !py-4 !h-[48px]">
-                                                    <span className="group-hover:underline ltr:mr-1 rtl:ml-1">VIEW ALL ACTIVITIES</span>
+                                                    <span className="group-hover:underline ltr:mr-1 rtl:ml-1">모든 메시지 확인하기</span>
                                                     <IconArrowLeft className="group-hover:translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1" />
                                                 </button>
                                             </li>
@@ -358,8 +352,8 @@ const Header = () => {
                                 <ul className="!py-0 text-dark dark:text-white-dark w-[300px] sm:w-[350px] divide-y dark:divide-white/10">
                                     <li onClick={(e) => e.stopPropagation()}>
                                         <div className="flex items-center px-4 py-2 justify-between font-semibold">
-                                            <h4 className="text-lg">Notification</h4>
-                                            {notifications.length ? <span className="badge bg-primary/80">{notifications.length}New</span> : ''}
+                                            <h4 className="text-lg">공지</h4>
+                                            {notifications.length ? <span className="badge bg-primary/80">{notifications.length}개의 새로운 소식</span> : ''}
                                         </div>
                                     </li>
                                     {notifications.length > 0 ? (
@@ -397,7 +391,7 @@ const Header = () => {
                                             })}
                                             <li>
                                                 <div className="p-4">
-                                                    <button className="btn btn-primary block w-full btn-small">Read All Notifications</button>
+                                                    <button className="btn btn-primary block w-full btn-small">모든 공지 확인하기</button>
                                                 </div>
                                             </li>
                                         </>
