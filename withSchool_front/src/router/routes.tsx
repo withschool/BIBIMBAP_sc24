@@ -5,6 +5,7 @@ const SchoolList = lazy(() => import('../pages/SuperAdmin/SchoolList'));
 const Login = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const Error = lazy(() => import('../components/Error'));
+const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 
 
 const routes = [
@@ -26,6 +27,10 @@ const routes = [
     {
         path: '/school_list',
         element: <SchoolList />,
+    },
+    {
+        path: '/teacher/notice',
+        element: <TeacherNotice />,
     },
     {
         path: '*',
