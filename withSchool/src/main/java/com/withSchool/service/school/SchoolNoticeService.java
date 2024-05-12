@@ -2,13 +2,13 @@ package com.withSchool.service.school;
 
 import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.file.FileDeleteDTO;
-import com.withSchool.dto.school.ClientSchoolNoticeDTO;
+import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeToClientDTO;
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.school.SchoolNoticeFile;
-import com.withSchool.repository.file.NoticeFileRepository;
+import com.withSchool.repository.file.SchoolNoticeFileRepository;
 import com.withSchool.repository.school.SchoolNoticeRepository;
 import com.withSchool.service.file.FileService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 public class SchoolNoticeService {
     private final SchoolNoticeRepository schoolNoticeRepository;
-    private final NoticeFileRepository noticeFileRepository;
+    private final SchoolNoticeFileRepository schoolNoticeFileRepository;
     private final FileService fileService;
 
     @Transactional
@@ -40,13 +40,14 @@ public class SchoolNoticeService {
         SchoolNotice notice = schoolNoticeRepository.save(schoolNotice);
         // schoolNoticeDTO의 MultiPartFile 리스트를 가져와서 s3 스토리지에 저장하는 로직 구현
         List<MultipartFile> files = schoolNoticeDTO.getFile();
-        if(!files.isEmpty()){
-            for(MultipartFile s : files){
+        for(MultipartFile s : files){
+            if(!s.isEmpty()) {
                 FileDTO fileDTO = FileDTO.builder()
                         .file(s)
+                        .repoType("schoolNotice")
                         .masterId(notice.getSchoolNoticeId())
                         .build();
-                fileService.saveSchoolNoticeFile(fileDTO);
+                fileService.saveFile(fileDTO);
             }
         }
         return notice;
@@ -55,7 +56,7 @@ public class SchoolNoticeService {
     @Transactional
     public SchoolNoticeToClientDTO findById(Long schoolNoticeId) {
         Optional<SchoolNotice> schoolNoticeOptional = schoolNoticeRepository.findById(schoolNoticeId);
-        Optional<List<SchoolNoticeFile>> schoolNoticeFile = noticeFileRepository.findBySchoolNoticeId(schoolNoticeId);
+        Optional<List<SchoolNoticeFile>> schoolNoticeFile = schoolNoticeFileRepository.findBySchoolNoticeId(schoolNoticeId);
         List<String> filesUrl = new ArrayList<>();
         List<String> orignalName = new ArrayList<>();
         if(schoolNoticeFile.isPresent()) {
@@ -110,15 +111,15 @@ public class SchoolNoticeService {
     }
 
     @Transactional
-    public SchoolNotice updateById(Long schoolNoticeId, ClientSchoolNoticeDTO clientSchoolNoticeDTO) {
+    public SchoolNotice updateById(Long schoolNoticeId, ReqSchoolNoticeDTO reqSchoolNoticeDTO) {
         Optional<SchoolNotice> schoolNoticeOptional = schoolNoticeRepository.findById(schoolNoticeId);
 
 
         if (schoolNoticeOptional.isPresent()) {
             SchoolNotice schoolNotice = schoolNoticeOptional.get();
 
-            String title = clientSchoolNoticeDTO.getTitle();
-            String content = clientSchoolNoticeDTO.getContent();
+            String title = reqSchoolNoticeDTO.getTitle();
+            String content = reqSchoolNoticeDTO.getContent();
 
             SchoolNotice result = SchoolNotice.builder()
                     .schoolNoticeId(schoolNoticeId)
@@ -132,16 +133,17 @@ public class SchoolNoticeService {
 
 
             // 여기에 해당 공지사항의 S3파일삭제 + db에 정보 삭제
-            this.deleteById(schoolNoticeId);
+            this.deleteFileById(schoolNoticeId);
             //ClientSchoolNoticeDTO의 파일 저장
-            List<MultipartFile> dtoFile = clientSchoolNoticeDTO.getFile();
-            if(!dtoFile.isEmpty()){
-                for(MultipartFile s : dtoFile){
+            List<MultipartFile> dtoFile = reqSchoolNoticeDTO.getFile();
+            for(MultipartFile s : dtoFile){
+                if(!s.isEmpty()){
                     FileDTO fileDTO = FileDTO.builder()
+                            .repoType("schoolNotice")
                             .file(s)
                             .masterId(schoolNoticeId)
                             .build();
-                    fileService.saveSchoolNoticeFile(fileDTO);
+                    fileService.saveFile(fileDTO);
                 }
             }
 
@@ -150,18 +152,22 @@ public class SchoolNoticeService {
 
         return null;
     }
-
-    public void deleteById(Long schoolNoticeId) {
-        //공지사항에 연관된 file들 먼저 삭제
-        Optional<List<SchoolNoticeFile>> fileList = noticeFileRepository.findBySchoolNoticeId(schoolNoticeId);
+    public void deleteFileById(Long schoolNoticeId){
+        Optional<List<SchoolNoticeFile>> fileList = schoolNoticeFileRepository.findBySchoolNoticeId(schoolNoticeId);
         if(fileList.isPresent()){
             for(SchoolNoticeFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .fileUrl(files.getFileUrl())
+                        .originalName(files.getOriginalName())
+                        .repoType("schoolNotice")
                         .masterId(schoolNoticeId)
                         .build();
                 fileService.deleteSchoolNoticeFile(dto);
             }
         }
+    }
+    public void deleteById(Long schoolNoticeId) {
+        //공지사항에 연관된 file들 먼저 삭제
+        this.deleteFileById(schoolNoticeId);
+        schoolNoticeRepository.deleteById(schoolNoticeId);
     }
 }

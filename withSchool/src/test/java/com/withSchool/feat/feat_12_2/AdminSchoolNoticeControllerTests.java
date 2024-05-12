@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AdminController.class)
 @AutoConfigureMockMvc
-public class AdminControllerTests {
+public class AdminSchoolNoticeControllerTests {
 
     @Autowired
     private MockMvc mockMvc;

@@ -14,7 +14,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class QuestionPost extends BaseEntity {
+public class SubjectQuestionPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("질문게시판 PK")

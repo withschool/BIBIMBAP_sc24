@@ -14,7 +14,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class HomeworkSubmit extends BaseEntity {
+public class SubjectHomeworkSubmit extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("과제 제출 PK")
@@ -27,7 +27,7 @@ public class HomeworkSubmit extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_id")
     @Comment("과제 PK")
-    private Homework homework;
+    private SubjectHomework subjectHomework;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

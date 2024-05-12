@@ -1,6 +1,6 @@
 package com.withSchool.feat;
 
-import com.withSchool.dto.school.ClientSchoolNoticeDTO;
+import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeToClientDTO;
 import com.withSchool.entity.school.SchoolNotice;
@@ -85,11 +85,11 @@ public class feat_16 {
     // 수정 가능한 것은 제목과 내용만
     @Test
     public void testAdminModifyOneNotice(){
-        ClientSchoolNoticeDTO clientSchoolNoticeDTO = ClientSchoolNoticeDTO.builder()
+        ReqSchoolNoticeDTO reqSchoolNoticeDTO = ReqSchoolNoticeDTO.builder()
                 .title("공지10")
                 .content("내용10-1")
                 .build();
-        schoolNoticeService.updateById(13L, clientSchoolNoticeDTO);
+        schoolNoticeService.updateById(13L, reqSchoolNoticeDTO);
     }
 
     // 공지사항 삭제

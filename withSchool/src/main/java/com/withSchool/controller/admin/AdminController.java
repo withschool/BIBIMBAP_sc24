@@ -3,7 +3,7 @@ package com.withSchool.controller.admin;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
-import com.withSchool.dto.school.ClientSchoolNoticeDTO;
+import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
@@ -14,10 +14,7 @@ import com.withSchool.service.csv.CsvService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
 
-import java.io.IOException;
 import com.withSchool.service.school.SchoolNoticeService;
-import com.withSchool.service.subject.SubjectService;
-import com.withSchool.service.user.UserService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +30,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @RestController
@@ -130,7 +125,7 @@ public class AdminController {
     }
 
     @PostMapping("/schools/notices")
-    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ClientSchoolNoticeDTO request) {
+    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ReqSchoolNoticeDTO request) {
         Map<String, Object> response = new HashMap<>();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -156,7 +151,7 @@ public class AdminController {
     }
 
     @PatchMapping("/schools/notices/{notice-id}")
-    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ClientSchoolNoticeDTO request){
+    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqSchoolNoticeDTO request){
         Map<String, Object> response = new HashMap<>();
 
         SchoolNotice schoolNotice = schoolNoticeService.updateById(noticeId, request);

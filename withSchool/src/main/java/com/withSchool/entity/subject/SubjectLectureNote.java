@@ -13,7 +13,7 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class LectureNote extends BaseEntity {
+public class SubjectLectureNote extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("강의노트 PK")

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Data
 public class FileDeleteDTO {
-    private String fileUrl;
+    private String originalName;
     private Long masterId;
+    private String repoType;
 }

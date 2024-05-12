@@ -13,14 +13,14 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class HomeworkFile extends BaseFileEntity {
+public class SubjectHomeworkSubmitFile extends BaseFileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("과제 공지 파일 PK")
-    private Long homeworkFileId;
+    @Comment("과제 제출 첨부파일 PK")
+    private Long homeworkSubmitFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "homework_id")
-    @Comment("과제 PK")
-    private Homework homework;
+    @JoinColumn(name = "homework_submit_id")
+    @Comment("과제 제출 PK")
+    private SubjectHomeworkSubmit subjectHomeworkSubmit;
 }

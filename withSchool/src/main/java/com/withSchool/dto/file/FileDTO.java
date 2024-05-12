@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @Data
 public class FileDTO {
+    private String repoType;
     private MultipartFile file;
     private Long masterId;
 }
