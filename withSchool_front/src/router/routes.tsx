@@ -7,6 +7,7 @@ const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const Error = lazy(() => import('../components/Error'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
+const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 
 
 
@@ -34,10 +35,13 @@ const routes = [
         path: '/teacher/notice',
         element: <TeacherNotice />,
     },
-
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
+    },
+    {
+        path: '/student-home',
+        element: <StudentHome />,
     },
     {
         path: '*',
