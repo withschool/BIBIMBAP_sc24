@@ -4,6 +4,7 @@ import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
 import com.withSchool.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -29,6 +30,7 @@ public class SchoolNoticeController {
     private final SchoolNoticeService schoolNoticeService;
 
     @GetMapping("/{noticeId}")
+    @Operation(summary = "유저의 학교 공지 상세 조회")
     public ResponseEntity<Map<String, Object>> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
         Map<String, Object> response = new HashMap<>();
 
@@ -39,6 +41,7 @@ public class SchoolNoticeController {
     }
 
     @GetMapping
+    @Operation(summary = "유저의 학교 공지 리스트 조회")
     public ResponseEntity<Map<String, Object>> showAllNotices() {
         Map<String, Object> response = new HashMap<>();
 

@@ -3,6 +3,7 @@ package com.withSchool.controller.user;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentParentService;
 import com.withSchool.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -21,6 +22,7 @@ public class MappingController {
     private final StudentParentService studentParentService;
 
     @PostMapping("/student-parent")
+    @Operation(summary = "부모와 학생의 매핑")
     public ResponseEntity<?> mapStudentWithParent(@RequestParam String userCode) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -6,6 +6,7 @@ import com.withSchool.dto.user.PreSignUpReturnDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class BasicController {
     private final SchoolInformationService schoolInformationService;
 
     @PostMapping("/pre-sign-up")
+    @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")
     public ResponseEntity<Map<String, Object>> preRegisterUser(@RequestBody PreSignUpRequestDTO preSignUpRequestDTO) {
         Map<String, Object> response = new HashMap<>();
 
@@ -50,12 +52,14 @@ public class BasicController {
     }
 
     @PostMapping("/sign-up")
+    @Operation(summary = "회원가입")
     public ResponseEntity<String> registerUser(@RequestBody SignUpDTO userDto) {
         userService.register(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("User.java registered successfully.");
     }
 
     @PostMapping("/sign-in")
+    @Operation(summary = "로그인")
     public JwtToken signIn(@RequestBody SignInDTO signInDTO) {
         String id = signInDTO.getId();
         String password = signInDTO.getPassword();
@@ -67,8 +71,21 @@ public class BasicController {
         return jwtToken;
     }
     @GetMapping("/schools")
+    @Operation(summary = "등록된 학교 리스트 불러오기")
     public ResponseEntity<List<SchoolInformationListDTO>> listSchool(){
         return ResponseEntity.status(HttpStatus.OK).body(schoolInformationService.findAll());
+    }
+
+    @GetMapping("/is-duplicate")
+    @Operation(summary = "아이디 중복 검증")
+    public ResponseEntity<Boolean> isDuplicate(@RequestParam("userId") String userId){
+        User user = userService.findById(userId);
+        if (user == null) {
+            return ResponseEntity.ok().body(false);
+        }
+        else{
+            return ResponseEntity.ok().body(true);
+        }
     }
 
     @PostMapping("/test")

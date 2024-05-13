@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-public class studentSubjectService {
+public class StudentSubjectServiceTest {
 
     @Autowired
     private StudentSubjectService studentSubjectService;
@@ -30,7 +30,7 @@ public class studentSubjectService {
 
     @Test
     public void findOnesSugang() {
-        User user = userService.findById("id1");
+        User user = userService.findById("id0");
 
         System.out.println(studentSubjectService.findOnesSugang(user));
     }
@@ -38,7 +38,7 @@ public class studentSubjectService {
     @Test
     public void sugangInformation(){
         Map<String, Object> response = new HashMap<>();
-        Long subjectId = 2L;
+        Long subjectId = 1L;
         SubjectInfoDTO subjectInfoDTO = subjectService.findById(subjectId);
         List<User> users = studentSubjectService.findSugangStudent(subjectId);
         List<StudentListDTO> studentListDTOS = new ArrayList<>();

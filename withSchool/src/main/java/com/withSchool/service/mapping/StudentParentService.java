@@ -22,8 +22,4 @@ public class StudentParentService {
         studentParentRepository.save(studentParent);
     }
 
-    public User findChildByParentId(User parent) {
-        Long childId = studentParentRepository.findStudentByParentId(parent.getUserId());
-        return userService.findByUserId(childId);
-    }
 }

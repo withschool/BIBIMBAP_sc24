@@ -9,7 +9,6 @@ import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.mapping.StudentParentService;
-import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +26,8 @@ public class SubjectService {
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
     private final StudentParentService studentParentService;
-    private final UserService userService;
 
-    public List<SubjectInfoDTO> findAllSubjectBySchool(User user) {
+    public List<SubjectInfoDTO> findAllSubjectByUserSchool(User user) {
         SchoolInformation schoolInformation = user.getSchoolInformation();
 
         List<Subject> subjects = subjectRepository.findBySchool(schoolInformation);
@@ -81,9 +79,11 @@ public class SubjectService {
     //  1. 부모-학생 매핑 테이블 참조해서 학생 정보 가져오기
     //  2. 학생 정보를 이용해서 듣는 수업을 호출하는
     //    public List<SubjectInfoDTO> findAllSugangByUser(User user) 메서드 호출하기 끝.
+    // (보류) 지금 api는 자녀가 한 명일 때만 가능한 api이기 때문에 자녀가 여러 명일 때는 이 api가 쓰이면 안됨
+    // 당장은 안 쓰일 거 같음
     @Transactional
-    public List<SubjectInfoDTO> findChildSubjects(User user) {
-        return findAllSugangByUser(studentParentService.findChildByParentId(user));
+    public List<SubjectInfoDTO> findChildSubjects(User child) {
+        return findAllSugangByUser(child);
     }
 
     public Subject saveSubject(String subjectName, User user) {

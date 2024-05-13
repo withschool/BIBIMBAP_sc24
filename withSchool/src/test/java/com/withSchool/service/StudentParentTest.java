@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 @SpringBootTest
-public class StudentParent {
+public class StudentParentTest {
     @Autowired
     private UserService userService;
 
@@ -153,8 +153,9 @@ public class StudentParent {
     @Test
     public void 학부모의_학생_수강목록_확인() {
         User parent = userService.findById("parent1");
+        User child = userService.findById("child");
 
-        List<SubjectInfoDTO> subjects = subjectService.findChildSubjects(parent);
+        List<SubjectInfoDTO> subjects = subjectService.findAllSugangByUser(child);
 
         for (SubjectInfoDTO s : subjects) {
             System.out.println(s);
