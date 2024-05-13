@@ -2,15 +2,12 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.entity.school.SchoolInformation;
-import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
