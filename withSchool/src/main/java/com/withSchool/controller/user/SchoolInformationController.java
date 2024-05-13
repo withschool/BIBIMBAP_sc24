@@ -25,7 +25,7 @@ public class SchoolInformationController {
     private final SchoolInformationService schoolInformationService;
     private final UserService userService;
 
-    @GetMapping("/info)")
+    @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> getSchoolInformation() {
         Map<String, Object> response = new HashMap<>();
 
