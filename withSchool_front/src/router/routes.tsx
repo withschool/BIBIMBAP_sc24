@@ -6,6 +6,8 @@ const Login = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const Error = lazy(() => import('../components/Error'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
+const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
+
 
 
 const routes = [
@@ -32,11 +34,16 @@ const routes = [
         path: '/teacher/notice',
         element: <TeacherNotice />,
     },
+
+    {
+        path: '/users/user-account-settings',
+        element: <AccountSetting />,
+    },
     {
         path: '*',
         element: <Error />,
         layout: 'blank',
-    },
+    }
 ];
 
 export { routes };
