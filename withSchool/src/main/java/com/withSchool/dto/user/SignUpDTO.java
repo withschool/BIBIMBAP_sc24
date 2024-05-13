@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class SignUpDTO {
+    private Long userId;
     private String id;
     private String email;
     private String password;

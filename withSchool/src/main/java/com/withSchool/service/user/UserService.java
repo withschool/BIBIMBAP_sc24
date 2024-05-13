@@ -89,6 +89,7 @@ public class UserService {
 
         // DTO에서 엔티티로 변환
         User user = User.builder()
+                .userId(signUpDTO.getUserId())
                 .id(signUpDTO.getId())
                 .email(signUpDTO.getEmail())
                 .name(signUpDTO.getName())
@@ -155,4 +156,9 @@ public class UserService {
         return schoolInformation.getSchoolId();
     }
 
+    @Transactional
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return this.findById(authentication.getName());
+    }
 }
