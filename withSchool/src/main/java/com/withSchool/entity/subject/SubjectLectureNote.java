@@ -17,11 +17,11 @@ public class SubjectLectureNote extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("강의노트 PK")
-    private Long lectureNoteId;
+    private Long subjectLectureNoteId;
 
     @Column(nullable = false)
     @Comment("강의노트제목")
-    private String title;
+    private String subjectTitle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")

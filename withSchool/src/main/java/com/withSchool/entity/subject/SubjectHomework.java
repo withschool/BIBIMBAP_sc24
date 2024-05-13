@@ -19,19 +19,19 @@ public class SubjectHomework extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("과제 PK")
-    private Long homeworkId;
+    private Long subjectHomeworkId;
 
     @Column(nullable = false)
     @Comment("과제제목")
-    private String homeworkTitle;
+    private String subjectHomeworkTitle;
 
     @Column
     @Comment("과제내용")
-    private String homeworkContent;
+    private String subjectHomeworkContent;
 
     @Column
     @Comment("과제기한")
-    private LocalDateTime homeworkDue;
+    private LocalDateTime SubjectHomeworkDue;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="subject_id")

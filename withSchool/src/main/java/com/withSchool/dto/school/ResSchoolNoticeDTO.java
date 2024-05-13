@@ -2,7 +2,6 @@ package com.withSchool.dto.school;
 
 import com.withSchool.dto.user.StudentListDTO;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 @Getter
 @Data
 @ToString
-public class SchoolNoticeToClientDTO {
+public class ResSchoolNoticeDTO {
     String title;
     String content;
     StudentListDTO user;

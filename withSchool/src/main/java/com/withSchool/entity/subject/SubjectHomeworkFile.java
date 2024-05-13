@@ -17,7 +17,7 @@ public class SubjectHomeworkFile extends BaseFileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("과제 공지 파일 PK")
-    private Long homeworkFileId;
+    private Long subjectHomeworkFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_id")

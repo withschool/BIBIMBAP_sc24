@@ -18,11 +18,11 @@ public class SubjectHomeworkSubmit extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("과제 제출 PK")
-    private Long homeworkSubmitId;
+    private Long subjectHomeworkSubmitId;
 
     @Column
     @Comment("과제 제출 내용")
-    private String submitContent;
+    private String subjectSubmitContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_id")

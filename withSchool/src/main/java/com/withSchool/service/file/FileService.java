@@ -199,11 +199,15 @@ public class FileService {
         }
     }
     public void deleteSchoolNoticeFile(FileDeleteDTO dto){
+        String repoType = dto.getRepoType();
         try {
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getOriginalName()));
             schoolNoticeFileRepository.deleteAllBySchoolNoticeId(dto.getMasterId());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if(repoType = "schoolNotice"){
+
         }
     }
 }

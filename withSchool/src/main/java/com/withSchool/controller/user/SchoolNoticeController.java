@@ -1,6 +1,6 @@
 package com.withSchool.controller.user;
 
-import com.withSchool.dto.school.SchoolNoticeToClientDTO;
+import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
 import com.withSchool.service.user.UserService;
@@ -32,8 +32,8 @@ public class SchoolNoticeController {
     public ResponseEntity<Map<String, Object>> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
         Map<String, Object> response = new HashMap<>();
 
-        SchoolNoticeToClientDTO schoolNoticeToClientDTO = schoolNoticeService.findById(noticeId);
-        response.put("notice", schoolNoticeToClientDTO);
+        ResSchoolNoticeDTO resSchoolNoticeDTO = schoolNoticeService.findById(noticeId);
+        response.put("notice", resSchoolNoticeDTO);
 
         return ResponseEntity.ok().body(response);
     }
@@ -45,7 +45,7 @@ public class SchoolNoticeController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User admin = userService.findById(authentication.getName());
 
-        List<SchoolNoticeToClientDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
+        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
 
         response.put("school-notices", schoolNoticeDTOS);
 

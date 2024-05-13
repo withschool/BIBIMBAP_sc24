@@ -2,7 +2,7 @@ package com.withSchool.feat;
 
 import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeToClientDTO;
+import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
@@ -57,12 +57,12 @@ public class feat_16 {
     @Test
     public void testAdminReadNotice(){
         // school notice의 pk 3으로 테스트
-        SchoolNoticeToClientDTO schoolNoticeToClientDTO = schoolNoticeService.findById(3L);
+        ResSchoolNoticeDTO resSchoolNoticeDTO = schoolNoticeService.findById(3L);
 
-        Map<String, SchoolNoticeToClientDTO> response = new HashMap<>();
-        response.put("school_notice", schoolNoticeToClientDTO);
-        System.out.println(schoolNoticeToClientDTO.getUser());
-        System.out.println(schoolNoticeToClientDTO);
+        Map<String, ResSchoolNoticeDTO> response = new HashMap<>();
+        response.put("school_notice", resSchoolNoticeDTO);
+        System.out.println(resSchoolNoticeDTO.getUser());
+        System.out.println(resSchoolNoticeDTO);
 
     }
 
@@ -73,9 +73,9 @@ public class feat_16 {
     public void testAdminReadAllNotices(){
         User admin = userService.findById("id3");
 
-        List<SchoolNoticeToClientDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
+        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
 
-        for (SchoolNoticeToClientDTO s : schoolNoticeDTOS) {
+        for (ResSchoolNoticeDTO s : schoolNoticeDTOS) {
             System.out.println(s);
         }
     }

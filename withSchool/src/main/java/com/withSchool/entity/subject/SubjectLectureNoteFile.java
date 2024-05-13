@@ -17,7 +17,7 @@ public class SubjectLectureNoteFile extends BaseFileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("강의노트 파일 PK")
-    private Long LectureNoteFileId;
+    private Long subjectLectureNoteFileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_note_id")

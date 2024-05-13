@@ -4,7 +4,7 @@ import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.file.FileDeleteDTO;
 import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeToClientDTO;
+import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.school.SchoolNoticeFile;
@@ -54,7 +54,7 @@ public class SchoolNoticeService {
     }
 
     @Transactional
-    public SchoolNoticeToClientDTO findById(Long schoolNoticeId) {
+    public ResSchoolNoticeDTO findById(Long schoolNoticeId) {
         Optional<SchoolNotice> schoolNoticeOptional = schoolNoticeRepository.findById(schoolNoticeId);
         Optional<List<SchoolNoticeFile>> schoolNoticeFile = schoolNoticeFileRepository.findBySchoolNoticeId(schoolNoticeId);
         List<String> filesUrl = new ArrayList<>();
@@ -74,7 +74,7 @@ public class SchoolNoticeService {
                 .userId(schoolNotice.getUser().getUserId())
                 .build();
 
-        return SchoolNoticeToClientDTO.builder()
+        return ResSchoolNoticeDTO.builder()
                 .title(schoolNotice.getTitle())
                 .content(schoolNotice.getContent())
                 .user(studentListDTO)
@@ -85,10 +85,10 @@ public class SchoolNoticeService {
     }
 
     @Transactional
-    public List<SchoolNoticeToClientDTO> findAll(Long schoolId) {
+    public List<ResSchoolNoticeDTO> findAll(Long schoolId) {
         List<SchoolNotice> schoolNotices = schoolNoticeRepository.findAllBySchoolId(schoolId);
 
-        List<SchoolNoticeToClientDTO> schoolNoticeToClientDTOS = new ArrayList<>();
+        List<ResSchoolNoticeDTO> resSchoolNoticeDTOS = new ArrayList<>();
 
         for (SchoolNotice s : schoolNotices) {
             StudentListDTO studentListDTO = StudentListDTO.builder()
@@ -97,17 +97,17 @@ public class SchoolNoticeService {
                     .userId(s.getUser().getUserId())
                     .build();
 
-            SchoolNoticeToClientDTO schoolNoticeDTO = SchoolNoticeToClientDTO.builder()
+            ResSchoolNoticeDTO schoolNoticeDTO = ResSchoolNoticeDTO.builder()
                     .title(s.getTitle())
                     .user(studentListDTO)
                     .content(s.getContent())
                     .regDate(s.getRegDate())
                     .build();
 
-            schoolNoticeToClientDTOS.add(schoolNoticeDTO);
+            resSchoolNoticeDTOS.add(schoolNoticeDTO);
         }
 
-        return schoolNoticeToClientDTOS;
+        return resSchoolNoticeDTOS;
     }
 
     @Transactional

@@ -18,14 +18,14 @@ public class SubjectQuestionPost extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("질문게시판 PK")
-    private Long questionPostId;
+    private Long subjectQuestionPostId;
 
     @Column(nullable = false)
     @Comment("질문 내용")
-    private String questionContent;
+    private String subjectQuestionContent;
     @Column
     @Comment("답변 내용")
-    private String answerContent;
+    private String subjectAnswerContent;
     @Column(nullable = false)
     @Comment("답변 상태")
     private int isAnswered;
