@@ -6,6 +6,7 @@ import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class SubjectController {
     private final UserService userService;
 
     @GetMapping
+    @Operation(summary = "유저의 과목 리스트 조회", description = "학생과 교사는 자신이 속해있는 과목의 리스트를 조회한다. 어드민은 학교의 모든 과목의 리스트를 조회한다. 부모는 자신이 선택한 자식이 수강하는 과목의 리스트를 조회한다.")
     public ResponseEntity<List<SubjectInfoDTO>> findEverySubject(@RequestParam("childId") Long childId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
@@ -48,6 +50,7 @@ public class SubjectController {
 
     // 과목 기본 정보 + 수강 인원을 리턴
     @GetMapping("/{subjectId}")
+    @Operation(summary = "과목 기본 정보 + 수강 인원을 리턴")
     public ResponseEntity<Map<String, Object>> findOneSubject(@PathVariable Long subjectId) {
         Map<String, Object> response = new HashMap<>();
 
@@ -75,6 +78,7 @@ public class SubjectController {
         }
     }
     @GetMapping("/options")
+    @Operation(summary = "조건을 바탕으로 과목 조회")
     public ResponseEntity<List<SubjectInfoDTO>> findSubjectsByOptions(
             @RequestParam String grade,
             @RequestParam String year,

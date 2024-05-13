@@ -14,16 +14,14 @@ import com.withSchool.service.csv.CsvService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
 
-import java.io.IOException;
 import com.withSchool.service.school.SchoolNoticeService;
-import com.withSchool.service.subject.SubjectService;
-import com.withSchool.service.user.UserService;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -34,7 +32,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Slf4j
 @RestController
@@ -49,6 +46,7 @@ public class AdminController {
     private final SchoolNoticeService schoolNoticeService;
 
     @PostMapping("/subjects")
+    @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
     public ResponseEntity<String> createSubject(@RequestParam String subjectName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
@@ -64,6 +62,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/subjects/{subjectId}")
+    @Operation(summary = "어드민의 특정 과목 삭제", description = "어드민은 과목의 PK를 사용하여 과목을 삭제할 수 있다.")
     public ResponseEntity<String> deleteOneSubject(@PathVariable Long subjectId) {
         try {
             subjectService.deleteById(subjectId);
@@ -74,6 +73,7 @@ public class AdminController {
     }
 
     @PostMapping("/classes")
+    @Operation(summary = "어드민의 반 생성", description = "어드민은 반을 생성할 수 있다.")
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
 
         try {
@@ -85,30 +85,35 @@ public class AdminController {
     }
 
     @GetMapping("/classes/byUser")
+    @Operation(summary = "어드민의 반 조회(학년, 반)", description = "어드민은 학년과 반을 옵션으로 반을 검색할 수 있다.")
     public ResponseEntity<List<ClassInformation>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
             List<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
             return ResponseEntity.ok().body(searchedClass);
     }
 
     @GetMapping("/classes/{classId}")
+    @Operation(summary = "어드민의 반 상세 정보 조회", description = "어드민은 반 PK를 바탕으로 반 상세 정보를 확인할 수 있다.")
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
         return ResponseEntity.ok().body(classInfo);
     }
 
     @PatchMapping("/classes/{classId}")
+    @Operation(summary = "어드민의 반 정보 수정", description = "어드민은 PK를 바탕으로 반 정보를 수정할 수 있다.")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
         return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
     }
 
     @DeleteMapping("/classes/{classId}")
+    @Operation(summary = "어드민의 반 삭제", description = "어드민은 반 PK를 바탕으로 반을 삭제할 수 있다.")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
         return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");
     }
 
     @PostMapping("/users-file")
+    @Operation(summary = "어드민의 유저 정보 삽입", description = "어드민은 CSV 파일을 업로드하여 유저 기본정보를 삽입할 수 있다.")
     public ResponseEntity<String> handleFileUpload(@RequestBody MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
@@ -124,12 +129,14 @@ public class AdminController {
 
     // 유저 리스트를 받아서 다 삭제
     @DeleteMapping("/users")
+    @Operation(summary = "어드민의 복수 유저 정보 삭제", description = "유저의 PK 리스트를 받아서 유저 정보를 삭제할 수 있다.")
     public ResponseEntity<String> deleteUsers(@RequestBody UserDeleteRequestDTO dto){
         userService.delete(dto);
         return ResponseEntity.ok().body("삭제 완료");
     }
 
     @PostMapping("/schools/notices")
+    @Operation(summary = "어드민의 학교 공지 작성", description = "어드민은 학교 공지를 작성할 수 있다.")
     public ResponseEntity<Map<String, Object>> createNotice(@RequestBody ClientSchoolNoticeDTO request) {
         Map<String, Object> response = new HashMap<>();
 
@@ -166,6 +173,7 @@ public class AdminController {
     }
 
     @PatchMapping("/schools/notices/{notice-id}")
+    @Operation(summary = "어드민의 학교 공지 수정", description = "어드민은 학교 공지를 수정할 수 있다.")
     public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @RequestBody ClientSchoolNoticeDTO request){
         Map<String, Object> response = new HashMap<>();
 
@@ -179,6 +187,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/schools/notices/{notice-id}")
+    @Operation(summary = "어드민의 학교 공지 삭제", description = "어드민은 PK를 사용하여 학교 공지를 삭제할 수 있다. ")
     public ResponseEntity<Map<String, Object>> deleteOneNotice(@PathVariable(name = "notice-id") Long noticeId) {
         Map<String, Object> response = new HashMap<>();
 
