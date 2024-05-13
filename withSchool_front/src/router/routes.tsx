@@ -1,9 +1,11 @@
 import { lazy, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import SelectStudentOrParent from '../pages/Authentication/SelectStudentOrParent';
 const Index = lazy(() => import('../pages/Index'));
 const SchoolList = lazy(() => import('../pages/SuperAdmin/SchoolList'));
 const Login = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
+const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
 const Error = lazy(() => import('../components/Error'));
 
 
@@ -19,8 +21,18 @@ const routes = [
         layout: 'blank',
     },
     {
+        path: '/register/choose',
+        element: <SelectStudentOrParent />,
+        layout: 'blank',
+    },
+    {
         path: '/register',
         element: <Register />,
+        layout: 'blank',
+    },
+    {
+        path: '/register/sign-in',
+        element: <SignIn />,
         layout: 'blank',
     },
     {
