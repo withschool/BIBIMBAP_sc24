@@ -26,16 +26,12 @@ public class SchoolInformationController {
     private final UserService userService;
 
     @GetMapping("/info")
-    public ResponseEntity<Map<String, Object>> getSchoolInformation() {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<SchoolInformationDTO> getSchoolInformation() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User admin = userService.findById(authentication.getName());
         Long id = admin.getSchoolInformation().getSchoolId();
 
-        SchoolInformationDTO schoolInformationDTO = schoolInformationService.findById(id);
-        response.put("school-information", schoolInformationDTO);
-
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(schoolInformationService.findById(id));
     }
 }
