@@ -206,8 +206,8 @@ public class FileService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(repoType = "schoolNotice"){
-
-        }
+//        if(repoType = "schoolNotice"){
+//
+//        }
     }
 }
