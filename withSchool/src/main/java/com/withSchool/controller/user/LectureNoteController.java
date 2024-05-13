@@ -24,9 +24,7 @@ public class LectureNoteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LectureNoteDTO> getLectureNoteById(@PathVariable Long id) {
-        return lectureNoteService.getLectureNoteById(id)
-                .map(lectureNoteDTO -> new ResponseEntity<>(lectureNoteDTO, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(lectureNoteService.getLectureNoteById(id), HttpStatus.OK);
     }
 
     @PostMapping

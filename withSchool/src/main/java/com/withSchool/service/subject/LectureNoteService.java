@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -33,22 +32,7 @@ public class LectureNoteService {
     public List<LectureNoteDTO> getAllLectureNotes() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return null;
-        else if (user.getAccountType() == 0 || user.getAccountType() == 2) {// 학생, 교사
-            return getAllLectureNotesfromStudent(user);
-        }
-        else if (user.getAccountType() == 1) {// 학부모
-            return null; // 개발 예정
-        }
-        else if (user.getAccountType() == 3) {// 어드민
-            return getAllLectureNotesfromSchool(user);
-        }
-        else if (user.getAccountType() == 4) {// 슈퍼 어드민
-            return lectureNoteRepository.findAll().stream()
-                    .map(this::mapToLectureNoteDTO)
-                    .collect(Collectors.toList());
-        }
-        else return null;
+        return getAllLectureNotesfromStudent(user);
     }
 
     public List<LectureNoteDTO> getAllLectureNotesfromStudent(User user) {
@@ -67,16 +51,10 @@ public class LectureNoteService {
         }
         return allLectureNotes;
     }
-    public List<LectureNoteDTO>getAllLectureNotesfromSchool(User user)
-    {
-        SchoolInformation schoolInformation = user.getSchoolInformation();
-        List<Subject> subjectList = subjectRepository.findBySchool(schoolInformation);
-        return getAllLectureNotesfromSubjectList(subjectList);
-    }
 
-    public Optional<LectureNoteDTO> getLectureNoteById(Long id) {
-        return lectureNoteRepository.findById(id)
-                .map(this::mapToLectureNoteDTO);
+    public LectureNoteDTO getLectureNoteById(Long id) {
+        LectureNote lectureNote = lectureNoteRepository.findById(id).orElseThrow(NoSuchElementException::new);
+        return mapToLectureNoteDTO(lectureNote);
     }
 
     public LectureNoteDTO createLectureNote(LectureNoteDTO lectureNoteDTO) {
