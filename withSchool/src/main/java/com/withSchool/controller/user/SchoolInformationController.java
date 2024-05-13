@@ -1,6 +1,7 @@
 package com.withSchool.controller.user;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.user.UserService;
@@ -28,14 +29,9 @@ public class SchoolInformationController {
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> getSchoolInformation() {
         Map<String, Object> response = new HashMap<>();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = userService.findById(authentication.getName());
-        Long id = admin.getSchoolInformation().getSchoolId();
-
-        SchoolInformationDTO schoolInformationDTO = schoolInformationService.findById(id);
+        SchoolInformation schoolInformation = userService.getCurrentUserSchoolInformation();
+        SchoolInformationDTO schoolInformationDTO = schoolInformationService.entityToDTO(schoolInformation);
         response.put("school-information", schoolInformationDTO);
-
         return ResponseEntity.ok().body(response);
     }
 }
