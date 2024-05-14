@@ -54,7 +54,12 @@ public class BasicController {
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입")
     public ResponseEntity<String> registerUser(@RequestBody SignUpDTO userDto) {
-        userService.register(userDto);
+        try{
+            userService.register(userDto);
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body("User.java registered successfully.");
     }
 

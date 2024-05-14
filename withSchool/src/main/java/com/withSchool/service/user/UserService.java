@@ -3,6 +3,7 @@ package com.withSchool.service.user;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
+import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
@@ -82,28 +83,78 @@ public class UserService {
     }
 
     public void register(SignUpDTO signUpDTO) {
+        log.info("회원가입 요청 데이터", signUpDTO);
+
         // 중복된 아이디 체크
         if (userRepository.existsById(signUpDTO.getId())) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
 
+        Optional<User> optionalUser = userRepository.findByUserCode(signUpDTO.getUserCode());
+        if(optionalUser.isEmpty()){
+            throw new RuntimeException("해당 유저코드를 가진 유저가 없습니다.");
+        }
+
+        User user = optionalUser.get();
+        if(user.getId() != null){
+            throw new RuntimeException("이미 회원가입이 된 계정입니다.");
+        }
+
+        Long userId = Optional.ofNullable(signUpDTO.getUserId())
+                .orElse(user.getUserId());
+
+        String id = signUpDTO.getId();
+
+        String email = Optional.ofNullable(signUpDTO.getEmail())
+                .orElse(user.getEmail());
+
+        String password = passwordEncoder.encode(signUpDTO.getPassword());
+
+        String name = Optional.ofNullable(signUpDTO.getName())
+                .orElse(user.getName());
+
+        Boolean sex = Optional.ofNullable(signUpDTO.getSex())
+                .orElse(user.getSex());
+
+        String phoneNumber = Optional.ofNullable(signUpDTO.getPhoneNumber())
+                .orElse(user.getPhoneNumber());
+
+        String address = Optional.ofNullable(signUpDTO.getAddress())
+                .orElse(user.getAddress());
+
+        String birthDate = Optional.ofNullable(signUpDTO.getBirthDate())
+                .orElse(user.getBirthDate());
+
+        int accountType = Optional.ofNullable(signUpDTO.getAccountType())
+                .orElse(user.getAccountType());
+
+        String userCode = Optional.ofNullable(signUpDTO.getUserCode())
+                .orElse(user.getUserCode());
+
+        SchoolInformation schoolInformation = user.getSchoolInformation();
+        ClassInformation classInformation = user.getClassInformation();
+
+
         // DTO에서 엔티티로 변환
-        User user = User.builder()
-                .userId(signUpDTO.getUserId())
-                .id(signUpDTO.getId())
-                .email(signUpDTO.getEmail())
-                .name(signUpDTO.getName())
-                .sex(signUpDTO.getSex())
-                .phoneNumber(signUpDTO.getPhoneNumber())
-                .address(signUpDTO.getAddress())
-                .birthDate(signUpDTO.getBirthDate())
-                .accountType(signUpDTO.getAccountType())
-                .userCode(signUpDTO.getUserCode())
-                .password(passwordEncoder.encode(signUpDTO.getPassword()))
+        User response = User.builder()
+                .userId(userId)
+                .id(id)
+                .email(email)
+                .name(name)
+                .sex(sex)
+                .phoneNumber(phoneNumber)
+                .address(address)
+                .birthDate(birthDate)
+                .accountType(accountType)
+                .userCode(userCode)
+                .password(password)
+                .schoolInformation(schoolInformation)
+                .classInformation(classInformation)
                 .build();
 
+
         // 회원가입
-        userRepository.save(user);
+        userRepository.save(response);
     }
     @Transactional
     public void delete(UserDeleteRequestDTO dto){
