@@ -24,6 +24,7 @@ const SignInBoxed = () => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [id, setId] = useState('');
+    const [sex, setSex] = useState('');
     const [year, setYear] = useState('2000');
     const [month, setMonth] = useState('01');
     const [day, setDay] = useState('01');
@@ -47,6 +48,10 @@ const SignInBoxed = () => {
         // 페이지 렌더링 시 실행되는 코드
         const certifyInfo = localStorage.getItem('certifyinfo');
       }, []);
+
+    const handleSex = (event: ChangeEvent<HTMLSelectElement>) => {
+        setSex(event.target.value);
+    }
 
     const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setYear(event.target.value);
@@ -85,7 +90,8 @@ const SignInBoxed = () => {
         setEmail(event.target.value);
     }
 
-    const handleCheckDuplicate = async () => {
+    const handleCheckDuplicate = async (event: MouseEventHandler<HTMLButtonElement>) => {
+        event.preventDefault();
         try {
             console.log(userInfo);
             result = await DuplicateId(id);
@@ -99,7 +105,7 @@ const SignInBoxed = () => {
         }
     };
 
-    const formatPhoneNumber = (input) => {
+    const formatPhoneNumber = (input: string) => {
         let cleaned = ('' + input).replace(/\D/g, '');
     
         if (cleaned.length > 11) {
@@ -121,7 +127,7 @@ const SignInBoxed = () => {
         const birthDate = `${(parseInt(year) % 100).toString().padStart(2, '0')}${month}${day}`;
         try {
 
-            const data = await register(id, email, password, name, true, phoneNumber, "", birthDate, userInfo.user.accountType);
+            const data = await register(id, email, password, name, true, phoneNumber, "", "101011", 0);
             alert("회원가입 완료");
             navigate('/login');
 
@@ -219,6 +225,12 @@ const SignInBoxed = () => {
                                         <span className="absolute start-3 top-1/2 -translate-y-1/2">
                                             <IconLaptop fill={true} />
                                         </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="Sex">Password</label>
+                                    <div className="relative text-white-dark">
+                                    <input id="Sex" type="checkbox" className="form-input ps-10 placeholder:text-white-dark" value={sex} onChange={handleSex}  />
                                     </div>
                                 </div>
                                 <div>
