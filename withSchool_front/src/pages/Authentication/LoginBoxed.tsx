@@ -82,7 +82,7 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="Email">ID</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" placeholder="아이디를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange}  />
+                                        <input id="Email" placeholder="이메일을 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange}  />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
