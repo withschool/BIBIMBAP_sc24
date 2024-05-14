@@ -12,6 +12,7 @@ import IconPhone from '../../components/Icon/IconPhone';
 import IconInfoCircle from '../../components/Icon/IconInfoCircle';
 import IconSettings from '../../components/Icon/IconSettings';
 
+
 const Tabs = () => {
     const dispatch = useDispatch();
     useEffect(() => {
@@ -35,7 +36,7 @@ const Tabs = () => {
                     </Link>
                 </li>
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>탭 예시</span>
+                    <span>탭</span>
                 </li>
             </ul>
             <div className="space-y-8 pt-5">

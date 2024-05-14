@@ -11,6 +11,10 @@ const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 
+//예시 컴포넌트들
+const Tabs = lazy(() => import('../pages/Components/Tabs'));
+
+
 
 
 const routes = [
