@@ -46,6 +46,8 @@ const LoginBoxed = () => {
 
                 let dec = base64.decode(payload);
                 const userinfo = JSON.parse(dec);
+                console.log("sadas");
+                console.log(userinfo.auth);
                 localStorage.setItem('userinfo',userinfo);
                 localStorage.setItem('token', token);
                 localStorage.setItem('id', email);

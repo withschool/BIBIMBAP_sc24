@@ -18,9 +18,13 @@ jobs:
           port: ${{secrets.PORT}}
 
           script: |
+
+            # 현재 실행중인 서버 종료
+            kill -9 $(ps -ef | grep 'java -jar withSchool-0.0.1' | grep -v grep | awk '{print $2}')
+
             # Git 디렉토리로 이동 후 PULL
             cd ./BIBIMBAP_sc24
-            git pull origin master
+            git pull origin backend
 
             # backend 디렉토리로 이동 후 appilcation.properties 불러오기
             cd ./withSchool
@@ -31,9 +35,11 @@ jobs:
             chmod +x ./gradlew
             ./gradlew clean build -x test
 
+            rm ./src/main/resources/application.properties
+
             # 빌드파일 실행
             cd ./build/libs
-            nohup java -jar withSchool-0.0.1-SNAPSHOT.jar &
+            nohup java -jar withSchool-0.0.1-SNAPSHOT.jar > nohup.out 2> nohup.err < /dev/null &
 
   notification:
     name: Notification

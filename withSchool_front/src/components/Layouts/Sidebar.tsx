@@ -257,11 +257,11 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
-                                        <NavLink to="/apps/notes" className="group">
+                            <li className="nav-item">
+                                        <NavLink to="/users/user-account-settings" className="group">
                                             <div className="flex items-center">
-                                                <IconMenuNotes className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 4')}</span>
+                                                <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
                                             </div>
                                         </NavLink>
                                     </li>
@@ -315,6 +315,98 @@ const Sidebar = () => {
                         
                                 </ul>
                             </li>
+
+                            
+                            <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                                <IconMinus className="w-4 h-5 flex-none hidden" />
+                                <span>{t('학생')}</span>       
+                            </h2>
+
+                            <li className="nav-item">
+                                <ul>
+                                    <li className="nav-item">
+                                        <NavLink to="/student-home" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuChat className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('홈')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/apps/mailbox" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuMailbox className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('과목')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/apps/todolist" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuTodo className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 3')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                            <li className="nav-item">
+                                        <NavLink to="/users/user-account-settings" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/apps/scrumboard" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 5')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/apps/contacts" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuContacts className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 6')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+
+                                    <li className="menu nav-item">
+                                        <button type="button" className={`${currentMenu === 'invoice' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('invoice')}>
+                                            <div className="flex items-center">
+                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 7')}</span>
+                                            </div>
+
+                                            <div className={currentMenu !== 'invoice' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                <IconCaretDown />
+                                            </div>
+                                        </button>
+
+                                        <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
+                                            <ul className="sub-menu text-gray-500">
+                                                <li>
+                                                    <NavLink to="/apps/invoice/list">{t('내용 1')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/apps/invoice/preview">{t('내용 2')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/apps/invoice/add">{t('내용 3')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/apps/invoice/edit">{t('내용 4')}</NavLink>
+                                                </li>
+                                            </ul>
+                                        </AnimateHeight>
+                                    </li>
+
+                        
+                                </ul>
+                            </li>
+
 
                         </ul>
                     </PerfectScrollbar>

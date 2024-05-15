@@ -8,6 +8,9 @@ const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
 const Error = lazy(() => import('../components/Error'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
+const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
+const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
+
 
 
 const routes = [
@@ -45,10 +48,18 @@ const routes = [
         element: <TeacherNotice />,
     },
     {
+        path: '/users/user-account-settings',
+        element: <AccountSetting />,
+    },
+    {
+        path: '/student-home',
+        element: <StudentHome />,
+    },
+    {
         path: '*',
         element: <Error />,
         layout: 'blank',
-    },
+    }
 ];
 
 export { routes };
