@@ -76,13 +76,11 @@ public class SubjectController {
             response.put("students", studentListDTOS);
 
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(response);
         } catch (Exception e) {
             response.put("errorMessage", e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(response);
         }
     }
@@ -95,17 +93,13 @@ public class SubjectController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return ResponseEntity.notFound()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                .build();
+        if (user == null) return ResponseEntity.notFound().build();
 
         if (semester == null) {
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
         } else {
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
         }
     }

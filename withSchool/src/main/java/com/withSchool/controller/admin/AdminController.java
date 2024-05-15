@@ -63,7 +63,6 @@ public class AdminController {
                     .body(subject.getSubjectName() + " 과목이 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(e.getMessage());
         }
 
@@ -79,7 +78,6 @@ public class AdminController {
                     .body("해당 과목이 삭제되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(e.getMessage());
         }
     }
@@ -95,7 +93,6 @@ public class AdminController {
                     .body("해당 반이 생성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(e.getMessage());
         }
     }
@@ -105,7 +102,6 @@ public class AdminController {
     public ResponseEntity<List<ClassInformation>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
             List<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(searchedClass);
     }
 
@@ -114,7 +110,6 @@ public class AdminController {
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(classInfo);
     }
 
@@ -142,7 +137,6 @@ public class AdminController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
         if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("no user.");
 
         CsvRequestDTO dto = CsvRequestDTO.builder()
@@ -151,7 +145,6 @@ public class AdminController {
                 .build();
         csvService.registerUser(dto);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("file upload");
     }
 
@@ -190,7 +183,6 @@ public class AdminController {
         response.put("content", request.getContent());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(response);
     }
 
@@ -218,10 +210,9 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
 
         schoolNoticeService.deleteById(noticeId);
-        response.put("message", "success delete");
+        response.put("message", "삭제 성공입니다.");
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(response);
     }
 
