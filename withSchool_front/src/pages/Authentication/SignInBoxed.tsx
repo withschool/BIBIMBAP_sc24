@@ -33,7 +33,7 @@ const SignInBoxed = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [loginError, setLoginError] = useState('');
-    let result = false;
+    let result = true;
 
     let userInfoString = localStorage.getItem('certifyinfo')!;
     const userInfo = JSON.parse(userInfoString);
@@ -49,7 +49,7 @@ const SignInBoxed = () => {
         const certifyInfo = localStorage.getItem('certifyinfo');
       }, []);
 
-    const handleSex = (event: ChangeEvent<HTMLSelectElement>) => {
+    const handleSex = (event: ChangeEvent<HTMLInputElement>) => {
         setSex(event.target.value);
     }
 
@@ -71,7 +71,7 @@ const SignInBoxed = () => {
 
     const handleId = (event: React.ChangeEvent<HTMLInputElement>) => {
         setId(event.target.value);
-        result = false;
+        result = true;
     }
 
     const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,17 +122,50 @@ const SignInBoxed = () => {
         return formatted;
     };
 
+    const changePhoneForm = (Phone: string) => {
+        const numberPattern = /\d+/g;
+        const numbersArray = Phone.match(numberPattern);
+        return numbersArray ? numbersArray.join('') : '';
+    }
+
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const birthDate = `${(parseInt(year) % 100).toString().padStart(2, '0')}${month}${day}`;
+        const reqphoneNumber = changePhoneForm(phoneNumber);
         try {
+            // 무결성 검사
+            if(
+                (!isStudent && (name === '')) ||
+                (sex === '') || 
+                (phoneNumber === '')
+                ){
+                    throw new Error('기입하지 않는 항목이 있습니다. 입력해 주세요.');
+                }
+            else if(result){
+                throw new Error('아이디 중복 확인 후 시도바랍니다.');
+            }
+            else if(password.length < 6 || password != checkPassword){
+                throw new Error('비밀번호가 6자리 미만이거나 일치하지 않습니다.');
+            }
 
-            const data = await register(id, email, password, name, true, phoneNumber, "", "101011", 0);
-            alert("회원가입 완료");
+            // 학생, 교사
+            if(isStudent){
+                const userCode: string = localStorage.getItem('userCode') ?? '';
+                console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, "", userInfo.user.birthDate, -1)
+                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, "" , userInfo.user.birthDate, -1 , userCode);
+            }
+
+            // 학부모
+            else{
+                console.log(id, email, password, name, sex==="male", phoneNumber, "", birthDate, 1)
+                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, "" , birthDate, 1 , "");
+            }
+
+            alert("회원가입이 완료되었습니다.");
             navigate('/login');
 
-        } catch (error) {
-            console.error('Error during certifying:', error);
+        } catch (error: any) {
+            alert(error.message);
         }
 
     };
@@ -216,6 +249,14 @@ const SignInBoxed = () => {
                                     </div>
                                 )}
                                 <div>
+                                    <label htmlFor="Sex">Sex</label>
+                                    <div className="relative text-white-dark">
+                                        <label><input id="male" type="radio" name="Sex" className="relative w-6 h-4 rounded border border-gray-400 mr-2" value="male" onChange={handleSex}/>남자</label>
+                                        <label><input id="female" type="radio" name="Sex" className="relative w-6 h-4 rounded border border-gray-400 mr-2" value="female" onChange={handleSex}/>여자</label>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div>
                                     <label htmlFor="IndividualCode">ID</label>
                                     <div className="relative text-white-dark flex">
                                         <input id="Id" placeholder="아이디를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={id} onChange={handleId}  />
@@ -225,12 +266,6 @@ const SignInBoxed = () => {
                                         <span className="absolute start-3 top-1/2 -translate-y-1/2">
                                             <IconLaptop fill={true} />
                                         </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Sex">Password</label>
-                                    <div className="relative text-white-dark">
-                                    <input id="Sex" type="checkbox" className="form-input ps-10 placeholder:text-white-dark" value={sex} onChange={handleSex}  />
                                     </div>
                                 </div>
                                 <div>

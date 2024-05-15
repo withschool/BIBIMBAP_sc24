@@ -17,11 +17,12 @@ interface RegisterBody {
   email: string;
   password: string;
   name: string;
-  sex: true;
+  sex: boolean;
   phoneNumber: string;
   address: string;
   birthDate: string;
-  accountType: 0;
+  accountType: number;
+  userCode: string
 }
 
 export const login = async (id: string, password: string): Promise<any> => {
@@ -80,15 +81,18 @@ export const certify = async (schoolId: string, userName: string, birthDate: str
   }
 }
 
-export const register = async (id: string,
+export const register = async (
+  id: string,
   email: string,
   password: string,
   name: string,
-  sex: true,
+  sex: boolean,
   phoneNumber: string,
   address: string,
   birthDate: string,
-  accountType: 0): Promise<any> => {
+  accountType: number,
+  userCode: string
+  ): Promise<any> => {
   try {
     const body: RegisterBody = {
       id,
@@ -99,7 +103,8 @@ export const register = async (id: string,
       phoneNumber,
       address,
       birthDate,
-      accountType
+      accountType,
+      userCode
     };
     const response = await fetch(`${url}/basic/sign-up`, {
       method: 'POST',
@@ -115,6 +120,7 @@ export const register = async (id: string,
       return data;
     } else {
       const errorMessage = await response.text();
+      alert("회원가입에 실패했습니다: "+errorMessage);
       console.error('Register failed:', errorMessage);
       throw new Error(errorMessage);
     }
@@ -123,9 +129,9 @@ export const register = async (id: string,
   }
 }
 
-export const DuplicateId = async (userId: string): Promise<any> => {
+export const DuplicateId = async (id: string): Promise<any> => {
   try {
-    const response = await fetch(`${url}/basic/is-duplicate?userId=${userId}`, {
+    const response = await fetch(`${url}/basic/is-duplicated?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

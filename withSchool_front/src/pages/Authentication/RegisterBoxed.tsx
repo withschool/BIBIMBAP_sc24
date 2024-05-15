@@ -74,6 +74,7 @@ const LoginBoxed = () => {
     const handleUserInfo = (data : string) => {
         const paramData = JSON.stringify(data);
         localStorage.setItem('certifyinfo', paramData);
+        localStorage.setItem('userCode', individualCode);
     }
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
