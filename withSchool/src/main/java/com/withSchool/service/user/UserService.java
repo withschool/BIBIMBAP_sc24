@@ -98,7 +98,7 @@ public class UserService {
         String name = signUpDTO.getName();
         String birthDate = signUpDTO.getBirthDate();
         String email = signUpDTO.getEmail();
-        String phoneNumber = signUpDTO.getPhoneNumber();
+        String phoneNumber = signUpDTO.getPhoneNumber().isEmpty() ? null : signUpDTO.getPhoneNumber();
         Boolean sex = signUpDTO.getSex();
         String address = signUpDTO.getAddress();
 
@@ -107,7 +107,7 @@ public class UserService {
         if (userRepository.existsById(id)) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
-        else if(userRepository.existsByPhoneNumber(phoneNumber)){
+        else if(!signUpDTO.getPhoneNumber().isEmpty() && userRepository.existsByPhoneNumber(phoneNumber)){
             throw new RuntimeException("해당 전화번호로 이미 회원가입이 되었습니다.");
         }
 
