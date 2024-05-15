@@ -9,12 +9,15 @@ import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +44,13 @@ public class SubjectController {
         } else if (user.getAccountType() == 3 || user.getAccountType() == 4) {
             return ResponseEntity.ok().body(subjectService.findAllSubjectByUserSchool(user));
         } else if (user.getAccountType() == 1) {
-            if(childId == null) return null;
+            if(childId == null) throw new RuntimeException("학생이 선택되지 않았습니다.");
 
             User child = userService.findByUserId(childId);
-            return ResponseEntity.ok().body(subjectService.findAllSugangByUser(child));
-        } else return null;
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(subjectService.findAllSugangByUser(child));
+        } else throw new RuntimeException("적절한 유저가 아닙니다.");
     }
 
     // 과목 기본 정보 + 수강 인원을 리턴
@@ -70,11 +75,15 @@ public class SubjectController {
             response.put("subject", subjectInfoDTO);
             response.put("students", studentListDTOS);
 
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(response);
         } catch (Exception e) {
             response.put("errorMessage", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(response);
         }
     }
     @GetMapping("/options")
@@ -86,12 +95,18 @@ public class SubjectController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return ResponseEntity.notFound().build();
+        if (user == null) return ResponseEntity.notFound()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .build();
 
         if (semester == null) {
-            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
         } else {
-            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
         }
     }
 

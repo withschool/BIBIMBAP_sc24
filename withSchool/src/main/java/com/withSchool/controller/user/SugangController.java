@@ -7,6 +7,8 @@ import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -38,8 +41,10 @@ public class SugangController {
     public ResponseEntity<List<StudentSubjectDTO>> findOnesSugang() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return null;
+        if (user == null) throw new RuntimeException("로그인을 해주세요.");
 
-        return ResponseEntity.ok().body(studentSubjectService.findOnesSugang(user));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(studentSubjectService.findOnesSugang(user));
     }
 }
