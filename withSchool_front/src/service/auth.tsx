@@ -12,6 +12,19 @@ interface CertifyBody {
   userCode: string;
 }
 
+interface RegisterBody {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  sex: boolean;
+  phoneNumber: string;
+  address: string;
+  birthDate: string;
+  accountType: number;
+  userCode: string
+}
+
 export const login = async (id: string, password: string): Promise<any> => {
   try {
     const body: LoginBody = {
@@ -67,6 +80,78 @@ export const certify = async (schoolId: string, userName: string, birthDate: str
     console.error('Error during certify:', error);
   }
 }
+
+export const register = async (
+  id: string,
+  email: string,
+  password: string,
+  name: string,
+  sex: boolean,
+  phoneNumber: string,
+  address: string,
+  birthDate: string,
+  accountType: number,
+  userCode: string
+  ): Promise<any> => {
+  try {
+    const body: RegisterBody = {
+      id,
+      email,
+      password,
+      name,
+      sex,
+      phoneNumber,
+      address,
+      birthDate,
+      accountType,
+      userCode
+    };
+    const response = await fetch(`${url}/basic/sign-up`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Register successful:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      alert("회원가입에 실패했습니다: "+errorMessage);
+      console.error('Register failed:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (errorss) {
+    console.error('Register during login:', errorss);
+  }
+}
+
+export const DuplicateId = async (id: string): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/basic/is-duplicated?id=${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Check Duplicate successful:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('Check Duplicate failed:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (errorss) {
+    console.error('Check Duplicate during Checking:', errorss);
+  }
+}
+
 
 export const getId = async (user_id: string): Promise<any> => {
   try {

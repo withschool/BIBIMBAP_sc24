@@ -99,6 +99,7 @@ const LoginBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
+
                                 <div>
                                     <label className="flex cursor-pointer items-center">
                                         <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
@@ -114,10 +115,9 @@ const LoginBoxed = () => {
                                 <span className="absolute inset-x-0 top-1/2 h-px w-full -translate-y-1/2 bg-white-light dark:bg-white-dark"></span>
                                 <span className="relative bg-white px-2 font-bold uppercase text-white-dark dark:bg-dark dark:text-white-light">or</span>
                             </div>
-                            
                             <div className="font-semibold text-center dark:text-white">
                                 학교랑 계정이 없으신가요? &nbsp;
-                                <Link to="/register" className="font-bold uppercase text-primary underline transition hover:text-black dark:hover:text-white">
+                                <Link to="/register/choose" className="font-bold uppercase text-primary underline transition hover:text-black dark:hover:text-white">
                                     계정 생성하기
                                 </Link>
                             </div>
