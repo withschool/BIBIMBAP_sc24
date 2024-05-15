@@ -1,8 +1,8 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.school.ClientSchoolNoticeDTO;
+import com.withSchool.dto.school.ReqSchoolNoticeDTO;
+import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeToClientDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.user.UserRepository;
@@ -51,21 +51,21 @@ public class SchoolNoticeServiceTest {
         System.out.println(schoolNotice);
 
         // when find by ID
-        SchoolNoticeToClientDTO schoolNoticeToClientDTO = schoolNoticeService.findById(schoolNotice.getSchoolNoticeId());
+        ResSchoolNoticeDTO schoolNoticeToClientDTO = schoolNoticeService.findById(schoolNotice.getSchoolNoticeId());
 
         // then
         Assertions.assertNotNull(schoolNoticeToClientDTO);
         System.out.println(schoolNoticeToClientDTO);
 
         // when find By School
-        List<SchoolNoticeToClientDTO> schoolNoticeToClientDTOS = schoolNoticeService.findAll(user.getSchoolInformation().getSchoolId());
+        List<ResSchoolNoticeDTO> schoolNoticeToClientDTOS = schoolNoticeService.findAll(user.getSchoolInformation().getSchoolId());
 
         // then
         Assertions.assertEquals(17, schoolNoticeToClientDTOS.size());
         System.out.println(schoolNoticeToClientDTOS);
 
         // when update by ID
-        ClientSchoolNoticeDTO clientSchoolNoticeDTO = ClientSchoolNoticeDTO.builder()
+        ReqSchoolNoticeDTO clientSchoolNoticeDTO = ReqSchoolNoticeDTO.builder()
                 .title("notice Test")
                 .build();
         SchoolNotice updatedNotice = schoolNoticeService.updateById(schoolNotice.getSchoolNoticeId(), clientSchoolNoticeDTO);
@@ -77,7 +77,7 @@ public class SchoolNoticeServiceTest {
         // when delete by ID
         schoolNoticeService.deleteById(schoolNotice.getSchoolNoticeId());
 
-        SchoolNoticeToClientDTO deletedNotice = schoolNoticeService.findById(schoolNotice.getSchoolNoticeId());
+        ResSchoolNoticeDTO deletedNotice = schoolNoticeService.findById(schoolNotice.getSchoolNoticeId());
         Assertions.assertNull(deletedNotice);
     }
 }

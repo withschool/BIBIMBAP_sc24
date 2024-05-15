@@ -8,7 +8,9 @@ import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.withSchool.dto.user.SignInDTO;
@@ -17,6 +19,7 @@ import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +40,9 @@ public class BasicController {
         User user = userService.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getBirthDate(), preSignUpRequestDTO.getUserCode());
         if(user==null) {
             response.put("message", "해당하는 유저가 없습니다.");
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(response);
         }
 
         PreSignUpReturnDTO preSignUpReturnDTO = PreSignUpReturnDTO.builder()
@@ -48,7 +53,9 @@ public class BasicController {
                 .build();
 
         response.put("user", preSignUpReturnDTO);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(response);
     }
 
     @PostMapping("/sign-up")
@@ -58,9 +65,13 @@ public class BasicController {
             userService.register(userDto);
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("User.java registered successfully.");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body("User.java registered successfully.");
     }
 
     @PostMapping("/sign-in")
@@ -78,13 +89,17 @@ public class BasicController {
     @GetMapping("/schools")
     @Operation(summary = "등록된 학교 리스트 불러오기")
     public ResponseEntity<List<SchoolInformationListDTO>> listSchool(){
-        return ResponseEntity.status(HttpStatus.OK).body(schoolInformationService.findAll());
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(schoolInformationService.findAll());
     }
 
     @GetMapping("/is-duplicated")
     @Operation(summary = "아이디 중복 검증")
     public ResponseEntity<Boolean> isDuplicated(@RequestParam("id") String id){
-        return ResponseEntity.ok().body(userService.isDuplicated(id));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(userService.isDuplicated(id));
     }
 
     @PostMapping("/test")
