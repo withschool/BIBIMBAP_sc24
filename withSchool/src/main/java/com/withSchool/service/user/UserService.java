@@ -82,62 +82,42 @@ public class UserService {
         }
     }
 
+    public boolean isDuplicated(String id){
+        return userRepository.existsById(id);
+    }
+
+    private boolean isParent(int accountType){
+        return accountType == 1;
+    }
+
     public void register(SignUpDTO signUpDTO) {
-        log.info("회원가입 요청 데이터", signUpDTO);
-
-        // 중복된 아이디 체크
-        if (userRepository.existsById(signUpDTO.getId())) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
-        }
-
-        Optional<User> optionalUser = userRepository.findByUserCode(signUpDTO.getUserCode());
-        if(optionalUser.isEmpty()){
-            throw new RuntimeException("해당 유저코드를 가진 유저가 없습니다.");
-        }
-
-        User user = optionalUser.get();
-        if(user.getId() != null){
-            throw new RuntimeException("이미 회원가입이 된 계정입니다.");
-        }
-
-        Long userId = Optional.ofNullable(signUpDTO.getUserId())
-                .orElse(user.getUserId());
+        log.info("회원가입 요청");
 
         String id = signUpDTO.getId();
-
-        String email = Optional.ofNullable(signUpDTO.getEmail())
-                .orElse(user.getEmail());
-
         String password = passwordEncoder.encode(signUpDTO.getPassword());
-
-        String name = Optional.ofNullable(signUpDTO.getName())
-                .orElse(user.getName());
-
-        Boolean sex = Optional.ofNullable(signUpDTO.getSex())
-                .orElse(user.getSex());
-
-        String phoneNumber = Optional.ofNullable(signUpDTO.getPhoneNumber())
-                .orElse(user.getPhoneNumber());
-
-        String address = Optional.ofNullable(signUpDTO.getAddress())
-                .orElse(user.getAddress());
-
-        String birthDate = Optional.ofNullable(signUpDTO.getBirthDate())
-                .orElse(user.getBirthDate());
-
-        int accountType = Optional.ofNullable(signUpDTO.getAccountType())
-                .orElse(user.getAccountType());
-
-        String userCode = Optional.ofNullable(signUpDTO.getUserCode())
-                .orElse(user.getUserCode());
-
-        SchoolInformation schoolInformation = user.getSchoolInformation();
-        ClassInformation classInformation = user.getClassInformation();
+        String name = signUpDTO.getName();
+        String birthDate = signUpDTO.getBirthDate();
+        String email = signUpDTO.getEmail();
+        String phoneNumber = signUpDTO.getPhoneNumber();
+        Boolean sex = signUpDTO.getSex();
+        String address = signUpDTO.getAddress();
 
 
-        // DTO에서 엔티티로 변환
-        User response = User.builder()
-                .userId(userId)
+        // 중복된 아이디 체크
+        if (userRepository.existsById(id)) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+        else if(userRepository.existsByPhoneNumber(phoneNumber)){
+            throw new RuntimeException("해당 전화번호로 이미 회원가입이 되었습니다.");
+        }
+
+        int accountType = signUpDTO.getAccountType();
+        String userCode = signUpDTO.getUserCode();
+
+        User response;
+
+        if(isParent(accountType)){
+            response = User.builder()
                 .id(id)
                 .email(email)
                 .name(name)
@@ -146,12 +126,44 @@ public class UserService {
                 .address(address)
                 .birthDate(birthDate)
                 .accountType(accountType)
-                .userCode(userCode)
                 .password(password)
-                .schoolInformation(schoolInformation)
-                .classInformation(classInformation)
                 .build();
+        }
+        else{
+            Optional<User> optionalUser = userRepository.findByUserCode(signUpDTO.getUserCode());
+            if(optionalUser.isEmpty()){
+                throw new RuntimeException("해당 유저코드를 가진 유저가 없습니다.");
+            }
 
+            User user = optionalUser.get();
+            if(user.getId() != null){
+                throw new RuntimeException("이미 회원가입이 된 계정입니다.");
+            } else if (!name.equals(user.getName())) {
+                throw new RuntimeException("잘못된 이름이 입력되었습니다.");
+            }
+
+            SchoolInformation schoolInformation = user.getSchoolInformation();
+            ClassInformation classInformation = user.getClassInformation();
+
+            Long userId = user.getUserId();
+            accountType = user.getAccountType();
+
+            response = User.builder()
+                    .userId(userId)
+                    .id(id)
+                    .email(email)
+                    .name(name)
+                    .sex(sex)
+                    .phoneNumber(phoneNumber)
+                    .address(address)
+                    .birthDate(birthDate)
+                    .accountType(accountType)
+                    .userCode(userCode)
+                    .password(password)
+                    .schoolInformation(schoolInformation)
+                    .classInformation(classInformation)
+                    .build();
+        }
 
         // 회원가입
         userRepository.save(response);

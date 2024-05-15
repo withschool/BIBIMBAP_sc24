@@ -81,16 +81,10 @@ public class BasicController {
         return ResponseEntity.status(HttpStatus.OK).body(schoolInformationService.findAll());
     }
 
-    @GetMapping("/is-duplicate")
+    @GetMapping("/is-duplicated")
     @Operation(summary = "아이디 중복 검증")
-    public ResponseEntity<Boolean> isDuplicate(@RequestParam("userId") String userId){
-        User user = userService.findById(userId);
-        if (user == null) {
-            return ResponseEntity.ok().body(false);
-        }
-        else{
-            return ResponseEntity.ok().body(true);
-        }
+    public ResponseEntity<Boolean> isDuplicated(@RequestParam("id") String id){
+        return ResponseEntity.ok().body(userService.isDuplicated(id));
     }
 
     @PostMapping("/test")

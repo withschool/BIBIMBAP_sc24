@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class SignUpDTO {
-    private Long userId;
     private String id;
     private String email;
     private String password;
@@ -17,6 +16,7 @@ public class SignUpDTO {
     private String phoneNumber;
     private String address;
     private String birthDate;
+
     private int accountType;
     private String userCode;
 }
