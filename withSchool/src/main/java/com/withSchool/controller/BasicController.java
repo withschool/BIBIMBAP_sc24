@@ -8,9 +8,7 @@ import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.withSchool.dto.user.SignInDTO;
@@ -19,7 +17,6 @@ import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +38,6 @@ public class BasicController {
         if(user==null) {
             response.put("message", "해당하는 유저가 없습니다.");
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(response);
         }
 
@@ -54,7 +50,6 @@ public class BasicController {
 
         response.put("user", preSignUpReturnDTO);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(response);
     }
 
@@ -66,11 +61,9 @@ public class BasicController {
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("User.java registered successfully.");
     }
 
@@ -90,7 +83,6 @@ public class BasicController {
     @Operation(summary = "등록된 학교 리스트 불러오기")
     public ResponseEntity<List<SchoolInformationListDTO>> listSchool(){
         return ResponseEntity.status(HttpStatus.OK)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(schoolInformationService.findAll());
     }
 
@@ -98,7 +90,6 @@ public class BasicController {
     @Operation(summary = "아이디 중복 검증")
     public ResponseEntity<Boolean> isDuplicated(@RequestParam("id") String id){
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(userService.isDuplicated(id));
     }
 

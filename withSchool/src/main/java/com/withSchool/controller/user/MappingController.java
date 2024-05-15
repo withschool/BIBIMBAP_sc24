@@ -48,7 +48,6 @@ public class MappingController {
             }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(e.getMessage());
         }
     }
