@@ -30,7 +30,7 @@ import java.util.List;
 
 @SpringBootTest
 @Transactional
-public class SubjectSubjectQuestionPostServiceTest {
+public class SubjectQuestionPostServiceTest {
     SchoolInformation schoolInformation;
     Subject subject;
     ClassInformation classInformation;

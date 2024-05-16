@@ -50,14 +50,8 @@ public class AdminController {
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
     public ResponseEntity<String> createSubject(@RequestParam String subjectName) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findById(authentication.getName());
-        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                .body("해당하는 유저가 없습니다.");
-
         try {
-            Subject subject = subjectService.saveSubject(subjectName, user);
+            Subject subject = subjectService.saveSubject(subjectName);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(subject.getSubjectName() + " 과목이 생성되었습니다.");
@@ -85,7 +79,6 @@ public class AdminController {
     @PostMapping("/classes")
     @Operation(summary = "어드민의 반 생성", description = "어드민은 반을 생성할 수 있다.")
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
-
         try {
             classService.saveClassInformation(classDTO);
             return ResponseEntity.ok()

@@ -22,7 +22,7 @@ import java.util.List;
 
 @Transactional
 @SpringBootTest
-public class SubjectSubjectQuestionPostRepositoryTest {
+public class SubjectQuestionPostRepositoryTest {
     SchoolInformation schoolInformation;
     Subject subject;
     ClassInformation classInformation;

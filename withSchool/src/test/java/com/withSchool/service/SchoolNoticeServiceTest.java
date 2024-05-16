@@ -7,11 +7,16 @@ import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.user.UserRepository;
 import com.withSchool.service.school.SchoolNoticeService;
+import com.withSchool.service.user.UserService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,6 +29,15 @@ public class SchoolNoticeServiceTest {
     private SchoolNoticeService schoolNoticeService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+
+    @BeforeEach
+    public void init(){
+        User user = userService.findById("id3");
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+    }
 
     @Test
     @DisplayName("공지 CRUD 테스트")
@@ -58,7 +72,7 @@ public class SchoolNoticeServiceTest {
         System.out.println(schoolNoticeToClientDTO);
 
         // when find By School
-        List<ResSchoolNoticeDTO> schoolNoticeToClientDTOS = schoolNoticeService.findAll(user.getSchoolInformation().getSchoolId());
+        List<ResSchoolNoticeDTO> schoolNoticeToClientDTOS = schoolNoticeService.findAll();
 
         // then
         Assertions.assertEquals(17, schoolNoticeToClientDTOS.size());

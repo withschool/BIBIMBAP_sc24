@@ -8,9 +8,11 @@ import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.dto.user.StudentListDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.school.SchoolNoticeFile;
+import com.withSchool.entity.user.User;
 import com.withSchool.repository.file.SchoolNoticeFileRepository;
 import com.withSchool.repository.school.SchoolNoticeRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class SchoolNoticeService {
     private final SchoolNoticeRepository schoolNoticeRepository;
     private final SchoolNoticeFileRepository schoolNoticeFileRepository;
     private final FileService fileService;
+    private final UserService userService;
 
     @Transactional
     public SchoolNotice save(SchoolNoticeDTO schoolNoticeDTO) {
@@ -85,8 +88,9 @@ public class SchoolNoticeService {
     }
 
     @Transactional
-    public List<ResSchoolNoticeDTO> findAll(Long schoolId) {
-        List<SchoolNotice> schoolNotices = schoolNoticeRepository.findAllBySchoolId(schoolId);
+    public List<ResSchoolNoticeDTO> findAll() {
+        User user = userService.getCurrentUser();
+        List<SchoolNotice> schoolNotices = schoolNoticeRepository.findAllBySchoolId(user.getSchoolInformation().getSchoolId());
 
         List<ResSchoolNoticeDTO> resSchoolNoticeDTOS = new ArrayList<>();
 
