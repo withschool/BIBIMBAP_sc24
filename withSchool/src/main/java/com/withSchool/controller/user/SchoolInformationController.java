@@ -10,9 +10,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -24,11 +21,9 @@ public class SchoolInformationController {
     private final UserService userService;
 
     @GetMapping("/info")
-    public ResponseEntity<Map<String, Object>> getSchoolInformation() {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<SchoolInformationDTO> getSchoolInformation() {
         SchoolInformation schoolInformation = userService.getCurrentUserSchoolInformation();
         SchoolInformationDTO schoolInformationDTO = schoolInformationService.entityToDTO(schoolInformation);
-        response.put("school-information", schoolInformationDTO);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(schoolInformationDTO);
     }
 }
