@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResUserDefaultDTO {
-    Long userId;
-    String userName;
-    String name;
+    private Long userId;
+    private String userName;
+    private String name;
 }

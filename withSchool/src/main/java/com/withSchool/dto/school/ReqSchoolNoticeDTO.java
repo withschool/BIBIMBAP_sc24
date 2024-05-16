@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @ToString
 public class ReqSchoolNoticeDTO {
-    String title;
-    String content;
-    List<MultipartFile> file;
+    private String title;
+    private String content;
+    private List<MultipartFile> file;
 }

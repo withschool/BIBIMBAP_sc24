@@ -1,6 +1,6 @@
 package com.withSchool.dto.school;
 
-import com.withSchool.dto.user.StudentListDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,10 +11,10 @@ import java.util.List;
 @Data
 @ToString
 public class ResSchoolNoticeDTO {
-    String title;
-    String content;
-    StudentListDTO user;
-    LocalDateTime regDate;
-    List<String> filesURl;
-    List<String> originalName;
+    private String title;
+    private String content;
+    private ResUserDefaultDTO user;
+    private LocalDateTime regDate;
+    private List<String> filesURl;
+    private List<String> originalName;
 }

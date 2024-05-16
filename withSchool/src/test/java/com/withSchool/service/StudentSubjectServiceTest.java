@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.user.StudentListDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
@@ -41,16 +41,16 @@ public class StudentSubjectServiceTest {
         Long subjectId = 1L;
         SubjectInfoDTO subjectInfoDTO = subjectService.findById(subjectId);
         List<User> users = studentSubjectService.findSugangStudent(subjectId);
-        List<StudentListDTO> studentListDTOS = new ArrayList<>();
+        List<ResUserDefaultDTO> studentListDTOS = new ArrayList<>();
 
         for (User u : users) {
-            StudentListDTO studentListDTO = StudentListDTO.builder()
+            ResUserDefaultDTO resUserDefaultDTO = ResUserDefaultDTO.builder()
                     .userId(u.getUserId())
                     .name(u.getName())
-                    .id(u.getId())
+                    .userName(u.getId())
                     .build();
 
-            studentListDTOS.add(studentListDTO);
+            studentListDTOS.add(resUserDefaultDTO);
         }
         response.put("subject", subjectInfoDTO);
         response.put("students", studentListDTOS);

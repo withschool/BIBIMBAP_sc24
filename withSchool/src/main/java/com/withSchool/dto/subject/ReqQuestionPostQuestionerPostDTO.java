@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReqQuestionPostQuestionerPostDTO {
-    String questionContent;
-    Long subjectId;
+    private String questionContent;
+    private Long subjectId;
 }
