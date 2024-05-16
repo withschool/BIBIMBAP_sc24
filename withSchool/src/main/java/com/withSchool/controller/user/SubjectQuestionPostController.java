@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @EnableAutoConfiguration
-@RequestMapping("/subject-question-post")
+@RequestMapping("/subjects/questions")
 public class SubjectQuestionPostController {
     private final SubjectQuestionPostService subjectQuestionPostService;
 
