@@ -10,8 +10,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -29,8 +27,7 @@ public class MappingController {
     @Operation(summary = "부모와 학생의 매핑")
     public ResponseEntity<?> mapStudentWithParent(@RequestParam String userCode) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User parent = userService.findById(authentication.getName());
+            User parent = userService.getCurrentUser();
             if (parent.getAccountType() != 1)
                 return ResponseEntity.badRequest()
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)

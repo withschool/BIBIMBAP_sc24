@@ -24,7 +24,7 @@ public class ClassController {
 
 
     @GetMapping("/classes/{classId}")
-    @Operation(summary = "유저의 학교 정보 조회")
+    @Operation(summary = "유저의 반 정보 조회")
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
 
