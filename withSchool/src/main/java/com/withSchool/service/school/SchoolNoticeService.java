@@ -5,7 +5,7 @@ import com.withSchool.dto.file.FileDeleteDTO;
 import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.dto.school.ResSchoolNoticeDTO;
-import com.withSchool.dto.user.StudentListDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.school.SchoolNoticeFile;
 import com.withSchool.entity.user.User;
@@ -71,8 +71,8 @@ public class SchoolNoticeService {
         if(schoolNoticeOptional.isEmpty())return null;
         SchoolNotice schoolNotice = schoolNoticeOptional.get();
 
-        StudentListDTO studentListDTO = StudentListDTO.builder()
-                .id(schoolNotice.getUser().getId())
+        ResUserDefaultDTO resUserDefaultDTO = ResUserDefaultDTO.builder()
+                .userName(schoolNotice.getUser().getId())
                 .name(schoolNotice.getUser().getName())
                 .userId(schoolNotice.getUser().getUserId())
                 .build();
@@ -80,7 +80,7 @@ public class SchoolNoticeService {
         return ResSchoolNoticeDTO.builder()
                 .title(schoolNotice.getTitle())
                 .content(schoolNotice.getContent())
-                .user(studentListDTO)
+                .user(resUserDefaultDTO)
                 .filesURl(filesUrl)
                 .originalName(orignalName)
                 .regDate(schoolNotice.getRegDate())
@@ -95,15 +95,15 @@ public class SchoolNoticeService {
         List<ResSchoolNoticeDTO> resSchoolNoticeDTOS = new ArrayList<>();
 
         for (SchoolNotice s : schoolNotices) {
-            StudentListDTO studentListDTO = StudentListDTO.builder()
-                    .id(s.getUser().getId())
+            ResUserDefaultDTO resUserDefaultDTO = ResUserDefaultDTO.builder()
+                    .userName(s.getUser().getId())
                     .name(s.getUser().getName())
                     .userId(s.getUser().getUserId())
                     .build();
 
             ResSchoolNoticeDTO schoolNoticeDTO = ResSchoolNoticeDTO.builder()
                     .title(s.getTitle())
-                    .user(studentListDTO)
+                    .user(resUserDefaultDTO)
                     .content(s.getContent())
                     .regDate(s.getRegDate())
                     .build();
