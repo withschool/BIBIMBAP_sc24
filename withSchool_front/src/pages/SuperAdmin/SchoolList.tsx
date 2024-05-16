@@ -1,14 +1,22 @@
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment, } from 'react';
 import sortBy from 'lodash/sortBy';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IconBell from '../../components/Icon/IconBell';
-import IconXCircle from '../../components/Icon/IconXCircle';
 import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
+import { Dialog, Transition } from '@headlessui/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import IconX from '../../components/Icon/IconX';
+import IconUser from '../../components/Icon/IconUser';
+import IconAt from '../../components/Icon/IconAt';
+import { getSchoolList, createSchool } from '../../service/school';
+
 
 const rowData = [
     {
@@ -79,6 +87,7 @@ const SchoolList = () => {
     useEffect(() => {
         dispatch(setPageTitle('학교 목록'));
     });
+    const [schools, setSchools] = useState([]);
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -90,6 +99,24 @@ const SchoolList = () => {
         columnAccessor: 'firstName',
         direction: 'asc',
     });
+
+    const handleCreateSchool = async (event: React.FormEvent) => {
+        event.preventDefault();
+        const schoolData = {
+            ATPT_OFCDC_SC_CODE: "Code",
+            SCHUL_NM: "School Name",
+            // Add other necessary fields
+        };
+        try {
+            const response = await createSchool(schoolData);
+            console.log('School created successfully:', response);
+            // Optionally, refresh the school list or handle UI updates
+        } catch (error) {
+            console.error('Failed to create school:', error);
+        }
+    }
+
+    const [modal21, setModal21] = useState(false);
 
     useEffect(() => {
         setPage(1);
@@ -167,6 +194,20 @@ const SchoolList = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sortStatus2]);
 
+    useEffect(() => {
+        dispatch(setPageTitle('학교 목록'));
+        getSchoolList().then(data => {
+            const formattedData = data.map(school => ({
+                schoolId: school.schoolId,
+                schoolName: school.schoolName || '기본',
+                schoolAddress: school.schoolAddress || '기본'
+            }));
+            setSchools(formattedData);
+        }).catch(error => {
+            console.error('Failed to fetch school data:', error);
+        });
+    }, [dispatch]);
+
     const formatDate = (date: string | number | Date) => {
         if (date) {
             const dt = new Date(date);
@@ -208,30 +249,100 @@ const SchoolList = () => {
                     <div className="ltr:ml-auto rtl:mr-auto">
                         <input type="text" className="form-input w-auto" placeholder="검색하기" value={search2} onChange={(e) => setSearch2(e.target.value)} />
                     </div>
+
+                    <div>
+                        <button type="button" onClick={() => { setModal21(true)}} className="btn btn-info">
+                            학교 제작하기
+                        </button>
+                        <Transition appear show={modal21} as={Fragment}>
+                            <Dialog
+                                as="div"
+                                open={modal21}
+                                onClose={() => {
+                                    setModal21(false);
+                                }}
+                            >
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0"
+                                    enterTo="opacity-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100"
+                                    leaveTo="opacity-0"
+                                >
+                                    <div className="fixed inset-0" />
+                                </Transition.Child>
+                                <div id="register_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                    <div className="flex min-h-screen items-start justify-center px-4">
+                                        <Transition.Child
+                                            as={Fragment}
+                                            enter="ease-out duration-300"
+                                            enterFrom="opacity-0 scale-95"
+                                            enterTo="opacity-100 scale-100"
+                                            leave="ease-in duration-200"
+                                            leaveFrom="opacity-100 scale-100"
+                                            leaveTo="opacity-0 scale-95"
+                                        >
+
+                                            <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark mx-auto">
+                                                <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
+                                                    <h5>학교 생성</h5>
+                                                    <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
+                                                        <IconX className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                                <div className="p-5">
+                                                    <form>
+                                                        <div className="relative mb-4">
+                                                            <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                <IconAt />
+                                                            </span>
+                                                            <input type="text" placeholder="학교 이름" className="form-input ltr:pl-10 rtl:pr-10" id="schoolName" />
+                                                        </div>
+                                                        <div className="relative mb-4">
+                                                            <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                <IconUser className="w-5 h-5" />
+                                                            </span>
+                                                            <input type="text" placeholder="어드민 아이디" className="form-input ltr:pl-10 rtl:pr-10" id="AdminId" />
+                                                        </div>
+
+                                                        <button type="button" className="btn btn-primary w-full">
+                                                            학교 생성하기
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div className="border-t border-[#ebe9f1] p-5 dark:border-white/10">
+                                                    <div className="my-4 text-center text-xs text-white-dark dark:text-white-dark/70">OR</div>
+                                                    <div className="mb-5 flex items-center justify-center gap-3">
+                                                        <button type="button" className="btn btn-outline-primary flex gap-1">
+                                                            <span>학교 수정</span>
+                                                        </button>
+                                                        <button type="button" className="btn btn-outline-danger flex gap-1">
+                                                            <span>학교 삭제</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </Dialog.Panel>
+                                        </Transition.Child>
+                                    </div>
+                                </div>
+                            </Dialog>
+                        </Transition>
+                    </div>
                 </div>
                 <div className="datatables">
                     <DataTable
                         className="whitespace-nowrap table-hover"
-                        records={recordsData2}
+                        records={schools}
                         columns={[
-                            {
-                                accessor: 'firstName',
-                                title: '학교 이름',
-                                sortable: true,
-                                render: ({ firstName, lastName, id }) => (
-                                    <div className="flex items-center w-max">
-                                        <div>{firstName + ' ' + lastName}</div>
-                                    </div>
-                                ),
-                            },
-                            { accessor: 'age', title: 'ID', sortable: true },
+                            { accessor: 'schoolName', title: '학교 이름', sortable: true },
 
-                            { accessor: 'company', title: '세부 법인', sortable: true },
+                            { accessor: 'schoolId', title: '학교 ID', sortable: true },
+
+                            { accessor: 'schoolAddress', title: '학교 주소', sortable: true },
                             {
-                                accessor: 'dob',
-                                title: '가입일',
-                                sortable: true,
-                                render: ({ dob }) => <div>{formatDate(dob)}</div>,
+                                accessor: 'schoolAdmin', title: '담당자', sortable: true
                             },
                             { accessor: 'email', title: 'Email', sortable: true },
                             { accessor: 'phone', title: '전화번호', sortable: true },

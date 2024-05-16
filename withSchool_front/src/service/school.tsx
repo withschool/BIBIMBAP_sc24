@@ -21,3 +21,27 @@ export const getSchoolList = async (): Promise<any> => {
         throw error;
     }
 }
+
+export const createSchool = async (schoolData: any): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/super/schools`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(schoolData)
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to create school:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error creating school:', error);
+        throw error;
+    }
+}
+
