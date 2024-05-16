@@ -40,16 +40,15 @@ const LoginBoxed = () => {
         try {
             const user = await login(email, password);
             if (user && user.accessToken) {
-
                 let token = user.accessToken;
                 let payload = token.substring(token.indexOf('.')+1,token.lastIndexOf('.'));
 
                 let dec = base64.decode(payload);
                 const userinfo = JSON.parse(dec);
-                console.log("sadas");
                 console.log(userinfo.auth);
                 localStorage.setItem('userinfo',userinfo);
                 localStorage.setItem('token', token);
+                localStorage.setItem('accountType', userinfo.auth);
                 localStorage.setItem('id', email);
                 localStorage.setItem('login', token ? 'true' : 'false');
                 navigate('/');
