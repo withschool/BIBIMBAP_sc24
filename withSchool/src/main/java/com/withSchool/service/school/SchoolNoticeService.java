@@ -37,7 +37,7 @@ public class SchoolNoticeService {
     public SchoolNoticeToClientDTO findById(Long schoolNoticeId) {
         Optional<SchoolNotice> schoolNoticeOptional = schoolNoticeRepository.findById(schoolNoticeId);
 
-        if(schoolNoticeOptional.isEmpty())return null;
+        if(schoolNoticeOptional.isEmpty()) return null;
         SchoolNotice schoolNotice = schoolNoticeOptional.get();
 
         StudentListDTO studentListDTO = StudentListDTO.builder()
