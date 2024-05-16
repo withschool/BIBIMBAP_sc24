@@ -9,6 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReqQuestionPostModifyDTO {
-    Long questionPostId;
-    String questionContent;
+    private Long questionPostId;
+    private String questionContent;
 }

@@ -11,10 +11,10 @@ import java.util.List;
 @Data
 @ToString
 public class ResSchoolNoticeDTO {
-    String title;
-    String content;
-    ResUserDefaultDTO user;
-    LocalDateTime regDate;
-    List<String> filesURl;
-    List<String> originalName;
+    private String title;
+    private String content;
+    private ResUserDefaultDTO user;
+    private LocalDateTime regDate;
+    private List<String> filesURl;
+    private List<String> originalName;
 }
