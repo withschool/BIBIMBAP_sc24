@@ -2,6 +2,8 @@ package com.withSchool.controller.admin;
 
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
@@ -49,9 +51,9 @@ public class AdminController {
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
-    public ResponseEntity<String> createSubject(@RequestParam String subjectName) {
+    public ResponseEntity<String> createSubject(@RequestParam ReqSubjectDefaultDTO subjectDTO) {
         try {
-            Subject subject = subjectService.saveSubject(subjectName);
+            Subject subject = subjectService.saveSubject(subjectDTO);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(subject.getSubjectName() + " 과목이 생성되었습니다.");
@@ -207,6 +209,11 @@ public class AdminController {
 
         return ResponseEntity.ok()
                 .body(response);
+    }
+    @GetMapping("/users")
+    @Operation(summary = "로그인한 유저가 속한 학교의 모든 유저 리스트업")
+    public ResponseEntity<List<ResUserDefaultDTO>> showAllUsersBySchool() {
+        return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
 
 }

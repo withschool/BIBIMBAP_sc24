@@ -1,5 +1,6 @@
 package com.withSchool.service;
 
+import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
@@ -63,7 +64,14 @@ public class SubjectServiceTest {
 
     @Test
     public void registerSubject() {
-        subjectService.saveSubject("정보");
+        ReqSubjectDefaultDTO subjectDefaultDTO = ReqSubjectDefaultDTO.builder()
+                .subjectGrade("1")
+                .subjectName("정보")
+                .subjectSemester("1")
+                .subjectYear("2024")
+                .build();
+
+        subjectService.saveSubject(subjectDefaultDTO);
     }
 
     @Test

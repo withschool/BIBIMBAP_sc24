@@ -16,6 +16,6 @@ public interface StudentParentRepository extends JpaRepository<StudentParent, Lo
     @Query("SELECT sp.student.userId FROM StudentParent sp WHERE sp.parent.userId = :parentId")
     Long findStudentByParentId(Long parentId);
 
-    List<User> findStudentsByParent(User parent);
+    List<StudentParent> findStudentsByParent(User parent);
 
 }
