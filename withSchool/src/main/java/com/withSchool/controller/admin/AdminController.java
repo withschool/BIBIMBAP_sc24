@@ -1,9 +1,10 @@
 package com.withSchool.controller.admin;
 
+import com.withSchool.dto.basic.ResNoticeDTO;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
-import com.withSchool.dto.school.ReqSchoolNoticeDTO;
+import com.withSchool.dto.basic.ReqNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
@@ -16,6 +17,7 @@ import com.withSchool.service.user.UserService;
 
 import com.withSchool.service.school.SchoolNoticeService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -136,34 +140,18 @@ public class AdminController {
 
     @PostMapping("/schools/notices")
     @Operation(summary = "어드민의 학교 공지 작성", description = "어드민은 학교 공지를 작성할 수 있다.")
-    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ReqSchoolNoticeDTO request) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<ResNoticeDTO> createNotice(@ModelAttribute ReqNoticeDTO request) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = userService.findById(authentication.getName());
+        ResNoticeDTO resNoticeDTO = schoolNoticeService.save(request);
 
-        SchoolNoticeDTO schoolNoticeDto = SchoolNoticeDTO.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .user(admin)
-                .file(request.getFile())
-                .school(admin.getSchoolInformation())
-                .build();
-
-
-        SchoolNotice schoolNotice = schoolNoticeService.save(schoolNoticeDto);
-
-        response.put("message", "생성되었습니다.");
-        response.put("id", schoolNotice.getSchoolNoticeId());
-        response.put("title", request.getTitle());
-        response.put("content", request.getContent());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(resNoticeDTO);
     }
 
     @PatchMapping("/schools/notices/{notice-id}")
     @Operation(summary = "어드민의 학교 공지 수정", description = "어드민은 학교 공지를 수정할 수 있다.")
-    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqSchoolNoticeDTO request){
+    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqNoticeDTO request){
 
         Map<String, Object> response = new HashMap<>();
 

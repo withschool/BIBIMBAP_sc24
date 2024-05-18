@@ -1,7 +1,7 @@
 package com.withSchool.feat.feat_17;
 
 import com.withSchool.controller.admin.AdminController;
-import com.withSchool.dto.school.ReqSchoolNoticeDTO;
+import com.withSchool.dto.basic.ReqNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
@@ -82,7 +82,7 @@ public class SchoolNoticeAdminControllerTest {
         List<MultipartFile> files = new ArrayList<>();
         files.add(mockMultipartFile);
 
-        ReqSchoolNoticeDTO request = ReqSchoolNoticeDTO.builder()
+        ReqNoticeDTO request = ReqNoticeDTO.builder()
                 .title("제목실험")
                 .content("내용실험")
                 .file(files)

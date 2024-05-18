@@ -1,8 +1,8 @@
 package com.withSchool.feat;
 
-import com.withSchool.dto.school.ReqSchoolNoticeDTO;
+import com.withSchool.dto.basic.ReqNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.school.ResSchoolNoticeDTO;
+import com.withSchool.dto.basic.ResNoticeDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
@@ -57,12 +57,12 @@ public class feat_16 {
     @Test
     public void testAdminReadNotice(){
         // school notice의 pk 3으로 테스트
-        ResSchoolNoticeDTO resSchoolNoticeDTO = schoolNoticeService.findById(3L);
+        ResNoticeDTO resNoticeDTO = schoolNoticeService.findById(3L);
 
-        Map<String, ResSchoolNoticeDTO> response = new HashMap<>();
-        response.put("school_notice", resSchoolNoticeDTO);
-        System.out.println(resSchoolNoticeDTO.getUser());
-        System.out.println(resSchoolNoticeDTO);
+        Map<String, ResNoticeDTO> response = new HashMap<>();
+        response.put("school_notice", resNoticeDTO);
+        System.out.println(resNoticeDTO.getUser());
+        System.out.println(resNoticeDTO);
 
     }
 
@@ -73,9 +73,9 @@ public class feat_16 {
     public void testAdminReadAllNotices(){
         User admin = userService.findById("id3");
 
-        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
+        List<ResNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
 
-        for (ResSchoolNoticeDTO s : schoolNoticeDTOS) {
+        for (ResNoticeDTO s : schoolNoticeDTOS) {
             System.out.println(s);
         }
     }
@@ -85,11 +85,11 @@ public class feat_16 {
     // 수정 가능한 것은 제목과 내용만
     @Test
     public void testAdminModifyOneNotice(){
-        ReqSchoolNoticeDTO reqSchoolNoticeDTO = ReqSchoolNoticeDTO.builder()
+        ReqNoticeDTO reqNoticeDTO = ReqNoticeDTO.builder()
                 .title("공지10")
                 .content("내용10-1")
                 .build();
-        schoolNoticeService.updateById(13L, reqSchoolNoticeDTO);
+        schoolNoticeService.updateById(13L, reqNoticeDTO);
     }
 
     // 공지사항 삭제

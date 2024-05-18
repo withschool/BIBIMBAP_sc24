@@ -1,4 +1,4 @@
-package com.withSchool.dto.school;
+package com.withSchool.dto.basic;
 
 import com.withSchool.dto.user.StudentListDTO;
 import lombok.*;
@@ -10,10 +10,10 @@ import java.util.List;
 @Getter
 @Data
 @ToString
-public class ResSchoolNoticeDTO {
+public class ResNoticeDTO {
     String title;
     String content;
-    StudentListDTO user;
+    String user;
     LocalDateTime regDate;
     List<String> filesURl;
     List<String> originalName;

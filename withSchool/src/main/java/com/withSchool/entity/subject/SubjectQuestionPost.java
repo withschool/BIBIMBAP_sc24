@@ -22,10 +22,10 @@ public class SubjectQuestionPost extends BaseEntity {
 
     @Column(nullable = false)
     @Comment("질문 내용")
-    private String subjectQuestionContent;
+    private String questionContent;
     @Column
     @Comment("답변 내용")
-    private String subjectAnswerContent;
+    private String answerContent;
     @Column(nullable = false)
     @Comment("답변 상태")
     private int isAnswered;

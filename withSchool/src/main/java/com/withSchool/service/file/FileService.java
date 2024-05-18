@@ -31,7 +31,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
+
+import static com.google.common.io.Files.getFileExtension;
 
 @Service
 @RequiredArgsConstructor
@@ -64,150 +68,215 @@ public class FileService {
 
     private String fileName;
     private String fileUrl;
-    public void saveFile(FileDTO dto){
+    public void saveFile(FileDTO dto) {
         String repoType = dto.getRepoType();
         try {
-            fileName = dto.getFile().getOriginalFilename();
-            fileUrl = "https://kr.object.ncloudstorage.com/" + bucket + "/" + fileName;
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(dto.getFile().getContentType());
-            metadata.setContentLength(dto.getFile().getSize());
-            amazonS3.putObject(new PutObjectRequest(bucket, fileName, dto.getFile().getInputStream(), metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
-        }
-        catch (IOException e) {
+            String fileName = createFileName(dto.getFile().getOriginalFilename());
+            String fileUrl = uploadFileToS3(dto, fileName);
+            saveFileMetadata(repoType, dto, fileName, fileUrl);
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        if(repoType.equals("schoolNotice")){
-            try {
-                SchoolNoticeFile schoolNoticeFile = SchoolNoticeFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .schoolNotice(schoolNoticeRepository.findById(dto.getMasterId()).get())
-                        .build();
-                schoolNoticeFileRepository.save(schoolNoticeFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-
-        else if(repoType.equals("classNotice")){
-            try {
-                ClassNoticeFile classNoticeFile = ClassNoticeFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .classNotice(classNoticeRepository.findById(dto.getMasterId()).get())
-                        .build();
-                classNoticeFileRepository.save(classNoticeFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("classHomework")){
-            try {
-                ClassHomeworkFile classHomeworkFile = ClassHomeworkFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .classHomework(classHomeworkRepository.findById(dto.getMasterId()).get())
-                        .build();
-                classHomeworkFileRepository.save(classHomeworkFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("classHomeworkSubmit")){
-            try {
-                ClassHomeworkSubmitFile classHomeworkSubmitFile = ClassHomeworkSubmitFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .classHomeworkSubmit(classHomeworkSubmitRepository.findById(dto.getMasterId()).get())
-                        .build();
-                classHomeworkSubmitFileRepository.save(classHomeworkSubmitFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("subjectNotice")){
-            try {
-                SubjectNoticeFile subjectNoticeFile = SubjectNoticeFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .subjectNotice(subjectNoticeRepository.findById(dto.getMasterId()).get())
-                        .build();
-                subjectNoticeFileRepository.save(subjectNoticeFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("subjectHomework")){
-            try {
-                SubjectHomeworkFile subjectHomeworkFile = SubjectHomeworkFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .subjectHomework(subjectHomeworkRepository.findById(dto.getMasterId()).get())
-                        .build();
-                subjectHomeworkFileRepository.save(subjectHomeworkFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("subjectHomeworkSubmit")){
-            try {
-                SubjectHomeworkSubmitFile subjectHomeworkSubmitFile = SubjectHomeworkSubmitFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .subjectHomeworkSubmit(subjectHomeworkSubmitRepository.findById(dto.getMasterId()).get())
-                        .build();
-                subjectHomeworkSubmitFileRepository.save(subjectHomeworkSubmitFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("subjectLectureNote")){
-            try {
-                SubjectLectureNoteFile subjectLectureNoteFile = SubjectLectureNoteFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .subjectLectureNote(subjectLectureNoteRepository.findById(dto.getMasterId()).get())
-                        .build();
-                subjectLectureNoteFileRepository.save(subjectLectureNoteFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
-        }
-        else if(repoType.equals("CommunityPost")){
-            try {
-                PostFile postFile = PostFile.builder()
-                        .originalName(fileName)
-                        .fileUrl(fileUrl)
-                        .post(communityPostRepository.findById(dto.getMasterId()).get())
-                        .build();
-                communityPostFileRepository.save(postFile);
-            } catch (Exception e) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+            e.printStackTrace();
         }
     }
-    public void deleteSchoolNoticeFile(FileDeleteDTO dto){
+    public void deleteFile(FileDeleteDTO dto){
         String repoType = dto.getRepoType();
-        try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getOriginalName()));
-            schoolNoticeFileRepository.deleteAllBySchoolNoticeId(dto.getMasterId());
-        } catch (Exception e) {
+        try{
+            deleteFileMetadata(repoType,dto);
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        }
+        catch(Exception e){
             e.printStackTrace();
         }
-//        if(repoType = "schoolNotice"){
-//
-//        }
+    }
+    private String uploadFileToS3(FileDTO dto, String fileName) throws IOException {
+        String fileUrl = "https://kr.object.ncloudstorage.com/" + bucket + "/" + fileName;
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(dto.getFile().getContentType());
+        metadata.setContentLength(dto.getFile().getSize());
+        amazonS3.putObject(new PutObjectRequest(bucket, fileName, dto.getFile().getInputStream(), metadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        return fileUrl;
+    }
+    private void saveFileMetadata(String repoType, FileDTO dto, String fileName, String fileUrl) {
+        switch (repoType) {
+            case "schoolNotice":
+                saveSchoolNoticeFile(dto, fileName, fileUrl);
+                break;
+            case "classNotice":
+                saveClassNoticeFile(dto, fileName, fileUrl);
+                break;
+            case "classHomework":
+                saveClassHomeworkFile(dto, fileName, fileUrl);
+                break;
+            case "classHomeworkSubmit":
+                saveClassHomeworkSubmitFile(dto,fileName,fileUrl);
+                break;
+            case "subjectNotice":
+                saveSubjectNoticeFile(dto,fileName,fileUrl);
+                break;
+            case "subjectHomework":
+                saveSubjectHomeworkFile(dto,fileName,fileUrl);
+                break;
+            case "subjectHomeworkSubmit":
+                saveSubjectHomeworkSubmitFile(dto,fileName,fileUrl);
+                break;
+            case "subjectLectureNote":
+                saveSubjectLectureNoteFile(dto,fileName,fileUrl);
+                break;
+            case "communityPost":
+                savePostFile(dto,fileName,fileUrl);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid repository type: " + repoType);
+        }
+    }
+    private void deleteFileMetadata(String repoType, FileDeleteDTO dto) {
+        switch (repoType) {
+            case "schoolNotice":
+                deleteSchoolNoticeFile(dto);
+                break;
+            case "classNotice":
+                deleteClassNoticeFile(dto);
+                break;
+            case "classHomework":
+                deleteClassHomeworkFile(dto);
+                break;
+            case "classHomeworkSubmit":
+                deleteClassHomeworkSubmitFile(dto);
+                break;
+            case "subjectNotice":
+                deleteSubjectNoticeFile(dto);
+                break;
+            case "subjectHomework":
+                deleteSubjectHomeworkFile(dto);
+                break;
+            case "subjectHomeworkSubmit":
+                deleteSubjectHomeworkSubmitFile(dto);
+                break;
+            case "subjectLectureNote":
+                deleteSubjectLectureNoteFile(dto);
+                break;
+            case "communityPost":
+                deletePostFile(dto);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid repository type: " + repoType);
+        }
+    }
+
+    private void saveSchoolNoticeFile(FileDTO dto, String fileName, String fileUrl) {
+        SchoolNoticeFile schoolNoticeFile = SchoolNoticeFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .schoolNotice(schoolNoticeRepository.findById(dto.getMasterId()).orElseThrow())
+                .build();
+        schoolNoticeFileRepository.save(schoolNoticeFile);
+    }
+
+    private void saveClassNoticeFile(FileDTO dto, String fileName, String fileUrl) {
+        ClassNoticeFile classNoticeFile = ClassNoticeFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .classNotice(classNoticeRepository.findById(dto.getMasterId()).orElseThrow())
+                .build();
+        classNoticeFileRepository.save(classNoticeFile);
+    }
+
+    private void saveClassHomeworkFile(FileDTO dto, String fileName, String fileUrl) {
+        ClassHomeworkFile classHomeworkFile = ClassHomeworkFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .classHomework(classHomeworkRepository.findById(dto.getMasterId()).orElseThrow())
+                .build();
+        classHomeworkFileRepository.save(classHomeworkFile);
+    }
+    private void saveClassHomeworkSubmitFile(FileDTO dto, String fileName, String fileUrl) {
+        ClassHomeworkSubmitFile classHomeworkSubmitFile = ClassHomeworkSubmitFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .classHomeworkSubmit(classHomeworkSubmitRepository.findById(dto.getMasterId()).get())
+                .build();
+        classHomeworkSubmitFileRepository.save(classHomeworkSubmitFile);
+    }
+    private void saveSubjectNoticeFile(FileDTO dto, String fileName, String fileUrl) {
+        SubjectNoticeFile subjectNoticeFile = SubjectNoticeFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .subjectNotice(subjectNoticeRepository.findById(dto.getMasterId()).get())
+                .build();
+        subjectNoticeFileRepository.save(subjectNoticeFile);
+    }
+    private void saveSubjectHomeworkFile(FileDTO dto, String fileName, String fileUrl) {
+        SubjectHomeworkFile subjectHomeworkFile = SubjectHomeworkFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .subjectHomework(subjectHomeworkRepository.findById(dto.getMasterId()).get())
+                .build();
+        subjectHomeworkFileRepository.save(subjectHomeworkFile);
+    }
+    private void saveSubjectHomeworkSubmitFile(FileDTO dto, String fileName, String fileUrl) {
+        SubjectHomeworkSubmitFile subjectHomeworkSubmitFile = SubjectHomeworkSubmitFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .subjectHomeworkSubmit(subjectHomeworkSubmitRepository.findById(dto.getMasterId()).get())
+                .build();
+        subjectHomeworkSubmitFileRepository.save(subjectHomeworkSubmitFile);
+    }
+    private void saveSubjectLectureNoteFile(FileDTO dto, String fileName, String fileUrl) {
+        SubjectLectureNoteFile subjectLectureNoteFile = SubjectLectureNoteFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .subjectLectureNote(subjectLectureNoteRepository.findById(dto.getMasterId()).get())
+                .build();
+        subjectLectureNoteFileRepository.save(subjectLectureNoteFile);
+    }
+    private void savePostFile(FileDTO dto, String fileName, String fileUrl) {
+        PostFile postFile = PostFile.builder()
+                .originalName(fileName)
+                .fileUrl(fileUrl)
+                .post(communityPostRepository.findById(dto.getMasterId()).get())
+                .build();
+        communityPostFileRepository.save(postFile);
+    }
+    private void deleteSchoolNoticeFile(FileDeleteDTO dto) {
+        schoolNoticeFileRepository.deleteAllBySchoolNoticeId(dto.getMasterId());
+    }
+
+    private void deleteClassNoticeFile(FileDeleteDTO dto) {
+        classNoticeFileRepository.deleteAllByClassNoticeId(dto.getMasterId());
+    }
+
+    private void deleteClassHomeworkFile(FileDeleteDTO dto) {
+        classHomeworkFileRepository.deleteAllByClassHomeworkId(dto.getMasterId());
+    }
+
+    private void deleteClassHomeworkSubmitFile(FileDeleteDTO dto) {
+        classHomeworkSubmitFileRepository.deleteAllByClassHomeworkSubmitFileId(dto.getMasterId());
+    }
+
+    private void deleteSubjectNoticeFile(FileDeleteDTO dto) {
+        subjectNoticeFileRepository.deleteAllBySubjectNoticeId(dto.getMasterId());
+    }
+
+    private void deleteSubjectHomeworkFile(FileDeleteDTO dto) {
+        subjectHomeworkRepository.deleteAllBySubjectHomeworkId(dto.getMasterId());
+    }
+
+    private void deleteSubjectHomeworkSubmitFile(FileDeleteDTO dto) {
+        subjectHomeworkSubmitFileRepository.deleteAllBySubjectHomeworkSubmitId(dto.getMasterId());
+    }
+
+    private void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
+        subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
+    }
+
+    private void deletePostFile(FileDeleteDTO dto) {
+        communityPostFileRepository.deleteAllByPostFileId(dto.getMasterId());
+    }
+    private String createFileName(String fileName) {
+        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 }

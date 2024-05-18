@@ -17,6 +17,6 @@ public interface SchoolNoticeFileRepository extends JpaRepository<SchoolNoticeFi
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("DELETE FROM SchoolNoticeFile f WHERE f.schoolNotice.schoolNoticeId = :schoolNoticeId")
-    void deleteAllBySchoolNoticeId(Long schoolNoticeId);
+    void  deleteAllBySchoolNoticeId(Long schoolNoticeId);
 
 }

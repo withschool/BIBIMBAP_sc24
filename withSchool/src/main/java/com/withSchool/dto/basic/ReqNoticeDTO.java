@@ -1,4 +1,4 @@
-package com.withSchool.dto.school;
+package com.withSchool.dto.basic;
 
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @Getter
 @ToString
-public class ReqSchoolNoticeDTO {
+public class ReqNoticeDTO {
     String title;
     String content;
     List<MultipartFile> file;
