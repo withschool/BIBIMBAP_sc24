@@ -15,41 +15,29 @@ import 'swiper/css/pagination';
 import IconX from '../../components/Icon/IconX';
 import IconUser from '../../components/Icon/IconUser';
 import IconAt from '../../components/Icon/IconAt';
-import { getSchoolList } from '../../service/school';
+import { getSchoolList, getSchoolListFromNeis, } from '../../service/school';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconSearch from '../../components/Icon/IconSearch';
 
 
 const items = [
     {
-        schoolName: '서울고등학교',
-        schoolPhoneNumber: 'seoul@school.kr',
-        educationOffice: '서울교육청',
-        schoolAddress: '서울특별시 강남구',
+        schoolName: '가원중학교',
+        schoolPhoneNumber: '02-409-2179',
+        educationOffice: '서울특별시교육청',
+        schoolAddress: '서울특별시 송파구 중대로10길 40-18',
     },
     {
-        schoolName: '부산중학교',
-        schoolPhoneNumber: 'busan@school.kr',
-        educationOffice: '부산교육청',
-        schoolAddress: '부산광역시 해운대구',
+        schoolName: '가원중학교',
+        schoolPhoneNumber: '02-409-2179',
+        educationOffice: '서울특별시교육청',
+        schoolAddress: '서울특별시 송파구 중대로10길 40-18',
     },
     {
-        schoolName: '대구초등학교',
-        schoolPhoneNumber: 'daegu@school.kr',
-        educationOffice: '대구교육청',
-        schoolAddress: '대구광역시 수성구',
-    },
-    {
-        schoolName: '인천고등학교',
-        schoolPhoneNumber: 'incheon@school.kr',
-        educationOffice: '인천교육청',
-        schoolAddress: '인천광역시 남동구',
-    },
-    {
-        schoolName: '광주중학교',
-        schoolPhoneNumber: 'gwangju@school.kr',
-        educationOffice: '광주교육청',
-        schoolAddress: '광주광역시 서구',
+        schoolName: '가원중학교',
+        schoolPhoneNumber: '02-409-2179',
+        educationOffice: '서울특별시교육청',
+        schoolAddress: '서울특별시 송파구 중대로10길 40-18',
     },
 ];
 
@@ -143,6 +131,24 @@ const SchoolList = () => {
     const [allSearch, setAllSearch] = useState<string>('');
 
     useEffect(() => {
+        const fetchAllData = async () => {
+            try {
+                const allData = await getSchoolListFromNeis(allSearch);
+                console.log('API로부터 받은 데이터:', allData); // allData를 출력하여 확인
+                if (Array.isArray(allData)) {
+                    console.log('데이터 배열:', allData);
+                } else {
+                    console.error('클라오류 1', allData);
+                }
+            } catch (error) {
+                console.error('클라 오류 2', error);
+            }
+        };
+        fetchAllData();
+    }, [allSearch]);
+
+
+    useEffect(() => {
         setFilteredItems(() => {
             return items.filter((item) => {
                 return item.schoolName.toLowerCase().includes(allSearch.toLowerCase());
@@ -231,14 +237,13 @@ const SchoolList = () => {
                                                                         </button>
                                                                     </div>
                                                                 </form>
-                                                                <div className="p-4 border border-white-dark/20 rounded-lg space-y-4 overflow-x-auto w-full block">
+                                                                <div className="p-4 border border-white-dark/20 rounded-lg space-y-4 overflow-x-auto w-full block max-h-96 overflow-y-auto">
                                                                     {filteredItems.map((item: any) => {
                                                                         return (
                                                                             <div
-
                                                                                 key={item.schoolName}
                                                                                 className="bg-white dark:bg-[#1b2e4b] rounded-xl shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] p-3 flex items-center justify-between
-                                         text-gray-500 font-semibold min-w-[625px] hover:text-primary transition-all duration-300 hover:scale-[1.01]"
+                text-gray-500 font-semibold min-w-[625px] hover:text-primary transition-all duration-300 hover:scale-[1.01]"
                                                                             >
                                                                                 <div>{item.schoolName}</div>
                                                                                 <div>{item.educationOffice}</div>

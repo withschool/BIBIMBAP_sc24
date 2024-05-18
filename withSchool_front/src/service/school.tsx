@@ -1,5 +1,6 @@
 const url = 'http://223.130.134.181:8080';
 
+
 export const getSchoolList = async (): Promise<any> => {
     try {
         const response = await fetch(`${url}/basic/schools`, {
@@ -22,19 +23,31 @@ export const getSchoolList = async (): Promise<any> => {
     }
 }
 
-const neisApiUrl = 'https://open.neis.go.kr/hub/schoolInfo';
 
-export const getSchoolListFromNeis = async (searchTerm: string): Promise<NeisSchool[]> => {
+export const getSchoolListFromNeis = async (search: string): Promise<any> => {
     try {
-        const response = await fetch(`${neisApiUrl}?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&pIndex=1&pSize=100&SCHUL_NM=${searchTerm}`, {
+        const response = await fetch(`/hub/schoolInfo?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&SCHUL_NM=${search}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
-        if (response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (response.ok && contentType && contentType.includes('application/json')) {
             const data = await response.json();
-            return data.schoolInfo[1].row; // Adjust this based on the actual structure of the response
+            console.log('API 응답 데이터:', data);
+            if (data.schoolInfo && data.schoolInfo[1] && data.schoolInfo[1].row) {
+                return data.schoolInfo[1].row.map((item: any) => ({
+                    schoolName: item.SCHUL_NM,
+                    schoolPhoneNumber: item.ORG_TELNO,
+                    schoolAddress: item.ORG_RDNMA,
+                    educationOffice: item.ATPT_OFCDC_SC_NM,
+                    ...item
+                }));
+            } else {
+                console.error('Unexpected API response structure:', data);
+                throw new Error('Unexpected API response structure');
+            }
         } else {
             const errorMessage = await response.text();
             console.error('Failed to fetch school list from NEIS:', errorMessage);
