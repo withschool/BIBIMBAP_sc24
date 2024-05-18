@@ -47,3 +47,28 @@ export const listingStudent = async (): Promise<any> => {
       console.error('불러오기 실패: 걍 안됨', errorss);
     }
 }
+
+export const getStudentInfoById = async (id: string): Promise<any> => {
+    try {
+      const response = await fetch(`${url}/users/user-id/${id}`,{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+  
+      if (response.ok) {
+        console.log('불러오기 완료');
+        const data = await response.json();
+        console.log("진짜"+data);
+        return data;
+      } else {
+        const errorMessage = await response.text();
+        console.error('불러오기 실패:', errorMessage);
+        throw new Error(errorMessage);
+      }
+    } catch (errorss) {
+      console.error('불러오기 실패: 걍 안됨', errorss);
+    }
+}

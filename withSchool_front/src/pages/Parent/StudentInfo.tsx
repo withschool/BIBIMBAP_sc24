@@ -3,7 +3,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import Tippy from '@tippyjs/react';
-import { mappingStudent, listingStudent } from '../../service/parent';
+import { mappingStudent, listingStudent, getStudentInfoById} from '../../service/parent';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -20,20 +20,36 @@ const StudentInfo = () => {
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [targetStudent, setTargetStudent] = useState('');
+    const [targetStudentInfo, setTargetStudentInfo] = useState('');
 
     useEffect(() => {
         const fetchStudents = async () => {
             try {
                 const data = await listingStudent();
                 setStudentList(data);
-                if(studentList.length > 0 ) setTargetStudent(studentList[0].user.userId);
-                console.log(data);
+                if (data.length > 0) {
+                    setTargetStudent(data[0].user.userId);
+                }
             } catch (error) {
                 console.error('Error fetching student list:', error);
             }
         };
         fetchStudents();
     }, []);
+    
+    useEffect(() => {
+        const fetchStudentData = async () => {
+            try {
+                if (targetStudent) {
+                    const data = await getStudentInfoById(targetStudent);
+                    setTargetStudentInfo(data);
+                }
+            } catch (error) {
+                console.error('Error fetching student data:', error);
+            }
+        };
+        fetchStudentData();
+    }, [targetStudent]);
 
     const handleUserCode = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserCode(event.target.value);
@@ -41,9 +57,16 @@ const StudentInfo = () => {
 
     const getmappingStudent = async (userCode : string) => {
         const ismaped = await mappingStudent(userCode);
-        setModal21(false);
-        if(ismaped) alert("학생 연결이 완료되었습니다.");
+        if(ismaped) { 
+            alert("학생 연결이 완료되었습니다.");
+            setModal21(false);
+        }
         else alert("학생 연결에 실패하였습니다.");
+    }
+
+    const handleChange = (userId : string) => {
+        setTargetStudent(userId);
+        console.log(targetStudent);
     }
      
     return(
@@ -104,7 +127,7 @@ const StudentInfo = () => {
                                         ):(
                                             <div>
                                                 <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
-                                                    <h6 className="text-lg font-bold mb-5">내 정보</h6>
+                                                    <h6 className="text-lg font-bold mb-5">{targetStudentInfo.name} 정보</h6>
                                                     <div className="flex flex-col sm:flex-row">
                                                         <div className="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
                                                             <img src="https://www.handmk.com/news/photo/202306/16714_40371_5250.jpg" alt="img" className="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" />
@@ -112,38 +135,23 @@ const StudentInfo = () => {
                                                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                                             <div>
                                                                 <label htmlFor="name">이름</label>
-                                                                <input id="name" type="text" placeholder="남창현" className="form-input" />
+                                                                <div className="form-input">{targetStudentInfo.name}</div>
                                                             </div>
                                                             <div>
-                                                                <label htmlFor="persnol-code">코드</label>
-                                                                <input id="persnol-code" type="text" placeholder="xxxxxxxx" className="form-input" />
+                                                                <label htmlFor="sex">성별</label>
+                                                                <div className="form-input">{targetStudentInfo.sex ? '남성' : '여성'}</div>
                                                             </div>
                                                             <div>
-                                                                <label htmlFor="status">성별</label>
-                                                                <select defaultValue="man" id="status" className="form-select text-white-dark">
-                                                                    <option value="man">남성</option>
-                                                                    <option value="woman">여성</option>
-                                                                </select>
-                                                            </div>
-                                                            <div>
-                                                                <label htmlFor="address">주소</label>
-                                                                <input id="address" type="text" placeholder="경기도 안산시 민동로" className="form-input" />
-                                                            </div>
-                                                            <div>
-                                                                <label htmlFor="location">학급 번호</label>
-                                                                <input id="location" type="text" placeholder="23번" className="form-input" />
+                                                                <label htmlFor="id">학생의 아이디</label>
+                                                                <div className="form-input" >{targetStudentInfo.id}</div>
                                                             </div>
                                                             <div>
                                                                 <label htmlFor="phone">전화번호</label>
-                                                                <input id="phone" type="text" placeholder="010-1234-5678" className="form-input" />
+                                                                <div className="form-input" >{targetStudentInfo.phoneNumber}</div>
                                                             </div>
                                                             <div>
-                                                                <label htmlFor="email">Email</label>
-                                                                <input id="email" type="email" placeholder="example@gmail.com" className="form-input" />
-                                                            </div>
-                                                            <div>
-                                                                <label htmlFor="web">연결 코드 </label>
-                                                                <input id="web" type="text" placeholder="연결된 코드" className="form-input" />
+                                                                <label htmlFor="email">이메일</label>
+                                                                <div className="form-input" >{targetStudentInfo.email}</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -209,7 +217,7 @@ const StudentInfo = () => {
                                                             <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일</td>
                                                             <td className="text-center">
                                                                 <Tippy content="전환">
-                                                                    <button type="button">
+                                                                    <button type="button" onClick={() => handleChange(data.user.userId)}>
                                                                         <IconTrashLines className="m-auto" />
                                                                     </button>
                                                                 </Tippy>
