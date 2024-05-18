@@ -147,6 +147,9 @@ public class User extends BaseEntity implements UserDetails {
                 .userId(this.getUserId())
                 .name(this.getName())
                 .userName(this.getUsername())
+                .email(this.getEmail())
+                .phoneNumber(this.getPhoneNumber())
+                .sex(this.getSex())
                 .build();
     }
 }

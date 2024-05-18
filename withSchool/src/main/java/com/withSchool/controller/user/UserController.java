@@ -20,16 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/user-name/{username}")
+    @GetMapping("/user-name/{userName}")
     @Operation(summary = "유저의 ID를 가지고 유저 찾는 API")
-    public ResponseEntity<ResUserDefaultDTO> findUserByUserName(@PathVariable("username") String userName) {
+    public ResponseEntity<ResUserDefaultDTO> findUserByUserName(@PathVariable("userName") String userName) {
         User user = userService.findById(userName);
         return ResponseEntity.ok().body(user.toResUserDefaultDTO());
     }
 
-    @GetMapping("/user-id/{user-pk}")
+    @GetMapping("/user-id/{userPk}")
     @Operation(summary = "유저의 PK를 가지고 유저 찾는 API")
-    public ResponseEntity<ResUserDefaultDTO> findUserByUserId(@PathVariable("user-pk") Long userId) {
+    public ResponseEntity<ResUserDefaultDTO> findUserByUserId(@PathVariable("userPk") Long userId) {
         User user = userService.findByUserId(userId);
         return ResponseEntity.ok().body(user.toResUserDefaultDTO());
     }

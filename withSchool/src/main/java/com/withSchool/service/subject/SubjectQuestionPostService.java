@@ -78,7 +78,10 @@ public class SubjectQuestionPostService {
                 .map(answererId -> new ResUserDefaultDTO(
                         answererId.getUserId(),
                         answererId.getName(),
-                        answererId.getId()
+                        answererId.getId(),
+                        answererId.getPhoneNumber(),
+                        answererId.getEmail(),
+                        answererId.getSex()
                 ))
                 .orElse(null);
 

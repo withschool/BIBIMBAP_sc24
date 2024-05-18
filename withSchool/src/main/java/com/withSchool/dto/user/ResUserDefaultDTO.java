@@ -12,4 +12,7 @@ public class ResUserDefaultDTO {
     private Long userId;
     private String userName;
     private String name;
+    private String phoneNumber;
+    private String email;
+    private boolean sex;
 }
