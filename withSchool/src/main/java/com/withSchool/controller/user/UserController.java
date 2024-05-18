@@ -24,13 +24,13 @@ public class UserController {
     @Operation(summary = "유저의 ID를 가지고 유저 찾는 API")
     public ResponseEntity<ResUserDefaultDTO> findUserByUserName(@PathVariable("user-name") String userName) {
         User user = userService.findById(userName);
-        return ResponseEntity.ok().body(userService.userEntityToResUserDefaultDTO(user));
+        return ResponseEntity.ok().body(user.toResUserDefaultDTO());
     }
 
     @GetMapping("/user-id/{user-pk}")
     @Operation(summary = "유저의 PK를 가지고 유저 찾는 API")
     public ResponseEntity<ResUserDefaultDTO> findUserByUserId(@PathVariable("user-pk") Long userId) {
         User user = userService.findByUserId(userId);
-        return ResponseEntity.ok().body(userService.userEntityToResUserDefaultDTO(user));
+        return ResponseEntity.ok().body(user.toResUserDefaultDTO());
     }
 }

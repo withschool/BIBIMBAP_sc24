@@ -1,6 +1,6 @@
 package com.withSchool.service.mapping;
 
-import com.withSchool.dto.user.ResUserDefaultDTO;
+import com.withSchool.dto.mapping.ResStudentParentDefaultDTO;
 import com.withSchool.entity.mapping.StudentParent;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.mapping.StudentParentRepository;
@@ -26,20 +26,15 @@ public class StudentParentService {
         studentParentRepository.save(studentParent);
     }
 
-    public List<ResUserDefaultDTO> findChildrenByParent(){
+    public List<ResStudentParentDefaultDTO> findChildrenByParent(){
         User parent = userService.getCurrentUser();
         List<StudentParent> mapping = studentParentRepository.findStudentsByParent(parent);
-        List<User> children = mapping.stream()
-                .map(StudentParent::getStudent)
-                .toList();
+        List<ResStudentParentDefaultDTO> dtos = new ArrayList<>();
 
-        List<ResUserDefaultDTO> dtos = new ArrayList<>();
-
-        for (User u : children) {
-            dtos.add(userService.userEntityToResUserDefaultDTO(u));
+        for (StudentParent sp : mapping) {
+            dtos.add(sp.toResStudentParentDefaultDTO());
         }
 
         return dtos;
     }
-
 }
