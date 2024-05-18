@@ -12,6 +12,12 @@ const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'))
 
+//Admin
+const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
+
+
+
+
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
 const Forms = lazy(() => import('../pages/Components/Forms'));
@@ -82,6 +88,13 @@ const routes = [
     {
         path: '/parent/studentinfo',
         element: <StudentInfo />,
+    },
+
+    //Admin
+
+    {
+        path: '/admin',
+        element: <AdminMain />,
     },
 
     //Components
