@@ -1,5 +1,6 @@
 package com.withSchool.service.subject;
 
+import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.mapping.StudentSubject;
@@ -86,7 +87,7 @@ public class SubjectService {
         return findAllSugangByUser(child);
     }
 
-    public Subject saveSubject(String subjectName) {
+    public Subject saveSubject(ReqSubjectDefaultDTO subjectDTO) {
         User user = userService.getCurrentUser();
 
         Optional<SchoolInformation> schoolInformation = schoolInformationRepository.findById(
@@ -94,7 +95,10 @@ public class SubjectService {
 
         if (schoolInformation.isPresent()) {
             Subject subject = Subject.builder()
-                    .subjectName(subjectName)
+                    .subjectName(subjectDTO.getSubjectName())
+                    .grade(subjectDTO.getSubjectGrade())
+                    .year(subjectDTO.getSubjectYear())
+                    .semester(subjectDTO.getSubjectSemester())
                     .schoolInformation(schoolInformation.get())
                     .build();
 

@@ -1,6 +1,7 @@
 package com.withSchool.service.user;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.entity.classes.ClassInformation;
@@ -24,12 +25,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final SchoolInformationRepository schoolInformationRepository;
@@ -41,10 +44,31 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
+    }
+
+    public List<ResUserDefaultDTO> findAllBySchool_SchoolId() {
+        Long schoolId = getCurrentUserSchoolId();
+        List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
+
+        List<ResUserDefaultDTO> dtos = new ArrayList<>();
+        for (User u : res) {
+            dtos.add(userEntityToResUserDefaultDTO(u));
+        }
+
+        return dtos;
+    }
+
+    public ResUserDefaultDTO userEntityToResUserDefaultDTO(User user){
+        if(user == null) throw new RuntimeException("there is no correct user");
+
+        return ResUserDefaultDTO.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .userName(user.getUsername())
+                .build();
     }
 
     public User findByUserId(Long id) {
@@ -168,7 +192,7 @@ public class UserService {
         // 회원가입
         userRepository.save(response);
     }
-    @Transactional
+
     public void delete(UserDeleteRequestDTO dto){
         List<Long> userId = dto.getUserId();
         userId.stream().forEach(u->{
@@ -179,7 +203,6 @@ public class UserService {
     }
 
 
-    @Transactional
     public JwtToken signIn(String id, String password) {
         // 입력받은 사용자 정보를 바탕으로 authentication token을 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
@@ -194,7 +217,6 @@ public class UserService {
         return jwtToken;
     }
 
-    @Transactional
     public User findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode) {
         Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
         return user.orElse(null);
@@ -219,7 +241,6 @@ public class UserService {
         return schoolInformation.getSchoolId();
     }
 
-    @Transactional
     public User getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return this.findById(authentication.getName());
