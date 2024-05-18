@@ -11,7 +11,7 @@ export const teacherNotice = async (title: string, content: string): Promise<any
         title,
         content
       };
-      const response = await fetch(`${url}/admin/schools/notices`, {
+      const response = await fetch(`${url}/admin/schools/notices`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
