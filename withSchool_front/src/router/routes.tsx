@@ -10,6 +10,7 @@ const Error = lazy(() => import('../components/Error'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
+const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'))
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -77,6 +78,10 @@ const routes = [
     {
         path: '/student-home',
         element: <StudentHome />,
+    },
+    {
+        path: '/parent/studentinfo',
+        element: <StudentInfo />,
     },
 
     //Components
