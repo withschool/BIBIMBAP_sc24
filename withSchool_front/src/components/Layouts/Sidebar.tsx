@@ -345,7 +345,41 @@ const Sidebar = () => {
 
 
                             </div>}
-                            {accountTypes == "ROLE_ADMIN" && <div>admin</div>}
+                            {accountTypes == "ROLE_ADMIN" && <div>admin
+                                
+                            <li className="menu nav-item">
+                                    <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
+                                        <div className="flex items-center">
+                                            <IconMenuDashboard
+                                                className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Super Admin')}</span>
+                                        </div>
+
+
+                                        <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                            <IconCaretDown />
+                                        </div>
+                                    </button>
+
+                                    <AnimateHeight duration={300} height={currentMenu === 'dashboard' ? 'auto' : 0}>
+                                        <ul className="sub-menu text-gray-500">
+                                            <li>
+                                                <NavLink to="/admin">{t('학교 관리')}</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/analytics">{t('공지 작성하기')}</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/finance">{t('메뉴 3')}</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/crypto">{t('메뉴 4')}</NavLink>
+                                            </li>
+                                        </ul>
+                                    </AnimateHeight>
+                                </li>
+                                
+                                </div>}
                             {accountTypes == "ROLE_SUPER" && <div>
 
                                 <li className="menu nav-item">
