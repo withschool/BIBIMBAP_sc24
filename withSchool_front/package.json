@@ -1,6 +1,7 @@
 {
   "name": "withschool_front",
   "version": "0.1.0",
+  "proxy": "https://open.neis.go.kr",
   "private": true,
   "type": "module",
   "scripts": {
@@ -34,6 +35,7 @@
     "easymde": "^2.18.0",
     "formik": "^2.2.9",
     "highlight.js": "^11.6.0",
+    "http-proxy-middleware": "^3.0.0",
     "js-base64": "^3.7.7",
     "mantine-datatable": "^1.7.17",
     "nouislider-react": "^3.4.1",
