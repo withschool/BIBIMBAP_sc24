@@ -55,20 +55,10 @@ public class UserService {
 
         List<ResUserDefaultDTO> dtos = new ArrayList<>();
         for (User u : res) {
-            dtos.add(userEntityToResUserDefaultDTO(u));
+            dtos.add(u.toResUserDefaultDTO());
         }
 
         return dtos;
-    }
-
-    public ResUserDefaultDTO userEntityToResUserDefaultDTO(User user){
-        if(user == null) throw new RuntimeException("there is no correct user");
-
-        return ResUserDefaultDTO.builder()
-                .userId(user.getUserId())
-                .name(user.getName())
-                .userName(user.getUsername())
-                .build();
     }
 
     public User findByUserId(Long id) {

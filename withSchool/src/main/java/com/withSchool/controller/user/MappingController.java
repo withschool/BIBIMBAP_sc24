@@ -1,6 +1,6 @@
 package com.withSchool.controller.user;
 
-import com.withSchool.dto.user.ResUserDefaultDTO;
+import com.withSchool.dto.mapping.ResStudentParentDefaultDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentParentService;
 import com.withSchool.service.user.UserService;
@@ -53,7 +53,7 @@ public class MappingController {
 
     @GetMapping
     @Operation(summary = "학부모와 매핑된 학생을 찾는 API")
-    public ResponseEntity<List<ResUserDefaultDTO>> findChild() {
+    public ResponseEntity<List<ResStudentParentDefaultDTO>> findChild() {
         return ResponseEntity.ok().body(studentParentService.findChildrenByParent());
     }
 }
