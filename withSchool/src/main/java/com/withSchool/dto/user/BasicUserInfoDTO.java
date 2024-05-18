@@ -8,8 +8,11 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResUserDefaultDTO {
+public class BasicUserInfoDTO{
     private Long userId;
-    private String userName;
+    private String id;
     private String name;
+    private String phoneNumber;
+    private String email;
+    private boolean sex;
 }
