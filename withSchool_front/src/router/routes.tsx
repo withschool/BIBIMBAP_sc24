@@ -11,6 +11,7 @@ const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'))
+const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'))
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -82,6 +83,10 @@ const routes = [
     {
         path: '/parent/studentinfo',
         element: <StudentInfo />,
+    },
+    {
+        path: '/parent/schoolinfo',
+        element: <SchoolInfo />,
     },
 
     //Components
