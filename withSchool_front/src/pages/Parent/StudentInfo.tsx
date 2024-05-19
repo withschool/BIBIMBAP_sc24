@@ -29,6 +29,7 @@ const StudentInfo = () => {
                 setStudentList(data);
                 if (data.length > 0) {
                     setTargetStudent(data[0].user.userId);
+                    localStorage.setItem('TargetStudent', data[0].user.userId);
                 }
             } catch (error) {
                 console.error('Error fetching student list:', error);
@@ -42,6 +43,7 @@ const StudentInfo = () => {
             try {
                 if (targetStudent) {
                     const data = await getStudentInfoById(targetStudent);
+                    localStorage.setItem('TargetStudent', targetStudent);
                     setTargetStudentInfo(data);
                 }
             } catch (error) {
@@ -157,8 +159,9 @@ const StudentInfo = () => {
                                                     </div>
                                                 </form>
                                             </div>
-                                        )}
-                                    </div>
+                                            )}
+                                        </div>
+                                    
                                 </Tab.Panel>
                                 <Tab.Panel>
                                     <div>

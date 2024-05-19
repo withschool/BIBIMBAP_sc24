@@ -42,7 +42,6 @@ import Swal from 'sweetalert2';
 
 
 const StudentHome = () => {
-    const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('학생 메인'));
     });
