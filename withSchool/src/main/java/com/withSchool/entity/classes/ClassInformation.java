@@ -1,5 +1,6 @@
 package com.withSchool.entity.classes;
 
+import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -38,4 +39,14 @@ public class ClassInformation extends BaseEntity {
     @JoinColumn(name = "school_id")
     @Comment("반이 속하는 학교")
     private SchoolInformation schoolInformation;
+
+    public ClassDTO toClassDTO() {
+        return ClassDTO.builder()
+                .classId(this.getClassId())
+                .year(this.getYear())
+                .grade(this.getGrade())
+                .inClass(this.getInClass())
+                .schoolId(this.schoolInformation.getSchoolId())
+                .build();
+    }
 }
