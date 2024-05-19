@@ -10,8 +10,8 @@ import lombok.ToString;
 @Getter
 @ToString
 public class PreSignUpRequestDTO {
-    Long schoolId;
-    String userName;
-    String birthDate;
-    String userCode;
+    private Long schoolId;
+    private String userName;
+    private String birthDate;
+    private String userCode;
 }

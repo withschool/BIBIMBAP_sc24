@@ -1,5 +1,6 @@
 package com.withSchool.service.subject;
 
+import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.mapping.StudentSubject;
@@ -8,7 +9,7 @@ import com.withSchool.entity.user.User;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectRepository;
-import com.withSchool.service.mapping.StudentParentService;
+import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
-    private final StudentParentService studentParentService;
+    private final UserService userService;
 
     public List<SubjectInfoDTO> findAllSubjectByUserSchool(User user) {
         SchoolInformation schoolInformation = user.getSchoolInformation();
@@ -86,14 +87,18 @@ public class SubjectService {
         return findAllSugangByUser(child);
     }
 
-    public Subject saveSubject(String subjectName, User user) {
+    public Subject saveSubject(ReqSubjectDefaultDTO subjectDTO) {
+        User user = userService.getCurrentUser();
 
         Optional<SchoolInformation> schoolInformation = schoolInformationRepository.findById(
                 user.getSchoolInformation().getSchoolId());
 
         if (schoolInformation.isPresent()) {
             Subject subject = Subject.builder()
-                    .subjectName(subjectName)
+                    .subjectName(subjectDTO.getSubjectName())
+                    .grade(subjectDTO.getSubjectGrade())
+                    .year(subjectDTO.getSubjectYear())
+                    .semester(subjectDTO.getSubjectSemester())
                     .schoolInformation(schoolInformation.get())
                     .build();
 

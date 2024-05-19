@@ -12,9 +12,9 @@ import java.util.List;
 @Getter
 @ToString
 public class SchoolNoticeDTO {
-    String title;
-    String content;
-    User user;
-    List<MultipartFile> file;
-    SchoolInformation school;
+    private String title;
+    private String content;
+    private User user;
+    private List<MultipartFile> file;
+    private SchoolInformation school;
 }

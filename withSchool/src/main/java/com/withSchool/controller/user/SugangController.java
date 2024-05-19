@@ -38,8 +38,9 @@ public class SugangController {
     public ResponseEntity<List<StudentSubjectDTO>> findOnesSugang() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return null;
+        if (user == null) throw new RuntimeException("로그인을 해주세요.");
 
-        return ResponseEntity.ok().body(studentSubjectService.findOnesSugang(user));
+        return ResponseEntity.ok()
+                .body(studentSubjectService.findOnesSugang(user));
     }
 }

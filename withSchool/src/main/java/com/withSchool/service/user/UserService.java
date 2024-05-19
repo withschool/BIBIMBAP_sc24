@@ -1,8 +1,10 @@
 package com.withSchool.service.user;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
+import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
@@ -23,12 +25,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final SchoolInformationRepository schoolInformationRepository;
@@ -40,10 +44,21 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Transactional
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
+    }
+
+    public List<ResUserDefaultDTO> findAllBySchool_SchoolId() {
+        Long schoolId = getCurrentUserSchoolId();
+        List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
+
+        List<ResUserDefaultDTO> dtos = new ArrayList<>();
+        for (User u : res) {
+            dtos.add(u.toResUserDefaultDTO());
+        }
+
+        return dtos;
     }
 
     public User findByUserId(Long id) {
@@ -71,8 +86,8 @@ public class UserService {
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();
             User admin = User.builder()
-                    .id(schoolInformation.getSdSchulCode() + " admin")
-                    .password("1234")  // 초기 비밀번호 설정이여서 암호화 필요없을듯
+                    .id(schoolInformation.getSdSchulCode() + "_admin")
+                    .password(passwordEncoder.encode("1234"))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
                     .schoolInformation(schoolInformation)
@@ -81,30 +96,93 @@ public class UserService {
         }
     }
 
+    public boolean isDuplicated(String id){
+        return userRepository.existsById(id);
+    }
+
+    private boolean isParent(int accountType){
+        return accountType == 1;
+    }
+
     public void register(SignUpDTO signUpDTO) {
+        log.info("회원가입 요청");
+
+        String id = signUpDTO.getId();
+        String password = passwordEncoder.encode(signUpDTO.getPassword());
+        String name = signUpDTO.getName();
+        String birthDate = signUpDTO.getBirthDate();
+        String email = signUpDTO.getEmail();
+        String phoneNumber = signUpDTO.getPhoneNumber().isEmpty() ? null : signUpDTO.getPhoneNumber();
+        Boolean sex = signUpDTO.getSex();
+        String address = signUpDTO.getAddress();
+
+
         // 중복된 아이디 체크
-        if (userRepository.existsById(signUpDTO.getId())) {
+        if (userRepository.existsById(id)) {
             throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
         }
+        else if(!signUpDTO.getPhoneNumber().isEmpty() && userRepository.existsByPhoneNumber(phoneNumber)){
+            throw new RuntimeException("해당 전화번호로 이미 회원가입이 되었습니다.");
+        }
 
-        // DTO에서 엔티티로 변환
-        User user = User.builder()
-                .id(signUpDTO.getId())
-                .email(signUpDTO.getEmail())
-                .name(signUpDTO.getName())
-                .sex(signUpDTO.getSex())
-                .phoneNumber(signUpDTO.getPhoneNumber())
-                .address(signUpDTO.getAddress())
-                .birthDate(signUpDTO.getBirthDate())
-                .accountType(signUpDTO.getAccountType())
-                .userCode(signUpDTO.getUserCode())
-                .password(passwordEncoder.encode(signUpDTO.getPassword()))
+        int accountType = signUpDTO.getAccountType();
+        String userCode = signUpDTO.getUserCode();
+
+        User response;
+
+        if(isParent(accountType)){
+            response = User.builder()
+                .id(id)
+                .email(email)
+                .name(name)
+                .sex(sex)
+                .phoneNumber(phoneNumber)
+                .address(address)
+                .birthDate(birthDate)
+                .accountType(accountType)
+                .password(password)
                 .build();
+        }
+        else{
+            Optional<User> optionalUser = userRepository.findByUserCode(signUpDTO.getUserCode());
+            if(optionalUser.isEmpty()){
+                throw new RuntimeException("해당 유저코드를 가진 유저가 없습니다.");
+            }
+
+            User user = optionalUser.get();
+            if(user.getId() != null){
+                throw new RuntimeException("이미 회원가입이 된 계정입니다.");
+            } else if (!name.equals(user.getName())) {
+                throw new RuntimeException("잘못된 이름이 입력되었습니다.");
+            }
+
+            SchoolInformation schoolInformation = user.getSchoolInformation();
+            ClassInformation classInformation = user.getClassInformation();
+
+            Long userId = user.getUserId();
+            accountType = user.getAccountType();
+
+            response = User.builder()
+                    .userId(userId)
+                    .id(id)
+                    .email(email)
+                    .name(name)
+                    .sex(sex)
+                    .phoneNumber(phoneNumber)
+                    .address(address)
+                    .birthDate(birthDate)
+                    .accountType(accountType)
+                    .userCode(userCode)
+                    .password(password)
+                    .schoolInformation(schoolInformation)
+                    .classInformation(classInformation)
+                    .build();
+        }
 
         // 회원가입
-        userRepository.save(user);
+        userRepository.save(response);
     }
-    @Transactional
+
     public void delete(UserDeleteRequestDTO dto){
         List<Long> userId = dto.getUserId();
         userId.stream().forEach(u->{
@@ -115,7 +193,6 @@ public class UserService {
     }
 
 
-    @Transactional
     public JwtToken signIn(String id, String password) {
         // 입력받은 사용자 정보를 바탕으로 authentication token을 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
@@ -130,7 +207,6 @@ public class UserService {
         return jwtToken;
     }
 
-    @Transactional
     public User findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode) {
         Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
         return user.orElse(null);
@@ -155,4 +231,8 @@ public class UserService {
         return schoolInformation.getSchoolId();
     }
 
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return this.findById(authentication.getName());
+    }
 }

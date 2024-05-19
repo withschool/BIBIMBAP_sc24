@@ -3,6 +3,8 @@ package com.withSchool.controller.admin;
 import com.withSchool.dto.basic.ResNoticeDTO;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.dto.basic.ReqNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
@@ -50,16 +52,15 @@ public class AdminController {
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
-    public ResponseEntity<String> createSubject(@RequestParam String subjectName) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findById(authentication.getName());
-        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("해당하는 유저가 없습니다.");
-
+    public ResponseEntity<String> createSubject(@RequestParam ReqSubjectDefaultDTO subjectDTO) {
         try {
-            Subject subject = subjectService.saveSubject(subjectName, user);
-            return ResponseEntity.ok().body(subject.getSubjectName() + " 과목이 생성되었습니다.");
+            Subject subject = subjectService.saveSubject(subjectDTO);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(subject.getSubjectName() + " 과목이 생성되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
 
     }
@@ -69,21 +70,26 @@ public class AdminController {
     public ResponseEntity<String> deleteOneSubject(@PathVariable Long subjectId) {
         try {
             subjectService.deleteById(subjectId);
-            return ResponseEntity.ok().body("해당 과목이 삭제되었습니다.");
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body("해당 과목이 삭제되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
         }
     }
 
     @PostMapping("/classes")
     @Operation(summary = "어드민의 반 생성", description = "어드민은 반을 생성할 수 있다.")
     public ResponseEntity<String> addClass(@RequestBody ClassDTO classDTO) {
-
         try {
             classService.saveClassInformation(classDTO);
-            return ResponseEntity.ok().body("해당 반이 생성되었습니다.");
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body("해당 반이 생성되었습니다.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
     }
 
@@ -91,28 +97,34 @@ public class AdminController {
     @Operation(summary = "어드민의 반 조회(학년, 반)", description = "어드민은 학년과 반을 옵션으로 반을 검색할 수 있다.")
     public ResponseEntity<List<ClassInformation>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
             List<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
-            return ResponseEntity.ok().body(searchedClass);
+            return ResponseEntity.ok()
+                    .body(searchedClass);
     }
 
     @GetMapping("/classes/{classId}")
     @Operation(summary = "어드민의 반 상세 정보 조회", description = "어드민은 반 PK를 바탕으로 반 상세 정보를 확인할 수 있다.")
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
-        return ResponseEntity.ok().body(classInfo);
+        return ResponseEntity.ok()
+                .body(classInfo);
     }
 
     @PatchMapping("/classes/{classId}")
     @Operation(summary = "어드민의 반 정보 수정", description = "어드민은 PK를 바탕으로 반 정보를 수정할 수 있다.")
     public ResponseEntity<String> updateClassInformation(@PathVariable Long classId, @RequestBody ClassDTO updatedClassDTO) {
         classService.updateClassInformation(classId, updatedClassDTO);
-        return ResponseEntity.ok().body("해당 반이 수정되었습니다.");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body("해당 반이 수정되었습니다.");
     }
 
     @DeleteMapping("/classes/{classId}")
     @Operation(summary = "어드민의 반 삭제", description = "어드민은 반 PK를 바탕으로 반을 삭제할 수 있다.")
     public ResponseEntity<String> deleteClassInformation(@PathVariable Long classId) {
         classService.deleteClassInformation(classId);
-        return ResponseEntity.ok().body("해당 반이 삭제되었습니다.");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body("해당 반이 삭제되었습니다.");
     }
 
     @PostMapping("/users-file")
@@ -120,14 +132,16 @@ public class AdminController {
     public ResponseEntity<String> handleFileUpload(@RequestBody MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
-        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT).body("no user.");
+        if (user == null) return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("no user.");
 
         CsvRequestDTO dto = CsvRequestDTO.builder()
                 .id(user.getId())
                 .file(file)
                 .build();
         csvService.registerUser(dto);
-        return ResponseEntity.ok().body("file upload");
+        return ResponseEntity.ok()
+                .body("file upload");
     }
 
     // 유저 리스트를 받아서 다 삭제
@@ -135,7 +149,9 @@ public class AdminController {
     @Operation(summary = "어드민의 복수 유저 정보 삭제", description = "유저의 PK 리스트를 받아서 유저 정보를 삭제할 수 있다.")
     public ResponseEntity<String> deleteUsers(@RequestBody UserDeleteRequestDTO dto){
         userService.delete(dto);
-        return ResponseEntity.ok().body("삭제 완료");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body("삭제 완료");
     }
 
     @PostMapping("/schools/notices")
@@ -162,7 +178,9 @@ public class AdminController {
         response.put("content", schoolNotice.getContent());
 
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(response);
     }
 
     @DeleteMapping("/schools/notices/{notice-id}")
@@ -171,9 +189,15 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
 
         schoolNoticeService.deleteById(noticeId);
-        response.put("message", "success delete");
+        response.put("message", "삭제 성공입니다.");
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok()
+                .body(response);
+    }
+    @GetMapping("/users")
+    @Operation(summary = "로그인한 유저가 속한 학교의 모든 유저 리스트업")
+    public ResponseEntity<List<ResUserDefaultDTO>> showAllUsersBySchool() {
+        return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
 
 }

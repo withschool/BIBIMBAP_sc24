@@ -41,7 +41,8 @@ public class ClassController {
     public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
 
-        return ResponseEntity.ok().body(classInfo);
+        return ResponseEntity.ok()
+                .body(classInfo);
     }
 
     @PostMapping("/notices")

@@ -7,9 +7,13 @@ import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
 import com.withSchool.service.user.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,13 @@ public class feat_16 {
 
     @Autowired
     private SchoolNoticeService schoolNoticeService;
+
+    @BeforeEach
+    public void init(){
+        User user = userService.findById("id3");
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+    }
 
     // 어드민의 공지 생성 로직
     // 1. 쿠키로 전달받은 access token(atk)에서 유저의 pk 가져오기
@@ -71,9 +82,12 @@ public class feat_16 {
     // 2. 어드민이 속한 학교의 키를 기반으로 검색
     @Test
     public void testAdminReadAllNotices(){
-        User admin = userService.findById("id3");
 
+<<<<<<< HEAD
         List<ResNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
+=======
+        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll();
+>>>>>>> a501b6c6ad700d1c4fa5b854317cbaed1e12f56b
 
         for (ResNoticeDTO s : schoolNoticeDTOS) {
             System.out.println(s);

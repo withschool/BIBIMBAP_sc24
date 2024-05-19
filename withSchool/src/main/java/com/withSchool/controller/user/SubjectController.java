@@ -1,6 +1,6 @@
 package com.withSchool.controller.user;
 
-import com.withSchool.dto.user.StudentListDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
@@ -9,12 +9,15 @@ import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +34,7 @@ public class SubjectController {
 
     @GetMapping
     @Operation(summary = "유저의 과목 리스트 조회", description = "학생과 교사는 자신이 속해있는 과목의 리스트를 조회한다. 어드민은 학교의 모든 과목의 리스트를 조회한다. 부모는 자신이 선택한 자식이 수강하는 과목의 리스트를 조회한다.")
-    public ResponseEntity<List<SubjectInfoDTO>> findEverySubject(@RequestParam("childId") Long childId) {
+    public ResponseEntity<List<SubjectInfoDTO>> findEverySubject(@RequestParam(value = "childId", required = false) Long childId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.findById(authentication.getName());
         if (user == null) return null;
@@ -41,11 +44,13 @@ public class SubjectController {
         } else if (user.getAccountType() == 3 || user.getAccountType() == 4) {
             return ResponseEntity.ok().body(subjectService.findAllSubjectByUserSchool(user));
         } else if (user.getAccountType() == 1) {
-            if(childId == null) return null;
+            if(childId == null) throw new RuntimeException("학생이 선택되지 않았습니다.");
 
             User child = userService.findByUserId(childId);
-            return ResponseEntity.ok().body(subjectService.findAllSugangByUser(child));
-        } else return null;
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(subjectService.findAllSugangByUser(child));
+        } else throw new RuntimeException("적절한 유저가 아닙니다.");
     }
 
     // 과목 기본 정보 + 수강 인원을 리턴
@@ -57,24 +62,26 @@ public class SubjectController {
         try {
             SubjectInfoDTO subjectInfoDTO = subjectService.findById(subjectId);
             List<User> users = studentSubjectService.findSugangStudent(subjectId);
-            List<StudentListDTO> studentListDTOS = new ArrayList<>();
+            List<ResUserDefaultDTO> userDefaultDTOS = new ArrayList<>();
             for (User u : users) {
-                StudentListDTO studentListDTO = StudentListDTO.builder()
+                ResUserDefaultDTO studentListDTO = ResUserDefaultDTO.builder()
                         .userId(u.getUserId())
                         .name(u.getName())
-                        .id(u.getId())
+                        .userName(u.getId())
                         .build();
 
-                studentListDTOS.add(studentListDTO);
+                userDefaultDTOS.add(studentListDTO);
             }
             response.put("subject", subjectInfoDTO);
-            response.put("students", studentListDTOS);
+            response.put("students", userDefaultDTOS);
 
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok()
+                    .body(response);
         } catch (Exception e) {
             response.put("errorMessage", e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(response);
         }
     }
     @GetMapping("/options")
@@ -89,9 +96,11 @@ public class SubjectController {
         if (user == null) return ResponseEntity.notFound().build();
 
         if (semester == null) {
-            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
+            return ResponseEntity.ok()
+                    .body(subjectService.findSubjectsByGradeAndYear(grade, year, user));
         } else {
-            return ResponseEntity.ok().body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
+            return ResponseEntity.ok()
+                    .body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
         }
     }
 
