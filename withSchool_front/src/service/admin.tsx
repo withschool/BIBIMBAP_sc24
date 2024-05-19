@@ -84,8 +84,14 @@ export const getAdminClasses = async (grade: number): Promise<any> => {
 
 export const createClass = async (grade: number, inClass: number): Promise<any> => {
     try {
+
         const token = localStorage.getItem('token');
-        const schoolId = localStorage.getItem('schoolId');
+        const schoolId = parseInt(localStorage.getItem('schoolId')?? '0');
+
+        console.log(grade)
+        console.log(inClass)
+        console.log(schoolId)
+
         const response = await fetch(`${url}/admin/classes`, {
             method: 'POST',
             headers: {
@@ -93,17 +99,15 @@ export const createClass = async (grade: number, inClass: number): Promise<any> 
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                classId: 0,
                 year: 2024,
-                grade,
-                inClass,
-                schoolId: Number(schoolId)
+                grade : grade,
+                inClass : inClass,
+                schoolId : schoolId
             })
         });
 
         if (response.ok) {
-            const data = await response.json();
-            return data;
+            return response;
         } else {
             const errorMessage = await response.text();
             console.error('반 생성 실패:', errorMessage);
@@ -111,6 +115,29 @@ export const createClass = async (grade: number, inClass: number): Promise<any> 
         }
     } catch (error) {
         console.error('반 생성 API 실패', error);
+        throw error;
+    }
+};
+
+export const deleteClass = async (classId: number): Promise<any> => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${url}/admin/classes/${classId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            return response;
+        } else {
+            const errorMessage = await response.text();
+            console.error('반 삭제 실패:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('반 삭제 API 실패', error);
         throw error;
     }
 };

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState, Fragment} from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import AnimateHeight from 'react-animate-height';
 import CodeHighlight from '../../components/Highlight';
 import { useDispatch } from 'react-redux';
@@ -15,7 +15,7 @@ import IconLayout from '../../components/Icon/IconLayout';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { downloadExcel } from 'react-export-table-to-excel';
-import { getSchoolUsers, uploadUserFile, getAdminClasses, createClass,  } from '../../service/admin';
+import { getSchoolUsers, uploadUserFile, getAdminClasses, createClass, deleteClass, } from '../../service/admin';
 import IconFile from '../../components/Icon/IconFile';
 import IconPrinter from '../../components/Icon/IconPrinter';
 
@@ -302,9 +302,31 @@ const ManageSchool = () => {
             fetchClassData(grade);
             setModal20(false); // Close the modal
         } catch (error) {
-            console.error('Error creating class:', error);
+            console.error('반 못만들었다.:', error);
         }
     };
+
+
+    //반 삭제
+
+    const handleDeleteClass = async (classId: number, grade: number) => {
+        if (window.confirm('정말로 이 반을 삭제하시겠습니까?')) {
+            try {
+                await deleteClass(classId);
+                console.log('Class deleted successfully');
+                fetchClassData(grade); // 삭제 후 반 목록 갱신
+            } catch (error) {
+                console.error('반 삭제 실패:', error);
+            }
+        }
+    };
+
+
+    //과목 관련
+
+    const [modal21, setModal21] = useState(false);
+
+
 
 
 
@@ -381,73 +403,73 @@ const ManageSchool = () => {
                 </div>
 
                 <div className="grid lg:grid-cols-2 grid-cols-1 gap-6">
-                <div className="panel" id="basic">
+                    <div className="panel" id="basic">
                         <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">학년 별 반 목록</h5>
 
                             <div>
-                                    <button type="button" onClick={() => setModal20(true)} className="btn btn-primary">
-                                        반 추가하기
-                                    </button>
-                                    <Transition appear show={modal20} as={Fragment}>
-                                        <Dialog as="div" open={modal20} onClose={() => setModal20(false)}>
-                                            <Transition.Child
-                                                as={Fragment}
-                                                enter="ease-out duration-300"
-                                                enterFrom="opacity-0"
-                                                enterTo="opacity-100"
-                                                leave="ease-in duration-200"
-                                                leaveFrom="opacity-100"
-                                                leaveTo="opacity-0"
-                                            >
-                                                <div className="fixed inset-0" />
-                                            </Transition.Child>
-                                            <div id="login_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
-                                                <div className="flex min-h-screen items-start justify-center px-4">
-                                                    <Transition.Child
-                                                        as={Fragment}
-                                                        enter="ease-out duration-300"
-                                                        enterFrom="opacity-0 scale-95"
-                                                        enterTo="opacity-100 scale-100"
-                                                        leave="ease-in duration-200"
-                                                        leaveFrom="opacity-100 scale-100"
-                                                        leaveTo="opacity-0 scale-95"
-                                                    >
-                                                        <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
-                                                            <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
-                                                                <h5>반 추가하기</h5>
-                                                                <button type="button" onClick={() => setModal20(false)} className="text-white-dark hover:text-dark">
-                                                                    <IconX className="w-5 h-5" />
-                                                                </button>
-                                                            </div>
+                                <button type="button" onClick={() => setModal20(true)} className="btn btn-primary">
+                                    반 추가하기
+                                </button>
+                                <Transition appear show={modal20} as={Fragment}>
+                                    <Dialog as="div" open={modal20} onClose={() => setModal20(false)}>
+                                        <Transition.Child
+                                            as={Fragment}
+                                            enter="ease-out duration-300"
+                                            enterFrom="opacity-0"
+                                            enterTo="opacity-100"
+                                            leave="ease-in duration-200"
+                                            leaveFrom="opacity-100"
+                                            leaveTo="opacity-0"
+                                        >
+                                            <div className="fixed inset-0" />
+                                        </Transition.Child>
+                                        <div id="login_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                            <div className="flex min-h-screen items-start justify-center px-4">
+                                                <Transition.Child
+                                                    as={Fragment}
+                                                    enter="ease-out duration-300"
+                                                    enterFrom="opacity-0 scale-95"
+                                                    enterTo="opacity-100 scale-100"
+                                                    leave="ease-in duration-200"
+                                                    leaveFrom="opacity-100 scale-100"
+                                                    leaveTo="opacity-0 scale-95"
+                                                >
+                                                    <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
+                                                        <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
+                                                            <h5>반 추가하기</h5>
+                                                            <button type="button" onClick={() => setModal20(false)} className="text-white-dark hover:text-dark">
+                                                                <IconX className="w-5 h-5" />
+                                                            </button>
+                                                        </div>
 
-                                                            <div className="p-5">
-                                                                <form>
-                                                                    <div className="relative mb-4">
-                                                                        <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
-                                                                            <IconUser className="w-5 h-5" />
-                                                                        </span>
-                                                                        <input type="text" placeholder="대상 학년" className="form-input ltr:pl-10 rtl:pr-10" id="targetGrade" />
-                                                                    </div>
-                                                                    <div className="relative mb-4">
-                                                                        <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
-                                                                            <IconLock className="w-5 h-5" />
-                                                                        </span>
-                                                                        <input type="text" placeholder="대상 반" className="form-input ltr:pl-10 rtl:pr-10" id="targetClass" />
-                                                                    </div>
-                                                                    <button type="button" className="btn btn-primary w-full" onClick={handleCreateClass}>
-                                                                        반 만들기
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-                                                     
-                                                        </Dialog.Panel>
-                                                    </Transition.Child>
-                                                </div>
+                                                        <div className="p-5">
+                                                            <form>
+                                                                <div className="relative mb-4">
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconUser className="w-5 h-5" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="대상 학년" className="form-input ltr:pl-10 rtl:pr-10" id="targetGrade" />
+                                                                </div>
+                                                                <div className="relative mb-4">
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconLock className="w-5 h-5" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="대상 반" className="form-input ltr:pl-10 rtl:pr-10" id="targetClass" />
+                                                                </div>
+                                                                <button type="button" className="btn btn-primary w-full" onClick={handleCreateClass}>
+                                                                    반 만들기
+                                                                </button>
+                                                            </form>
+                                                        </div>
+
+                                                    </Dialog.Panel>
+                                                </Transition.Child>
                                             </div>
-                                        </Dialog>
-                                    </Transition>
-                                </div>
+                                        </div>
+                                    </Dialog>
+                                </Transition>
+                            </div>
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
@@ -467,11 +489,22 @@ const ManageSchool = () => {
                                             <AnimateHeight duration={300} height={active === grade.toString() ? 'auto' : 0}>
                                                 <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
                                                     <ul className="space-y-1">
-                                                        {classData[grade]?.map((classItem) => (
-                                                            <li key={classItem.classId}>
-                                                                <button type="button">{classItem.inClass}반</button>
-                                                            </li>
-                                                        ))}
+                                                        {classData[grade]?.length > 0 ? (
+                                                            classData[grade].sort((a, b) => a.inClass - b.inClass).map((classItem) => (
+                                                                <li key={classItem.classId} className="flex justify-between items-center p-2 border-b border-gray-200">
+                                                                    <span className="text-sm">{classItem.inClass}반</span>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-sm btn-outline-danger"
+                                                                        onClick={() => handleDeleteClass(classItem.classId, grade)} // 삭제 버튼 클릭 시 호출
+                                                                    >
+                                                                        삭제 하기
+                                                                    </button>
+                                                                </li>
+                                                            ))
+                                                        ) : (
+                                                            <li>반 정보가 없습니다.</li>
+                                                        )}
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
@@ -481,105 +514,119 @@ const ManageSchool = () => {
                             </div>
                         </div>
 
-                </div>
+                    </div>
+
+
                     <div className="panel" id="basic">
                         <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">학년 별 과목 목록</h5>
 
+                            
+                            <div>
+                                <button type="button" onClick={() => setModal21(true)} className="btn btn-primary">
+                                    과목 추가하기
+                                </button>
+                                <Transition appear show={modal21} as={Fragment}>
+                                    <Dialog as="div" open={modal21} onClose={() => setModal21(false)}>
+                                        <Transition.Child
+                                            as={Fragment}
+                                            enter="ease-out duration-300"
+                                            enterFrom="opacity-0"
+                                            enterTo="opacity-100"
+                                            leave="ease-in duration-200"
+                                            leaveFrom="opacity-100"
+                                            leaveTo="opacity-0"
+                                        >
+                                            <div className="fixed inset-0" />
+                                        </Transition.Child>
+                                        <div id="login_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                            <div className="flex min-h-screen items-start justify-center px-4">
+                                                <Transition.Child
+                                                    as={Fragment}
+                                                    enter="ease-out duration-300"
+                                                    enterFrom="opacity-0 scale-95"
+                                                    enterTo="opacity-100 scale-100"
+                                                    leave="ease-in duration-200"
+                                                    leaveFrom="opacity-100 scale-100"
+                                                    leaveTo="opacity-0 scale-95"
+                                                >
+                                                    <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
+                                                        <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
+                                                            <h5>반 추가하기</h5>
+                                                            <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
+                                                                <IconX className="w-5 h-5" />
+                                                            </button>
+                                                        </div>
+
+                                                        <div className="p-5">
+                                                            <form>
+                                                                <div className="relative mb-4">
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconUser className="w-5 h-5" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="대상 학년" className="form-input ltr:pl-10 rtl:pr-10" id="targetGrade" />
+                                                                </div>
+                                                                <div className="relative mb-4">
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconLock className="w-5 h-5" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="대상 반" className="form-input ltr:pl-10 rtl:pr-10" id="targetClass" />
+                                                                </div>
+                                                                <button type="button" className="btn btn-primary w-full" onClick={handleCreateClass}>
+                                                                    반 만들기
+                                                                </button>
+                                                            </form>
+                                                        </div>
+
+                                                    </Dialog.Panel>
+                                                </Transition.Child>
+                                            </div>
+                                        </div>
+                                    </Dialog>
+                                </Transition>
+                            </div>
+
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
-                                <div className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active2 === '1' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara2('1')}
-                                    >
-                                        1학년 과목 목록
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active2 === '1' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
+                                {[1, 2, 3].map((grade) => (
+                                    <div key={grade} className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
+                                        <button
+                                            type="button"
+                                            className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === grade.toString() ? '!text-primary' : ''}`}
+                                            onClick={() => togglePara(grade.toString())}
+                                        >
+                                            {grade}학년 반 목록
+                                            <div className={`ltr:ml-auto rtl:mr-auto ${active === grade.toString() ? 'rotate-180' : ''}`}>
+                                                <IconCaretDown />
+                                            </div>
+                                        </button>
                                         <div>
-                                            <AnimateHeight duration={300} height={active2 === '1' ? 'auto' : 0}>
+                                            <AnimateHeight duration={300} height={active === grade.toString() ? 'auto' : 0}>
                                                 <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
                                                     <ul className="space-y-1">
-                                                        <li>
-                                                            <button type="button">국어</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button">영어</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button">수학</button>
-                                                        </li>
-                                                    
+                                                        {classData[grade]?.length > 0 ? (
+                                                            classData[grade].sort((a, b) => a.inClass - b.inClass).map((classItem) => (
+                                                                <li key={classItem.classId} className="flex justify-between items-center p-2 border-b border-gray-200">
+                                                                    <span className="text-sm">{classItem.inClass}반</span>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-sm btn-outline-danger"
+                                                                        onClick={() => handleDeleteClass(classItem.classId, grade)} // 삭제 버튼 클릭 시 호출
+                                                                    >
+                                                                        삭제 하기
+                                                                    </button>
+                                                                </li>
+                                                            ))
+                                                        ) : (
+                                                            <li>반 정보가 없습니다.</li>
+                                                        )}
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="border border-[#d3d3d3] dark:border-[#1b2e4b] rounded">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active2 === '2' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara2('2')}
-                                    >
-                                        2학년 과목 목록
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active2 === '2' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active2 === '2' ? 'auto' : 0}>
-                                            <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-                                                <ul className="space-y-1">
-                                                <li>
-                                                            <button type="button">국어</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button">영어</button>
-                                                        </li>
-                                                 
-                                                </ul>
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
-                                <div className="border border-[#d3d3d3] dark:border-[#1b2e4b] rounded">
-                                    <button
-                                        type="button"
-                                        className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active2 === '3' ? '!text-primary' : ''}`}
-                                        onClick={() => togglePara2('3')}
-                                    >
-                                        3학년 과목 목록
-                                        <div className={`ltr:ml-auto rtl:mr-auto ${active2 === '3' ? 'rotate-180' : ''}`}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-                                    <div>
-                                        <AnimateHeight duration={300} height={active2 === '3' ? 'auto' : 0}>
-                                            <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
-                                                <ul className="space-y-1">
-                                                <li>
-                                                            <button type="button">국어</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button">영어</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button">수학</button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button">과학</button>
-                                                        </li>
-                                                </ul>
-                                            </div>
-                                        </AnimateHeight>
-                                    </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
 
