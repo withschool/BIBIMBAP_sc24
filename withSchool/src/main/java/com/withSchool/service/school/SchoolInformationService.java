@@ -33,8 +33,10 @@ public class SchoolInformationService {
         )).collect(Collectors.toList());
     }
 
-    public Optional<SchoolInformation> findById(Long id) {
-        return schoolInformationRepository.findById(id);
+    public SchoolInformationDTO findById(Long id) {
+        SchoolInformation schoolInformation = schoolInformationRepository.findById(id).orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+        return entityToDTO(schoolInformation);
+
     }
 
     public boolean isDuplicateSchool(String AtptOfcdcScCode, String SdSchulCode) {
@@ -76,6 +78,36 @@ public class SchoolInformationService {
                 .fondYmd(dto.getFOND_YMD())
                 .foasMemrd(dto.getFOAS_MEMRD())
                 .loadDtm(dto.getLOAD_DTM())
+                .build();
+    }
+
+    public SchoolInformationDTO entityToDTO(SchoolInformation entity) {
+        return SchoolInformationDTO.builder()
+                .ATPT_OFCDC_SC_CODE(entity.getAtptOfcdcScCode())
+                .ATPT_OFCDC_SC_NM(entity.getAtptOfcdcScNm())
+                .SD_SCHUL_CODE(entity.getSdSchulCode())
+                .SCHUL_NM(entity.getSchulNm())
+                .ENG_SCHUL_NM(entity.getEngSchulNm())
+                .SCHUL_KND_SC_NM(entity.getSchulKndScNm())
+                .LCTN_SC_NM(entity.getLctnScNm())
+                .JU_ORG_NM(entity.getJuOrgNm())
+                .FOND_SC_NM(entity.getFondScNm())
+                .ORG_RDNZC(entity.getOrgRdnzc())
+                .ORG_RDNMA(entity.getOrgRdnma())
+                .ORG_RDNDA(entity.getOrgRdnda())
+                .ORG_TELNO(entity.getOrgTelno())
+                .HMPG_ADRES(entity.getHmpgAdres())
+                .COEDU_SC_NM(entity.getCoeduScNm())
+                .ORG_FAXNO(entity.getOrgFaxno())
+                .HS_SC_NM(entity.getHsScNm())
+                .INDST_SPECL_CCCCL_EXST_YN(entity.getIndstSpeclCccclExstYn())
+                .HS_GNRL_BUSNS_SC_NM(entity.getHsGnrlBusnsScNm())
+                .SPCLY_PURPS_HS_ORD_NM(entity.getSpclyPurpsHsOrdNm())
+                .ENE_BFE_SEHF_SC_NM(entity.getEneBfeSehfScNm())
+                .DGHT_SC_NM(entity.getDghtScNm())
+                .FOND_YMD(entity.getFondYmd())
+                .FOAS_MEMRD(entity.getFoasMemrd())
+                .LOAD_DTM(entity.getLoadDtm())
                 .build();
     }
 
