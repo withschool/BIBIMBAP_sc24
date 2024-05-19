@@ -59,9 +59,9 @@ export const getSchoolListFromNeis = async (search: string): Promise<any> => {
     }
 }
 
-export const getSchoolNotice = async (): Promise<any> => {
+export const getSchoolNotice = async (targetStudent: string | null): Promise<any> => {
     try {
-        const response = await fetch(`${url}/schools/notices`, {
+        const response = await fetch(`${url}/schools/notices?childId=${targetStudent}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
