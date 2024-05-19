@@ -72,7 +72,8 @@ public class SchoolNoticeServiceTest {
         System.out.println(schoolNoticeToClientDTO);
 
         // when find By School
-        List<ResSchoolNoticeDTO> schoolNoticeToClientDTOS = schoolNoticeService.findAll();
+        Long childId = null;
+        List<ResSchoolNoticeDTO> schoolNoticeToClientDTOS = schoolNoticeService.findAll(childId);
 
         // then
         Assertions.assertEquals(17, schoolNoticeToClientDTOS.size());

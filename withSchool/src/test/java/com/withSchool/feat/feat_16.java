@@ -82,8 +82,9 @@ public class feat_16 {
     // 2. 어드민이 속한 학교의 키를 기반으로 검색
     @Test
     public void testAdminReadAllNotices(){
+        Long childId = null;
 
-        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll();
+        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(childId);
 
         for (ResSchoolNoticeDTO s : schoolNoticeDTOS) {
             System.out.println(s);
