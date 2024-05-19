@@ -23,19 +23,22 @@ export const getSchoolList = async (): Promise<any> => {
     }
 }
 
+//215a0c0d1fd74b64946efdc0ef79bc04
 
 export const getSchoolListFromNeis = async (search: string): Promise<any> => {
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const apiUrl = `https://open.neis.go.kr/hub/schoolInfo?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&pIndex=1&pSize=100&SCHUL_NM=${search}`;
+
     try {
-        const response = await fetch(`/hub/schoolInfo?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&SCHUL_NM=${search}`, {
+        const response = await fetch(proxyUrl + apiUrl, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         });
-        const contentType = response.headers.get('content-type');
-        if (response.ok && contentType && contentType.includes('application/json')) {
+
+        if (response.ok) {
             const data = await response.json();
-            console.log('API 응답 데이터:', data);
             if (data.schoolInfo && data.schoolInfo[1] && data.schoolInfo[1].row) {
                 return data.schoolInfo[1].row.map((item: any) => ({
                     schoolName: item.SCHUL_NM,
@@ -101,6 +104,31 @@ export const getSchoolNoticeDetail = async (noticeId: number): Promise<any> => {
         }
     } catch (error) {
         console.error('Error fetching school notice:', error);
+        throw error;
+    }
+}
+
+export const registerSchool = async (schoolData: any): Promise<any> => {
+    console.log(schoolData);
+    try {
+        const response = await fetch(`${url}/super/schools`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(schoolData)
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to register school:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error registering school:', error);
         throw error;
     }
 }
