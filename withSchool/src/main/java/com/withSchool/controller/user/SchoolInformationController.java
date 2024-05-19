@@ -22,8 +22,8 @@ public class SchoolInformationController {
     private final UserService userService;
 
     @GetMapping("/info")
-    public ResponseEntity<SchoolInformationDTO> getSchoolInformation() {
-        SchoolInformation schoolInformation = userService.getCurrentUserSchoolInformation();
+    public ResponseEntity<SchoolInformationDTO> getSchoolInformation(@RequestParam(required = false) Long childId) {
+        SchoolInformation schoolInformation = userService.getCurrentUserSchoolInformation(childId);
         SchoolInformationDTO schoolInformationDTO = schoolInformationService.entityToDTO(schoolInformation);
         return ResponseEntity.ok().body(schoolInformationDTO);
     }
