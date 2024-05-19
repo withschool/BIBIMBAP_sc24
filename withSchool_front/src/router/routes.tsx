@@ -75,7 +75,7 @@ const routes = [
         element: <SchoolList />,
     },
     {
-        path: '/teacher/notice',
+        path: '/teacher/class/notice',
         element: <TeacherNotice />,
     },
     {
