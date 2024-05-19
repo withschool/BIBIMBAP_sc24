@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @ToString
 public class ResSchoolNoticeDTO {
+    private Long schoolNoticeId;
     private String title;
     private String content;
     private ResUserDefaultDTO user;

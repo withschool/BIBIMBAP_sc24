@@ -78,6 +78,7 @@ public class SchoolNoticeService {
                 .build();
 
         return ResSchoolNoticeDTO.builder()
+                .schoolNoticeId(schoolNotice.getSchoolNoticeId())
                 .title(schoolNotice.getTitle())
                 .content(schoolNotice.getContent())
                 .user(resUserDefaultDTO)
@@ -102,6 +103,7 @@ public class SchoolNoticeService {
                     .build();
 
             ResSchoolNoticeDTO schoolNoticeDTO = ResSchoolNoticeDTO.builder()
+                    .schoolNoticeId(s.getSchoolNoticeId())
                     .title(s.getTitle())
                     .user(resUserDefaultDTO)
                     .content(s.getContent())
