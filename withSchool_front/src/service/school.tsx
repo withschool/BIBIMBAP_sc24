@@ -104,3 +104,26 @@ export const getSchoolNoticeDetail = async (noticeId: number): Promise<any> => {
         throw error;
     }
 }
+
+export const getSchoolInfo = async (targetStudent: string | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/schools/info?childId=${targetStudent}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch school notice:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching school notice:', error);
+        throw error;
+    }
+}
