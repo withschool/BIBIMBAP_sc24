@@ -10,8 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ClassRepository extends JpaRepository<ClassInformation, Long> {
 
-    @Query("SELECT CASE WHEN count(c) > 0 THEN true ELSE false END FROM ClassInformation c WHERE c.grade = :grade AND c.inClass = :inClass AND c.year = :year")
-    boolean checkDuplicate(int grade, int inClass, int year);
+    @Query("SELECT CASE WHEN count(c) > 0 THEN true ELSE false END FROM ClassInformation c WHERE c.grade = :grade AND c.inClass = :inClass AND c.year = :year AND c.schoolInformation.schoolId = :schoolId")
+    boolean checkDuplicate(int grade, int inClass, int year, long schoolId);
 
     //@Query("select c from ClassInformation c where c.grade = :grade and c.inClass = :inClass")
     Optional<ClassInformation> findByGradeAndInClass(int grade, int inClass);

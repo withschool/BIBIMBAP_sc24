@@ -29,7 +29,7 @@ public class ClassService {
     @PreAuthorize("hasRole('ADMIN')")
     public ClassInformation saveClassInformation(ClassDTO classDTO) throws Exception {
 
-        if(!classRepository.checkDuplicate(classDTO.getGrade(), classDTO.getInClass(), classDTO.getYear())){
+        if(!classRepository.checkDuplicate(classDTO.getGrade(), classDTO.getInClass(), classDTO.getYear(), classDTO.getSchoolId())){
             ClassInformation newClass = classBuilder(classDTO);
             return classRepository.save(newClass);
         }
