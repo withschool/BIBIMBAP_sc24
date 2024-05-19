@@ -18,11 +18,8 @@ public class BaseFileEntity extends BaseEntity {
     @Comment("원본 파일 이름")
     private String originalName;
 
-    @Column(name = "save_name", nullable = false)
-    @Comment("서버에 저장된 파일 이름")
-    private String saveName;
-
     @Column(name = "file_url", nullable = false)
-    @Comment("서버에 저장된 파일 주소")
+    @Comment("파일 URI")
     private String fileUrl;
+
 }

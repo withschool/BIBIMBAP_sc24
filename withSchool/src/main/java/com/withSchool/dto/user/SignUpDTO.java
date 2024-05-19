@@ -16,6 +16,7 @@ public class SignUpDTO {
     private String phoneNumber;
     private String address;
     private String birthDate;
+
     private int accountType;
     private String userCode;
 }

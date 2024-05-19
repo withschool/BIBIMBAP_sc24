@@ -1,17 +1,20 @@
 package com.withSchool.controller.superadmin;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
-import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+
 
 @Slf4j
 @RestController
@@ -22,25 +25,37 @@ public class SuperController {
     private final UserService userService;
 
     @PostMapping("/schools")
+    @Operation(summary = "슈퍼 어드민의 학교 모델 등록")
     public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO) {
         SchoolInformation schoolInformation = schoolInformationService.save(schoolInformationService.dtoToEntity(schoolInformationDTO));
         if (schoolInformation == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
 
         try{
             userService.registerAdmin(schoolInformationDTO);
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("어드민 계정 생성중에 오류가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body("어드민 계정 생성중에 오류가 발생하였습니다");
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(schoolInformation.getSchulNm()+ ", 학교어드민 계정이 생성되었습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(schoolInformation.getSchulNm()+ ", 학교어드민 계정이 생성되었습니다.");
     }
     @DeleteMapping("/schools/{schoolId}")
+    @Operation(summary = "슈퍼 어드민의 학교 모델 삭제")
     public ResponseEntity<String> removeSchool(@PathVariable("schoolId") Long id){
         try{
             schoolInformationService.delete(id);
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 실패");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body("삭제 실패");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("삭제 성공");
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body("삭제 성공");
     }
 }

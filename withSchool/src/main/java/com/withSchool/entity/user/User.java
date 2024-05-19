@@ -1,12 +1,13 @@
 package com.withSchool.entity.user;
 
+import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.base.BaseEntity;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
@@ -14,7 +15,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -141,5 +141,23 @@ public class User extends BaseEntity implements UserDetails {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
+    }
+
+    public ResUserDefaultDTO toResUserDefaultDTO(){
+        return ResUserDefaultDTO.builder()
+                .userId(this.getUserId())
+                .name(this.getName())
+                .userName(this.getUsername())
+                .build();
+    }
+    public BasicUserInfoDTO entityToBasicUserInfoDTO(){
+        return BasicUserInfoDTO.builder()
+                .userId(this.getUserId())
+                .id(this.getUsername())
+                .name(this.getName())
+                .email(this.getEmail())
+                .phoneNumber(this.getPhoneNumber())
+                .sex(this.getSex())
+                .build();
     }
 }

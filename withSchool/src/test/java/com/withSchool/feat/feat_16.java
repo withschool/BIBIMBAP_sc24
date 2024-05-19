@@ -1,15 +1,19 @@
 package com.withSchool.feat;
 
-import com.withSchool.dto.school.ClientSchoolNoticeDTO;
+import com.withSchool.dto.school.ReqSchoolNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeToClientDTO;
+import com.withSchool.dto.school.ResSchoolNoticeDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
 import com.withSchool.service.user.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +29,13 @@ public class feat_16 {
 
     @Autowired
     private SchoolNoticeService schoolNoticeService;
+
+    @BeforeEach
+    public void init(){
+        User user = userService.findById("id3");
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
+    }
 
     // 어드민의 공지 생성 로직
     // 1. 쿠키로 전달받은 access token(atk)에서 유저의 pk 가져오기
@@ -57,12 +68,12 @@ public class feat_16 {
     @Test
     public void testAdminReadNotice(){
         // school notice의 pk 3으로 테스트
-        SchoolNoticeToClientDTO schoolNoticeToClientDTO = schoolNoticeService.findById(3L);
+        ResSchoolNoticeDTO resSchoolNoticeDTO = schoolNoticeService.findById(3L);
 
-        Map<String, SchoolNoticeToClientDTO> response = new HashMap<>();
-        response.put("school_notice", schoolNoticeToClientDTO);
-        System.out.println(schoolNoticeToClientDTO.getUser());
-        System.out.println(schoolNoticeToClientDTO);
+        Map<String, ResSchoolNoticeDTO> response = new HashMap<>();
+        response.put("school_notice", resSchoolNoticeDTO);
+        System.out.println(resSchoolNoticeDTO.getUser());
+        System.out.println(resSchoolNoticeDTO);
 
     }
 
@@ -71,11 +82,11 @@ public class feat_16 {
     // 2. 어드민이 속한 학교의 키를 기반으로 검색
     @Test
     public void testAdminReadAllNotices(){
-        User admin = userService.findById("id3");
+        Long childId = null;
 
-        List<SchoolNoticeToClientDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
+        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(childId);
 
-        for (SchoolNoticeToClientDTO s : schoolNoticeDTOS) {
+        for (ResSchoolNoticeDTO s : schoolNoticeDTOS) {
             System.out.println(s);
         }
     }
@@ -85,11 +96,11 @@ public class feat_16 {
     // 수정 가능한 것은 제목과 내용만
     @Test
     public void testAdminModifyOneNotice(){
-        ClientSchoolNoticeDTO clientSchoolNoticeDTO = ClientSchoolNoticeDTO.builder()
+        ReqSchoolNoticeDTO reqSchoolNoticeDTO = ReqSchoolNoticeDTO.builder()
                 .title("공지10")
                 .content("내용10-1")
                 .build();
-        schoolNoticeService.updateById(13L, clientSchoolNoticeDTO);
+        schoolNoticeService.updateById(13L, reqSchoolNoticeDTO);
     }
 
     // 공지사항 삭제
