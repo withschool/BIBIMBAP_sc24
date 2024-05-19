@@ -13,11 +13,14 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import IconX from '../../components/Icon/IconX';
+import IconXCircle from '../../components/Icon/IconXCircle';
 import IconUser from '../../components/Icon/IconUser';
 import IconAt from '../../components/Icon/IconAt';
-import { getSchoolList, getSchoolListFromNeis, registerSchool} from '../../service/school';
+import { getSchoolList, getSchoolListFromNeis, registerSchool, deleteSchool} from '../../service/school';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconSearch from '../../components/Icon/IconSearch';
+import Tippy from '@tippyjs/react';
+
 
 
 
@@ -177,6 +180,26 @@ const SchoolList = () => {
             console.error('학교 등록 오류', error);
         }
     };
+
+    const handleDeleteSchool = async (schoolId: number) => {
+        if (window.confirm('정말로 이 학교를 삭제하시겠습니까?')) {
+            try {
+                await deleteSchool(schoolId);
+                // Refetch the school list
+                const data = await getSchoolList();
+                const formattedData = data.map((item: School) => ({
+                    ...item,
+                    regDate: formatDate(item.regDate),
+                }));
+                setInitialRecords(sortBy(formattedData, 'schoolName'));
+                setRecordsData(formattedData.slice((page - 1) * pageSize, page * pageSize));
+            } catch (error) {
+                console.error('학교 삭제 오류', error);
+            }
+        }
+    };
+
+
     return (
         <div>
             <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
@@ -311,6 +334,20 @@ const SchoolList = () => {
                             { accessor: 'educationOffice', title: '담당 교육청', sortable: true },
                             { accessor: 'schoolAddress', title: '학교 주소', sortable: true },
                             { accessor: 'regDate', title: '생성일', sortable: true },
+                            {
+                                accessor: 'deleteSchool',
+                                title: '삭제하기',
+                                titleClassName: '!text-center',
+                                render: (record) => (
+                                    <div className="flex items-center w-max mx-auto">
+                                        <Tippy content="Delete">
+                                            <button type="button" onClick={() => handleDeleteSchool(record.schoolId)}>
+                                                <IconXCircle />
+                                            </button>
+                                        </Tippy>
+                                    </div>
+                                ),
+                            },
                         ]}
                         totalRecords={initialRecords.length}
                         recordsPerPage={pageSize}

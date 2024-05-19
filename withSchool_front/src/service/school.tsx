@@ -132,3 +132,25 @@ export const registerSchool = async (schoolData: any): Promise<any> => {
         throw error;
     }
 }
+
+export const deleteSchool = async (schoolId: number): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/super/schools/${schoolId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to delete school:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error deleting school:', error);
+        throw error;
+    }
+};
