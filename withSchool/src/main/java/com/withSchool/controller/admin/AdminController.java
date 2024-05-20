@@ -2,11 +2,12 @@ package com.withSchool.controller.admin;
 
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.mapping.UserClassDTO;
+import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
-import com.withSchool.dto.school.ReqSchoolNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassService;
@@ -91,6 +92,15 @@ public class AdminController {
                     .body(e.getMessage());
         }
     }
+    @PostMapping("/users/{userId}/classes/{classId}")
+    @Operation(summary = "어드민의 유저 반 매핑", description = "어드민은 유저와 반을 매핑시킬수 있다.")
+    public ResponseEntity<String> mapUserClass(@PathVariable Long userId, @PathVariable Long classId){
+        userService.mapById(UserClassDTO.builder()
+                        .classId(classId)
+                        .userId(userId)
+                        .build());
+        return ResponseEntity.ok().body("success");
+    }
 
     @GetMapping("/classes/byUser")
     @Operation(summary = "어드민의 반 조회(학년, 반)", description = "어드민은 학년과 반을 옵션으로 반을 검색할 수 있다.")
@@ -155,35 +165,17 @@ public class AdminController {
 
     @PostMapping("/schools/notices")
     @Operation(summary = "어드민의 학교 공지 작성", description = "어드민은 학교 공지를 작성할 수 있다.")
-    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ReqSchoolNoticeDTO request) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<ResNoticeDTO> createNotice(@ModelAttribute ReqNoticeDTO request) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = userService.findById(authentication.getName());
-
-        SchoolNoticeDTO schoolNoticeDto = SchoolNoticeDTO.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .user(admin)
-                .file(request.getFile())
-                .school(admin.getSchoolInformation())
-                .build();
-
-
-        SchoolNotice schoolNotice = schoolNoticeService.save(schoolNoticeDto);
-
-        response.put("message", "생성되었습니다.");
-        response.put("id", schoolNotice.getSchoolNoticeId());
-        response.put("title", request.getTitle());
-        response.put("content", request.getContent());
+        ResNoticeDTO resNoticeDTO = schoolNoticeService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(response);
+                .body(resNoticeDTO);
     }
 
     @PatchMapping("/schools/notices/{notice-id}")
     @Operation(summary = "어드민의 학교 공지 수정", description = "어드민은 학교 공지를 수정할 수 있다.")
-    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqSchoolNoticeDTO request){
+    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqNoticeDTO request){
 
         Map<String, Object> response = new HashMap<>();
 
@@ -195,7 +187,6 @@ public class AdminController {
 
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(response);
     }
 

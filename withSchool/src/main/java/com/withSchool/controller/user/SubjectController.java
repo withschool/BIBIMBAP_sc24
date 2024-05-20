@@ -1,9 +1,13 @@
 package com.withSchool.controller.user;
 
+import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.school.ResNoticeDTO;
+import com.withSchool.dto.subject.ReqSubjectNoticeDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.subject.SubjectNoticeService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -29,6 +30,7 @@ import java.util.Map;
 @RequestMapping("/subjects")
 public class SubjectController {
     private final SubjectService subjectService;
+    private final SubjectNoticeService subjectNoticeService;
     private final StudentSubjectService studentSubjectService;
     private final UserService userService;
 
@@ -103,5 +105,45 @@ public class SubjectController {
                     .body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
         }
     }
+    @PostMapping("/notices")
+    @Operation(summary = "과목교사의 과목 공지 작성", description = "과목교사는 과목 공지를 작성할 수 있다.")
+    public ResponseEntity<ResNoticeDTO> createNotice(@ModelAttribute ReqSubjectNoticeDTO request) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(subjectNoticeService.save(request));
+    }
+    @PatchMapping("/notices/{notice-id}")
+    @Operation(summary = "과목교사의 과목 공지 수정", description = "과목교사는 과목 공지를 수정할 수 있다.")
+    public ResponseEntity<ResNoticeDTO> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqNoticeDTO request){
+
+        return ResponseEntity.ok()
+                .body(subjectNoticeService.updateById(noticeId, request));
+    }
+    @GetMapping("/notices/{noticeId}")
+    @Operation(summary = "수강유저의 과목 공지 상세 조회")
+    public ResponseEntity<ResNoticeDTO> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
+        ResNoticeDTO resNoticeDTO = subjectNoticeService.findById(noticeId);
+        return ResponseEntity.ok()
+                .body(resNoticeDTO);
+    }
+
+    @GetMapping("/notices/list/{subjectId}")
+    @Operation(summary = "수강유저의 과목 공지 리스트 조회")
+    public ResponseEntity<List<ResNoticeDTO>> showAllNotices(@PathVariable("subjectId") Long subjectId) {
+        List<ResNoticeDTO> classNoticeDTOS = subjectNoticeService.findAll(subjectId);
+        return ResponseEntity.ok()
+                .body(classNoticeDTOS);
+    }
+
+    @DeleteMapping("/notices/{notice-id}")
+    @Operation(summary = "과목교사의 과목 공지 삭제", description = "과목교사는 PK를 사용하여 과목 공지를 삭제할 수 있다. ")
+    public ResponseEntity<String> deleteOneNotice(@PathVariable(name = "notice-id") Long noticeId) {
+
+        subjectNoticeService.deleteById(noticeId);
+
+        return ResponseEntity.ok()
+                .body("delete success");
+    }
+
 
 }

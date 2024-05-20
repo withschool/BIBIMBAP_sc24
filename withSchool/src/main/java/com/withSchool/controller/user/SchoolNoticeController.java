@@ -1,6 +1,7 @@
 package com.withSchool.controller.user;
 
-import com.withSchool.dto.school.ResSchoolNoticeDTO;
+
+import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.service.school.SchoolNoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +22,16 @@ public class SchoolNoticeController {
 
     @GetMapping("/{noticeId}")
     @Operation(summary = "유저의 학교 공지 상세 조회")
-    public ResponseEntity<ResSchoolNoticeDTO> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
-        ResSchoolNoticeDTO resSchoolNoticeDTO = schoolNoticeService.findById(noticeId);
+    public ResponseEntity<ResNoticeDTO> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
+        ResNoticeDTO resNoticeDTO = schoolNoticeService.findById(noticeId);
         return ResponseEntity.ok()
-                .body(resSchoolNoticeDTO);
+                .body(resNoticeDTO);
     }
 
     @GetMapping
     @Operation(summary = "유저의 학교 공지 리스트 조회")
-    public ResponseEntity<List<ResSchoolNoticeDTO>> showAllNotices(@RequestParam(value = "childId", required = false) Long childId) {
-        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(childId);
+    public ResponseEntity<List<ResNoticeDTO>> showAllNotices(@RequestParam(value = "childId", required = false) Long childId) {
+        List<ResNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(childId);
 
         return ResponseEntity.ok()
                 .body(schoolNoticeDTOS);
