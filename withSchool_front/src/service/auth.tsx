@@ -194,7 +194,7 @@ export const getSchoolId = async (token: string): Promise<any> => {
 
 export const getClassId = async (token: string): Promise<any> => {
   try {
-    const response = await fetch(`${url}/schools/mySchool`, {
+    const response = await fetch(`${url}/classes/myClass`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -213,5 +213,29 @@ export const getClassId = async (token: string): Promise<any> => {
     }
   } catch (error) {
     console.error('Error during fetching Class ID:', error);
+  }
+}
+
+export const getUserInfobyId = async (id: string | null): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/users/id/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('UserInfo fetched successfully:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('Failed to fetch UserInfo:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (error) {
+    console.error('Error during fetching UserInfo:', error);
   }
 }

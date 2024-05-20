@@ -57,10 +57,10 @@ const LoginBoxed = () => {
                 if (schoolData) {
                     localStorage.setItem('schoolId', schoolData);
                 }
-                else if(classData) {
-                    localStorage.setITem('classId', classData);
+                if (classData) {
+                    localStorage.setItem('classId', classData);
                 }
-
+                
                 navigate('/');
             } else {
                 setLoginError('Login failed');
