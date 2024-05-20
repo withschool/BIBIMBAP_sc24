@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import Tippy from '@tippyjs/react';
 import { mappingStudent, listingStudent, getStudentInfoById } from '../../service/parent';
-import { getSchoolNotice, getSchoolNoticeDetail } from '../../service/school';
+import { getSchoolNotice, getSchoolNoticeDetail, getSchoolInfo } from '../../service/school';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -29,6 +29,7 @@ const StudentInfo = () => {
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
+    const [schoolInfo, setSchoolInfo] = useState([]);
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [selectedNotice, setSelectedNotice] = useState('');
@@ -56,6 +57,19 @@ const StudentInfo = () => {
             }
         };
         fetchNoticeData();
+    }, []);
+
+    useEffect(() => {
+        const fetchSchoolData = async () => {
+            try {
+                const data = await getSchoolInfo(localStorage.getItem('TargetStudent'));
+                setSchoolInfo(data);
+                console.log(data);    
+            } catch (error) {
+                console.error('Error fetching student data:', error);
+            }
+        };
+        fetchSchoolData();
     }, []);
 
     const handlePopUp = async (noticeId : number) => {
@@ -138,6 +152,17 @@ const StudentInfo = () => {
                                     >
                                         <IconPhone className="ltr:mr-2 rtl:ml-2" />
                                         학사일정
+                                    </button>
+                                )}
+                            </Tab>
+                            <Tab as={Fragment}>
+                                {({ selected }) => (
+                                    <button
+                                        className={`${selected ? 'bg-warning text-white !outline-none' : ''}
+                                            before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
+                                    >
+                                        <IconHome className="ltr:mr-2 rtl:ml-2" />
+                                        기본정보
                                     </button>
                                 )}
                             </Tab>
@@ -380,6 +405,59 @@ const StudentInfo = () => {
                                             </Dialog>
                                         </Transition>
                                     </div>
+                                </div>
+                            </Tab.Panel>
+                            <Tab.Panel>
+                                <div className="active pt-5">
+                                    { (studentList.length == 0) ? (
+                                        <><h1>연결된 학생이 없습니다.</h1></>
+                                    ):(
+                                        <div>
+                                            <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
+                                                <h6 className="text-lg font-bold mb-5">학교 기본정보</h6>
+                                                <div className="flex flex-col sm:flex-row">
+                                                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                                        <div>
+                                                            <label htmlFor="name">학교명</label>
+                                                            <div className="form-input">{schoolInfo.SCHUL_NM}</div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="sex">소속 교육청</label>
+                                                            <div className="form-input">{schoolInfo.ATPT_OFCDC_SC_NM}</div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="id">주소</label>
+                                                            <div className="form-input" >{schoolInfo.ORG_RDNMA}</div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="phone">공립/사립</label>
+                                                            <div className="form-input" >{schoolInfo.FOND_SC_NM}</div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="email">학교 홈페이지</label>
+                                                            <div className="form-input" >
+                                                            <a href={schoolInfo.HMPG_ADRES} target="_blank" rel="noopener noreferrer">
+                                                                {schoolInfo.HMPG_ADRES}
+                                                            </a>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="email">공학여부</label>
+                                                            <div className="form-input" >{schoolInfo.COEDU_SC_NM}</div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="email">학교 전화번호</label>
+                                                            <div className="form-input" >{schoolInfo.ORG_TELNO}</div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="email">학교 팩스번호</label>
+                                                            <div className="form-input" >{schoolInfo.ORG_FAXNO}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        )}
                                 </div>
                             </Tab.Panel>
                         </Tab.Panels>
