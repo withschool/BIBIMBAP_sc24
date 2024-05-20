@@ -2,6 +2,7 @@ package com.withSchool.controller.user;
 
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.service.classes.ClassService;
+import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequestMapping("/classes")
 public class ClassController {
     private final ClassService classService;
+    private final UserService userService;
 
 
     @GetMapping("/{classId}")
@@ -30,6 +32,12 @@ public class ClassController {
 
         return ResponseEntity.ok()
                 .body(classInfo);
+    }
+
+    @GetMapping("/myClass")
+    @Operation(summary = "자기 반 pk 가져오기")
+    public ResponseEntity<Long> findMyClass(){
+        return ResponseEntity.ok().body(userService.getCurrentUserClassId());
     }
 
 }

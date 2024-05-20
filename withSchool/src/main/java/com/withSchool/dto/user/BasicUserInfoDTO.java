@@ -15,4 +15,6 @@ public class BasicUserInfoDTO{
     private String phoneNumber;
     private String email;
     private boolean sex;
+    private Long schoolId;
+    private Long classId;
 }

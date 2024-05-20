@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 @Entity
 @Data
@@ -151,6 +152,14 @@ public class User extends BaseEntity implements UserDetails {
                 .build();
     }
     public BasicUserInfoDTO entityToBasicUserInfoDTO(){
+        Long classId = Optional.ofNullable(this.getClassInformation())
+                .map(ClassInformation::getClassId)
+                .orElse(null);
+
+        Long schoolId = Optional.ofNullable(this.getSchoolInformation())
+                .map(SchoolInformation::getSchoolId)
+                .orElse(null);
+
         return BasicUserInfoDTO.builder()
                 .userId(this.getUserId())
                 .id(this.getUsername())
@@ -158,6 +167,9 @@ public class User extends BaseEntity implements UserDetails {
                 .email(this.getEmail())
                 .phoneNumber(this.getPhoneNumber())
                 .sex(this.getSex())
+                .classId(classId)
+                .schoolId(schoolId)
                 .build();
     }
+
 }

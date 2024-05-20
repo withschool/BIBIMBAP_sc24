@@ -237,6 +237,20 @@ public class UserService {
         return schoolInformation.getSchoolId();
     }
 
+    public ClassInformation getCurrentUserClassInformation(){
+        User user = getCurrentUser();
+        ClassInformation classInformation = user.getClassInformation();
+        if(classInformation == null){
+            throw new IllegalStateException("User is not associated with any class");
+        }
+        return classInformation;
+    }
+
+    public Long getCurrentUserClassId(){
+        ClassInformation classInformation = getCurrentUserClassInformation();
+        return classInformation.getClassId();
+    }
+
     public User getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return this.findById(authentication.getName());

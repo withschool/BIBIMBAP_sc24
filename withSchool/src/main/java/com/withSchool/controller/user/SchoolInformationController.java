@@ -27,7 +27,7 @@ public class SchoolInformationController {
         SchoolInformationDTO schoolInformationDTO = schoolInformationService.entityToDTO(schoolInformation);
         return ResponseEntity.ok().body(schoolInformationDTO);
     }
-  
+
     @GetMapping("/mySchool")
     @Operation(summary = "사용자의 학교 PK를 불러오는 API")
     public ResponseEntity<Long> findMySchool(){
