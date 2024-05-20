@@ -8,7 +8,7 @@ import i18next from 'i18next';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
-import { login, getSchoolId } from '../../service/auth';
+import { login, getSchoolId, getClassId } from '../../service/auth';
 import IconInstagram from '../../components/Icon/IconInstagram';
 import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
 import IconTwitter from '../../components/Icon/IconTwitter';
@@ -52,11 +52,15 @@ const LoginBoxed = () => {
                 localStorage.setItem('login', token ? 'true' : 'false');
 
                 const schoolData = await getSchoolId(token);
+                const classData = await getClassId(token);
 
                 if (schoolData) {
                     localStorage.setItem('schoolId', schoolData);
                 }
-
+                if (classData) {
+                    localStorage.setItem('classId', classData);
+                }
+                
                 navigate('/');
             } else {
                 setLoginError('Login failed');
