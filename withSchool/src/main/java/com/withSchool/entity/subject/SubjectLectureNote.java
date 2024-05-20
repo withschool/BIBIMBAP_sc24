@@ -2,6 +2,7 @@ package com.withSchool.entity.subject;
 
 import com.withSchool.entity.base.BaseEntity;
 import com.withSchool.entity.base.BasePostEntity;
+import com.withSchool.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +25,9 @@ public class SubjectLectureNote extends BasePostEntity {
     @JoinColumn(name = "subject_id")
     @Comment("과목 PK")
     private Subject subject;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @Comment("사용자ID")
+    private User user;
 }

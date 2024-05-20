@@ -1,5 +1,7 @@
 package com.withSchool.controller.user;
 
+import com.withSchool.dto.subject.ReqSubjectLectureNoteDTO;
+import com.withSchool.dto.subject.ResSubjectLectureNoteDTO;
 import com.withSchool.service.subject.SubjectLectureNoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,25 +18,25 @@ public class LectureNoteController {
     private final SubjectLectureNoteService subjectLectureNoteService;
 
     @GetMapping
-    public ResponseEntity<List<LectureNoteDTO>> getAllLectureNotes() {
-        List<LectureNoteDTO> lectureNotes = subjectLectureNoteService.getAllLectureNotes();
+    public ResponseEntity<List<ResSubjectLectureNoteDTO>> getAllLectureNotes() {
+        List<ResSubjectLectureNoteDTO> lectureNotes = subjectLectureNoteService.getAllSubjectLectureNotes();
         return new ResponseEntity<>(lectureNotes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LectureNoteDTO> getLectureNoteById(@PathVariable Long id) {
-        return new ResponseEntity<>(subjectLectureNoteService.getLectureNoteById(id), HttpStatus.OK);
+    public ResponseEntity<ResSubjectLectureNoteDTO> getLectureNoteById(@PathVariable Long id) {
+        return new ResponseEntity<>(subjectLectureNoteService.getSubjectLectureNoteById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<LectureNoteDTO> createLectureNote(@RequestBody LectureNoteDTO lectureNoteDTO) {
-        LectureNoteDTO createdLectureNote = subjectLectureNoteService.createLectureNote(lectureNoteDTO);
+    public ResponseEntity<ResSubjectLectureNoteDTO> createLectureNote(@ModelAttribute ReqSubjectLectureNoteDTO reqSubjectLectureNoteDTO) {
+        ResSubjectLectureNoteDTO createdLectureNote = subjectLectureNoteService.createSubjectLectureNote(reqSubjectLectureNoteDTO);
         return new ResponseEntity<>(createdLectureNote, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<LectureNoteDTO> updateLectureNote(@PathVariable Long id, @RequestBody LectureNoteDTO newLectureNoteDTO) {
-        LectureNoteDTO updatedLectureNote = subjectLectureNoteService.updateLectureNote(id, newLectureNoteDTO);
+    public ResponseEntity<ResSubjectLectureNoteDTO> updateLectureNote(@PathVariable Long id, @ModelAttribute ReqSubjectLectureNoteDTO reqSubjectLectureNoteDTO) {
+        ResSubjectLectureNoteDTO updatedLectureNote = subjectLectureNoteService.updateLectureNote(id, reqSubjectLectureNoteDTO);
         return new ResponseEntity<>(updatedLectureNote, HttpStatus.OK);
     }
 

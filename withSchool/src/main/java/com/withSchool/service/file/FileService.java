@@ -210,4 +210,13 @@ public class FileService {
 //
 //        }
     }
+    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
+        String repoType = dto.getRepoType();
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getOriginalName()));
+            subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -64,6 +64,7 @@ public class SubjectLectureNoteService {
             SubjectLectureNote subjectLectureNote = SubjectLectureNote.builder()
                     .title(reqSubjectLectureNoteDTO.getTitle())
                     .subject(optionalSubject.get())
+                    .user(userService.getCurrentUser())
                     .build();
             SubjectLectureNote savedSubjectLectureNote = subjectLectureNoteRepository.save(subjectLectureNote);
 
@@ -120,7 +121,7 @@ public class SubjectLectureNoteService {
                 .userId(subjectLectureNote.getUser().getUserId())
                 .build();
 
-        List<SubjectLectureNoteFile> files = subjectLectureNoteFileRepository.findBySubjectLectureNoteId(subjectLectureNote.getSubjectLectureNoteId()).orElse(new ArrayList<>());
+        List<SubjectLectureNoteFile> files = subjectLectureNoteFileRepository.findBySubjectLectureNote_SubjectLectureNoteId(subjectLectureNote.getSubjectLectureNoteId()).orElse(new ArrayList<>());
         List<String> fileUrls = new ArrayList<>();
         List<String> originalNames = new ArrayList<>();
         for (SubjectLectureNoteFile file : files) {
@@ -152,7 +153,7 @@ public class SubjectLectureNoteService {
     }
 
     private void deleteFilesByLectureNoteId(Long lectureNoteId) {
-        Optional<List<SubjectLectureNoteFile>> files = subjectLectureNoteFileRepository.findBySubjectLectureNoteId(lectureNoteId);
+        Optional<List<SubjectLectureNoteFile>> files = subjectLectureNoteFileRepository.findBySubjectLectureNote_SubjectLectureNoteId(lectureNoteId);
         if (files.isPresent()) {
             for (SubjectLectureNoteFile file : files.get()) {
                 FileDeleteDTO fileDeleteDTO = FileDeleteDTO.builder()
@@ -160,7 +161,7 @@ public class SubjectLectureNoteService {
                         .repoType("subjectLectureNote")
                         .masterId(lectureNoteId)
                         .build();
-                fileService.deleteFile(fileDeleteDTO);
+                fileService.deleteSubjectLectureNoteFile(fileDeleteDTO);
             }
         }
     }
