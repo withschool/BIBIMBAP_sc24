@@ -32,7 +32,7 @@ const ClassInfo = () => {
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
-    const [classInfo, setClassInfo] = useState([]);
+    const [classInfo, setClassInfo] = useState({ class: {}, users: [] });
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [selectedNotice, setSelectedNotice] = useState('');
@@ -117,11 +117,11 @@ const ClassInfo = () => {
                             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
                                     <label htmlFor="name">학년</label>
-                                    <div className="form-input">{classInfo.grade}</div>
+                                    <div className="form-input">{classInfo.class.grade}</div>
                                 </div>
                                 <div>
                                     <label htmlFor="sex">반</label>
-                                    <div className="form-input">{classInfo.inClass}</div>
+                                    <div className="form-input">{classInfo.class.inClass}</div>
                                 </div>
                                 <div>
                                     <label htmlFor="id">담임</label>
@@ -133,6 +133,33 @@ const ClassInfo = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="email">학생 목록</label>
+                                    <div className="form-input" >
+                                    <div className="table-responsive mb-5">
+                                        <table className="table-hover">
+                                            <thead>
+                                                <tr className="!bg-transparent dark:!bg-transparent">
+                                                    <th>유저 ID</th>
+                                                    <th>ID</th>
+                                                    <th>이름</th>
+                                                    <th className="text-center"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {classInfo.users.map((data) => {
+                                                return (
+                                                    <tr key={data.userId}>
+                                                        <td>{data.userId}</td>
+                                                        <td>
+                                                            <div className="whitespace-nowrap">{data.userName}</div>
+                                                        </td>
+                                                        <td>{data.name}</td>
+                                                    </tr>
+                                                );
+                                            })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
