@@ -2,6 +2,7 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
+import com.withSchool.dto.user.BasicUserInfoDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassNoticeService;
@@ -17,7 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -28,15 +31,28 @@ import java.util.Optional;
 public class ClassController {
     private final ClassService classService;
     private final ClassNoticeService classNoticeService;
+    private final UserService userService;
 
 
     @GetMapping("/{classId}")
     @Operation(summary = "유저의 반 정보 조회")
-    public ResponseEntity<Optional<ClassInformation>> getClassById(@PathVariable Long classId) {
+    public ResponseEntity<Map<String, Object>> getClassById(@PathVariable Long classId) {
+        Map<String, Object> response = new HashMap<>();
+
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
+        List<BasicUserInfoDTO> basicUserInfoDTOS = userService.findAllClassInformation_ClassId();
+
+        response.put("class", classInfo);
+        response.put("users", basicUserInfoDTOS);
 
         return ResponseEntity.ok()
-                .body(classInfo);
+                .body(response);
+    }
+
+    @GetMapping("/myClass")
+    @Operation(summary = "자기 반 pk 가져오기")
+    public ResponseEntity<Long> findMyClass(){
+        return ResponseEntity.ok().body(userService.getCurrentUserClassId());
     }
 
     @PostMapping("/notices")

@@ -9,10 +9,9 @@ import com.withSchool.repository.school.SchoolInformationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,22 +29,31 @@ public class ClassService {
     @PreAuthorize("hasRole('ADMIN')")
     public ClassInformation saveClassInformation(ClassDTO classDTO) throws Exception {
 
-        if(!classRepository.checkDuplicate(classDTO.getGrade(), classDTO.getInClass(), classDTO.getYear())){
+        if(!classRepository.checkDuplicate(classDTO.getGrade(), classDTO.getInClass(), classDTO.getYear(), classDTO.getSchoolId())){
             ClassInformation newClass = classBuilder(classDTO);
             return classRepository.save(newClass);
         }
         throw new Exception("이미 존재하는 반입니다");
     }
     // 반 정보 조회
-    public List<ClassInformation> findBySchoolInformation(Integer grade, Integer inClass) {
+    public List<ClassDTO> findBySchoolInformation(Integer grade, Integer inClass) {
         Long schoolId = userService.getCurrentUserSchoolId();
+        List<ClassDTO> dtos = new ArrayList<>();
+        List<ClassInformation> classInformations;
         if (grade != null && inClass != null) {
-            return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+            classInformations = classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
         } else if (grade != null) {
-            return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
+            classInformations = classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
         } else {
-            return classRepository.findBySchoolInformation_SchoolId(schoolId);
+            classInformations = classRepository.findBySchoolInformation_SchoolId(schoolId);
         }
+
+        for (ClassInformation c : classInformations) {
+            ClassDTO dto = c.toClassDTO();
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 
     // 특정 반 정보 조회

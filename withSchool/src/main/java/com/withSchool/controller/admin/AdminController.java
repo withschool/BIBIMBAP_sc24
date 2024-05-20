@@ -52,7 +52,7 @@ public class AdminController {
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
-    public ResponseEntity<String> createSubject(@RequestParam ReqSubjectDefaultDTO subjectDTO) {
+    public ResponseEntity<String> createSubject(@RequestBody ReqSubjectDefaultDTO subjectDTO) {
         try {
             Subject subject = subjectService.saveSubject(subjectDTO);
             return ResponseEntity.ok()
@@ -104,8 +104,8 @@ public class AdminController {
 
     @GetMapping("/classes/byUser")
     @Operation(summary = "어드민의 반 조회(학년, 반)", description = "어드민은 학년과 반을 옵션으로 반을 검색할 수 있다.")
-    public ResponseEntity<List<ClassInformation>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
-            List<ClassInformation> searchedClass = classService.findBySchoolInformation(grade, inClass);
+    public ResponseEntity<List<ClassDTO>> getAllClasses(@RequestParam(required = false) Integer grade, @RequestParam(required = false) Integer inClass) {
+            List<ClassDTO> searchedClass = classService.findBySchoolInformation(grade, inClass);
             return ResponseEntity.ok()
                     .body(searchedClass);
     }

@@ -2,6 +2,7 @@ package com.withSchool.service.user;
 
 import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.dto.user.BasicUserInfoDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
@@ -215,24 +216,44 @@ public class UserService {
         Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
         return user.orElse(null);
     }
-    public SchoolInformation getCurrentUserSchoolInformation() {
-        // 현재 로그인된 사용자의 정보를 가져옴
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-
-        // 사용자의 학교 정보에서 schoolId를 반환
-        SchoolInformation schoolInformation = user.getSchoolInformation();
-        if (schoolInformation == null) {
-            throw new IllegalStateException("User is not associated with any school");
+    public SchoolInformation getCurrentUserSchoolInformation(Long childId) {
+        // 1. childId가 null이면 현재 로그인된 사용자의 정보를 가져옴
+        if (childId == null) {
+            User user = getCurrentUser();
+            SchoolInformation schoolInformation = user.getSchoolInformation();
+            if (schoolInformation == null) {
+                throw new IllegalStateException("User is not associated with any school");
+            }
+            return schoolInformation;
         }
-        return schoolInformation;
+        // 2. childId가 null이 아니면 해당 child의 정보를 가져옴
+        else {
+            User child = userRepository.findById(childId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            SchoolInformation schoolInformation = child.getSchoolInformation();
+            if (schoolInformation == null) {
+                throw new IllegalStateException("User is not associated with any school");
+            }
+            return schoolInformation;
+        }
     }
 
     public Long getCurrentUserSchoolId() {
-        SchoolInformation schoolInformation = getCurrentUserSchoolInformation();
+        SchoolInformation schoolInformation = getCurrentUserSchoolInformation(null);
         return schoolInformation.getSchoolId();
+    }
+
+    public ClassInformation getCurrentUserClassInformation(){
+        User user = getCurrentUser();
+        ClassInformation classInformation = user.getClassInformation();
+        if(classInformation == null){
+            throw new IllegalStateException("User is not associated with any class");
+        }
+        return classInformation;
+    }
+
+    public Long getCurrentUserClassId(){
+        ClassInformation classInformation = getCurrentUserClassInformation();
+        return classInformation.getClassId();
     }
 
     public User getCurrentUser(){
@@ -247,5 +268,18 @@ public class UserService {
         user.updateClassInfo(classInformation);
 
         userRepository.save(user);
+    }
+  
+    public List<BasicUserInfoDTO> findAllClassInformation_ClassId(){
+        User user = getCurrentUser();
+        List<User> users = userRepository.findAllByClassInformation_ClassId(user.getClassInformation().getClassId());
+
+        List<BasicUserInfoDTO> dtos = new ArrayList<>();
+
+        for (User u : users) {
+            dtos.add(u.entityToBasicUserInfoDTO());
+        }
+
+        return dtos;
     }
 }

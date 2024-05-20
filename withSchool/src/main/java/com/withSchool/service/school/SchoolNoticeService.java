@@ -106,12 +106,18 @@ public class SchoolNoticeService {
     }
 
     @Transactional
-    public List<ResNoticeDTO> findAll() {
-        User user = userService.getCurrentUser();
+    public List<ResNoticeDTO> findAll(Long childId) {
+        List<ResNoticeDTO> resSchoolNoticeDTOS = new ArrayList<>();
+        int currentUserType = userService.getCurrentUser().getAccountType();
+
+        if(currentUserType == 1 && childId == null)return resSchoolNoticeDTOS;
+        else if(currentUserType != 1 && childId != null)childId = null;
+
+        User user = Optional.ofNullable(childId)
+                .map(userService::findByUserId)
+                .orElseGet(userService::getCurrentUser);
+
         List<SchoolNotice> schoolNotices = schoolNoticeRepository.findAllBySchoolId(user.getSchoolInformation().getSchoolId());
-
-        List<ResNoticeDTO> resNoticeDTOS = new ArrayList<>();
-
         for (SchoolNotice s : schoolNotices) {
             ResUserDefaultDTO resUserDefaultDTO = ResUserDefaultDTO.builder()
                     .userName(s.getUser().getId())

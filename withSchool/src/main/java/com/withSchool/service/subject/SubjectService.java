@@ -38,6 +38,9 @@ public class SubjectService {
             SubjectInfoDTO subjectInfoDTO = SubjectInfoDTO.builder()
                     .subjectName(s.getSubjectName())
                     .subjectId(s.getSubjectId())
+                    .grade(s.getGrade())
+                    .year(s.getYear())
+                    .semester(s.getSemester())
                     .regDate(s.getRegDate())
                     .build();
 
@@ -67,6 +70,9 @@ public class SubjectService {
             SubjectInfoDTO subjectInfoDTO = SubjectInfoDTO.builder()
                     .subjectName(s.getSubjectName())
                     .subjectId(s.getSubjectId())
+                    .grade(s.getGrade())
+                    .year(s.getYear())
+                    .semester(s.getSemester())
                     .regDate(s.getRegDate())
                     .build();
 
@@ -101,7 +107,6 @@ public class SubjectService {
                     .semester(subjectDTO.getSubjectSemester())
                     .schoolInformation(schoolInformation.get())
                     .build();
-
             return subjectRepository.save(subject);
         } else {
             return null;
@@ -115,6 +120,9 @@ public class SubjectService {
             SubjectInfoDTO subjectInfoDTO = SubjectInfoDTO.builder()
                     .subjectId(subject.get().getSubjectId())
                     .subjectName(subject.get().getSubjectName())
+                    .semester(subject.get().getSemester())
+                    .year(subject.get().getYear())
+                    .grade(subject.get().getGrade())
                     .regDate(subject.get().getRegDate())
                     .build();
 
