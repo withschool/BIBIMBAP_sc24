@@ -23,7 +23,7 @@ import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
 
-const StudentInfo = () => {
+const SchoolInfo = () => {
 
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
@@ -469,4 +469,4 @@ const StudentInfo = () => {
 
 }
 
-export default StudentInfo;
+export default SchoolInfo;

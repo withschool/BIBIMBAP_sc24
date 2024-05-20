@@ -31,11 +31,10 @@ const ClassInfo = () => {
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
-    const [ClassInfo, setClassInfo] = useState([]);
+    const [classInfo, setClassInfo] = useState([]);
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [selectedNotice, setSelectedNotice] = useState('');
-    const userInfo = localStorage.getItem('userinfo');
 
     useEffect(() => {
         const fetchSubject = async () => {
@@ -77,7 +76,7 @@ const ClassInfo = () => {
     useEffect(() => {
         const fetchClassData = async () => {
             try {
-                const data = await getClassInfo(targetStudentInfo);
+                const data = await getClassInfo(localStorage.getItem('classId'));
                 setClassInfo(data);
                 console.log(data);    
             } catch (error) {

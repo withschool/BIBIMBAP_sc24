@@ -283,6 +283,14 @@ const Sidebar = () => {
                                                 </div>
                                             </NavLink>
                                         </li>
+                                        <li className="nav-item">
+                                            <NavLink to="/teacher/schoolnotice" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuMailbox className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학교 공지')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
                                         <li className="menu nav-item">
                                             <button type="button" className={`${currentMenu === 'class' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('class')}>
                                                 <div className="flex items-center">

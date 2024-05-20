@@ -9,6 +9,7 @@ const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
 const Error = lazy(() => import('../components/Error'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
+const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'))
@@ -78,6 +79,10 @@ const routes = [
     {
         path: '/teacher/class/notice',
         element: <TeacherNotice />,
+    },
+    {
+        path: '/teacher/schoolnotice',
+        element: <SchoolNotice />,
     },
     {
         path: '/teacher/class/infomation',
