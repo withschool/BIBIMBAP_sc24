@@ -16,6 +16,7 @@ import com.withSchool.repository.file.SubjectLectureNoteFileRepository;
 import com.withSchool.service.file.FileService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,17 +84,16 @@ public class SubjectLectureNoteService {
                 .orElseThrow(NoSuchElementException::new);
 
         Optional<Subject> optionalSubject = subjectRepository.findById(reqSubjectLectureNoteDTO.getSubjectId());
+
         if (optionalSubject.isPresent()) {
             Subject subject = optionalSubject.get();
 
-            SubjectLectureNote updatedSubjectLectureNote = SubjectLectureNote.builder()
-                    .subjectLectureNoteId(existingSubjectLectureNote.getSubjectLectureNoteId())
-                    .title(reqSubjectLectureNoteDTO.getTitle())
-                    .subject(subject)
-                    .regDate(existingSubjectLectureNote.getRegDate())
-                    .build();
+            // 엔티티를 직접 변경하지 말고 엔티티의 setter 메서드를 사용하여 필드를 변경합니다.
+            existingSubjectLectureNote.setSubject(subject);
+            existingSubjectLectureNote.setTitle(reqSubjectLectureNoteDTO.getTitle());
 
-            subjectLectureNoteRepository.save(updatedSubjectLectureNote);
+            // Save the updated SubjectLectureNote
+            SubjectLectureNote updatedSubjectLectureNote = subjectLectureNoteRepository.save(existingSubjectLectureNote);
 
             // Delete old files and save new ones
             deleteFilesByLectureNoteId(id);
@@ -105,6 +105,7 @@ public class SubjectLectureNoteService {
         }
     }
 
+
     @Transactional
     public void deleteLectureNote(Long id) {
         SubjectLectureNote subjectLectureNote = subjectLectureNoteRepository.findById(id)
@@ -114,7 +115,11 @@ public class SubjectLectureNoteService {
         subjectLectureNoteRepository.delete(subjectLectureNote);
     }
 
-    private ResSubjectLectureNoteDTO mapToSubjectLectureNoteDTO(SubjectLectureNote subjectLectureNote) {
+    @Transactional
+    public ResSubjectLectureNoteDTO mapToSubjectLectureNoteDTO(SubjectLectureNote subjectLectureNote) {
+
+        Hibernate.initialize(subjectLectureNote.getUser());
+
         ResUserDefaultDTO userDTO = ResUserDefaultDTO.builder()
                 .userName(subjectLectureNote.getUser().getId())
                 .name(subjectLectureNote.getUser().getName())
