@@ -1,21 +1,24 @@
-package com.withSchool.service.classes;
+package com.withSchool.service.subject;
 
 import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.file.FileDeleteDTO;
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
+import com.withSchool.dto.subject.ReqSubjectNoticeDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
-import com.withSchool.entity.classes.ClassNotice;
-import com.withSchool.entity.classes.ClassNoticeFile;
+import com.withSchool.entity.mapping.TeacherSubject;
+import com.withSchool.entity.subject.Subject;
+import com.withSchool.entity.subject.SubjectNotice;
+import com.withSchool.entity.subject.SubjectNoticeFile;
 import com.withSchool.entity.user.User;
-import com.withSchool.repository.classes.ClassNoticeRepository;
-import com.withSchool.repository.file.ClassNoticeFileRepository;
+import com.withSchool.repository.file.SubjectNoticeFileRepository;
+import com.withSchool.repository.mapping.TeacherSubjectRepository;
+import com.withSchool.repository.subject.SubjectNoticeRepository;
+import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.file.FileService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,41 +31,42 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ClassNoticeService {
+public class SubjectNoticeService {
     private final UserService userService;
-    private final ClassNoticeRepository classNoticeRepository;
-    private final ClassNoticeFileRepository classNoticeFileRepository;
     private final FileService fileService;
-
-
+    private final SubjectNoticeRepository subjectNoticeRepository;
+    private final SubjectNoticeFileRepository subjectNoticeFileRepository;
+    private final TeacherSubjectRepository teacherSubjectRepository;
+    private final SubjectRepository subjectRepository;
     @Transactional
-    public ResNoticeDTO save(ReqNoticeDTO reqNoticeDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User teacher = userService.findById(authentication.getName());
+    public ResNoticeDTO save(ReqSubjectNoticeDTO reqSubjectNoticeDTO) {
 
-        ClassNotice classNotice = ClassNotice.builder()
-                .title(reqNoticeDTO.getTitle())
-                .content(reqNoticeDTO.getContent())
-                .teacher(teacher)
-                .classInformation(teacher.getClassInformation())
+        User teacher = userService.getCurrentUser();
+        Subject subject = subjectRepository.findById(reqSubjectNoticeDTO.getSubjectId()).orElseThrow();
+
+        SubjectNotice subjectNotice = SubjectNotice.builder()
+                .title(reqSubjectNoticeDTO.getTitle())
+                .content(reqSubjectNoticeDTO.getContent())
+                .user(teacher)
+                .subject(subject)
                 .build();
 
-        ClassNotice result = classNoticeRepository.save(classNotice);
+        SubjectNotice result = subjectNoticeRepository.save(subjectNotice);
 
-        List<MultipartFile> files = reqNoticeDTO.getFile();
+        List<MultipartFile> files = reqSubjectNoticeDTO.getFile();
         for(MultipartFile s : files){
             if(!s.isEmpty()) {
                 FileDTO fileDTO = FileDTO.builder()
                         .file(s)
-                        .repoType("classNotice")
-                        .masterId(result.getClassNoticeId())
+                        .repoType("subjectNotice")
+                        .masterId(result.getSubjectNoticeId())
                         .build();
                 fileService.saveFile(fileDTO);
             }
         }
 
         return ResNoticeDTO.builder()
-                .noticeId(result.getClassNoticeId())
+                .noticeId(result.getSubjectNoticeId())
                 .title(result.getTitle())
                 .content(result.getContent())
                 .user(ResUserDefaultDTO.builder()
@@ -74,25 +78,25 @@ public class ClassNoticeService {
                 .build();
     }
     public ResNoticeDTO updateById(Long noticeId, ReqNoticeDTO reqNoticeDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User teacher = userService.findById(authentication.getName());
 
-        Optional<ClassNotice> classNotice = classNoticeRepository.findById(noticeId);
+        User teacher = userService.getCurrentUser();
 
-        if (classNotice.isPresent()) {
+        Optional<SubjectNotice> subjectNotice = subjectNoticeRepository.findById(noticeId);
+
+        if (subjectNotice.isPresent()) {
 
             String title = reqNoticeDTO.getTitle();
             String content = reqNoticeDTO.getContent();
 
-            ClassNotice result = ClassNotice.builder()
-                    .classNoticeId(noticeId)
+            SubjectNotice result = SubjectNotice.builder()
+                    .subjectNoticeId(noticeId)
                     .title(title)
                     .content(content)
-                    .teacher(classNotice.get().getTeacher())
-                    .classInformation(classNotice.get().getClassInformation())
+                    .user(teacher)
+                    .subject(subjectNotice.get().getSubject())
                     .build();
 
-            ClassNotice resultNotice = classNoticeRepository.save(result);
+            SubjectNotice resultNotice = subjectNoticeRepository.save(result);
 
 
             // 여기에 해당 공지사항의 S3파일삭제 + db에 정보 삭제
@@ -102,7 +106,7 @@ public class ClassNoticeService {
             for(MultipartFile s : dtoFile){
                 if(!s.isEmpty()){
                     FileDTO fileDTO = FileDTO.builder()
-                            .repoType("classNotice")
+                            .repoType("subjectNotice")
                             .file(s)
                             .masterId(noticeId)
                             .build();
@@ -111,7 +115,7 @@ public class ClassNoticeService {
             }
 
             return ResNoticeDTO.builder()
-                    .noticeId(resultNotice.getClassNoticeId())
+                    .noticeId(resultNotice.getSubjectNoticeId())
                     .title(resultNotice.getTitle())
                     .content(resultNotice.getContent())
                     .user(ResUserDefaultDTO.builder()
@@ -126,12 +130,12 @@ public class ClassNoticeService {
         return null;
     }
     public void deleteFileById(Long noticeId){
-        Optional<List<ClassNoticeFile>> fileList = classNoticeFileRepository.findByClassNoticeId(noticeId);
+        Optional<List<SubjectNoticeFile>> fileList = subjectNoticeFileRepository.findBySubjectNoticeId(noticeId);
         if(fileList.isPresent()){
-            for(ClassNoticeFile files : fileList.get()){
+            for(SubjectNoticeFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
                         .originalName(files.getOriginalName())
-                        .repoType("classNotice")
+                        .repoType("subjectNotice")
                         .masterId(noticeId)
                         .build();
                 fileService.deleteFile(dto);
@@ -141,32 +145,32 @@ public class ClassNoticeService {
     public void deleteById(Long noticeId) {
         //공지사항에 연관된 file들 먼저 삭제
         this.deleteFileById(noticeId);
-        classNoticeRepository.deleteById(noticeId);
+        subjectNoticeRepository.deleteById(noticeId);
     }
 
     @Transactional
     public ResNoticeDTO findById(Long noticeId) {
-        Optional<ClassNotice> classNotice = classNoticeRepository.findById(noticeId);
-        Optional<List<ClassNoticeFile>> classNoticeFile = classNoticeFileRepository.findByClassNoticeId(noticeId);
+        Optional<SubjectNotice> subjectNotice = subjectNoticeRepository.findById(noticeId);
+        Optional<List<SubjectNoticeFile>> subjectNoticeFiles = subjectNoticeFileRepository.findBySubjectNoticeId(noticeId);
         List<String> filesUrl = new ArrayList<>();
         List<String> orignalName = new ArrayList<>();
-        if(classNoticeFile.isPresent()) {
-            for (ClassNoticeFile file : classNoticeFile.get()) {
+        if(subjectNoticeFiles.isPresent()) {
+            for (SubjectNoticeFile file : subjectNoticeFiles.get()) {
                 filesUrl.add(file.getFileUrl());
                 orignalName.add(file.getOriginalName());
             }
         }
-        if(classNotice.isEmpty())return null;
-       ClassNotice result = classNotice.get();
+        if(subjectNotice.isEmpty())return null;
+        SubjectNotice result = subjectNotice.get();
 
         ResUserDefaultDTO resUserDefaultDTO = ResUserDefaultDTO.builder()
-                .userName(result.getTeacher().getId())
-                .name(result.getTeacher().getName())
-                .userId(result.getTeacher().getUserId())
+                .userName(result.getUser().getId())
+                .name(result.getUser().getName())
+                .userId(result.getUser().getUserId())
                 .build();
 
         return ResNoticeDTO.builder()
-                .noticeId(result.getClassNoticeId())
+                .noticeId(result.getSubjectNoticeId())
                 .title(result.getTitle())
                 .content(result.getContent())
                 .user(resUserDefaultDTO)
@@ -176,25 +180,25 @@ public class ClassNoticeService {
                 .build();
     }
     @Transactional
-    public List<ResNoticeDTO> findAll() {
+    public List<ResNoticeDTO> findAll(Long subjectId) {
         User user = userService.getCurrentUser();
-        List<ClassNotice> classNotices = classNoticeRepository.findAllByClassId(user.getClassInformation().getClassId());
+        List<SubjectNotice> subjectNotices = subjectNoticeRepository.findAllBySubjectId(subjectId);
 
         List<ResNoticeDTO> resNoticeDTOS = new ArrayList<>();
 
-        for (ClassNotice c : classNotices) {
+        for (SubjectNotice s : subjectNotices) {
             ResUserDefaultDTO resUserDefaultDTO = ResUserDefaultDTO.builder()
-                    .userName(c.getTeacher().getId())
-                    .name(c.getTeacher().getName())
-                    .userId(c.getTeacher().getUserId())
+                    .userName(s.getUser().getId())
+                    .name(s.getUser().getName())
+                    .userId(s.getUser().getUserId())
                     .build();
 
             ResNoticeDTO classNoticeDTO = ResNoticeDTO.builder()
-                    .noticeId(c.getClassNoticeId())
-                    .title(c.getTitle())
+                    .noticeId(s.getSubjectNoticeId())
+                    .title(s.getTitle())
                     .user(resUserDefaultDTO)
-                    .content(c.getContent())
-                    .regDate(c.getRegDate())
+                    .content(s.getContent())
+                    .regDate(s.getRegDate())
                     .build();
 
             resNoticeDTOS.add(classNoticeDTO);

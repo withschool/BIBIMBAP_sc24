@@ -2,9 +2,8 @@ package com.withSchool.service.school;
 
 import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.file.FileDeleteDTO;
-import com.withSchool.dto.basic.ReqNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.school.ResSchoolNoticeDTO;
+import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.school.SchoolNoticeFile;
@@ -62,9 +61,14 @@ public class SchoolNoticeService {
             }
         }
         return ResNoticeDTO.builder()
+                .noticeId(notice.getSchoolNoticeId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
-                .user(admin.getName())
+                .user(ResUserDefaultDTO.builder()
+                        .name(admin.getName())
+                        .userName(admin.getId())
+                        .userId(admin.getUserId())
+                        .build())
                 .regDate(LocalDateTime.now())
                 .build();
     }
@@ -90,8 +94,8 @@ public class SchoolNoticeService {
                 .userId(schoolNotice.getUser().getUserId())
                 .build();
 
-        return ResSchoolNoticeDTO.builder()
-                .schoolNoticeId(schoolNotice.getSchoolNoticeId())
+        return ResNoticeDTO.builder()
+                .noticeId(schoolNotice.getSchoolNoticeId())
                 .title(schoolNotice.getTitle())
                 .content(schoolNotice.getContent())
                 .user(resUserDefaultDTO)
@@ -102,7 +106,7 @@ public class SchoolNoticeService {
     }
 
     @Transactional
-    public List<ResSchoolNoticeDTO> findAll() {
+    public List<ResNoticeDTO> findAll() {
         User user = userService.getCurrentUser();
         List<SchoolNotice> schoolNotices = schoolNoticeRepository.findAllBySchoolId(user.getSchoolInformation().getSchoolId());
 
@@ -115,8 +119,8 @@ public class SchoolNoticeService {
                     .userId(s.getUser().getUserId())
                     .build();
 
-            ResSchoolNoticeDTO schoolNoticeDTO = ResSchoolNoticeDTO.builder()
-                    .schoolNoticeId(s.getSchoolNoticeId())
+            ResNoticeDTO schoolNoticeDTO = ResNoticeDTO.builder()
+                    .noticeId(s.getSchoolNoticeId())
                     .title(s.getTitle())
                     .user(resUserDefaultDTO)
                     .content(s.getContent())
@@ -180,7 +184,7 @@ public class SchoolNoticeService {
                         .repoType("schoolNotice")
                         .masterId(schoolNoticeId)
                         .build();
-                //fileService.deleteSchoolNoticeFile(dto);
+                fileService.deleteFile(dto);
             }
         }
     }

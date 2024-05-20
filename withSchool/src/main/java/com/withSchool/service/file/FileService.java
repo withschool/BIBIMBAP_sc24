@@ -85,7 +85,7 @@ public class FileService {
         String repoType = dto.getRepoType();
         try{
             deleteFileMetadata(repoType,dto);
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getOriginalName()));
         }
         catch(Exception e){
             e.printStackTrace();
@@ -241,42 +241,42 @@ public class FileService {
                 .build();
         communityPostFileRepository.save(postFile);
     }
-    private void deleteSchoolNoticeFile(FileDeleteDTO dto) {
+    public void deleteSchoolNoticeFile(FileDeleteDTO dto) {
         schoolNoticeFileRepository.deleteAllBySchoolNoticeId(dto.getMasterId());
     }
 
-    private void deleteClassNoticeFile(FileDeleteDTO dto) {
+    public void deleteClassNoticeFile(FileDeleteDTO dto) {
         classNoticeFileRepository.deleteAllByClassNoticeId(dto.getMasterId());
     }
 
-    private void deleteClassHomeworkFile(FileDeleteDTO dto) {
+    public void deleteClassHomeworkFile(FileDeleteDTO dto) {
         classHomeworkFileRepository.deleteAllByClassHomeworkId(dto.getMasterId());
     }
 
-    private void deleteClassHomeworkSubmitFile(FileDeleteDTO dto) {
+    public void deleteClassHomeworkSubmitFile(FileDeleteDTO dto) {
         classHomeworkSubmitFileRepository.deleteAllByClassHomeworkSubmitFileId(dto.getMasterId());
     }
 
-    private void deleteSubjectNoticeFile(FileDeleteDTO dto) {
+    public void deleteSubjectNoticeFile(FileDeleteDTO dto) {
         subjectNoticeFileRepository.deleteAllBySubjectNoticeId(dto.getMasterId());
     }
 
-    private void deleteSubjectHomeworkFile(FileDeleteDTO dto) {
+    public void deleteSubjectHomeworkFile(FileDeleteDTO dto) {
         subjectHomeworkRepository.deleteAllBySubjectHomeworkId(dto.getMasterId());
     }
 
-    private void deleteSubjectHomeworkSubmitFile(FileDeleteDTO dto) {
+    public void deleteSubjectHomeworkSubmitFile(FileDeleteDTO dto) {
         subjectHomeworkSubmitFileRepository.deleteAllBySubjectHomeworkSubmitId(dto.getMasterId());
     }
 
-    private void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
+    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
         subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
     }
 
-    private void deletePostFile(FileDeleteDTO dto) {
+    public void deletePostFile(FileDeleteDTO dto) {
         communityPostFileRepository.deleteAllByPostFileId(dto.getMasterId());
     }
-    private String createFileName(String fileName) {
+    public String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 }

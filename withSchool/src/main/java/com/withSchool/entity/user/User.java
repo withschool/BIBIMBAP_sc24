@@ -160,4 +160,7 @@ public class User extends BaseEntity implements UserDetails {
                 .sex(this.getSex())
                 .build();
     }
+    public void updateClassInfo(ClassInformation classInformation){
+        this.classInformation = classInformation;
+    }
 }

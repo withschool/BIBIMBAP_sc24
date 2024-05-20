@@ -5,6 +5,7 @@ import com.withSchool.JWT.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -36,7 +37,12 @@ public class SecurityConfig {
                                 .requestMatchers("/test").hasAnyRole("ADMIN", "SUPER", "TEACHER")
                                 .requestMatchers("/super/**").hasRole("SUPER")
                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPER")
-                                .requestMatchers("/classes/{classId}/notices").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.POST,"/classes/notices").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.PATCH,"/classes/notices/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.DELETE,"/classes/notices/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.POST,"/subjects/notices").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.PATCH,"/subjects/notices/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.DELETE,"/subjects/notices/**").hasRole("TEACHER")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

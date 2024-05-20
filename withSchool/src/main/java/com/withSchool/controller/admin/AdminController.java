@@ -1,13 +1,13 @@
 package com.withSchool.controller.admin;
 
-import com.withSchool.dto.basic.ResNoticeDTO;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.mapping.UserClassDTO;
+import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
-import com.withSchool.dto.basic.ReqNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassService;
@@ -92,6 +92,15 @@ public class AdminController {
                     .body(e.getMessage());
         }
     }
+    @PostMapping("/users/{userId}/classes/{classId}")
+    @Operation(summary = "어드민의 유저 반 매핑", description = "어드민은 유저와 반을 매핑시킬수 있다.")
+    public ResponseEntity<String> mapUserClass(@PathVariable Long userId, @PathVariable Long classId){
+        userService.mapById(UserClassDTO.builder()
+                        .classId(classId)
+                        .userId(userId)
+                        .build());
+        return ResponseEntity.ok().body("success");
+    }
 
     @GetMapping("/classes/byUser")
     @Operation(summary = "어드민의 반 조회(학년, 반)", description = "어드민은 학년과 반을 옵션으로 반을 검색할 수 있다.")
@@ -161,7 +170,6 @@ public class AdminController {
         ResNoticeDTO resNoticeDTO = schoolNoticeService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(resNoticeDTO);
     }
 
@@ -179,7 +187,6 @@ public class AdminController {
 
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(response);
     }
 

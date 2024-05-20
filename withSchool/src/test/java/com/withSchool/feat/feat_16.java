@@ -1,8 +1,8 @@
 package com.withSchool.feat;
 
-import com.withSchool.dto.basic.ReqNoticeDTO;
+import com.withSchool.dto.school.ResNoticeDTO;
+import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
-import com.withSchool.dto.basic.ResNoticeDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolNoticeService;
@@ -83,11 +83,8 @@ public class feat_16 {
     @Test
     public void testAdminReadAllNotices(){
 
-<<<<<<< HEAD
-        List<ResNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll(admin.getSchoolInformation().getSchoolId());
-=======
-        List<ResSchoolNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll();
->>>>>>> a501b6c6ad700d1c4fa5b854317cbaed1e12f56b
+
+        List<ResNoticeDTO> schoolNoticeDTOS = schoolNoticeService.findAll();
 
         for (ResNoticeDTO s : schoolNoticeDTOS) {
             System.out.println(s);

@@ -1,7 +1,7 @@
 package com.withSchool.feat.feat_17;
 
 import com.withSchool.controller.admin.AdminController;
-import com.withSchool.dto.basic.ReqNoticeDTO;
+import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.user.User;

@@ -1,34 +1,33 @@
-package com.withSchool.entity.subject;
+package com.withSchool.entity.mapping;
 
+import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
-import com.withSchool.entity.base.BasePostEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
-
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class SubjectNotice extends BasePostEntity {
+@Table(name = "teacher_subject")
+public class TeacherSubject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("과목 공지 PK")
-    private Long subjectNoticeId;
+    @Column(name = "teacher_subject_id", unique = true, nullable = false)
+    @Comment("교사 수업 매핑 PK")
+    private Long teacherSubjectId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    @Comment("과목 공지 작성자 PK")
+    @JoinColumn(name = "user_id")
+    @Comment("교사 PK")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="subject_id")
+    @JoinColumn(name = "subject_id")
     @Comment("과목 PK")
     private Subject subject;
-
 }
