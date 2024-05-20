@@ -16,7 +16,7 @@ import IconX from '../../components/Icon/IconX';
 import IconXCircle from '../../components/Icon/IconXCircle';
 import IconUser from '../../components/Icon/IconUser';
 import IconAt from '../../components/Icon/IconAt';
-import { getSchoolList, getSchoolListFromNeis, registerSchool, deleteSchool} from '../../service/school';
+import { getSchoolList, getSchoolListFromNeis, registerSchool, deleteSchool } from '../../service/school';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconSearch from '../../components/Icon/IconSearch';
 import Tippy from '@tippyjs/react';
@@ -155,7 +155,7 @@ const SchoolList = () => {
             LCTN_SC_NM: school.LCTN_SC_NM,
             JU_ORG_NM: school.JU_ORG_NM,
             FOND_SC_NM: school.FOND_SC_NM,
-            ORG_RDNZC: school.ORG_RDNZC.trim(), 
+            ORG_RDNZC: school.ORG_RDNZC.trim(),
             ORG_RDNMA: school.ORG_RDNMA,
             ORG_RDNDA: school.ORG_RDNDA,
             ORG_TELNO: school.ORG_TELNO,
@@ -165,14 +165,14 @@ const SchoolList = () => {
             HS_SC_NM: school.HS_SC_NM,
             INDST_SPECL_CCCCL_EXST_YN: school.INDST_SPECL_CCCCL_EXST_YN,
             HS_GNRL_BUSNS_SC_NM: school.HS_GNRL_BUSNS_SC_NM,
-            SPCLY_PURPS_HS_ORD_NM: school.SPCLY_PURPS_HS_ORD_NM || '', 
+            SPCLY_PURPS_HS_ORD_NM: school.SPCLY_PURPS_HS_ORD_NM || '',
             ENE_BFE_SEHF_SC_NM: school.ENE_BFE_SEHF_SC_NM,
             DGHT_SC_NM: school.DGHT_SC_NM,
             FOND_YMD: school.FOND_YMD,
             FOAS_MEMRD: school.FOAS_MEMRD,
             LOAD_DTM: school.LOAD_DTM
         };
-    
+
         try {
             await registerSchool(schoolData);
             setModal21(false);
@@ -285,7 +285,6 @@ const SchoolList = () => {
                                                                                 className="bg-white dark:bg-[#1b2e4b] rounded-xl shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] p-3 flex items-center justify-between
                 text-gray-500 font-semibold min-w-[625px] hover:text-primary transition-all duration-300 hover:scale-[1.01]"
                                                                                 onClick={() => handleRegisterSchool(item)}
-
                                                                             >
                                                                                 <div>{item.schoolName}</div>
                                                                                 <div>{item.educationOffice}</div>
@@ -341,7 +340,10 @@ const SchoolList = () => {
                                 render: (record) => (
                                     <div className="flex items-center w-max mx-auto">
                                         <Tippy content="Delete">
-                                            <button type="button" onClick={() => handleDeleteSchool(record.schoolId)}>
+                                            <button type="button" onClick={async () => {
+                                                await handleDeleteSchool(record.schoolId);
+                                                window.location.reload();
+                                            }}>
                                                 <IconXCircle />
                                             </button>
                                         </Tippy>
