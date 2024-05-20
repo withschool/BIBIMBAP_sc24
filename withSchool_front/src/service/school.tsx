@@ -154,3 +154,25 @@ export const deleteSchool = async (schoolId: number): Promise<any> => {
         throw error;
     }
 };
+
+export const getSchoolInfo = async (childId: number | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/schools/info?childId=${childId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to get school information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error deleting school information:', error);
+        throw error;
+    }
+};

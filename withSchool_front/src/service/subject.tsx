@@ -23,7 +23,7 @@ export const getSubjectList = async (): Promise<any> => {
     }
 }
 
-export const getSubjectInfo = async (subjectId: string): Promise<any> => {
+export const getSubjectInfo = async (subjectId: string | null): Promise<any> => {
     try {
         const response = await fetch(`${url}/subjects/${subjectId}`, {
             method: 'GET',
