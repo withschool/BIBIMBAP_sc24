@@ -62,10 +62,6 @@ const ClassInfo = () => {
         };
         fetchSubject();
     }, []);
-
-    useEffect(() => {
-        
-    }, []);
     
     useEffect(() => {
         const fetchNoticeData = async () => {
