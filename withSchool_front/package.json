@@ -1,7 +1,6 @@
 {
   "name": "withschool_front",
   "version": "0.1.0",
-  "proxy": "https://open.neis.go.kr",
   "private": true,
   "type": "module",
   "scripts": {

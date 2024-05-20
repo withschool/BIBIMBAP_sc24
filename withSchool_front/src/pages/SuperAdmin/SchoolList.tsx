@@ -13,33 +13,16 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import IconX from '../../components/Icon/IconX';
+import IconXCircle from '../../components/Icon/IconXCircle';
 import IconUser from '../../components/Icon/IconUser';
 import IconAt from '../../components/Icon/IconAt';
-import { getSchoolList, getSchoolListFromNeis, } from '../../service/school';
+import { getSchoolList, getSchoolListFromNeis, registerSchool, deleteSchool } from '../../service/school';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconSearch from '../../components/Icon/IconSearch';
+import Tippy from '@tippyjs/react';
 
 
-const items = [
-    {
-        schoolName: '가원중학교',
-        schoolPhoneNumber: '02-409-2179',
-        educationOffice: '서울특별시교육청',
-        schoolAddress: '서울특별시 송파구 중대로10길 40-18',
-    },
-    {
-        schoolName: '가원중학교',
-        schoolPhoneNumber: '02-409-2179',
-        educationOffice: '서울특별시교육청',
-        schoolAddress: '서울특별시 송파구 중대로10길 40-18',
-    },
-    {
-        schoolName: '가원중학교',
-        schoolPhoneNumber: '02-409-2179',
-        educationOffice: '서울특별시교육청',
-        schoolAddress: '서울특별시 송파구 중대로10길 40-18',
-    },
-];
+
 
 interface School {
     schoolId: number;
@@ -127,16 +110,18 @@ const SchoolList = () => {
 
 
     //search
-    const [filteredItems, setFilteredItems] = useState<any>(items);
+
+    const [filteredItems, setFilteredItems] = useState<any>([]);
     const [allSearch, setAllSearch] = useState<string>('');
 
     useEffect(() => {
         const fetchAllData = async () => {
             try {
                 const allData = await getSchoolListFromNeis(allSearch);
-                console.log('API로부터 받은 데이터:', allData); // allData를 출력하여 확인
                 if (Array.isArray(allData)) {
-                    console.log('데이터 배열:', allData);
+                    setFilteredItems(allData.filter((item: School) =>
+                        item.schoolName.toLowerCase().includes(allSearch.toLowerCase())
+                    ));
                 } else {
                     console.error('클라오류 1', allData);
                 }
@@ -147,14 +132,72 @@ const SchoolList = () => {
         fetchAllData();
     }, [allSearch]);
 
-
     useEffect(() => {
-        setFilteredItems(() => {
-            return items.filter((item) => {
+        setFilteredItems((prevItems: School[]) => {
+            return prevItems.filter((item: School) => {
                 return item.schoolName.toLowerCase().includes(allSearch.toLowerCase());
             });
         });
     }, [allSearch]);
+
+    useEffect(() => {
+        setFilteredItems([]);
+    }, [allSearch]);
+
+    const handleRegisterSchool = async (school: any) => {
+        const schoolData = {
+            ATPT_OFCDC_SC_CODE: school.ATPT_OFCDC_SC_CODE,
+            ATPT_OFCDC_SC_NM: school.ATPT_OFCDC_SC_NM,
+            SD_SCHUL_CODE: school.SD_SCHUL_CODE,
+            SCHUL_NM: school.SCHUL_NM,
+            ENG_SCHUL_NM: school.ENG_SCHUL_NM,
+            SCHUL_KND_SC_NM: school.SCHUL_KND_SC_NM,
+            LCTN_SC_NM: school.LCTN_SC_NM,
+            JU_ORG_NM: school.JU_ORG_NM,
+            FOND_SC_NM: school.FOND_SC_NM,
+            ORG_RDNZC: school.ORG_RDNZC.trim(),
+            ORG_RDNMA: school.ORG_RDNMA,
+            ORG_RDNDA: school.ORG_RDNDA,
+            ORG_TELNO: school.ORG_TELNO,
+            HMPG_ADRES: school.HMPG_ADRES,
+            COEDU_SC_NM: school.COEDU_SC_NM,
+            ORG_FAXNO: school.ORG_FAXNO,
+            HS_SC_NM: school.HS_SC_NM,
+            INDST_SPECL_CCCCL_EXST_YN: school.INDST_SPECL_CCCCL_EXST_YN,
+            HS_GNRL_BUSNS_SC_NM: school.HS_GNRL_BUSNS_SC_NM,
+            SPCLY_PURPS_HS_ORD_NM: school.SPCLY_PURPS_HS_ORD_NM || '',
+            ENE_BFE_SEHF_SC_NM: school.ENE_BFE_SEHF_SC_NM,
+            DGHT_SC_NM: school.DGHT_SC_NM,
+            FOND_YMD: school.FOND_YMD,
+            FOAS_MEMRD: school.FOAS_MEMRD,
+            LOAD_DTM: school.LOAD_DTM
+        };
+
+        try {
+            await registerSchool(schoolData);
+            setModal21(false);
+        } catch (error) {
+            console.error('학교 등록 오류', error);
+        }
+    };
+
+    const handleDeleteSchool = async (schoolId: number) => {
+        if (window.confirm('정말로 이 학교를 삭제하시겠습니까?')) {
+            try {
+                await deleteSchool(schoolId);
+                // Refetch the school list
+                const data = await getSchoolList();
+                const formattedData = data.map((item: School) => ({
+                    ...item,
+                    regDate: formatDate(item.regDate),
+                }));
+                setInitialRecords(sortBy(formattedData, 'schoolName'));
+                setRecordsData(formattedData.slice((page - 1) * pageSize, page * pageSize));
+            } catch (error) {
+                console.error('학교 삭제 오류', error);
+            }
+        }
+    };
 
 
     return (
@@ -168,9 +211,6 @@ const SchoolList = () => {
                     https://www.npmjs.com/package/mantine-datatable
                 </a>
             </div>
-
-
-
 
             <div className="panel mt-6">
                 <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
@@ -232,7 +272,7 @@ const SchoolList = () => {
                                                                             className="form-input shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] bg-white rounded-full h-11 placeholder:tracking-wider ltr:pr-11 rtl:pl-11"
                                                                             onChange={(e) => setAllSearch(e.target.value)}
                                                                         />
-                                                                        <button type="button" className="btn btn-primary absolute ltr:right-1 rtl:left-1 inset-y-0 m-auto rounded-full w-9 h-9 p-0 flex items-center justify-center">
+                                                                        <button type="button" className="btn btn-primary absolute ltr:right-1 rtl:left-1 inset-y-0 m-auto rounded-full w-9 h-9 p-0 flex items-center justify-center" onClick={() => getSchoolListFromNeis(allSearch)}>
                                                                             <IconSearch className="mx-auto" />
                                                                         </button>
                                                                     </div>
@@ -244,6 +284,7 @@ const SchoolList = () => {
                                                                                 key={item.schoolName}
                                                                                 className="bg-white dark:bg-[#1b2e4b] rounded-xl shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] p-3 flex items-center justify-between
                 text-gray-500 font-semibold min-w-[625px] hover:text-primary transition-all duration-300 hover:scale-[1.01]"
+                                                                                onClick={() => handleRegisterSchool(item)}
                                                                             >
                                                                                 <div>{item.schoolName}</div>
                                                                                 <div>{item.educationOffice}</div>
@@ -292,6 +333,23 @@ const SchoolList = () => {
                             { accessor: 'educationOffice', title: '담당 교육청', sortable: true },
                             { accessor: 'schoolAddress', title: '학교 주소', sortable: true },
                             { accessor: 'regDate', title: '생성일', sortable: true },
+                            {
+                                accessor: 'deleteSchool',
+                                title: '삭제하기',
+                                titleClassName: '!text-center',
+                                render: (record) => (
+                                    <div className="flex items-center w-max mx-auto">
+                                        <Tippy content="Delete">
+                                            <button type="button" onClick={async () => {
+                                                await handleDeleteSchool(record.schoolId);
+                                                window.location.reload();
+                                            }}>
+                                                <IconXCircle />
+                                            </button>
+                                        </Tippy>
+                                    </div>
+                                ),
+                            },
                         ]}
                         totalRecords={initialRecords.length}
                         recordsPerPage={pageSize}
