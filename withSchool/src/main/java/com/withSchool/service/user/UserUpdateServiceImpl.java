@@ -30,5 +30,9 @@ public class UserUpdateServiceImpl implements UserUpdateService {
             user.changeUserInfo(dto.getId(), dto.getPassword(), dto.getEmail(), dto.getPhoneNumber(), dto.getAddress());
             userRepository.save(user);
         }
+        else{
+            throw new RuntimeException("해당유저가 없습니다");
+        }
+
     }
 }

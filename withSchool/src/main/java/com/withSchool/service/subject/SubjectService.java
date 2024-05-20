@@ -101,7 +101,6 @@ public class SubjectService {
                     .semester(subjectDTO.getSubjectSemester())
                     .schoolInformation(schoolInformation.get())
                     .build();
-
             return subjectRepository.save(subject);
         } else {
             return null;
