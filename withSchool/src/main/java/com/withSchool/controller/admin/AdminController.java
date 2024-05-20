@@ -51,7 +51,7 @@ public class AdminController {
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
-    public ResponseEntity<String> createSubject(@RequestParam ReqSubjectDefaultDTO subjectDTO) {
+    public ResponseEntity<String> createSubject(@RequestBody ReqSubjectDefaultDTO subjectDTO) {
         try {
             Subject subject = subjectService.saveSubject(subjectDTO);
             return ResponseEntity.ok()
