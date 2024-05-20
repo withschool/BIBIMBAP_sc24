@@ -1,6 +1,7 @@
 package com.withSchool.service.user;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.dto.user.BasicUserInfoDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.SignUpDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
@@ -254,5 +255,18 @@ public class UserService {
     public User getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return this.findById(authentication.getName());
+    }
+
+    public List<BasicUserInfoDTO> findAllClassInformation_ClassId(){
+        User user = getCurrentUser();
+        List<User> users = userRepository.findAllByClassInformation_ClassId(user.getClassInformation().getClassId());
+
+        List<BasicUserInfoDTO> dtos = new ArrayList<>();
+
+        for (User u : users) {
+            dtos.add(u.entityToBasicUserInfoDTO());
+        }
+
+        return dtos;
     }
 }
