@@ -38,6 +38,9 @@ public class SubjectService {
             SubjectInfoDTO subjectInfoDTO = SubjectInfoDTO.builder()
                     .subjectName(s.getSubjectName())
                     .subjectId(s.getSubjectId())
+                    .grade(s.getGrade())
+                    .year(s.getYear())
+                    .semester(s.getSemester())
                     .regDate(s.getRegDate())
                     .build();
 
