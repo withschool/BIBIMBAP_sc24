@@ -46,15 +46,11 @@ public class SubjectQuestionPostController {
     }
 
     @PatchMapping("/{question-id}")
-    @Operation(summary = "과목별 질문 단건 수정")
-    public ResponseEntity<ResSubjectQuestionPostDefaultDTO> modifyOneQuestion(@PathVariable("question-id") Long questionPostId, @RequestBody String questionContent) {
-        ReqQuestionPostModifyDTO reqQuestionPostModifyDTO = ReqQuestionPostModifyDTO.builder()
-                .questionPostId(questionPostId)
-                .questionContent(questionContent)
-                .build();
+    @Operation(summary = "과목별 질문 단건 수정(학생, 교사)")
+    public ResponseEntity<ResSubjectQuestionPostDefaultDTO> modifyOneQuestion(@PathVariable("question-id") Long questionPostId, @RequestBody ReqQuestionPostModifyDTO request) {
 
         return ResponseEntity.ok()
-                .body(subjectQuestionPostService.updateByStudent(reqQuestionPostModifyDTO));
+                .body(subjectQuestionPostService.updateQuestion(questionPostId, request));
     }
 
     @DeleteMapping("/{question-id}")

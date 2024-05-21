@@ -144,11 +144,10 @@ public class SubjectQuestionPostServiceTest {
                 .build();
 
         ReqQuestionPostModifyDTO reqQuestionPostModifyDTO = ReqQuestionPostModifyDTO.builder()
-                .questionPostId(modifiedQuestion.getSubjectQuestionPostId())
                 .questionContent(modifiedQuestion.getQuestionContent())
                 .build();
 
-        ResSubjectQuestionPostDefaultDTO savedModifiedQuestion = subjectQuestionPostService.updateByStudent(reqQuestionPostModifyDTO);
+        ResSubjectQuestionPostDefaultDTO savedModifiedQuestion = subjectQuestionPostService.updateQuestion(modifiedQuestion.getSubjectQuestionPostId(), reqQuestionPostModifyDTO);
 
         // then
         Assertions.assertEquals(1, subjectQuestionPostService.findAllBySubject(subject.getSubjectId()).size());
