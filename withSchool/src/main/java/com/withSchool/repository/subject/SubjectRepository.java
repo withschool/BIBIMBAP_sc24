@@ -12,8 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
-    @Query("SELECT s FROM Subject s JOIN s.schoolInformation i WHERE s.subjectName = :subjectName AND i.schoolId = :schoolId")
-    Optional<Subject> findBySubjectName(@Param("subjectName") String subjectName, @Param("schoolId") Long schoolId);
+    @Query("SELECT s FROM Subject s  WHERE s.subjectName = :subjectName AND s.schoolInformation.schoolId = :schoolId AND s.grade = :grade AND s.year = :year")
+    Optional<Subject> findBySubjectNameAndGradeAndYear(@Param("subjectName") String subjectName, @Param("grade") String grade, @Param("year") String year, @Param("schoolId") Long schoolId);
 
     @Query("SELECT s FROM Subject s WHERE s.schoolInformation = :schoolInformation")
     List<Subject> findBySchool(@Param("schoolInformation") SchoolInformation schoolInformation);

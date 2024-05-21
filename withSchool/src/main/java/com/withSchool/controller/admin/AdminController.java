@@ -148,9 +148,13 @@ public class AdminController {
                 .id(user.getId())
                 .file(file)
                 .build();
-        csvService.registerUser(dto);
-        return ResponseEntity.ok()
-                .body("file upload");
+        try {
+            csvService.registerUser(dto);
+            return ResponseEntity.ok("Users registered successfully.");
+
+        }catch(RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     // 유저 리스트를 받아서 다 삭제

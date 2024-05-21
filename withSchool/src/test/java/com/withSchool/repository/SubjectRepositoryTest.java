@@ -25,7 +25,7 @@ public class SubjectRepositoryTest {
 
     @Test
     public void test(){
-        Optional<Subject> subject = subjectRepository.findBySubjectName("수학",9L);
+        Optional<Subject> subject = subjectRepository.findBySubjectNameAndGradeAndYear("수학","9","1",10L);
         if(subject.isPresent()){
             System.out.println(subject.get().getSubjectName());
         }
