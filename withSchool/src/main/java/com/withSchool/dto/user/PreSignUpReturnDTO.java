@@ -13,5 +13,4 @@ public class PreSignUpReturnDTO {
     private Long userId;
     private String schoolName;
     private String userName;
-    private String birthDate;
 }

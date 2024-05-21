@@ -31,7 +31,7 @@ public class BasicController {
     public ResponseEntity<Map<String, Object>> preRegisterUser(@RequestBody PreSignUpRequestDTO preSignUpRequestDTO) {
         Map<String, Object> response = new HashMap<>();
 
-        User user = userService.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getBirthDate(), preSignUpRequestDTO.getUserCode());
+        User user = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getUserCode());
         if(user==null) {
             response.put("message", "해당하는 유저가 없습니다.");
             return ResponseEntity.ok()
@@ -42,7 +42,6 @@ public class BasicController {
                 .userId(user.getUserId())
                 .userName(user.getName())
                 .schoolName(user.getSchoolInformation().getSchulNm())
-                .birthDate(user.getBirthDate())
                 .build();
 
         response.put("user", preSignUpReturnDTO);

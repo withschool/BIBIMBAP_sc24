@@ -209,8 +209,8 @@ public class UserService {
         return jwtToken;
     }
 
-    public User findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode) {
-        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
+    public User findBySchoolInformationSchoolIdAndNameAndUserCode(Long schoolId, String name, String userCode) {
+        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndUserCode(schoolId, name, userCode);
         return user.orElse(null);
     }
     public SchoolInformation getCurrentUserSchoolInformation(Long childId) {
