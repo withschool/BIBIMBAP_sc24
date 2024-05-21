@@ -3,6 +3,7 @@ package com.withSchool.service.csv;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.mapping.ReqTeacherSubjectMappingDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.subject.Subject;
@@ -12,6 +13,7 @@ import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.repository.user.UserRepository;
 import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.mapping.TeacherSubjectService;
 import com.withSchool.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class CsvService {
     private final ClassRepository classRepository;
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectService studentSubjectService;
+    private final TeacherSubjectService teacherSubjectService;
     private final SubjectRepository subjectRepository;
     private final UserService userService;
 
@@ -104,7 +107,16 @@ public class CsvService {
 
             Optional<Subject> subject = subjectRepository.findBySubjectNameAndGradeAndYearAndSemester(subjectName, grade, year,semester, schoolId);
             if (subject.isPresent()) {
-                studentSubjectService.register(newUser, subject.get());
+                if(line[0].equals("학생")){
+                    studentSubjectService.register(newUser, subject.get());
+                }
+                else{
+                    ReqTeacherSubjectMappingDTO dto= ReqTeacherSubjectMappingDTO.builder()
+                            .subjectId(subject.get().getSubjectId())
+                            .teacherId(newUser.getUserId())
+                            .build();
+                    teacherSubjectService.save(dto);
+                }
             } else {
                 throw new NoSuchElementException("can't find subjectInfo: " + subjectName);
             }
