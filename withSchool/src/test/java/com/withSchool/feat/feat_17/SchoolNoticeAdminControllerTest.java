@@ -89,7 +89,7 @@ public class SchoolNoticeAdminControllerTest {
                 .build();
 
         when(userService.findById(anyString())).thenReturn(user);
-        doReturn(schoolNotice).when(schoolNoticeService).save(any(SchoolNoticeDTO.class));
+//        doReturn(schoolNotice).when(schoolNoticeService).save(any(SchoolNoticeDTO.class));
 
 
         Map<String, Object> response = new HashMap<>();

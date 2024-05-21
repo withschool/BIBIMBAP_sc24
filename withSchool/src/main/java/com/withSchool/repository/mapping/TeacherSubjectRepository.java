@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface TeacherSubjectRepository extends JpaRepository<TeacherSubject,Long> {
-    @Query("SELECT t FROM TeacherSubject t WHERE t.user.userId = :teacherId")
+    @Query("SELECT t FROM TeacherSubject t WHERE t.teacher.userId = :teacherId")
     List<TeacherSubject> findByTeacherId(Long teacherId);
 }

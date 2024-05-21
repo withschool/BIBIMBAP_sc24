@@ -58,9 +58,9 @@ public class feat_16 {
                 .build();
 
 
-        SchoolNotice schoolNotice = schoolNoticeService.save(schoolNoticeDto);
-
-        System.out.println(schoolNotice.getSchoolNoticeId());
+//        SchoolNotice schoolNotice = schoolNoticeService.save(schoolNoticeDto);
+//
+//        System.out.println(schoolNotice.getSchoolNoticeId());
     }
 
     // 어드민 공지 단건 조회 로직

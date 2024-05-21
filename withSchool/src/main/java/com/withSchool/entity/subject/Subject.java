@@ -1,5 +1,6 @@
 package com.withSchool.entity.subject;
 
+import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.base.BaseEntity;
 import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
@@ -43,4 +44,15 @@ public class Subject extends BaseEntity {
     @JoinColumn(name = "school_id")
     @Comment("학교 PK")
     private SchoolInformation schoolInformation;
+
+    public SubjectInfoDTO toSubjectInfoDTO(){
+        return SubjectInfoDTO.builder()
+                .subjectId(this.getSubjectId())
+                .subjectName(this.getSubjectName())
+                .year(this.getYear())
+                .semester(this.getSemester())
+                .grade(this.getGrade())
+                .regDate(this.getRegDate())
+                .build();
+    }
 }
