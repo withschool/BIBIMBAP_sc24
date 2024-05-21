@@ -46,6 +46,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST,"/subjects/homework").hasRole("TEACHER")
                                 .requestMatchers(HttpMethod.PATCH,"/subjects/homework/**").hasRole("TEACHER")
                                 .requestMatchers(HttpMethod.DELETE,"/subjects/homework/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.POST,"/classes/homework").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.PATCH,"/classes/homework/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.DELETE,"/classes/homework/**").hasRole("TEACHER")
 
                                 .anyRequest().authenticated()
                 )

@@ -2,9 +2,13 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
+import com.withSchool.dto.subject.ReqHomeworkCreateDTO;
+import com.withSchool.dto.subject.ResHomeworkDTO;
 import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.entity.classes.ClassHomework;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
+import com.withSchool.service.classes.ClassHomeworkService;
 import com.withSchool.service.classes.ClassNoticeService;
 import com.withSchool.service.classes.ClassService;
 import com.withSchool.service.user.UserService;
@@ -32,6 +36,7 @@ public class ClassController {
     private final ClassService classService;
     private final ClassNoticeService classNoticeService;
     private final UserService userService;
+    private final ClassHomeworkService classHomeworkService;
 
 
     @GetMapping("/{classId}")
@@ -94,6 +99,29 @@ public class ClassController {
         return ResponseEntity.ok()
                 .body("delete success");
     }
+    @PostMapping("/homework")
+    @Operation(summary = "반 교사의 반 과제 생성", description = "반 교사는 과제를 생성할 수 있다")
+    public ResponseEntity<ResHomeworkDTO> createHomework(@ModelAttribute ReqHomeworkCreateDTO reqHomeworkCreateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(classHomeworkService.save(reqHomeworkCreateDTO));
+    }
 
+    @GetMapping("/{class-id}/homework") // 과제 리스트 가져오기
+    @Operation(summary = "해당 유저의 반 과제 리스트 불러오기", description = "반 과제 리스트 불러오기")
+    public ResponseEntity<List<ResHomeworkDTO>> getHomeworkList(@PathVariable("class-id")Long classId) {
+        return ResponseEntity.status(HttpStatus.OK).body(classHomeworkService.getList(classId));
+    }
+
+    @PatchMapping("/homework/{homework-id}")
+    @Operation(summary = "반 교사의 반 과제 수정", description = "반 교사는 homework id를 사용하여 과제를 수정할 수 있다")
+    public ResponseEntity<ResHomeworkDTO> updateHomework(@PathVariable("homework-id") Long homeworkId, @ModelAttribute ReqHomeworkCreateDTO req){
+        return ResponseEntity.status(HttpStatus.OK).body(classHomeworkService.update(homeworkId,req));
+    }
+
+    @DeleteMapping("/homework/{homework-id}")
+    @Operation(summary = "반 교사의 반 과제 삭제", description = "반 교사는 homework id를 사용하여 과제를 삭제할 수 있다")
+    public ResponseEntity<String> deleteHomework(@PathVariable("homework-id") Long homeworkId){
+        classHomeworkService.delete(homeworkId);
+        return ResponseEntity.status(HttpStatus.OK).body("delete success");
+    }
 
 }
