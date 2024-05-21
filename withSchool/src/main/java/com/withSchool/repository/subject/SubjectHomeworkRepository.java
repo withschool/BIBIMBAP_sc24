@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface SubjectHomeworkRepository extends JpaRepository<SubjectHomework,Long> {
-    @Transactional
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("DELETE FROM SubjectHomeworkFile s WHERE s.subjectHomework.subjectHomeworkId = : subjectHomeworkId")
-    void deleteAllBySubjectHomeworkId(Long subjectHomeworkId);
+
+    @Query("SELECT s FROM SubjectHomework s WHERE s.subject.subjectId = :subjectId")
+    List<SubjectHomework> findAlLBySubjectId(Long subjectId);
 }
