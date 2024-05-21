@@ -2,11 +2,14 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
+import com.withSchool.dto.subject.ReqHomeworkCreateDTO;
 import com.withSchool.dto.subject.ReqSubjectNoticeDTO;
+import com.withSchool.dto.subject.ResHomeworkDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.subject.SubjectHomeworkService;
 import com.withSchool.service.subject.SubjectNoticeService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
@@ -33,6 +36,7 @@ public class SubjectController {
     private final SubjectNoticeService subjectNoticeService;
     private final StudentSubjectService studentSubjectService;
     private final UserService userService;
+    private final SubjectHomeworkService subjectHomeworkService;
 
     @GetMapping
     @Operation(summary = "유저의 과목 리스트 조회", description = "학생과 교사는 자신이 속해있는 과목의 리스트를 조회한다. 어드민은 학교의 모든 과목의 리스트를 조회한다. 부모는 자신이 선택한 자식이 수강하는 과목의 리스트를 조회한다.")
@@ -46,7 +50,7 @@ public class SubjectController {
         } else if (user.getAccountType() == 3 || user.getAccountType() == 4) {
             return ResponseEntity.ok().body(subjectService.findAllSubjectByUserSchool(user));
         } else if (user.getAccountType() == 1) {
-            if(childId == null) throw new RuntimeException("학생이 선택되지 않았습니다.");
+            if (childId == null) throw new RuntimeException("학생이 선택되지 않았습니다.");
 
             User child = userService.findByUserId(childId);
             return ResponseEntity.ok()
@@ -86,6 +90,7 @@ public class SubjectController {
                     .body(response);
         }
     }
+
     @GetMapping("/options")
     @Operation(summary = "조건을 바탕으로 과목 조회")
     public ResponseEntity<List<SubjectInfoDTO>> findSubjectsByOptions(
@@ -105,6 +110,7 @@ public class SubjectController {
                     .body(subjectService.findSubjectsByGradeAndYearAndSemester(grade, year, semester, user));
         }
     }
+
     @PostMapping("/notices")
     @Operation(summary = "과목교사의 과목 공지 작성", description = "과목교사는 과목 공지를 작성할 수 있다.")
     public ResponseEntity<ResNoticeDTO> createNotice(@ModelAttribute ReqSubjectNoticeDTO request) {
@@ -112,13 +118,15 @@ public class SubjectController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(subjectNoticeService.save(request));
     }
+
     @PatchMapping("/notices/{notice-id}")
     @Operation(summary = "과목교사의 과목 공지 수정", description = "과목교사는 과목 공지를 수정할 수 있다.")
-    public ResponseEntity<ResNoticeDTO> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqNoticeDTO request){
+    public ResponseEntity<ResNoticeDTO> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqNoticeDTO request) {
 
         return ResponseEntity.ok()
                 .body(subjectNoticeService.updateById(noticeId, request));
     }
+
     @GetMapping("/notices/{noticeId}")
     @Operation(summary = "수강유저의 과목 공지 상세 조회")
     public ResponseEntity<ResNoticeDTO> showOneNotice(@PathVariable(name = "noticeId") Long noticeId) {
@@ -145,5 +153,28 @@ public class SubjectController {
                 .body("delete success");
     }
 
+    @PostMapping("/homework")
+    @Operation(summary = "과목교사의 과목 과제 생성", description = "과목교사는 원하는 과목id를 사용하여 과제를 생성할 수 있다")
+    public ResponseEntity<ResHomeworkDTO> createHomework(@ModelAttribute ReqHomeworkCreateDTO reqHomeworkCreateDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(subjectHomeworkService.save(reqHomeworkCreateDTO));
+    }
 
+    @GetMapping("/{subject-id}/homework") // 과제 리스트 가져오기
+    @Operation(summary = "해당 유저의 과목 과제 리스트 불러오기", description = "과목 과제 리스트 불러오기")
+    public ResponseEntity<List<ResHomeworkDTO>> getHomeworkList(@PathVariable("subject-id")Long subjectId) {
+        return ResponseEntity.status(HttpStatus.OK).body(subjectHomeworkService.getList(subjectId));
+    }
+
+    @PatchMapping("/homework/{homework-id}")
+    @Operation(summary = "과목교사의 과목 과제 수정", description = "과목 교사는 homework id를 사용하여 과제를 수정할 수 있다")
+    public ResponseEntity<ResHomeworkDTO> updateHomework(@PathVariable("homework-id") Long homeworkId, @ModelAttribute ReqHomeworkCreateDTO req){
+        return ResponseEntity.status(HttpStatus.OK).body(subjectHomeworkService.update(homeworkId,req));
+    }
+
+    @DeleteMapping("/homework/{homework-id}")
+    @Operation(summary = "과목교사의 과목 과제 삭제", description = "과목 교사는 homework id를 사용하여 과제를 삭제할 수 있다")
+    public ResponseEntity<String> deleteHomework(@PathVariable("homework-id") Long homeworkId){
+        subjectHomeworkService.delete(homeworkId);
+        return ResponseEntity.status(HttpStatus.OK).body("delete success");
+    }
 }

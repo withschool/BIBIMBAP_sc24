@@ -43,6 +43,10 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST,"/subjects/notices").hasRole("TEACHER")
                                 .requestMatchers(HttpMethod.PATCH,"/subjects/notices/**").hasRole("TEACHER")
                                 .requestMatchers(HttpMethod.DELETE,"/subjects/notices/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.POST,"/subjects/homework").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.PATCH,"/subjects/homework/**").hasRole("TEACHER")
+                                .requestMatchers(HttpMethod.DELETE,"/subjects/homework/**").hasRole("TEACHER")
+
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

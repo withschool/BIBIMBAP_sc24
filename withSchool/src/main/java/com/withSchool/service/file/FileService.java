@@ -262,7 +262,7 @@ public class FileService {
     }
 
     public void deleteSubjectHomeworkFile(FileDeleteDTO dto) {
-        subjectHomeworkRepository.deleteAllBySubjectHomeworkId(dto.getMasterId());
+        subjectHomeworkFileRepository.deleteAllBySubjectHomeworkId(dto.getMasterId());
     }
 
     public void deleteSubjectHomeworkSubmitFile(FileDeleteDTO dto) {
