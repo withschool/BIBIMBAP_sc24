@@ -100,6 +100,11 @@ const Header = () => {
         setMessages(messages.filter((user) => user.id !== value));
     };
 
+    const ResetData = () =>{
+        alert("로그아웃 되었습니다.");
+        localStorage.clear();
+    }
+
     const [notifications, setNotifications] = useState([
         {
             id: 1,
@@ -449,7 +454,7 @@ const Header = () => {
                                             Lock Screen
                                         </Link>
                                     </li>
-                                    <li className="border-t border-white-light dark:border-white-light/10">
+                                    <li onClick={ResetData} className="border-t border-white-light dark:border-white-light/10">
                                         <Link to="/login" className="text-danger !py-3">
                                             <IconLogout className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
                                             Sign Out
