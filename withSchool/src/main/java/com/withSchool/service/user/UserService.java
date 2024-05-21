@@ -2,10 +2,7 @@ package com.withSchool.service.user;
 
 import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
-import com.withSchool.dto.user.BasicUserInfoDTO;
-import com.withSchool.dto.user.ResUserDefaultDTO;
-import com.withSchool.dto.user.SignUpDTO;
-import com.withSchool.dto.user.UserDeleteRequestDTO;
+import com.withSchool.dto.user.*;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
@@ -54,13 +51,13 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public List<ResUserDefaultDTO> findAllBySchool_SchoolId() {
+    public List<ResUserUsercodeDTO> findAllBySchool_SchoolId() {
         Long schoolId = getCurrentUserSchoolId();
         List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
 
-        List<ResUserDefaultDTO> dtos = new ArrayList<>();
+        List<ResUserUsercodeDTO> dtos = new ArrayList<>();
         for (User u : res) {
-            dtos.add(u.toResUserDefaultDTO());
+            dtos.add(u.toResUserUsercodeDTO());
         }
 
         return dtos;

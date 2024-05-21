@@ -6,7 +6,7 @@ import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
-import com.withSchool.dto.user.ResUserDefaultDTO;
+import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
@@ -207,7 +207,7 @@ public class AdminController {
     }
     @GetMapping("/users")
     @Operation(summary = "로그인한 유저가 속한 학교의 모든 유저 리스트업")
-    public ResponseEntity<List<ResUserDefaultDTO>> showAllUsersBySchool() {
+    public ResponseEntity<List<ResUserUsercodeDTO>> showAllUsersBySchool() {
         return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
 
