@@ -118,7 +118,7 @@ const LoginBoxed = () => {
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
                                 <div>
                                     <label htmlFor="IndividualCode">Verify Code</label>
-                                    <div className="relative text-white-dark">
+                                    <div className="relative  text-white-dark">
                                         <input id="IndividualCode" placeholder="인증코드를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={individualCode} onChange={handleIndividualCode}  />
                                         <span className="absolute start-3 top-1/2 -translate-y-1/2">
                                             <IconLaptop fill={true} />

@@ -33,7 +33,7 @@ const SignInBoxed = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [loginError, setLoginError] = useState('');
-    let result = true;
+    const [result, setResult] = useState(true);
 
     let userInfoString = localStorage.getItem('certifyinfo')!;
     const userInfo = JSON.parse(userInfoString);
@@ -71,7 +71,8 @@ const SignInBoxed = () => {
 
     const handleId = (event: React.ChangeEvent<HTMLInputElement>) => {
         setId(event.target.value);
-        result = true;
+        console.log("바뀜");
+        setResult(true);
     }
 
     const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,11 +95,11 @@ const SignInBoxed = () => {
         event.preventDefault();
         try {
             console.log(userInfo);
-            result = await DuplicateId(id);
-            if (result) {
+            if (await DuplicateId(id)) {
                 alert("중복된 아이디입니다. 다시 설정해주세요.");
             } else {
                 alert("사용 가능한 아이디입니다.");
+                setResult(false);
             }
         } catch (error) {
             console.error("오류가 발생했습니다:", error);
