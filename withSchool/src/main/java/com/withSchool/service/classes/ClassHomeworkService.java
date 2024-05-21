@@ -3,14 +3,19 @@ package com.withSchool.service.classes;
 import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.file.FileDeleteDTO;
 import com.withSchool.dto.subject.ReqHomeworkCreateDTO;
+import com.withSchool.dto.subject.ReqHomeworkSubmitDTO;
 import com.withSchool.dto.subject.ResHomeworkDTO;
-import com.withSchool.entity.classes.ClassHomework;
-import com.withSchool.entity.classes.ClassHomeworkFile;
-import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.dto.subject.ResHomeworkSubmitDTO;
+import com.withSchool.entity.classes.*;
+import com.withSchool.entity.subject.SubjectHomeworkSubmit;
+import com.withSchool.entity.user.User;
 import com.withSchool.repository.classes.ClassHomeworkRepository;
+import com.withSchool.repository.classes.ClassHomeworkSubmitRepository;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.file.ClassHomeworkFileRepository;
+import com.withSchool.repository.file.ClassHomeworkSubmitFileRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,9 +34,12 @@ import java.util.Optional;
 public class ClassHomeworkService {
 
     private final FileService fileService;
+    private final UserService userService;
     private final ClassRepository classRepository;
     private final ClassHomeworkRepository classHomeworkRepository;
     private final ClassHomeworkFileRepository classHomeworkFileRepository;
+    private final ClassHomeworkSubmitRepository classHomeworkSubmitRepository;
+    private final ClassHomeworkSubmitFileRepository classHomeworkSubmitFileRepository;
     @Transactional
     public ResHomeworkDTO save(ReqHomeworkCreateDTO reqHomeworkCreateDTO) {
 
@@ -155,6 +163,146 @@ public class ClassHomeworkService {
                         .originalName(files.getOriginalName())
                         .repoType("classHomework")
                         .masterId(homeworkId)
+                        .build();
+                fileService.deleteFile(dto);
+            }
+        }
+    }
+
+    public String submit(ReqHomeworkSubmitDTO reqHomeworkSubmitDTO) throws Exception {
+        User student = userService.getCurrentUser();
+
+        Optional<ClassHomework> classHomework = classHomeworkRepository.findById(reqHomeworkSubmitDTO.getHomeworkId());
+        if(classHomework.isEmpty()){
+            throw new Exception("Homework not found with id");
+        }
+        Optional<ClassHomeworkSubmit> exist = classHomeworkSubmitRepository.findByUserIdHomeworkId(student.getUserId(), reqHomeworkSubmitDTO.getHomeworkId());
+        if(exist.isPresent()){
+            throw new Exception("submit homework already exist");
+        }
+        ClassHomeworkSubmit classHomeworkSubmit = ClassHomeworkSubmit.builder()
+                .submitContent(reqHomeworkSubmitDTO.getContent())
+                .classHomework(classHomework.get())
+                .student(student)
+                .build();
+        ClassHomeworkSubmit result = classHomeworkSubmitRepository.save(classHomeworkSubmit);
+
+        List<MultipartFile> files = reqHomeworkSubmitDTO.getFiles();
+        for(MultipartFile s : files){
+            if(!s.isEmpty()) {
+                FileDTO fileDTO = FileDTO.builder()
+                        .file(s)
+                        .repoType("classHomeworkSubmit")
+                        .masterId(result.getClassHomeworkSubmitId())
+                        .build();
+                fileService.saveFile(fileDTO);
+            }
+        }
+        return "Homework submitted successfully.";
+    }
+
+    public String updateSubmit(Long classHomeworkSubmitId, ReqHomeworkSubmitDTO reqHomeworkSubmitDTO) throws Exception {
+        User user = userService.getCurrentUser();
+        Optional<ClassHomeworkSubmit> classHomeworkSubmit = classHomeworkSubmitRepository.findById(classHomeworkSubmitId);
+        if(classHomeworkSubmit.isEmpty()){
+            throw new Exception("HomeworkSubmit not found with id");
+        }
+        ClassHomeworkSubmit updateClassHomeworkSubmit =ClassHomeworkSubmit.builder()
+                .classHomeworkSubmitId(classHomeworkSubmitId)
+                .submitContent(reqHomeworkSubmitDTO.getContent())
+                .student(user)
+                .classHomework(classHomeworkSubmit.get().getClassHomework())
+                .build();
+        classHomeworkSubmitRepository.save(updateClassHomeworkSubmit);
+
+        this.deleteSubmitFileById(classHomeworkSubmitId);
+
+        List<MultipartFile> dtoFile = reqHomeworkSubmitDTO.getFiles();
+        for(MultipartFile s : dtoFile){
+            if(!s.isEmpty()){
+                FileDTO fileDTO = FileDTO.builder()
+                        .repoType("classHomeworkSubmit")
+                        .file(s)
+                        .masterId(classHomeworkSubmitId)
+                        .build();
+                fileService.saveFile(fileDTO);
+            }
+        }
+        return "Homework update successfully.";
+    }
+    public Long getId(Long homeworkId) {
+        User user = userService.getCurrentUser();
+        Optional<ClassHomeworkSubmit> classHomeworkSubmit = classHomeworkSubmitRepository.findByUserIdHomeworkId(user.getUserId(),homeworkId);
+        if(classHomeworkSubmit.isPresent()){
+            return classHomeworkSubmit.get().getClassHomeworkSubmitId();
+        }
+        else{
+            return null;
+        }
+    }
+
+    public ResHomeworkSubmitDTO getOne(Long classHomeworkSubmitId) {
+        Optional<ClassHomeworkSubmit> classHomeworkSubmit = classHomeworkSubmitRepository.findById(classHomeworkSubmitId);
+        if(classHomeworkSubmit.isPresent()){
+            Optional<List<ClassHomeworkSubmitFile>> classHomeworkSubmitFiles = classHomeworkSubmitFileRepository.findByClassHomeworkSubmitId(classHomeworkSubmitId);
+            List<String> filesUrl = new ArrayList<>();
+            List<String> originalName = new ArrayList<>();
+            if(classHomeworkSubmitFiles.isPresent()) {
+                for (ClassHomeworkSubmitFile file : classHomeworkSubmitFiles.get()) {
+                    filesUrl.add(file.getFileUrl());
+                    originalName.add(file.getOriginalName());
+                }
+            }
+
+            return ResHomeworkSubmitDTO.builder()
+                    .id(classHomeworkSubmit.get().getClassHomeworkSubmitId())
+                    .content(classHomeworkSubmit.get().getSubmitContent())
+                    .filesURl(filesUrl)
+                    .originalName(originalName)
+                    .build();
+        }
+        return null;
+    }
+
+    public List<ResHomeworkSubmitDTO> getAll(Long homeworkId) {
+        List<ResHomeworkSubmitDTO> result = new ArrayList<>();
+        Optional<List<ClassHomeworkSubmit>> classHomeworkSubmitList = classHomeworkSubmitRepository.findAllByHomeworkId(homeworkId);
+        if(classHomeworkSubmitList.isPresent()){
+            for(ClassHomeworkSubmit c : classHomeworkSubmitList.get()){
+                Optional<List<ClassHomeworkSubmitFile>> classHomeworkSubmitFiles = classHomeworkSubmitFileRepository.findByClassHomeworkSubmitId(c.getClassHomeworkSubmitId());
+                List<String> filesUrl = new ArrayList<>();
+                List<String> originalName = new ArrayList<>();
+                if(classHomeworkSubmitFiles.isPresent()) {
+                    for (ClassHomeworkSubmitFile file : classHomeworkSubmitFiles.get()) {
+                        filesUrl.add(file.getFileUrl());
+                        originalName.add(file.getOriginalName());
+                    }
+                }
+                ResHomeworkSubmitDTO resHomeworkSubmitDTO = ResHomeworkSubmitDTO.builder()
+                        .id(c.getClassHomeworkSubmitId())
+                        .content(c.getSubmitContent())
+                        .originalName(originalName)
+                        .filesURl(filesUrl)
+                        .build();
+
+                result.add(resHomeworkSubmitDTO);
+            }
+            return result;
+        }
+        return null;
+    }
+    public void deleteSubmit(Long homeworkSubmitId) {
+        this.deleteFileById(homeworkSubmitId);
+        classHomeworkSubmitRepository.deleteById(homeworkSubmitId);
+    }
+    public void deleteSubmitFileById(Long homeworkSubmitId){
+        Optional<List<ClassHomeworkSubmitFile>> fileList = classHomeworkSubmitFileRepository.findByClassHomeworkSubmitId(homeworkSubmitId);
+        if(fileList.isPresent()){
+            for(ClassHomeworkSubmitFile files : fileList.get()){
+                FileDeleteDTO dto = FileDeleteDTO.builder()
+                        .originalName(files.getOriginalName())
+                        .repoType("classHomeworkSubmit")
+                        .masterId(homeworkSubmitId)
                         .build();
                 fileService.deleteFile(dto);
             }
