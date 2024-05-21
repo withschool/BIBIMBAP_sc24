@@ -18,6 +18,10 @@ jobs:
           port: ${{secrets.PORT}}
 
           script: |
+
+            # 현재 실행중인 서버 종료
+            kill -9 $(ps -ef | grep 'java -jar withSchool-0.0.1' | grep -v grep | awk '{print $2}')
+
             # Git 디렉토리로 이동 후 PULL
             cd ./BIBIMBAP_sc24
             git pull origin backend
