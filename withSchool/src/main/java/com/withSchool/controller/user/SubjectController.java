@@ -2,11 +2,8 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
-import com.withSchool.dto.subject.ReqHomeworkCreateDTO;
-import com.withSchool.dto.subject.ReqSubjectNoticeDTO;
-import com.withSchool.dto.subject.ResHomeworkDTO;
+import com.withSchool.dto.subject.*;
 import com.withSchool.dto.user.ResUserDefaultDTO;
-import com.withSchool.dto.subject.SubjectInfoDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
 import com.withSchool.service.subject.SubjectHomeworkService;
@@ -153,28 +150,67 @@ public class SubjectController {
                 .body("delete success");
     }
 
-    @PostMapping("/homework")
+    @PostMapping("/homeworks")
     @Operation(summary = "과목교사의 과목 과제 생성", description = "과목교사는 원하는 과목id를 사용하여 과제를 생성할 수 있다")
     public ResponseEntity<ResHomeworkDTO> createHomework(@ModelAttribute ReqHomeworkCreateDTO reqHomeworkCreateDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(subjectHomeworkService.save(reqHomeworkCreateDTO));
     }
 
-    @GetMapping("/{subject-id}/homework") // 과제 리스트 가져오기
+    @GetMapping("/{subject-id}/homeworks") // 과제 리스트 가져오기
     @Operation(summary = "해당 유저의 과목 과제 리스트 불러오기", description = "과목 과제 리스트 불러오기")
     public ResponseEntity<List<ResHomeworkDTO>> getHomeworkList(@PathVariable("subject-id")Long subjectId) {
         return ResponseEntity.status(HttpStatus.OK).body(subjectHomeworkService.getList(subjectId));
     }
 
-    @PatchMapping("/homework/{homework-id}")
+    @PatchMapping("/homeworks/{homework-id}")
     @Operation(summary = "과목교사의 과목 과제 수정", description = "과목 교사는 homework id를 사용하여 과제를 수정할 수 있다")
     public ResponseEntity<ResHomeworkDTO> updateHomework(@PathVariable("homework-id") Long homeworkId, @ModelAttribute ReqHomeworkCreateDTO req){
         return ResponseEntity.status(HttpStatus.OK).body(subjectHomeworkService.update(homeworkId,req));
     }
 
-    @DeleteMapping("/homework/{homework-id}")
+    @DeleteMapping("/homeworks/{homework-id}")
     @Operation(summary = "과목교사의 과목 과제 삭제", description = "과목 교사는 homework id를 사용하여 과제를 삭제할 수 있다")
     public ResponseEntity<String> deleteHomework(@PathVariable("homework-id") Long homeworkId){
         subjectHomeworkService.delete(homeworkId);
+        return ResponseEntity.status(HttpStatus.OK).body("delete success");
+    }
+    @PostMapping("/students/homeworks")
+    @Operation(summary = "학생의 과목 과제 제출", description = "학생은 homeworkId에 해당하는 과제를 제출할 수 있다")
+    public ResponseEntity<String> submitHomework(@ModelAttribute ReqHomeworkSubmitDTO reqHomeworkSubmitDTO){
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(subjectHomeworkService.submit(reqHomeworkSubmitDTO));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @GetMapping("/students/homeworks/{homework-id}")
+    @Operation(summary = "학생의 과목 과제제출 여부 조회", description = "과목 과제 id를 이용해 학생이 과목 과제를 제출하였으면 학생의 과목 과제 제출Id를 반환")
+    public ResponseEntity<Long> whetherSubmit(@PathVariable("homework-id") Long homeworkId){
+        return ResponseEntity.ok().body(subjectHomeworkService.getId(homeworkId));
+    }
+    @GetMapping("/students/submit-homeworks/list/{homework-id}")
+    @Operation(summary = "학생들이 제출한 반 과제 리스트 조회", description = "반 과제Id를 이용해 학생들이 제출한 반 과제 리스트 조회")
+    public ResponseEntity<List<ResHomeworkSubmitDTO>> getSubmitList(@PathVariable("homework-id") Long homeworkId){
+        return ResponseEntity.ok().body(subjectHomeworkService.getAll(homeworkId));
+    }
+    @GetMapping("/students/submit-homeworks/{subject-homework-submit-id}")
+    @Operation(summary = "학생의 제출과제 단일조회", description = "과제제출Id를 이용해 학생이 제출한 과제 내용을 조회")
+    public ResponseEntity<ResHomeworkSubmitDTO> getSubmit(@PathVariable("subject-homework-submit-id") Long subjectHomeworkSubmitId){
+        return ResponseEntity.ok().body(subjectHomeworkService.getOne(subjectHomeworkSubmitId));
+    }
+    @PatchMapping("/students/homeworks/{subject-homework-submit-id}")
+    @Operation(summary = "학생의 과목 과제 수정", description = "학생은 subject-homework-submit-id에 해당하는 과제를 수정할 수 있다")
+    public ResponseEntity<String> updateSubmitHomework(@PathVariable("subject-homework-submit-id") Long subjectHomeworkSubmitId,@ModelAttribute ReqHomeworkSubmitDTO reqHomeworkSubmitDTO){
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(subjectHomeworkService.updateSubmit(subjectHomeworkSubmitId,reqHomeworkSubmitDTO));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/students/homeworks/{subject-homework-submit-id}")
+    @Operation(summary = "학생이 자신의 과제 삭제", description = "학생은 homeworkSubmitId를 사용하여 과제를 삭제할 수 있다")
+    public ResponseEntity<String> deleteSubmitHomework(@PathVariable("subject-homework-submit-id") Long subjectHomeworkSubmitId){
+        subjectHomeworkService.deleteSubmit(subjectHomeworkSubmitId);
         return ResponseEntity.status(HttpStatus.OK).body("delete success");
     }
 }
