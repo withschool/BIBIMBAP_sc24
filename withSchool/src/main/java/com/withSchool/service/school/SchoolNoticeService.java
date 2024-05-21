@@ -107,10 +107,10 @@ public class SchoolNoticeService {
 
     @Transactional
     public List<ResNoticeDTO> findAll(Long childId) {
-        List<ResNoticeDTO> resSchoolNoticeDTOS = new ArrayList<>();
+        List<ResNoticeDTO> resNoticeDTOS = new ArrayList<>();
         int currentUserType = userService.getCurrentUser().getAccountType();
 
-        if(currentUserType == 1 && childId == null)return resSchoolNoticeDTOS;
+        if(currentUserType == 1 && childId == null)return resNoticeDTOS;
         else if(currentUserType != 1 && childId != null)childId = null;
 
         User user = Optional.ofNullable(childId)

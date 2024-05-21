@@ -1,6 +1,7 @@
 package com.withSchool.service.csv;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import com.withSchool.dto.csv.CsvRequestDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
@@ -17,10 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,67 +34,79 @@ public class CsvService {
     private final UserService userService;
 
     @Transactional
-    public void registerUser(CsvRequestDTO dto){
-        try(CSVReader csvReader = new CSVReader(new InputStreamReader(dto.getFile().getInputStream(), "UTF-8"))) {
+    public void registerUser(CsvRequestDTO dto) throws RuntimeException{
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(dto.getFile().getInputStream(),"euc-kr"))) {
             List<String[]> lines = csvReader.readAll();
-            //lines.forEach(line -> System.out.println(String.join(",", line)));
             Long schoolId = userService.getCurrentUserSchoolId();
             lines.stream()
                     .skip(1)
-                    .forEach(line->{
-                        //System.out.println(Arrays.toString(line));
-                        if(line[0].equals("학생")){
-                            Optional<ClassInformation> classInformation = classRepository.findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(Integer.parseInt(line[3]),Integer.parseInt(line[4]), Integer.parseInt(line[5]), schoolId);
-                            Optional<User> user = userRepository.findById(dto.getId());
-                            if(user.isPresent()){
-                                Optional<SchoolInformation> schoolInformation = schoolInformationRepository.findById(user.get().getSchoolInformation().getSchoolId());
-                                if(classInformation.isPresent() && schoolInformation.isPresent()){
-                                    User newUser = User.builder()
-                                            .name(line[1])
-                                            .birthDate(line[2])
-                                            .accountType(0)
-                                            .classInformation(classInformation.get())
-                                            .schoolInformation(schoolInformation.get())
-                                            .userCode(RandomStringUtils.randomAlphanumeric(8))
-                                            .build();
-                                    userRepository.save(newUser);
-                                    Arrays.stream(line).skip(6).forEach(s->{
-                                        Optional<Subject> subject = subjectRepository.findBySubjectName(s,schoolInformation.get().getSchoolId());
-                                        if(subject.isPresent()){
-                                            studentSubjectService.register(newUser,subject.get());
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                        else if(line[0].equals("교사")){ // 교사
-                            Optional<ClassInformation> classInformation = classRepository.findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(Integer.parseInt(line[3]),Integer.parseInt(line[4]), Integer.parseInt(line[5]), schoolId);
-                            Optional<User> user = userRepository.findById(dto.getId());
-                            if(user.isPresent()){
-                                Optional<SchoolInformation> schoolInformation = schoolInformationRepository.findById(user.get().getSchoolInformation().getSchoolId());
-                                if(classInformation.isPresent() && schoolInformation.isPresent()){
-                                    User newUser = User.builder()
-                                            .name(line[1])
-                                            .birthDate(line[2])
-                                            .accountType(2)
-                                            .classInformation(classInformation.get())
-                                            .schoolInformation(schoolInformation.get())
-                                            .userCode(RandomStringUtils.randomAlphanumeric(8))
-                                            .build();
-                                    userRepository.save(newUser);
-                                    Arrays.stream(line).skip(6).forEach(s->{
-                                        Optional<Subject> subject = subjectRepository.findBySubjectName(s,schoolInformation.get().getSchoolId());
-                                        if(subject.isPresent()){
-                                            studentSubjectService.register(newUser,subject.get());
-                                        }
-                                    });
-                                }
-                            }
+                    .forEach(line -> {
+                        try {
+                            processLine(line, schoolId, dto.getId());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e.getMessage());
                         }
                     });
-        }catch(Exception e){
-            throw new RuntimeException("CSV 파일 처리 중 오류 발생", e);
+        } catch (IOException e) {
+            throw new RuntimeException("CSV file got error when reading", e);
+        } catch (RuntimeException | CsvException e) {
+            throw new RuntimeException(e);
         }
     }
 
+    private void processLine(String[] line, Long schoolId, String id){
+        if (line[0].equals("학생") || line[0].equals("교사")) {
+            createUser(line, schoolId, id, line[0].equals("학생") ? 0 : 2);
+        } else {
+            throw new IllegalArgumentException("not defined usertype: " + line[0]);
+        }
+    }
+
+    private void createUser(String[] line, Long schoolId, String id, int accountType) {
+        Optional<ClassInformation> classInformation = classRepository.findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(
+                Integer.parseInt(line[3]), Integer.parseInt(line[4]), Integer.parseInt(line[5]), schoolId);
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent() && classInformation.isPresent()) {
+            Optional<SchoolInformation> schoolInformation = schoolInformationRepository.findById(user.get().getSchoolInformation().getSchoolId());
+
+            if (schoolInformation.isPresent()) {
+                User newUser = User.builder()
+                        .name(line[1])
+                        .birthDate(line[2])
+                        .accountType(accountType)
+                        .classInformation(classInformation.get())
+                        .schoolInformation(schoolInformation.get())
+                        .userCode(RandomStringUtils.randomAlphanumeric(8))
+                        .build();
+
+                userRepository.save(newUser);
+                registerSubjects(line, schoolInformation.get(), newUser);
+            } else {
+                throw new NoSuchElementException("can't find school's information: " + user.get().getSchoolInformation().getSchoolId());
+            }
+        } else {
+            throw new NoSuchElementException("can't find userInfo or classInfo.");
+        }
+    }
+
+    private void registerSubjects(String[] line, SchoolInformation schoolInformation, User newUser) {
+        for (int i = 6; i < line.length; i++) {
+            String subjectName = line[i];
+            if (subjectName.isEmpty()) { // subject이름이 비어있으면 해당 라인 입력 종료
+                break;
+            }
+            String grade = Integer.toString(newUser.getClassInformation().getGrade());
+            String year = Integer.toString(newUser.getClassInformation().getYear());
+            Long schoolId = schoolInformation.getSchoolId();
+
+
+            Optional<Subject> subject = subjectRepository.findBySubjectNameAndGradeAndYear(subjectName, grade, year, schoolId);
+            if (subject.isPresent()) {
+                studentSubjectService.register(newUser, subject.get());
+            } else {
+                throw new NoSuchElementException("can't find subjectInfo: " + subjectName);
+            }
+        }
+    }
 }

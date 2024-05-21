@@ -17,7 +17,7 @@ public class CsvTest {
     private UserRepository userRepository;
 
     @Test
-    public void register() {
+    public void register() throws Exception {
         CsvRequestDTO dto = CsvRequestDTO.builder()
                 .file(null)
                 .id("dd1")
