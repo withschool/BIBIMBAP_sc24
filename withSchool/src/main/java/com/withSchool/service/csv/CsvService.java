@@ -64,7 +64,7 @@ public class CsvService {
 
     private void createUser(String[] line, Long schoolId, String id, int accountType) {
         Optional<ClassInformation> classInformation = classRepository.findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(
-                Integer.parseInt(line[3]), Integer.parseInt(line[4]), Integer.parseInt(line[5]), schoolId);
+                Integer.parseInt(line[3]), Integer.parseInt(line[4]), Integer.parseInt(line[6]),schoolId);
         Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent() && classInformation.isPresent()) {
@@ -83,25 +83,26 @@ public class CsvService {
                 userRepository.save(newUser);
                 registerSubjects(line, schoolInformation.get(), newUser);
             } else {
-                throw new NoSuchElementException("can't find school's information: " + user.get().getSchoolInformation().getSchoolId());
+                throw new NoSuchElementException("can't find school information");
             }
         } else {
-            throw new NoSuchElementException("can't find userInfo or classInfo.");
+            throw new NoSuchElementException("can't find class information");
         }
     }
 
     private void registerSubjects(String[] line, SchoolInformation schoolInformation, User newUser) {
-        for (int i = 6; i < line.length; i++) {
+        for (int i = 7; i < line.length; i++) {
             String subjectName = line[i];
             if (subjectName.isEmpty()) { // subject이름이 비어있으면 해당 라인 입력 종료
                 break;
             }
-            String grade = Integer.toString(newUser.getClassInformation().getGrade());
-            String year = Integer.toString(newUser.getClassInformation().getYear());
+            String grade = line[3];
+            String semester = line[5];
+            String year = line[6];
             Long schoolId = schoolInformation.getSchoolId();
 
 
-            Optional<Subject> subject = subjectRepository.findBySubjectNameAndGradeAndYear(subjectName, grade, year, schoolId);
+            Optional<Subject> subject = subjectRepository.findBySubjectNameAndGradeAndYearAndSemester(subjectName, grade, year,semester, schoolId);
             if (subject.isPresent()) {
                 studentSubjectService.register(newUser, subject.get());
             } else {
