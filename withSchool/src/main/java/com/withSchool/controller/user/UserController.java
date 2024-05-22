@@ -1,6 +1,7 @@
 package com.withSchool.controller.user;
 
 import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.dto.user.ReqUserPasswordDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.dto.user.UserUpdateDTO;
 import com.withSchool.entity.user.User;
@@ -39,6 +40,13 @@ public class UserController {
     @Operation(summary = "유저의 정보를 수정하는 API")
     public ResponseEntity<String> updateUserInfo(@RequestBody UserUpdateDTO dto){
         userUpdateService.updateUserInfo(dto);
+
+        return ResponseEntity.ok().body("update success");
+    }
+    @PatchMapping("/password")
+    @Operation(summary = "유저의 비밀번호를 수정하는 API")
+    public ResponseEntity<String> updateUserPassword(@RequestBody ReqUserPasswordDTO dto){
+        userUpdateService.updateUserPassword(dto);
 
         return ResponseEntity.ok().body("update success");
     }
