@@ -44,7 +44,7 @@ const LoginBoxed = () => {
                 let payload = token.substring(token.indexOf('.')+1,token.lastIndexOf('.'));
 
                 let dec = base64.decode(payload);
-                const userinfo = JSON.parse(dec);
+                const userinfo = await JSON.parse(dec);
                 localStorage.setItem('userinfo',userinfo);
                 localStorage.setItem('token', token);
                 localStorage.setItem('accountType', userinfo.auth);
@@ -60,6 +60,9 @@ const LoginBoxed = () => {
                 if (classData) {
                     localStorage.setItem('classId', classData);
                 }
+
+                console.log(userinfo);
+                console.log("accountType : "+localStorage.getItem('accountType'));
 
                 if(localStorage.getItem('accountType') == "ROLE_SUPER"){
                     navigate('/superadmin/home');

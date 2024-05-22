@@ -19,8 +19,8 @@ const StudentInfo = () => {
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
-    const [targetStudent, setTargetStudent] = useState('');
-    const [targetStudentInfo, setTargetStudentInfo] = useState('');
+    const [targetStudent, setTargetStudent] = useState<any>('');
+    const [targetStudentInfo, setTargetStudentInfo] = useState<any>('');
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -193,7 +193,7 @@ const StudentInfo = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {studentList.map((data) => {
+                                                {studentList.map((data: any) => {
                                                     return (
                                                         <tr key={data.id}>
                                                             <td>

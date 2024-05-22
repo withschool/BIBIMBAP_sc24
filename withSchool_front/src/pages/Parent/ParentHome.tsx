@@ -22,17 +22,19 @@ import IconPrinter from '../../components/Icon/IconPrinter';
 import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
+import { identifier } from '@babel/types';
 
 const ParentHome = () => {
 
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
-    const [noticeList, setNoticeList] = useState([]);
-    const [schoolInfo, setSchoolInfo] = useState([]);
+    const [noticeList, setNoticeList] = useState<any[]>([]);
+    const [schoolInfo, setSchoolInfo] = useState<any>([]);
+    const [targetStudent, setTargetStudent] = useState('');
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [selectedNotice, setSelectedNotice] = useState('');
+    const [selectedNotice, setSelectedNotice] = useState<any>('');
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -295,7 +297,7 @@ const ParentHome = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {studentList.map((data) => (
+                                                {studentList.map((data : any) => (
                                                     <tr key={data.id}>
                                                         <td>
                                                             <div className="whitespace-nowrap">{data.user.name}</div>

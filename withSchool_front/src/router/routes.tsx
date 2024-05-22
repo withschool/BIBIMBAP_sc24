@@ -55,13 +55,8 @@ const Popovers = lazy(() => import('../pages/Elements/Popovers'));
 const routes = [
     {
         path: '/',
-        element: localStorage.getItem('token') ? 
-                (localStorage.getItem('accountType') == 'ROLE_SUPER' ? <Navigate to="/super/home" /> :
-                    (localStorage.getItem('accountType') == 'ROLE_ADMIN' ?  <Navigate to="/admin/home" /> :
-                        (localStorage.getItem('accountType') == 'ROLE_TEACHER' ? <Navigate to="/teacher/home" /> :
-                            (localStorage.getItem('accountType') == 'ROLE_PARENT' ? <Navigate to="/parent/home" /> : <Navigate to="/student/home" /> )
-                        ))) : <Navigate to="/login" />,
-
+        element: localStorage.getItem('token') ? <Index /> : <Navigate to="/login" replace />,
+        // element: localStorage.getItem('token') ? <Index /> : <Index />,
     },
     {
         path: '/login',
@@ -85,54 +80,54 @@ const routes = [
     },
     {
         path: '/school_list',
-        element: (localStorage.getItem('accountType')  == 'ROLE_SUPER')  ? <SchoolList /> : <Navigate to="/"  />,
+        element: <SchoolList />,
     },
     {
         path: '/teacher/class/notice',
-        element: (localStorage.getItem('accountType')  == 'ROLE_TEACHER')  ? <TeacherNotice /> : <Navigate to="/"  />,
+        element: <TeacherNotice />,
     },
     {
         path: '/teacher/home',
-        element: (localStorage.getItem('accountType')  == 'ROLE_TEACHER') ? <TeacherHome /> : <Navigate to="/" />,
+        element: <TeacherHome />,
     },
    {
         path: '/parent/home',
-        element: (localStorage.getItem('accountType')  == 'ROLE_PARENT') ? <ParentHome /> : <Navigate to="/" />,
+        element: <TeacherNotice />,
     },
     {
         path: '/teacher/schoolnotice',
-        element: (localStorage.getItem('accountType')  == 'ROLE_TEACHER') ? <SchoolNotice /> : <Navigate to="/"  />,
+        element: <SchoolNotice />,
     },
     {
         path: '/teacher/class/infomation',
-        element: (localStorage.getItem('accountType')  == 'ROLE_TEACHER') ? <ClassInfo /> : <Navigate to="/"  />,
+        element: <ClassInfo />,
     },
     {
         path: '/teacher/subject/infomation',
-        element: (localStorage.getItem('accountType')  == 'ROLE_TEACHER') ? <SubjectInfo /> : <Navigate to="/"  />,
+        element: <SubjectInfo />,
     },
     {
         path: '/users/user-account-settings',
-        element: localStorage.getItem('token') ? <AccountSetting /> : <Navigate to="/"  />,
+        element: <AccountSetting />,
     },
     {
-        path: '/student/home',
-        element: (localStorage.getItem('accountType')  == 'ROLE_STUDENT') ? <StudentHome /> : <Navigate to="/"  />,
+        path: '/student-home',
+        element: <StudentHome />,
     },
     {
         path: '/parent/studentinfo',
-        element: (localStorage.getItem('accountType')  == 'ROLE_PARENT') ? <StudentInfo /> : <Navigate to="/"  />,
+        element: <StudentInfo />,
     },
     {
         path: '/parent/schoolinfo',
-        element: (localStorage.getItem('accountType') == 'ROLE_PARENT') ? <SchoolInfo /> : <Navigate to="/"  />,
+        element: <SchoolInfo />,
     },
 
     //Admin
 
     {
         path: '/admin',
-        element: (localStorage.getItem('accountType') == 'ROLE_ADMIN') ? <AdminMain /> : <Navigate to="/"  />,
+        element: <AdminMain />,
     },
 
     //Components

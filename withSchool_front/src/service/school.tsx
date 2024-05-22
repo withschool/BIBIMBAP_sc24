@@ -155,7 +155,7 @@ export const deleteSchool = async (schoolId: number): Promise<any> => {
     }
 };
 
-export const getSchoolInfo = async (childId: number | null): Promise<any> => {
+export const getSchoolInfo = async (childId: string | null): Promise<any> => {
     try {
         const response = await fetch(`${url}/schools/info?childId=${childId}`, {
             method: 'GET',
