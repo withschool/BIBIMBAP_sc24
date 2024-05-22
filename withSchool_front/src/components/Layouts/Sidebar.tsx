@@ -341,7 +341,7 @@ const Sidebar = () => {
                                                         <NavLink to="/teacher/subject/lecturenote">{t('강의 노트')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/teacher/subject/assignment">{t('과제')}</NavLink>
+                                                        <NavLink to="/teacher/subject/homework">{t('과제')}</NavLink>
                                                     </li>
                                                     <li>
                                                         <NavLink to="/teacher/subject/grade">{t('성적 관리')}</NavLink>
