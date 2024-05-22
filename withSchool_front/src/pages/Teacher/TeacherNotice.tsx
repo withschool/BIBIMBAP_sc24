@@ -7,7 +7,6 @@ import 'react-quill/dist/quill.snow.css';
 import Dropdown from '../../components/Dropdown';
 import Swal from 'sweetalert2';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';

@@ -10,14 +10,30 @@ import { getSubjectList, getSubjectInfo } from '../../service/subject';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
 
+interface Subject {
+    subjectName: string;
+    year: string;
+    grade: string;
+    semester: string;
+}
+
+interface SubjectInfo {
+    subject: Subject;
+    students: Array<{ userId: string; userName: string; name: string }>;
+}
+
 const SubjectInfo = () => {
+    const [subjectInfo, setSubjectInfo] = useState<SubjectInfo>({
+        subject: { subjectName: '', year: '', grade: '', semester: '' },
+        students: []
+    });
+
 
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [subjectList, setSubjectList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
-    const [subjectInfo, setSubjectInfo] = useState({ subject: {}, students: [] });
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [targetSubject, setTargetSubject] = useState('');
     const [showModal, setShowModal] = useState(false);

@@ -26,17 +26,35 @@ import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
 
+interface ClassInfoType {
+    class: {
+        grade: string;
+        inClass: string;
+    };
+    users: Array<{ userId: string; userName: string; name: string }>;
+}
+
+interface UserInfoType {
+    name: string;
+    phoneNumber: string;
+}
+
 const ClassInfo = () => {
 
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
-    const [classInfo, setClassInfo] = useState({ class: {}, users: [] });
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [selectedNotice, setSelectedNotice] = useState('');
-    const [userInfo, setUserInfo] = useState('');
+
+    const [classInfo, setClassInfo] = useState<ClassInfoType>({
+        class: { grade: '', inClass: '' },
+        users: []
+    });
+
+    const [userInfo, setUserInfo] = useState<UserInfoType>({ name: '', phoneNumber: '' });
 
     useEffect(() => {
         const getUserInfo = async () => {
@@ -89,10 +107,7 @@ const ClassInfo = () => {
         fetchClassData();
     }, []);
 
-    const handleChange = (userId : string) => {
-        setTargetStudent(userId);
-        console.log(targetStudent);
-    }
+  
      
     return (
         <div>

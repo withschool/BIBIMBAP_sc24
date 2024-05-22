@@ -91,7 +91,7 @@ const SignInBoxed = () => {
         setEmail(event.target.value);
     }
 
-    const handleCheckDuplicate = async (event: MouseEventHandler<HTMLButtonElement>) => {
+    const handleCheckDuplicate = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         try {
             console.log(userInfo);

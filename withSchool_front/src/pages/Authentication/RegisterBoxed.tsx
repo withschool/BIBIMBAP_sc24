@@ -24,12 +24,19 @@ const LoginBoxed = () => {
     const navigate = useNavigate();
     const [individualCode, setIndividualCode] = useState('');
     const [selectedSchool, setSelectedSchool] = useState('');
-    const [schoolList, setSchoolList] = useState([]); // 학교 목록을 저장할 상태 추가
     const [year, setYear] = useState('2000');
     const [month, setMonth] = useState('01');
     const [day, setDay] = useState('01');
     const [name, setName] = useState('');
     const [loginError, setLoginError] = useState('');
+
+    interface School {
+        schoolId: string;
+        schoolName: string;
+        schoolAddress: string;
+    }
+
+    const [schoolList, setSchoolList] = useState<School[]>([]);
 
     useEffect(() => {
         dispatch(setPageTitle('Withschool-Login'));

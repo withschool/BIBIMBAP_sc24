@@ -42,9 +42,13 @@ import Swal from 'sweetalert2';
 
 
 const StudentHome = () => {
+
+    const dispatch = useDispatch();
+
     useEffect(() => {
+        const dispatch = useDispatch();
         dispatch(setPageTitle('학생 메인'));
-    });
+    }, []);
     const [tabs, setTabs] = useState<string[]>([]);
 
     const toggleCode = (name: string) => {
