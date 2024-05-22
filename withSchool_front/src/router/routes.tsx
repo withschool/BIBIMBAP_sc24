@@ -56,7 +56,7 @@ const Popovers = lazy(() => import('../pages/Elements/Popovers'));
 const routes = [
     {
         path: '/',
-        element: localStorage.getItem('token') ? <Index /> : <Navigate to="/login" replace />,
+        element: localStorage.getItem('token') ? <Index /> : <Navigate to="/landing" replace />,
         // element: localStorage.getItem('token') ? <Index /> : <Index />,
     },
     {
