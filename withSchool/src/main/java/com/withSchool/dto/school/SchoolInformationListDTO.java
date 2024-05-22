@@ -15,5 +15,6 @@ public class SchoolInformationListDTO { // 학교 리스트 조회
     private String SchoolAddress;
     private String schoolPhoneNumber;
     private String educationOffice;
+    private String SdSchulCode;
     private LocalDateTime regDate;
 }
