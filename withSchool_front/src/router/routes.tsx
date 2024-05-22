@@ -11,7 +11,6 @@ const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
-const AdminNotice = lazy(() => import('../pages/Admin/AdminNotice'));
 
 //Teacher
 const TeacherHome = lazy(() => import('../pages/Teacher/TeacherHome'));
@@ -129,10 +128,6 @@ const routes = [
     {
         path: '/admin',
         element: <AdminMain />,
-    },
-    {
-        path: '/admin/notice',
-        element: <AdminNotice />,
     },
 
     //Components

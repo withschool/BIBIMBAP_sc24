@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { ChangeEvent } from 'react';
 import { IRootState } from '../../store';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 import { certify } from '../../service/auth';
 import { getSchoolList } from '../../service/school';
@@ -18,6 +18,12 @@ import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
 import IconSettings from '../../components/Icon/IconSettings';
 import IconLaptop from '../../components/Icon/IconLaptop';
+import { Dialog, Transition,Tab } from '@headlessui/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper';
 
 const LoginBoxed = () => {
     const dispatch = useDispatch();
@@ -29,14 +35,41 @@ const LoginBoxed = () => {
     const [day, setDay] = useState('01');
     const [name, setName] = useState('');
     const [loginError, setLoginError] = useState('');
+    const [searchModal, setSearchModal] = useState(false);
+    const [searchWord, setSearchWord] = useState('');
+    const [schoolList, setSchoolList] = useState<SchoolType[]>([]);
+    const [filteredSchools, setFilteredSchools] = useState<SchoolType[]>([]);
 
-    interface School {
+    interface SchoolType {
         schoolId: string;
         schoolName: string;
         schoolAddress: string;
     }
 
-    const [schoolList, setSchoolList] = useState<School[]>([]);
+    useEffect(() => {
+        if (searchWord === '') {
+          setFilteredSchools([]);
+        } else {
+          const lowercasedFilter = searchWord.toLowerCase();
+          const filteredData : SchoolType[] = schoolList.filter(school =>
+            school &&
+            school.schoolName &&
+            school.schoolName.toLowerCase().includes(lowercasedFilter)
+          );
+          setFilteredSchools(filteredData);
+        }
+    }, [searchWord, schoolList]);
+      
+
+    const handleSelect = (school : any) => {
+        setSelectedSchool(school.schoolId);
+        setSearchWord('');
+        setSearchModal(false);
+    };
+
+    const handleBlur = () => {
+        setTimeout(() => setFilteredSchools([]), 100);
+    };
 
     useEffect(() => {
         dispatch(setPageTitle('Withschool-Login'));
@@ -45,13 +78,13 @@ const LoginBoxed = () => {
     useEffect(() => {
         const fetchSchools = async () => {
             try {
-                const data = await getSchoolList(); // getSchoolList 함수를 호출하여 학교 목록을 가져옴
-                setSchoolList(data); // 가져온 학교 목록을 상태에 저장
+                const data = await getSchoolList(); 
+                setSchoolList(data); 
             } catch (error) {
                 console.error('Error fetching school list:', error);
             }
         };
-        fetchSchools(); // 학교 목록을 가져오는 함수 호출
+        fetchSchools(); 
     }, []);
 
     const handleIndividualCode = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +109,11 @@ const LoginBoxed = () => {
 
     const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
+    }
+
+    const handleSearchWord = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchWord(event.target.value);
+        console.log(searchWord);
     }
 
     const handleUserInfo = (data : string) => {
@@ -149,9 +187,78 @@ const LoginBoxed = () => {
                                                 </option>
                                             ))}
                                     </select>
-                                    <button className="ml-2 px-5 py-2 w-20 h-9 items-center btn btn-gradient rounded-md text-white font-bold uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] focus:outline-none hover:bg-blue-600 btn-text">
-                                        검색
-                                    </button>
+
+                                    <div className="mb-5">
+                                        <div className="flex flex-wrap items-center justify-center gap-2">
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSearchModal(true)}
+                                                    className="ml-2 px-5 py-2 w-20 h-9 items-center btn btn-gradient rounded-md text-white font-bold uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] focus:outline-none hover:bg-blue-600 btn-text"
+                                                >
+                                                    검색
+                                                </button>
+                                                <Transition appear show={searchModal} as={Fragment}>
+                                                    <Dialog
+                                                        as="div"
+                                                        open={searchModal}
+                                                        onClose={() => setSearchModal(false)}
+                                                        className="fixed inset-0 z-50 overflow-y-auto"
+                                                    >
+                                                        <div className="flex items-start justify-center min-h-screen px-4 text-center">
+                                                            <Transition.Child
+                                                                as={Fragment}
+                                                                enter="ease-out duration-300"
+                                                                enterFrom="opacity-0 scale-95"
+                                                                enterTo="opacity-100 scale-100"
+                                                                leave="ease-in duration-200"
+                                                                leaveFrom="opacity-100 scale-100"
+                                                                leaveTo="opacity-0 scale-95"
+                                                            >
+                                                                <Dialog.Panel className="panel border-0 py-2 w-full pb-4 rounded-lg overflow-hidden max-w-sm my-8 text-black dark:text-white-dark">
+                                                                    <div className="flex items-center justify-between p-5 font-semibold text-lg text-primary md:text-xl dark:text-white">
+                                                                        <h5>학교 찾기</h5>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => setSearchModal(false)}
+                                                                            className="text-white-dark hover:text-dark"
+                                                                        >
+                                                                        </button>
+                                                                    </div>
+                                                                    <div className="p-3">
+                                                                        <form>
+                                                                            <div className="relative mb-4">
+                                                                            <input
+                                                                                className = 'w-full border rounded px-3 py-2'
+                                                                                type="text"
+                                                                                placeholder="학교를 검색하세요."
+                                                                                value={searchWord}
+                                                                                onChange={handleSearchWord}
+                                                                                onBlur={handleBlur}
+                                                                            />
+                                                                            {filteredSchools.length > 0 && (
+                                                                                <ul>
+                                                                                {filteredSchools.map((school :SchoolType) => (
+                                                                                    <li className='mt-3 h-5 text-sm cursor-pointer flex' 
+                                                                                    style={{ borderTop: filteredSchools.length > 0 ? '1px solid #ccc' : 'none' , paddingTop: '5px', paddingBottom: '5px' }}
+                                                                                    key={school.schoolId} onMouseDown={() => handleSelect(school)}>
+                                                                                    {school.schoolName} ({school.schoolAddress})
+                                                                                    </li>
+                                                                                ))}
+                                                                                </ul>
+                                                                            )}
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </Dialog.Panel>
+                                                            </Transition.Child>
+                                                        </div>
+                                                    </Dialog>
+                                                </Transition>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     </div>
                                         <span className="absolute start-3 pb-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
