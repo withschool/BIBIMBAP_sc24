@@ -19,6 +19,7 @@ const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
 const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
 const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
 const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
+const ChooseSubject = lazy(() => import('../pages/Teacher/ChooseSubject'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
@@ -111,6 +112,11 @@ const routes = [
     {
         path: '/teacher/subject/infomation',
         element: <SubjectInfo />,
+    },
+    {
+        path: '/teacher/subject/choose',
+        element: <ChooseSubject />,
+
     },
     {
         path: '/users/user-account-settings',
