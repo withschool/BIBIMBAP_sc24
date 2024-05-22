@@ -44,13 +44,13 @@ const LoginBoxed = () => {
                 let payload = token.substring(token.indexOf('.')+1,token.lastIndexOf('.'));
 
                 let dec = base64.decode(payload);
-                const userinfo = JSON.parse(dec);
+                const userinfo = await JSON.parse(dec);
                 localStorage.setItem('userinfo',userinfo);
                 localStorage.setItem('token', token);
                 localStorage.setItem('accountType', userinfo.auth);
                 localStorage.setItem('id', email);
                 localStorage.setItem('login', token ? 'true' : 'false');
-
+                
                 const schoolData = await getSchoolId(token);
                 const classData = await getClassId(token);
 
@@ -60,8 +60,26 @@ const LoginBoxed = () => {
                 if (classData) {
                     localStorage.setItem('classId', classData);
                 }
-                
-                navigate('/');
+
+                console.log(userinfo);
+                console.log("accountType : "+localStorage.getItem('accountType'));
+
+                if(localStorage.getItem('accountType') == "ROLE_SUPER"){
+                    navigate('/superadmin/home');
+                }
+                else if(localStorage.getItem('accountType') == "ROLE_ADMIN"){
+                    navigate('/admin/home');
+                }
+                else if(localStorage.getItem('accountType') == "ROLE_TEACHER"){
+                    navigate('/teacher/home');
+                }
+                else if(localStorage.getItem('accountType') == "ROLE_PARENT"){
+                    navigate('/parent/home');
+                }
+                else if(localStorage.getItem('accountType') == "ROLE_STUDENT"){
+                    navigate('/student/home');
+                }
+
             } else {
                 setLoginError('Login failed');
             }
@@ -109,14 +127,8 @@ const LoginBoxed = () => {
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="flex cursor-pointer items-center">
-                                        <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
-                                        <span className="text-white-dark">비밀번호 기억하기</span>
-                                    </label>
-                                </div>
                                 {loginError && <div className="text-red-500">로그인에 실패하였습니다.</div>}
-                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                <button type="submit" className="btn btn-gradient !mt-10 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     로그인
                                 </button>
                             </form>

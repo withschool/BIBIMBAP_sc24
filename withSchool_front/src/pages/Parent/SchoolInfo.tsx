@@ -29,10 +29,11 @@ const SchoolInfo = () => {
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
-    const [schoolInfo, setSchoolInfo] = useState([]);
+    const [schoolInfo, setSchoolInfo] = useState<any>([]);
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [selectedNotice, setSelectedNotice] = useState('');
+    const [targetStudent, setTargetStudent] = useState('');
+    const [selectedNotice, setSelectedNotice] = useState<any>('');
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -185,7 +186,7 @@ const SchoolInfo = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {noticeList.slice().reverse().map((data, index, array) => (
+                                                    {noticeList.slice().reverse().map((data: any, index, array) => (
                                                         <tr key={data.id} className="cursor-pointer" onClick={() => handlePopUp(array.length - index)}>
                                                             <td>
                                                                 <div className="whitespace-nowrap">{data.title}</div>
@@ -307,7 +308,7 @@ const SchoolInfo = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {studentList.map((data) => (
+                                                {studentList.map((data : any) => (
                                                     <tr key={data.id}>
                                                         <td>
                                                             <div className="whitespace-nowrap">{data.user.name}</div>

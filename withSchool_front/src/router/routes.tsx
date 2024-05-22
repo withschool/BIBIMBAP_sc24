@@ -7,21 +7,26 @@ const Login = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
 const Error = lazy(() => import('../components/Error'));
-const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
-const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
-const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
-const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
-const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
-const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'))
-const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'))
 
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
 const AdminNotice = lazy(() => import('../pages/Admin/AdminNotice'));
 
+//Teacher
+const TeacherHome = lazy(() => import('../pages/Teacher/TeacherHome'));
+const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
+const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
+const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
+const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
 
+//Parent
+const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
+const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'));
+const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'));
 
+//Student
+const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -80,6 +85,14 @@ const routes = [
     },
     {
         path: '/teacher/class/notice',
+        element: <TeacherNotice />,
+    },
+    {
+        path: '/teacher/home',
+        element: <TeacherHome />,
+    },
+   {
+        path: '/parent/home',
         element: <TeacherNotice />,
     },
     {
