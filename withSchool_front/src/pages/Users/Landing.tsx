@@ -1,19 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
 import { useEffect, useState } from 'react';
 import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
-import Dropdown from '../../components/Dropdown';
-import i18next from 'i18next';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
-import IconMail from '../../components/Icon/IconMail';
-import IconLockDots from '../../components/Icon/IconLockDots';
-import { login, getSchoolId, getClassId } from '../../service/auth';
-import IconInstagram from '../../components/Icon/IconInstagram';
-import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
-import IconTwitter from '../../components/Icon/IconTwitter';
-import IconGoogle from '../../components/Icon/IconGoogle';
-import base64 from "base-64";
 
 const Landing = () => {
 
