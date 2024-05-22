@@ -8,7 +8,4 @@
 - 최현수
 - 이권민
 - 남창현
-
-test
-
 auto build test
