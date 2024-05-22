@@ -83,6 +83,7 @@ const StudentInfo = () => {
     const handleChange = (userId : string) => {
         setTargetStudent(userId);
         console.log(targetStudent);
+        alert("전환 되었습니다.")
     }
      
     return(
@@ -288,7 +289,7 @@ const StudentInfo = () => {
                                                             <td className="text-center">
                                                                 <Tippy content="전환">
                                                                     <button type="button" onClick={() => handleChange(data.user.userId)}>
-                                                                        <IconTrashLines className="m-auto" />
+                                                                        <IconAt className="m-auto" />
                                                                     </button>
                                                                 </Tippy>
                                                             </td>
@@ -336,7 +337,7 @@ const StudentInfo = () => {
                                                             <div className="flex items-center justify-between pl-5 pt-5 text-lg font-semibold dark:text-white">
                                                                 <h5>학생 추가하기</h5>
                                                                 <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
-                                                                    <IconX className="w-5 h-5" />
+                                                                    <IconAt className="w-5 h-5" />
                                                                 </button>
                                                             </div>
                                                             <div className="p-5">

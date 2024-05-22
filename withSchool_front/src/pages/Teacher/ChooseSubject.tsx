@@ -6,7 +6,7 @@ import Tippy from '@tippyjs/react';
 import { mappingStudent, listingStudent, getStudentInfoById } from '../../service/parent';
 import { getSchoolNotice, getSchoolNoticeDetail, getSchoolInfo } from '../../service/school';
 import { getClassInfo } from '../../service/class';
-import { getSubjectList } from '../../service/subject';
+import { getSubjectList , getSubjects } from '../../service/subject';
 import { getUserInfobyId } from '../../service/auth';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
@@ -44,6 +44,7 @@ const ChooseSubject = () => {
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
+    const [subjectList, setSubjectList] = useState([]);
     const [noticeList, setNoticeList] = useState([]);
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -73,7 +74,10 @@ const ChooseSubject = () => {
         const fetchSubject = async () => {
             try { 
                 const data = await getSubjectList();
-                console.log(data);
+                setSubjectList(data);
+                if(data) {
+                    localStorage.setItem('targetSubject', data[0].subjectId);
+                }
             } catch (error) {
                 console.error('Error fetching student list:', error);
             }
@@ -107,7 +111,10 @@ const ChooseSubject = () => {
         fetchClassData();
     }, []);
 
-  
+    const handleChange = (subjectId : string) => {
+        localStorage.setItem('targetSubject', subjectId);
+        alert("변경 되었습니다.")
+    }
      
     return (
         <div>
@@ -145,45 +152,27 @@ const ChooseSubject = () => {
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>이름</th>
-                                                    <th>학교</th>
-                                                    <th>생년월일</th>
-                                                    <th>등록일</th>
+                                                    <th>학년도</th>
+                                                    <th>학년</th>
+                                                    <th>학기</th>
+                                                    <th>과목명</th>
                                                     <th className="text-center">선택</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {studentList.map((data: any) => {
+                                                {subjectList.map((data: any) => {
                                                     return (
-                                                        <tr key={data.id}>
+                                                        <tr key={data.subjectId}>
                                                             <td>
-                                                                <div className="whitespace-nowrap">{data.user.name}</div>
+                                                                <div className="whitespace-nowrap">{data.year}</div>
                                                             </td>
-                                                            <td>{data.user.schoolName}</td>
-                                                            <td>
-                                                                {Math.floor(data.user.birthdate / 10000) > 40 ? (
-                                                                    <>
-                                                                        19{Math.floor(data.user.birthdate / 10000)}년 {Math.floor((data.user.birthdate / 100) % 100)}월 {Math.floor(data.user.birthdate % 100)}일
-                                                                    </>
-                                                                ) : (
-                                                                    Math.floor(data.user.birthdate / 10000) < 10 ? (
-                                                                        <>
-                                                                            200{Math.floor(data.user.birthdate / 10000)}년 {Math.floor((data.user.birthdate / 100) % 100)}월 {Math.floor(data.user.birthdate % 100)}일
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            20{Math.floor(data.user.birthdate / 10000)}년 {Math.floor((data.user.birthdate / 100) % 100)}월 {Math.floor(data.user.birthdate % 100)}일
-                                                                        </>
-                                                                    )
-                                                                )}
-                                                            </td>
-                                                            <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일</td>
+                                                            <td>{data.grade}</td>
+                                                            <td>{data.semester}</td>
+                                                            <td>{data.subjectName}</td>
                                                             <td className="text-center">
-                                                                <Tippy content="전환">
-                                                                    <button type="button" onClick={() => handleChange(data.user.userId)}>
-                                                                        <IconTrashLines className="m-auto" />
+                                                                    <button type="button" onClick={() => handleChange(data.subjectId)}>
+                                                                        <IconAt className="m-auto" />
                                                                     </button>
-                                                                </Tippy>
                                                             </td>
                                                         </tr>
                                                     );
