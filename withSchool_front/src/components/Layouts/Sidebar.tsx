@@ -401,7 +401,7 @@ const Sidebar = () => {
                                                 <NavLink to="/admin">{t('학교 관리')}</NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to="/analytics">{t('공지 작성하기')}</NavLink>
+                                                <NavLink to="/admin/notice">{t('공지 작성하기')}</NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to="/finance">{t('메뉴 3')}</NavLink>

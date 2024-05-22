@@ -16,7 +16,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { downloadExcel } from 'react-export-table-to-excel';
 import { getSchoolUsers, uploadUserFile, getAdminClasses, createClass, deleteClass, } from '../../service/admin';
-import { getSubjects, createSubject } from '../../service/subject';
+import { getSubjects, createSubject, deleteSubject } from '../../service/subject';
 import IconFile from '../../components/Icon/IconFile';
 import IconPrinter from '../../components/Icon/IconPrinter';
 
@@ -58,7 +58,6 @@ const ManageSchool = () => {
     //테이블
 
     const col = ['userId', 'userName', 'name'];
-
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [5, 10, 15];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -333,7 +332,7 @@ const ManageSchool = () => {
     const fetchSubjectData = async () => {
         try {
             const data = await getSubjects();
-            console.log(`내부 데이타 ${data}`);
+            console.log(`내부 데이타 ${JSON.stringify(data)}`);
             const groupedData = data.reduce((acc: any, subject: any) => {
                 const grade = subject.grade ? parseInt(subject.grade) : 0; // Handle null grade
                 if (!acc[grade]) {
@@ -342,7 +341,7 @@ const ManageSchool = () => {
                 acc[grade].push(subject);
                 return acc;
             }, {});
-            console.log(`그룹 데이타 ${groupedData}`);
+            console.log(`그룹 데이타 ${JSON.stringify(groupedData)}`);
             setSubjectData(groupedData);
         } catch (error) {
             console.error('Error fetching subject data:', error);
@@ -353,29 +352,41 @@ const ManageSchool = () => {
         fetchSubjectData();
     }, []);
 
+
     const handleCreateSubject = async () => {
         const subjectNameInput = document.getElementById('subjectName') as HTMLInputElement;
         const subjectGradeInput = document.getElementById('subjectGrade') as HTMLInputElement;
-
+    
         const subjectName = subjectNameInput.value;
         const subjectGrade = subjectGradeInput.value;
-
+    
         if (!subjectName || !subjectGrade) {
             alert('유효한 과목 이름과 학년을 입력하세요.');
             return;
         }
-
+    
         try {
+            setModal21(false);
             const response = await createSubject(subjectName, '2024', '1', subjectGrade);
             console.log('Subject created successfully:', response);
-            // Optionally, refresh the subject list after creation
-            fetchSubjectData();
-            setModal21(false); // Close the modal
+            fetchSubjectData(); // Refresh the subject list after creation
         } catch (error) {
             console.error('과목 생성 실패:', error);
         }
     };
 
+    
+const handleDeleteSubject = async (subjectId: number, grade: number) => {
+    if (window.confirm('정말로 이 과목을 삭제하시겠습니까?')) {
+        try {
+            await deleteSubject(subjectId);
+            console.log('Subject deleted successfully');
+            fetchSubjectData(); // Refresh the subject list after deletion
+        } catch (error) {
+            console.error('과목 삭제 실패:', error);
+        }
+    }
+};
 
 
 
@@ -554,6 +565,7 @@ const ManageSchool = () => {
                                                         ) : (
                                                             <li>반 정보가 없습니다.</li>
                                                         )}
+                                                        
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
@@ -606,21 +618,28 @@ const ManageSchool = () => {
 
                                                         <div className="p-5">
                                                             <form>
-                                                                <div className="relative mb-4">
-                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
-                                                                        <IconUser className="w-5 h-5" />
-                                                                    </span>
-                                                                    <input type="text" placeholder="과목 이름" className="form-input ltr:pl-10 rtl:pr-10" id="subjectName" />
-                                                                </div>
+                                                               
                                                                 <div className="relative mb-4">
                                                                     <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
                                                                         <IconLock className="w-5 h-5" />
                                                                     </span>
                                                                     <input type="text" placeholder="대상 학년" className="form-input ltr:pl-10 rtl:pr-10" id="subjectGrade" />
                                                                 </div>
-                                                                <button type="button" className="btn btn-primary w-full" onClick={handleCreateSubject}>
+
+                                                                <div className="relative mb-4">
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconUser className="w-5 h-5" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="과목 이름" className="form-input ltr:pl-10 rtl:pr-10" id="subjectName" />
+                                                                </div>
+
+                                                                <button type="button" className="btn btn-primary w-full" onClick={async () => {
+                                                                    await handleCreateSubject();
+                                                                    window.location.reload();
+                                                                }}>
                                                                     과목 만들기
                                                                 </button>
+
                                                             </form>
                                                         </div>
                                                     </Dialog.Panel>
@@ -656,7 +675,7 @@ const ManageSchool = () => {
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-sm btn-outline-danger"
-                                                                        onClick={() => handleDeleteClass(subject.subjectId, grade)} // 삭제 버튼 클릭 시 호출
+                                                                        onClick={() => handleDeleteSubject(subject.subjectId, grade)}
                                                                     >
                                                                         삭제 하기
                                                                     </button>

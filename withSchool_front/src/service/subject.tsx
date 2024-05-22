@@ -12,9 +12,7 @@ export const getSubjects = async (): Promise<any> => {
         });
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
-            const convertData = JSON.stringify(data);
-            return convertData;
+            return data; // Return parsed JSON object
         } else {
             const errorMessage = await response.text();
             console.error('과목 목록 가져오기 실패:', errorMessage);
@@ -36,10 +34,10 @@ export const createSubject = async (subjectName: string, subjectYear: string, su
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                subjectName : '가즈아',
-                subjectYear : '2024',
-                subjectSemester : '1',
-                subjectGrade : '2',
+                subjectName,
+                subjectYear,
+                subjectSemester,
+                subjectGrade,
             })
         });
         if (response.ok) {
@@ -52,6 +50,54 @@ export const createSubject = async (subjectName: string, subjectYear: string, su
         }
     } catch (error) {
         console.error('과목 생성 API 실패', error);
+        throw error;
+    }
+};
+
+
+export const getSubjectList = async (): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log(`서버 데이타 ${JSON.stringify(data)}`);
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch school notice:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching school notice:', error);
+        throw error;
+    }
+}
+
+export const deleteSubject = async (subjectId: number): Promise<any> => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${url}/admin/subjects/${subjectId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            return response;
+        } else {
+            const errorMessage = await response.text();
+            console.error('반 삭제 실패:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('반 삭제 API 실패', error);
         throw error;
     }
 };
