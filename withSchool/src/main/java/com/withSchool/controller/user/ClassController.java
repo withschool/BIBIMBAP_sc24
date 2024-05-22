@@ -8,6 +8,7 @@ import com.withSchool.dto.subject.ResHomeworkDTO;
 import com.withSchool.dto.subject.ResHomeworkSubmitDTO;
 import com.withSchool.dto.user.BasicUserInfoDTO;
 import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.entity.user.User;
 import com.withSchool.service.classes.ClassHomeworkService;
 import com.withSchool.service.classes.ClassNoticeService;
 import com.withSchool.service.classes.ClassService;
@@ -16,10 +17,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,10 +88,22 @@ public class ClassController {
 
     @GetMapping("/notices")
     @Operation(summary = "유저의 반 공지 리스트 조회")
-    public ResponseEntity<List<ResNoticeDTO>> showAllNotices() {
-        List<ResNoticeDTO> classNoticeDTOS = classNoticeService.findAll();
-        return ResponseEntity.ok()
-                .body(classNoticeDTOS);
+    public ResponseEntity<List<ResNoticeDTO>> showAllNotices(@RequestParam(value = "childId", required = false) Long childId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findById(authentication.getName());
+        if (user == null) return null;
+
+        if (user.getAccountType() == 0 || user.getAccountType() == 2) { // 교사 or 학생
+            return ResponseEntity.ok().body(classNoticeService.findAll(user));
+        }
+        else if (user.getAccountType() == 1) { //학부모
+            if (childId == null) throw new RuntimeException("학생이 선택되지 않았습니다.");
+            User child = userService.findByUserId(childId);
+            return ResponseEntity.ok()
+                    .body(classNoticeService.findAll(child));
+        }
+        return null;
     }
 
     @DeleteMapping("/notices/{notice-id}")

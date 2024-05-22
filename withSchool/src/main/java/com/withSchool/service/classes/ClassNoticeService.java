@@ -176,8 +176,7 @@ public class ClassNoticeService {
                 .build();
     }
     @Transactional
-    public List<ResNoticeDTO> findAll() {
-        User user = userService.getCurrentUser();
+    public List<ResNoticeDTO> findAll(User user) {
         List<ClassNotice> classNotices = classNoticeRepository.findAllByClassId(user.getClassInformation().getClassId());
 
         List<ResNoticeDTO> resNoticeDTOS = new ArrayList<>();
