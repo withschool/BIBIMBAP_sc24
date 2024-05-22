@@ -266,7 +266,7 @@ const StudentInfo = () => {
                                                         leaveTo="opacity-0 scale-95"
                                                     >
                                                         <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
-                                                            <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
+                                                            <div className="flex items-center justify-between pl-5 pt-5 text-lg font-semibold dark:text-white">
                                                                 <h5>학생 추가하기</h5>
                                                                 <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
                                                                     <IconX className="w-5 h-5" />
@@ -275,9 +275,9 @@ const StudentInfo = () => {
                                                             <div className="p-5">
                                                                 <form>
                                                                     <div className="relative mb-4">
-                                                                        <h2>연결하고자 하는 유저코드를 입력해 주세요.</h2>
+                                                                        <h2 className='pb-4'>연결하고자 하는 유저코드를 입력해 주세요.</h2>
                                                                         <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
-                                                                            <IconUser className="w-5 h-5" />
+                                                                            <IconUser className="w-5 h-5 mt-10"/>
                                                                         </span>
                                                                         <input type="text" placeholder="유저코드" className="form-input ltr:pl-10 rtl:pr-10" id="userCode" value ={userCode} onChange={handleUserCode}/>
                                                                     </div>
