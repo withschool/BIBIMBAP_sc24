@@ -88,10 +88,6 @@ export const createClass = async (grade: number, inClass: number): Promise<any> 
         const token = localStorage.getItem('token');
         const schoolId = parseInt(localStorage.getItem('schoolId')?? '0');
 
-        console.log(grade)
-        console.log(inClass)
-        console.log(schoolId)
-
         const response = await fetch(`${url}/admin/classes`, {
             method: 'POST',
             headers: {

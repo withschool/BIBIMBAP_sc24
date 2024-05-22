@@ -16,6 +16,7 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { downloadExcel } from 'react-export-table-to-excel';
 import { getSchoolUsers, uploadUserFile, getAdminClasses, createClass, deleteClass, } from '../../service/admin';
+import { getSubjects, createSubject, deleteSubject } from '../../service/subject';
 import IconFile from '../../components/Icon/IconFile';
 import IconPrinter from '../../components/Icon/IconPrinter';
 
@@ -57,7 +58,6 @@ const ManageSchool = () => {
     //테이블
 
     const col = ['userId', 'userName', 'name'];
-
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [5, 10, 15];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -322,11 +322,71 @@ const ManageSchool = () => {
     };
 
 
-    //과목 관련
+    //과목 관련 모달
 
     const [modal21, setModal21] = useState(false);
 
+    //과목 목록 API 
+    const [subjectData, setSubjectData] = useState<{ [key: number]: any[] }>({});
 
+    const fetchSubjectData = async () => {
+        try {
+            const data = await getSubjects();
+            console.log(`내부 데이타 ${JSON.stringify(data)}`);
+            const groupedData = data.reduce((acc: any, subject: any) => {
+                const grade = subject.grade ? parseInt(subject.grade) : 0; // Handle null grade
+                if (!acc[grade]) {
+                    acc[grade] = [];
+                }
+                acc[grade].push(subject);
+                return acc;
+            }, {});
+            console.log(`그룹 데이타 ${JSON.stringify(groupedData)}`);
+            setSubjectData(groupedData);
+        } catch (error) {
+            console.error('Error fetching subject data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubjectData();
+    }, []);
+
+
+    const handleCreateSubject = async () => {
+        const subjectNameInput = document.getElementById('subjectName') as HTMLInputElement;
+        const subjectGradeInput = document.getElementById('subjectGrade') as HTMLInputElement;
+    
+        const subjectName = subjectNameInput.value;
+        const subjectGrade = subjectGradeInput.value;
+    
+        if (!subjectName || !subjectGrade) {
+            alert('유효한 과목 이름과 학년을 입력하세요.');
+            return;
+        }
+    
+        try {
+            setModal21(false);
+            const response = await createSubject(subjectName, '2024', '1', subjectGrade);
+            console.log('Subject created successfully:', response);
+            fetchSubjectData(); // Refresh the subject list after creation
+        } catch (error) {
+            console.error('과목 생성 실패:', error);
+        }
+    };
+
+    
+const handleDeleteSubject = async (subjectId: number, grade: number) => {
+    if (window.confirm('정말로 이 과목을 삭제하시겠습니까?')) {
+        try {
+            await deleteSubject(subjectId);
+            console.log('Subject deleted successfully');
+            fetchSubjectData(); // Refresh the subject list after deletion
+        } catch (error) {
+            console.error('과목 삭제 실패:', error);
+        }
+    }
+};
 
 
 
@@ -505,6 +565,7 @@ const ManageSchool = () => {
                                                         ) : (
                                                             <li>반 정보가 없습니다.</li>
                                                         )}
+                                                        
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
@@ -516,12 +577,9 @@ const ManageSchool = () => {
 
                     </div>
 
-
                     <div className="panel" id="basic">
                         <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">학년 별 과목 목록</h5>
-
-                            
                             <div>
                                 <button type="button" onClick={() => setModal21(true)} className="btn btn-primary">
                                     과목 추가하기
@@ -552,7 +610,7 @@ const ManageSchool = () => {
                                                 >
                                                     <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
                                                         <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
-                                                            <h5>반 추가하기</h5>
+                                                            <h5>과목 추가하기</h5>
                                                             <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
                                                                 <IconX className="w-5 h-5" />
                                                             </button>
@@ -560,24 +618,30 @@ const ManageSchool = () => {
 
                                                         <div className="p-5">
                                                             <form>
-                                                                <div className="relative mb-4">
-                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
-                                                                        <IconUser className="w-5 h-5" />
-                                                                    </span>
-                                                                    <input type="text" placeholder="대상 학년" className="form-input ltr:pl-10 rtl:pr-10" id="targetGrade" />
-                                                                </div>
+                                                               
                                                                 <div className="relative mb-4">
                                                                     <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
                                                                         <IconLock className="w-5 h-5" />
                                                                     </span>
-                                                                    <input type="text" placeholder="대상 반" className="form-input ltr:pl-10 rtl:pr-10" id="targetClass" />
+                                                                    <input type="text" placeholder="대상 학년" className="form-input ltr:pl-10 rtl:pr-10" id="subjectGrade" />
                                                                 </div>
-                                                                <button type="button" className="btn btn-primary w-full" onClick={handleCreateClass}>
-                                                                    반 만들기
+
+                                                                <div className="relative mb-4">
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconUser className="w-5 h-5" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="과목 이름" className="form-input ltr:pl-10 rtl:pr-10" id="subjectName" />
+                                                                </div>
+
+                                                                <button type="button" className="btn btn-primary w-full" onClick={async () => {
+                                                                    await handleCreateSubject();
+                                                                    window.location.reload();
+                                                                }}>
+                                                                    과목 만들기
                                                                 </button>
+
                                                             </form>
                                                         </div>
-
                                                     </Dialog.Panel>
                                                 </Transition.Child>
                                             </div>
@@ -585,7 +649,6 @@ const ManageSchool = () => {
                                     </Dialog>
                                 </Transition>
                             </div>
-
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
@@ -593,33 +656,33 @@ const ManageSchool = () => {
                                     <div key={grade} className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
                                         <button
                                             type="button"
-                                            className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active === grade.toString() ? '!text-primary' : ''}`}
-                                            onClick={() => togglePara(grade.toString())}
+                                            className={`p-4 w-full flex items-center text-white-dark dark:bg-[#1b2e4b] ${active2 === grade.toString() ? '!text-primary' : ''}`}
+                                            onClick={() => togglePara2(grade.toString())}
                                         >
-                                            {grade}학년 반 목록
-                                            <div className={`ltr:ml-auto rtl:mr-auto ${active === grade.toString() ? 'rotate-180' : ''}`}>
+                                            {grade}학년 과목 목록
+                                            <div className={`ltr:ml-auto rtl:mr-auto ${active2 === grade.toString() ? 'rotate-180' : ''}`}>
                                                 <IconCaretDown />
                                             </div>
                                         </button>
                                         <div>
-                                            <AnimateHeight duration={300} height={active === grade.toString() ? 'auto' : 0}>
+                                            <AnimateHeight duration={300} height={active2 === grade.toString() ? 'auto' : 0}>
                                                 <div className="p-4 text-[13px] border-t border-[#d3d3d3] dark:border-[#1b2e4b]">
                                                     <ul className="space-y-1">
-                                                        {classData[grade]?.length > 0 ? (
-                                                            classData[grade].sort((a, b) => a.inClass - b.inClass).map((classItem) => (
-                                                                <li key={classItem.classId} className="flex justify-between items-center p-2 border-b border-gray-200">
-                                                                    <span className="text-sm">{classItem.inClass}반</span>
+                                                        {subjectData[grade]?.length > 0 ? (
+                                                            subjectData[grade].sort((a, b) => a.subjectName.localeCompare(b.subjectName)).map((subject) => (
+                                                                <li key={subject.subjectId} className="flex justify-between items-center p-2 border-b border-gray-200">
+                                                                    <span className="text-sm">{subject.subjectName}</span>
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-sm btn-outline-danger"
-                                                                        onClick={() => handleDeleteClass(classItem.classId, grade)} // 삭제 버튼 클릭 시 호출
+                                                                        onClick={() => handleDeleteSubject(subject.subjectId, grade)}
                                                                     >
                                                                         삭제 하기
                                                                     </button>
                                                                 </li>
                                                             ))
                                                         ) : (
-                                                            <li>반 정보가 없습니다.</li>
+                                                            <li>과목 정보가 없습니다.</li>
                                                         )}
                                                     </ul>
                                                 </div>
@@ -629,11 +692,14 @@ const ManageSchool = () => {
                                 ))}
                             </div>
                         </div>
-
                     </div>
 
+
                 </div>
+
+
             </div>
+
         </div>
     );
 };

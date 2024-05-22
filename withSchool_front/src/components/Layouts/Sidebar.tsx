@@ -395,9 +395,8 @@ const Sidebar = () => {
                                         <div className="flex items-center">
                                             <IconMenuDashboard
                                                 className="group-hover:!text-primary shrink-0" />
-                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Super Admin')}</span>
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Admin')}</span>
                                         </div>
-
 
                                         <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
                                             <IconCaretDown />
@@ -410,7 +409,7 @@ const Sidebar = () => {
                                                 <NavLink to="/admin">{t('학교 관리')}</NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to="/analytics">{t('공지 작성하기')}</NavLink>
+                                                <NavLink to="/admin/notice">{t('공지 작성하기')}</NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to="/finance">{t('메뉴 3')}</NavLink>

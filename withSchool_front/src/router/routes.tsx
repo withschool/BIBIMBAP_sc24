@@ -18,6 +18,7 @@ const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'))
 
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
+const AdminNotice = lazy(() => import('../pages/Admin/AdminNotice'));
 
 
 
@@ -115,6 +116,10 @@ const routes = [
     {
         path: '/admin',
         element: <AdminMain />,
+    },
+    {
+        path: '/admin/notice',
+        element: <AdminNotice />,
     },
 
     //Components

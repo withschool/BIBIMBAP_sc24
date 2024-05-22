@@ -20,12 +20,11 @@ import store from './store/index';
 
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
+
         <Suspense>
             <Provider store={store}>
                 <RouterProvider router={router} />
             </Provider>
         </Suspense>
-    </React.StrictMode>
 );
 

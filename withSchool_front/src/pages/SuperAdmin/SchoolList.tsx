@@ -326,7 +326,6 @@ const SchoolList = () => {
                         className={`${isRtl ? 'whitespace-nowrap table-hover' : 'whitespace-nowrap table-hover'}`}
                         records={recordsData}
                         columns={[
-
                             { accessor: 'schoolId', title: '학교 ID', sortable: true },
                             { accessor: 'schoolName', title: '학교 이름', sortable: true },
                             { accessor: 'schoolPhoneNumber', title: '전화 번호', sortable: true },
