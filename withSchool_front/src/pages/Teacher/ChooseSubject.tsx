@@ -140,29 +140,58 @@ const ChooseSubject = () => {
                                     <label htmlFor="email">과목 목록</label>
                                     <div className="form-input">
                                     <div className="table-responsive mb-5">
-                                        <table className="table-hover">
+                                    <div className="panel">
+                                    <div className="table-responsive mb-5">
+                                        <table>
                                             <thead>
-                                                <tr className="!bg-transparent dark:!bg-transparent">
-                                                    <th>유저 ID</th>
-                                                    <th>ID</th>
+                                                <tr>
                                                     <th>이름</th>
-                                                    <th className="text-center"></th>
+                                                    <th>학교</th>
+                                                    <th>생년월일</th>
+                                                    <th>등록일</th>
+                                                    <th className="text-center">선택</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            {classInfo.users.map((data) => {
-                                                return (
-                                                    <tr key={data.userId}>
-                                                        <td>{data.userId}</td>
-                                                        <td>
-                                                            <div className="whitespace-nowrap">{data.userName}</div>
-                                                        </td>
-                                                        <td>{data.name}</td>
-                                                    </tr>
-                                                );
-                                            })}
+                                                {studentList.map((data: any) => {
+                                                    return (
+                                                        <tr key={data.id}>
+                                                            <td>
+                                                                <div className="whitespace-nowrap">{data.user.name}</div>
+                                                            </td>
+                                                            <td>{data.user.schoolName}</td>
+                                                            <td>
+                                                                {Math.floor(data.user.birthdate / 10000) > 40 ? (
+                                                                    <>
+                                                                        19{Math.floor(data.user.birthdate / 10000)}년 {Math.floor((data.user.birthdate / 100) % 100)}월 {Math.floor(data.user.birthdate % 100)}일
+                                                                    </>
+                                                                ) : (
+                                                                    Math.floor(data.user.birthdate / 10000) < 10 ? (
+                                                                        <>
+                                                                            200{Math.floor(data.user.birthdate / 10000)}년 {Math.floor((data.user.birthdate / 100) % 100)}월 {Math.floor(data.user.birthdate % 100)}일
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            20{Math.floor(data.user.birthdate / 10000)}년 {Math.floor((data.user.birthdate / 100) % 100)}월 {Math.floor(data.user.birthdate % 100)}일
+                                                                        </>
+                                                                    )
+                                                                )}
+                                                            </td>
+                                                            <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일</td>
+                                                            <td className="text-center">
+                                                                <Tippy content="전환">
+                                                                    <button type="button" onClick={() => handleChange(data.user.userId)}>
+                                                                        <IconTrashLines className="m-auto" />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
                                             </tbody>
                                         </table>
+                                    </div>
+                                </div>
                                     </div>
                                     </div>
                                 </div>
