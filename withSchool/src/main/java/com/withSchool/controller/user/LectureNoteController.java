@@ -11,15 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/lecture-notes")
+@RequestMapping("subjects/lecture-notes")
 @RequiredArgsConstructor
 public class LectureNoteController {
 
     private final SubjectLectureNoteService subjectLectureNoteService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ResSubjectLectureNoteDTO>> getAllLectureNotes() {
         List<ResSubjectLectureNoteDTO> lectureNotes = subjectLectureNoteService.getAllSubjectLectureNotes();
+        return new ResponseEntity<>(lectureNotes, HttpStatus.OK);
+    }
+
+    @GetMapping("/bySubject/{subjectId}")
+    public ResponseEntity<List<ResSubjectLectureNoteDTO>> getAllLectureNotesBySubject(@PathVariable Long subjectId) {
+        List<ResSubjectLectureNoteDTO> lectureNotes = subjectLectureNoteService.getAllSubjectLectureNotesBySubject(subjectId);
         return new ResponseEntity<>(lectureNotes, HttpStatus.OK);
     }
 

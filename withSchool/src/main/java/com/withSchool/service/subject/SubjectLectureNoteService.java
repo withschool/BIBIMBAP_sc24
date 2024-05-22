@@ -52,6 +52,16 @@ public class SubjectLectureNoteService {
         }
         return allSubjectLectureNotes;
     }
+    @Transactional
+    public List<ResSubjectLectureNoteDTO> getAllSubjectLectureNotesBySubject(Long subjectId) {
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(NoSuchElementException::new);
+        List<SubjectLectureNote> subjectLectureNotes = subjectLectureNoteRepository.findBySubject(subject).orElseThrow(NoSuchElementException::new);
+        List<ResSubjectLectureNoteDTO> allSubjectLectureNotes = new ArrayList<>();
+        for (SubjectLectureNote subjectLectureNote : subjectLectureNotes) {
+            allSubjectLectureNotes.add(mapToSubjectLectureNoteDTO(subjectLectureNote));
+        }
+        return allSubjectLectureNotes;
+    }
 
     @Transactional
     public ResSubjectLectureNoteDTO getSubjectLectureNoteById(Long id) {

@@ -269,10 +269,6 @@ public class FileService {
         subjectHomeworkSubmitFileRepository.deleteAllBySubjectHomeworkSubmitId(dto.getMasterId());
     }
 
-    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
-        subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
-    }
-
     public void deletePostFile(FileDeleteDTO dto) {
         communityPostFileRepository.deleteAllByPostFileId(dto.getMasterId());
     }
