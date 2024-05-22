@@ -3,7 +3,8 @@ import { Fragment, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import Tippy from '@tippyjs/react';
-import { mappingStudent, listingStudent, getStudentInfoById} from '../../service/parent';
+import { mappingStudent, listingStudent, getStudentInfoById } from '../../service/parent';
+import { getSubjectsParent } from '../../service/subject';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -21,6 +22,19 @@ const StudentInfo = () => {
     const [studentList, setStudentList] = useState([]);
     const [targetStudent, setTargetStudent] = useState<any>('');
     const [targetStudentInfo, setTargetStudentInfo] = useState<any>('');
+    const [subjectList, setSubjectList] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchSubjectList = async () => {
+            try { 
+                const data = await getSubjectsParent(targetStudent);
+                setSubjectList(data);
+            } catch (error) {
+                console.error('Error fetching subject list:', error);
+            }
+        };
+        fetchSubjectList();
+    }, [targetStudent]);
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -94,7 +108,7 @@ const StudentInfo = () => {
                                                 before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
                                         >
                                             <IconHome className="ltr:mr-2 rtl:ml-2" />
-                                            기본정보
+                                            기본 정보
                                         </button>
                                     )}
                                 </Tab>
@@ -105,7 +119,18 @@ const StudentInfo = () => {
                                                 before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
                                         >
                                             <IconUser className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
-                                            성적조회
+                                            수강 과목 조회
+                                        </button>
+                                    )}
+                                </Tab>
+                                <Tab as={Fragment}>
+                                    {({ selected }) => (
+                                        <button
+                                            className={`${selected ? 'bg-warning text-white !outline-none' : ''}
+                                                before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
+                                        >
+                                            <IconUser className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
+                                            성적 조회
                                         </button>
                                     )}
                                 </Tab>
@@ -116,7 +141,7 @@ const StudentInfo = () => {
                                                 before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
                                         >
                                             <IconPhone className="ltr:mr-2 rtl:ml-2" />
-                                            학생선택
+                                            학생 선택
                                         </button>
                                     )}
                                 </Tab>
@@ -156,6 +181,48 @@ const StudentInfo = () => {
                                                                 <div className="form-input" >{targetStudentInfo.email}</div>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            )}
+                                        </div>
+                                    
+                                </Tab.Panel>
+                                <Tab.Panel>
+                                    <div className="active pt-5">
+                                        { (studentList.length == 0) ? (
+                                            <><h1>연결된 학생이 없습니다.</h1></>
+                                        ):(
+                                            <div>
+                                                <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
+                                                    <h6 className="text-lg font-bold mb-5">{targetStudentInfo.name} 학생이 수강중인 과목</h6>
+                                                    <div className="flex flex-col ">
+                                                    <div className="table-responsive mb-5">
+                                                        <table className="table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>학년도</th>
+                                                                    <th>학년</th>
+                                                                    <th>학기</th>
+                                                                    <th>과목명</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {subjectList.length > 0 ? (subjectList.map((data) => {
+                                                                    return (
+                                                                        <tr key={data.subjectId}>
+                                                                            <td>
+                                                                                <div className="whitespace-nowrap">{data.year}</div>
+                                                                            </td>
+                                                                            <td>{data.grade}</td>
+                                                                            <td>{data.semester}</td>
+                                                                            <td>{data.subjectName}</td>
+                                                                        </tr>
+                                                                    );
+                                                                })):(<p className='pl-5 pt-5 text-bold'>수강중인 과목이 없습니다.</p>)}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                     </div>
                                                 </form>
                                             </div>

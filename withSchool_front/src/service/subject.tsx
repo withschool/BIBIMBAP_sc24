@@ -24,6 +24,30 @@ export const getSubjects = async (): Promise<any> => {
     }
 };
 
+export const getSubjectsParent = async (childId : number): Promise<any> => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${url}/subjects?childId=${childId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data; // Return parsed JSON object
+        } else {
+            const errorMessage = await response.text();
+            console.error('과목 목록 가져오기 실패:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('과목 목록 API 실패', error);
+        throw error;
+    }
+};
+
 export const createSubject = async (subjectName: string, subjectYear: string, subjectSemester: string, subjectGrade: string): Promise<any> => {
     try {
         const token = localStorage.getItem('token');
