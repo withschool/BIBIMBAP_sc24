@@ -53,7 +53,7 @@ import IconTxtFile from '../../components/Icon/IconTxtFile';
 const TeacherNotice = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('TeacherNotice'));
+        dispatch(setPageTitle('teacher-notice'));
     });
     const [mailList, setMailList] = useState([
         {
@@ -148,13 +148,14 @@ const TeacherNotice = () => {
 
     useEffect(() => {
         searchMails();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedTab, searchText, mailList]);
 
     const refreshMails = () => {
         setSearchText('');
         searchMails(false);
     };
+
+    const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
     const setArchive = () => {
         if (ids.length) {
@@ -382,13 +383,13 @@ const TeacherNotice = () => {
             showMessage('제목을 작성해 주세요.', 'error');
             return false;
         }
-
+    
         let maxId = 0;
         if (!params.id) {
             maxId = mailList.length ? mailList.reduce((max, character) => (character.id > max ? character.id : max), mailList[0].id) : 0;
         }
         let cDt = new Date();
-
+    
         let obj: any = {
             id: maxId + 1,
             path: '',
@@ -406,18 +407,7 @@ const TeacherNotice = () => {
             description: params.description,
             attachments: null,
         };
-
-        if (params.file && params.file.length) {
-            obj.attachments = [];
-            for (let file of params.file) {
-                let flObj = {
-                    name: file.name,
-                    size: getFileSize(file.size),
-                    type: getFileType(file.type),
-                };
-                obj.attachments.push(flObj);
-            }
-        }
+    
         if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
             obj.type = 'draft';
             mailList.splice(0, 0, obj);
@@ -425,8 +415,24 @@ const TeacherNotice = () => {
             showMessage('Mail has been saved successfully to draft.');
         } else if (type === 'send' || type === 'reply' || type === 'forward') {
             try {
-                const response = await teacherNotice(params.title, params.description);
-                response()
+                const formData = new FormData();
+                formData.append("title", params.title);
+                formData.append("content", params.description);
+    
+                if (selectedFiles) {
+                    Array.from(selectedFiles).forEach(file => {
+                        formData.append("file", file);
+                    });
+                }
+    
+                const response = await teacherNotice(formData);
+    
+                if (response.ok) {
+                    console.log("Notice successfully created");
+                } else {
+                    console.error("Failed to create notice");
+                }
+    
                 obj.type = 'sent_notice';
                 mailList.splice(0, 0, obj); // Add the new notice to the mailList
                 searchMails(); // Refresh the mail list to show the new notice
@@ -440,7 +446,7 @@ const TeacherNotice = () => {
             searchMails();
             showMessage('공지를 성공적으로 작성하였습니다.');
         }
-
+    
         setSelectedMail(null);
         setIsEdit(false);
     };
@@ -525,9 +531,8 @@ const TeacherNotice = () => {
                     onClick={() => setIsShowMailMenu(!isShowMailMenu)}
                 ></div>
                 <div
-                    className={`panel xl:block p-4 dark:gray-50 w-[250px] max-w-full flex-none space-y-3 xl:relative absolute z-10 xl:h-auto h-full hidden ltr:xl:rounded-r-md ltr:rounded-r-none rtl:xl:rounded-l-md rtl:rounded-l-none overflow-hidden ${
-                        isShowMailMenu ? '!block' : ''
-                    }`}
+                    className={`panel xl:block p-4 dark:gray-50 w-[250px] max-w-full flex-none space-y-3 xl:relative absolute z-10 xl:h-auto h-full hidden ltr:xl:rounded-r-md ltr:rounded-r-none rtl:xl:rounded-l-md rtl:rounded-l-none overflow-hidden ${isShowMailMenu ? '!block' : ''
+                        }`}
                 >
                     <div className="flex flex-col h-full pb-16">
                         <div className="pb-5">
@@ -539,9 +544,8 @@ const TeacherNotice = () => {
                             <div className="space-y-1">
                                 <button
                                     type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                        !isEdit && selectedTab === 'inbox' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                    }`}
+                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'inbox' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                        }`}
                                     onClick={() => {
                                         setSelectedTab('inbox');
                                         tabChanged('inbox');
@@ -558,9 +562,8 @@ const TeacherNotice = () => {
 
                                 <button
                                     type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                        !isEdit && selectedTab === 'star' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                    }`}
+                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'star' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                        }`}
                                     onClick={() => {
                                         setSelectedTab('star');
                                         tabChanged('star');
@@ -574,9 +577,8 @@ const TeacherNotice = () => {
 
                                 <button
                                     type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                        !isEdit && selectedTab === 'sent_notice' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                    }`}
+                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'sent_notice' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                        }`}
                                     onClick={() => {
                                         setSelectedTab('sent_notice');
                                         tabChanged('sent_notice');
@@ -591,9 +593,8 @@ const TeacherNotice = () => {
 
                                 <button
                                     type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                        !isEdit && selectedTab === 'draft' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                    }`}
+                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'draft' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                        }`}
                                     onClick={() => {
                                         setSelectedTab('draft');
                                         tabChanged('draft');
@@ -610,9 +611,8 @@ const TeacherNotice = () => {
 
                                 <button
                                     type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                        !isEdit && selectedTab === 'trash' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                    }`}
+                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'trash' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                        }`}
                                     onClick={() => {
                                         setSelectedTab('trash');
                                         tabChanged('trash');
@@ -637,9 +637,8 @@ const TeacherNotice = () => {
                                                 <li>
                                                     <button
                                                         type="button"
-                                                        className={`w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                                            !isEdit && selectedTab === 'archive' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                                        }`}
+                                                        className={`w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'archive' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                                            }`}
                                                         onClick={() => {
                                                             setSelectedTab('archive');
                                                             tabChanged('archive');
@@ -652,9 +651,8 @@ const TeacherNotice = () => {
                                                 <li>
                                                     <button
                                                         type="button"
-                                                        className={`w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                                            !isEdit && selectedTab === 'important' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                                        }`}
+                                                        className={`w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'important' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
+                                                            }`}
                                                         onClick={() => {
                                                             setSelectedTab('important');
                                                             tabChanged('important');
@@ -673,7 +671,7 @@ const TeacherNotice = () => {
                             </div>
                         </PerfectScrollbar>
 
-                       
+
                     </div>
                 </div>
 
@@ -993,9 +991,8 @@ const TeacherNotice = () => {
                                                                     <Tippy content="Important">
                                                                         <button
                                                                             type="button"
-                                                                            className={`enabled:hover:text-primary disabled:opacity-60 rotate-90 flex items-center ${
-                                                                                mail.isImportant ? 'text-primary' : ''
-                                                                            }`}
+                                                                            className={`enabled:hover:text-primary disabled:opacity-60 rotate-90 flex items-center ${mail.isImportant ? 'text-primary' : ''
+                                                                                }`}
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
                                                                                 setImportant(mail.id);
@@ -1007,9 +1004,8 @@ const TeacherNotice = () => {
                                                                     </Tippy>
                                                                 </div>
                                                                 <div
-                                                                    className={`dark:text-gray-300 whitespace-nowrap font-semibold ${
-                                                                        !mail.isUnread ? 'text-gray-500 dark:text-gray-500 font-normal' : ''
-                                                                    }`}
+                                                                    className={`dark:text-gray-300 whitespace-nowrap font-semibold ${!mail.isUnread ? 'text-gray-500 dark:text-gray-500 font-normal' : ''
+                                                                        }`}
                                                                 >
                                                                     {mail.firstName ? mail.firstName + ' ' + mail.lastName : mail.email}
                                                                 </div>
@@ -1026,12 +1022,11 @@ const TeacherNotice = () => {
                                                         <td>
                                                             <div className="flex items-center">
                                                                 <div
-                                                                    className={`w-2 h-2 rounded-full ${
-                                                                        (mail.group === 'personal' && 'bg-primary') ||
+                                                                    className={`w-2 h-2 rounded-full ${(mail.group === 'personal' && 'bg-primary') ||
                                                                         (mail.group === 'work' && 'bg-warning') ||
                                                                         (mail.group === 'social' && 'bg-success') ||
                                                                         (mail.group === 'private' && 'bg-danger')
-                                                                    }`}
+                                                                        }`}
                                                                 ></div>
                                                                 {mail.attachments && (
                                                                     <div className="ltr:ml-4 rtl:mr-4">
@@ -1092,12 +1087,11 @@ const TeacherNotice = () => {
                                                 <div className="ltr:mr-4 rtl:ml-4">
                                                     <Tippy content={selectedMail.group} className="capitalize">
                                                         <div
-                                                            className={`w-2 h-2 rounded-full ${
-                                                                (selectedMail.group === 'personal' && 'bg-primary') ||
+                                                            className={`w-2 h-2 rounded-full ${(selectedMail.group === 'personal' && 'bg-primary') ||
                                                                 (selectedMail.group === 'work' && 'bg-warning') ||
                                                                 (selectedMail.group === 'social' && 'bg-success') ||
                                                                 (selectedMail.group === 'private' && 'bg-danger')
-                                                            }`}
+                                                                }`}
                                                         ></div>
                                                     </Tippy>
                                                 </div>
@@ -1276,8 +1270,10 @@ const TeacherNotice = () => {
                                         type="file"
                                         className="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary"
                                         multiple
-                                        accept="image/*,.zip,.pdf,.xls,.xlsx,.txt.doc,.docx"
+                                        accept="image/*,.zip,.pdf,.xls,.xlsx,.txt,.doc,.docx"
                                         required
+                                        id="fileId"
+                                        onChange={(e) => setSelectedFiles(e.target.files)}
                                     />
                                 </div>
                                 <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
