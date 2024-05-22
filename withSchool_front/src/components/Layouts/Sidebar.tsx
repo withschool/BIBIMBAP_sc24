@@ -349,6 +349,9 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/teacher/subject/qna">{t('Q & A')}</NavLink>
                                                     </li>
+                                                    <li>
+                                                        <NavLink to="/teacher/subject/choose">{t('과목 목록')}</NavLink>
+                                                    </li>
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
