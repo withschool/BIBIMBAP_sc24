@@ -28,6 +28,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SubjectLectureNoteService {
 
     private final SubjectLectureNoteRepository subjectLectureNoteRepository;
@@ -62,12 +63,28 @@ public class SubjectLectureNoteService {
     public ResSubjectLectureNoteDTO createSubjectLectureNote(ReqSubjectLectureNoteDTO reqSubjectLectureNoteDTO) {
         Optional<Subject> optionalSubject = subjectRepository.findById(reqSubjectLectureNoteDTO.getSubjectId());
         if (optionalSubject.isPresent()) {
-            SubjectLectureNote subjectLectureNote = SubjectLectureNote.builder()
-                    .title(reqSubjectLectureNoteDTO.getTitle())
-                    .subject(optionalSubject.get())
-                    .user(userService.getCurrentUser())
-                    .build();
+            String title = reqSubjectLectureNoteDTO.getTitle();
+            if (title == null || title.trim().isEmpty()) {
+                throw new IllegalArgumentException("Title cannot be null or empty");
+            }
+
+            // Log title value
+//            System.out.println("Creating SubjectLectureNote with title: " + title);
+
+            Subject subject = optionalSubject.get();
+//            System.out.println("Subject: " + subject.getSubjectId().toString());
+            User currentUser = userService.getCurrentUser();
+
+            SubjectLectureNote subjectLectureNote = new SubjectLectureNote();
+            subjectLectureNote.setTitle(title);
+            subjectLectureNote.setSubject(subject);
+            subjectLectureNote.setUser(currentUser);
+
+            // Save SubjectLectureNote
             SubjectLectureNote savedSubjectLectureNote = subjectLectureNoteRepository.save(subjectLectureNote);
+
+            // Log SubjectLectureNote creation
+//            System.out.println("Created SubjectLectureNote: " + savedSubjectLectureNote.toString());
 
             // Save files to S3 and update database
             saveFiles(reqSubjectLectureNoteDTO.getFile(), savedSubjectLectureNote.getSubjectLectureNoteId());
@@ -78,24 +95,26 @@ public class SubjectLectureNoteService {
         }
     }
 
+
     @Transactional
     public ResSubjectLectureNoteDTO updateLectureNote(Long id, ReqSubjectLectureNoteDTO reqSubjectLectureNoteDTO) {
         SubjectLectureNote existingSubjectLectureNote = subjectLectureNoteRepository.findById(id)
                 .orElseThrow(NoSuchElementException::new);
+
+        // 필요한 모든 연관 엔티티 초기화
+        Hibernate.initialize(existingSubjectLectureNote.getSubject());
+        Hibernate.initialize(existingSubjectLectureNote.getUser());
 
         Optional<Subject> optionalSubject = subjectRepository.findById(reqSubjectLectureNoteDTO.getSubjectId());
 
         if (optionalSubject.isPresent()) {
             Subject subject = optionalSubject.get();
 
-            // 엔티티를 직접 변경하지 말고 엔티티의 setter 메서드를 사용하여 필드를 변경합니다.
             existingSubjectLectureNote.setSubject(subject);
             existingSubjectLectureNote.setTitle(reqSubjectLectureNoteDTO.getTitle());
 
-            // Save the updated SubjectLectureNote
             SubjectLectureNote updatedSubjectLectureNote = subjectLectureNoteRepository.save(existingSubjectLectureNote);
 
-            // Delete old files and save new ones
             deleteFilesByLectureNoteId(id);
             saveFiles(reqSubjectLectureNoteDTO.getFile(), id);
 
