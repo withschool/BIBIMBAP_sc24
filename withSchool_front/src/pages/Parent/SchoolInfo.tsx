@@ -33,7 +33,7 @@ const SchoolInfo = () => {
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [targetStudent, setTargetStudent] = useState('');
-    const [selectedNotice, setSelectedNotice] = useState<any>('');
+    const [selectedNotice, setSelectedNotice] = useState<any>([]);
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -174,8 +174,110 @@ const SchoolInfo = () => {
                                     {(studentList.length === 0) ? (
                                         <><h1>연결된 학생이 없습니다.</h1></>
                                     ) : (
-                                        <div className="table-responsive mb-10">
+                                        <div className="table-responsive mb-5">
                                             {(noticeList.length === 0) ? (<h1>작성된 공지가 없습니다.</h1>) : (<></>)}
+                                            {(selectedNotice == '') &&(<table className="table-hover text-center">
+                                                <thead>
+                                                    <tr>
+                                                        <th>제목</th>
+                                                        <th>작성자</th>
+                                                        <th className="text-center">작성일시</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {noticeList.slice().reverse().map((data: any, index, array) => (
+                                                        <tr key={data.id} className="cursor-pointer" onClick={() => handlePopUp(data.noticeId)}>
+                                                            <td>
+                                                                <div className="whitespace-nowrap">{data.title}</div>
+                                                            </td>
+                                                            <td>{data.user.name}</td>
+                                                            <td className="text-center">
+                                                                {data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일 {data.regDate[3]}:{String(data.regDate[4]).padStart(2, '0')}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>)}
+                                            {(selectedNotice != '') && (
+                                                <div>
+                                                    <div className="flex items-center justify-between flex-wrap p-4">
+                                                        <div className="flex items-center">
+                                                            <button type="button" className="ltr:mr-2 rtl:ml-2 hover:text-primary" onClick={() => setSelectedNotice('')}>
+                                                                <IconArrowLeft className="w-5 h-5 rotate-180" />
+                                                            </button>
+                                                            <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedNotice.title}</h4>
+                                                            <div className="badge bg-info hover:top-0">{selectedNotice.type}</div>
+                                                        </div>
+                                                        <div>
+                                                            <Tippy content="Print">
+                                                                <button type="button">
+                                                                    <IconPrinter />
+                                                                </button>
+                                                            </Tippy>
+                                                        </div>
+                                                    </div>
+                                                    <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                    <div className="p-4 relative">
+                                                    <div className="flex flex-wrap">
+                                                        <div className="ltr:mr-2 rtl:ml-2 flex-1">
+                                                            <div className="flex items-center justify-end">
+                                                                <div className="text-sm ltr:mr-2 rtl:ml-4 whitespace-nowrap">
+                                                                    작성자: {selectedNotice.user.name}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-2xl mb-4" dangerouslySetInnerHTML={{ __html: selectedNotice.content }}></div>
+                                                    <p>{selectedNotice.user.name}님이 공지함</p>
+                                                    <p>
+                                                        {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
+                                                    </p>
+                                                        {(selectedNotice.filesURl) && (
+                                                            <div className="mt-8">
+                                                                <br/>
+                                                                <div className="text-base mb-4">Attachments</div>
+                                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                                <div className="flex items-center flex-wrap mt-6">
+                                                                    {selectedNotice.filesURl.map((attachment: any, i: number) => {
+                                                                        return (
+                                                                            <a 
+                                                                                href={attachment}
+                                                                                key={i}
+                                                                                type="button"
+                                                                                className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                            >
+                                                                                {attachment.type === 'image' && <IconGallery />}
+                                                                                {attachment.type === 'folder' && <IconFolder />}
+                                                                                {attachment.type === 'zip' && <IconZipFile />}
+                                                                                {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+
+                                                                                <div className="ltr:ml-3 rtl:mr-3">
+                                                                                    <p className="text-xs text-primary font-semibold">{selectedNotice.originalName}</p>
+                                                                                    <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                                </div>
+                                                                                <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                                    <IconDownload className="w-4.5 h-4.5" />
+                                                                                </div>
+                                                                            </a>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                            </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </Tab.Panel>
+                            <Tab.Panel>
+                            <div className="active pt-5">
+                                    {(studentList.length === 0) ? (
+                                        <><h1>연결된 학생이 없습니다.</h1></>
+                                    ) : (
+                                        <div className="table-responsive mb-10">
                                             {(selectedNotice == '') &&(<table className="table-hover text-center">
                                                 <thead>
                                                     <tr>
@@ -185,6 +287,7 @@ const SchoolInfo = () => {
                                                         <th className="text-center">파일</th>
                                                     </tr>
                                                 </thead>
+                                                {(noticeList.length === 0) ? (<h1>작성된 공지가 없습니다.</h1>) : (<></>)}
                                                 <tbody>
                                                     {noticeList.slice().reverse().map((data: any, index, array) => (
                                                         <tr key={data.id} className="cursor-pointer" onClick={() => handlePopUp(array.length - index)}>
@@ -194,7 +297,7 @@ const SchoolInfo = () => {
                                                             <td>{data.user.name}</td>
                                                             <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일 {data.regDate[3]}:{String(data.regDate[4]).padStart(2, '0')}</td>
                                                             <td className="text-center">
-                                                                {(data.filesURL != null)
+                                                                {(data.filesURI != null)
                                                                     ? (<Tippy content="파일 다운로드">
                                                                         <button type="button">
                                                                             <IconUser className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
@@ -240,7 +343,7 @@ const SchoolInfo = () => {
                                                     <p>
                                                         {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
                                                     </p>
-                                                        {selectedNotice.filesURI && (
+                                                        {(selectedNotice.filesURI != null) && (
                                                             <div className="mt-8">
                                                                 <div className="text-base mb-4">Attachments</div>
                                                                 <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
@@ -276,22 +379,6 @@ const SchoolInfo = () => {
                                             )}
                                         </div>
                                     )}
-                                </div>
-                            </Tab.Panel>
-                            <Tab.Panel>
-                                <div>
-                                    <div className="flex items-start pt-5">
-                                        <div className="h-20 w-20 flex-none ltr:mr-4 rtl:ml-4">
-                                            <img
-                                                src="/assets/images/profile-34.jpeg"
-                                                alt="img"
-                                                className="m-0 h-20 w-20 rounded-full object-cover ring-2 ring-[#ebedf2] dark:ring-white-dark"
-                                            />
-                                        </div>
-                                        <div className="flex-auto">
-                                            <h1>구현중입니닷</h1>
-                                        </div>
-                                    </div>
                                 </div>
                             </Tab.Panel>
                             <Tab.Panel>
