@@ -27,6 +27,18 @@ interface RegisterBody {
   userCode: string
 }
 
+interface EditBody {
+  userId: number;
+  email: string;
+  phoneNumber: string;
+  address: string;
+}
+
+interface PwEditBody {
+  userId: number;
+  password: string;
+}
+
 export const login = async (id: string, password: string): Promise<any> => {
   try {
     const body: LoginBody = {
@@ -239,5 +251,63 @@ export const getUserInfobyId = async (id: string | null): Promise<any> => {
     }
   } catch (error) {
     console.error('Error during fetching UserInfo:', error);
+  }
+}
+
+export const editUser = async (userId: number, email: string, phoneNumber: string, address: string): Promise<any> => {
+  try {
+    const body: EditBody = {
+      userId,
+      email,
+      phoneNumber,
+      address
+    };
+
+    const response = await fetch(`${url}/users`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    console.log(data);
+    if (response.status === 200) {
+      console.log('Edit user Success:', data);
+      return data;
+    } else {
+      console.error('Edit user failed:', data.message);
+    }
+  } catch (error) {
+    console.error('Error during edit user:', error);
+  }
+}
+
+export const editUserPw = async (userId: number, password: string): Promise<any> => {
+  try {
+    const body: PwEditBody = {
+      userId,
+      password
+    };
+
+    const response = await fetch(`${url}/users/password`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    console.log(data);
+    if (response.status === 200) {
+      console.log('Edit user Success:', data);
+      return data;
+    } else {
+      console.error('Edit user failed:', data.message);
+    }
+  } catch (error) {
+    console.error('Error during edit user:', error);
   }
 }

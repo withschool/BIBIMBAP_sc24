@@ -75,7 +75,7 @@ const SchoolNotice = () => {
     useEffect(() => {
         const fetchNoticeData = async () => {
             try {
-                const data = await getSchoolNotice(localStorage.getItem('TargetStudent'));
+                const data = await getSchoolNotice(localStorage.getItem('schoolId'));
                 setNoticeList(data);
                 console.log(data);
             } catch (error) {
