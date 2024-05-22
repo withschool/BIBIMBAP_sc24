@@ -138,7 +138,7 @@ const routes = [
     //Admin
 
     {
-        path: '/admin',
+        path: '/admin/home',
         element: <AdminMain />,
     },
 

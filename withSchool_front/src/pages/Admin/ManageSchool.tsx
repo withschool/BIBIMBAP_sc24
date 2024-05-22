@@ -32,6 +32,8 @@ import IconLock from '../../components/Icon/IconLock';
 import IconFacebook from '../../components/Icon/IconFacebook';
 import IconGithub from '../../components/Icon/IconGithub';
 
+import { getSchoolInfo } from '../../service/school';
+
 
 const ManageSchool = () => {
 
@@ -57,7 +59,7 @@ const ManageSchool = () => {
 
     //테이블
 
-    const col = ['userId', 'userName', 'name'];
+    const col = ['userId', 'userName', 'name', 'userCode'];
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [5, 10, 15];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -69,6 +71,7 @@ const ManageSchool = () => {
         userId: number;
         userName: string;
         name: string;
+        userCode: string;
     }
 
     const [initialRecords, setInitialRecords] = useState<Record[]>([]);
@@ -105,7 +108,7 @@ const ManageSchool = () => {
         setInitialRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
     }, [sortStatus]);
 
-    const header = ['User ID', 'Username', 'Name'];
+    const header = ['User ID', 'Username', 'Name', 'userCode'];
 
     function handleDownloadExcel() {
 
@@ -113,10 +116,11 @@ const ManageSchool = () => {
             userId: record.userId,
             userName: record.userName,
             name: record.name,
+            userCode: record.userCode,
         }));
 
         downloadExcel({
-            fileName: 'table',
+            fileName: '학교랑 유저 목록',
             sheet: 'react-export-table-to-excel',
             tablePayload: {
                 header,
@@ -356,15 +360,15 @@ const ManageSchool = () => {
     const handleCreateSubject = async () => {
         const subjectNameInput = document.getElementById('subjectName') as HTMLInputElement;
         const subjectGradeInput = document.getElementById('subjectGrade') as HTMLInputElement;
-    
+
         const subjectName = subjectNameInput.value;
         const subjectGrade = subjectGradeInput.value;
-    
+
         if (!subjectName || !subjectGrade) {
             alert('유효한 과목 이름과 학년을 입력하세요.');
             return;
         }
-    
+
         try {
             setModal21(false);
             const response = await createSubject(subjectName, '2024', '1', subjectGrade);
@@ -375,18 +379,33 @@ const ManageSchool = () => {
         }
     };
 
-    
-const handleDeleteSubject = async (subjectId: number, grade: number) => {
-    if (window.confirm('정말로 이 과목을 삭제하시겠습니까?')) {
-        try {
-            await deleteSubject(subjectId);
-            console.log('Subject deleted successfully');
-            fetchSubjectData(); // Refresh the subject list after deletion
-        } catch (error) {
-            console.error('과목 삭제 실패:', error);
+
+    const handleDeleteSubject = async (subjectId: number, grade: number) => {
+        if (window.confirm('정말로 이 과목을 삭제하시겠습니까?')) {
+            try {
+                await deleteSubject(subjectId);
+                console.log('Subject deleted successfully');
+                fetchSubjectData(); // Refresh the subject list after deletion
+            } catch (error) {
+                console.error('과목 삭제 실패:', error);
+            }
         }
-    }
-};
+    };
+
+    const [schoolName, setSchoolName] = useState('');
+
+    useEffect(() => {
+        const fetchSchoolInfo = async () => {
+            try {
+                const childId = localStorage.getItem('schoolId');
+                const data = await getSchoolInfo(childId);
+                setSchoolName(data.SCHUL_NM);
+            } catch (error) {
+                console.error('Error fetching school info:', error);
+            }
+        };
+        fetchSchoolInfo();
+    }, []);
 
 
 
@@ -397,6 +416,9 @@ const handleDeleteSubject = async (subjectId: number, grade: number) => {
                     <div className="panel">
                         <div className="flex md:items-center justify-between md:flex-row flex-col mb-4.5 gap-5">
                             <div className="flex items-center flex-wrap">
+
+                                <h5 className="font-semibold text-lg dark:text-white-light">{schoolName}</h5>
+
 
                                 <button type="button" onClick={() => exportTable('csv')} className="btn btn-primary btn-sm m-1 ">
                                     <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
@@ -446,6 +468,7 @@ const handleDeleteSubject = async (subjectId: number, grade: number) => {
                                     { accessor: 'userId', title: '유저 고유값', sortable: true },
                                     { accessor: 'userName', title: '유저 아이디', sortable: true },
                                     { accessor: 'name', title: '유저 이름', sortable: true },
+                                    { accessor: 'userCode', title: '유저 코드', sortable: true },
                                 ]}
                                 totalRecords={initialRecords.length}
                                 recordsPerPage={pageSize}
@@ -565,7 +588,7 @@ const handleDeleteSubject = async (subjectId: number, grade: number) => {
                                                         ) : (
                                                             <li>반 정보가 없습니다.</li>
                                                         )}
-                                                        
+
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
@@ -618,7 +641,7 @@ const handleDeleteSubject = async (subjectId: number, grade: number) => {
 
                                                         <div className="p-5">
                                                             <form>
-                                                               
+
                                                                 <div className="relative mb-4">
                                                                     <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
                                                                         <IconLock className="w-5 h-5" />
