@@ -95,9 +95,14 @@ const SignInBoxed = () => {
         event.preventDefault();
         try {
             console.log(userInfo);
+
             if (await DuplicateId(id)) {
                 alert("중복된 아이디입니다. 다시 설정해주세요.");
-            } else {
+            }
+            else if(id.length < 5){
+                alert("아이디의 길이가 너무 짧습니다(5자 이상).")
+            } 
+            else {
                 alert("사용 가능한 아이디입니다.");
                 setResult(false);
             }
