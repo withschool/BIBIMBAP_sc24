@@ -409,16 +409,13 @@ const Sidebar = () => {
                                     <AnimateHeight duration={300} height={currentMenu === 'dashboard' ? 'auto' : 0}>
                                         <ul className="sub-menu text-gray-500">
                                             <li>
-                                                <NavLink to="/admin">{t('학교 관리')}</NavLink>
+                                                <NavLink to="/admin/home">{t('학교 관리')}</NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to="/admin/notice">{t('공지 작성하기')}</NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to="/finance">{t('메뉴 3')}</NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to="/crypto">{t('메뉴 4')}</NavLink>
+                                                <NavLink to="/admin/schoolnotice">{t('공지 확인하기')}</NavLink>
                                             </li>
                                         </ul>
                                     </AnimateHeight>
