@@ -10,5 +10,4 @@ import lombok.*;
 public class ReqUserPasswordDTO {
     private Long userId;
     private String password;
-    private String userCode;
 }

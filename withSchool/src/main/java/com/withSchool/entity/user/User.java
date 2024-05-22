@@ -176,6 +176,7 @@ public class User extends BaseEntity implements UserDetails {
                 .id(this.getUsername())
                 .name(this.getName())
                 .email(this.getEmail())
+                .address(this.getAddress())
                 .phoneNumber(this.getPhoneNumber())
                 .sex(this.getSex())
                 .classId(classId)
