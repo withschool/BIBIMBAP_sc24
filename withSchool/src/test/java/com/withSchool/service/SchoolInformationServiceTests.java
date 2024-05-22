@@ -1,5 +1,6 @@
 package com.withSchool.service;
 
+import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.service.school.SchoolInformationService;
 import org.junit.jupiter.api.Assertions;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -44,12 +44,10 @@ public class SchoolInformationServiceTests {
         Long schoolId = 10L;
 
         // when
-        Optional<SchoolInformation> response = schoolInformationService.findById(schoolId);
+        SchoolInformationDTO response = schoolInformationService.findById(schoolId);
 
         // then
-        Assertions.assertTrue(response.isPresent());
-        SchoolInformation schoolInformation = response.get();
-        Assertions.assertEquals("강동고등학교", schoolInformation.getSchulNm());
+        Assertions.assertEquals("강동고등학교", response.getSCHUL_NM());
 
     }
 

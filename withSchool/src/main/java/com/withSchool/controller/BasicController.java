@@ -1,9 +1,7 @@
 package com.withSchool.controller;
 
 import com.withSchool.dto.school.SchoolInformationListDTO;
-import com.withSchool.dto.user.PreSignUpRequestDTO;
-import com.withSchool.dto.user.PreSignUpReturnDTO;
-import com.withSchool.dto.user.SignUpDTO;
+import com.withSchool.dto.user.*;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.withSchool.dto.user.SignInDTO;
 import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +31,7 @@ public class BasicController {
     public ResponseEntity<Map<String, Object>> preRegisterUser(@RequestBody PreSignUpRequestDTO preSignUpRequestDTO) {
         Map<String, Object> response = new HashMap<>();
 
-        User user = userService.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getBirthDate(), preSignUpRequestDTO.getUserCode());
+        User user = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getUserCode());
         if(user==null) {
             response.put("message", "해당하는 유저가 없습니다.");
             return ResponseEntity.ok()
@@ -45,7 +42,6 @@ public class BasicController {
                 .userId(user.getUserId())
                 .userName(user.getName())
                 .schoolName(user.getSchoolInformation().getSchulNm())
-                .birthDate(user.getBirthDate())
                 .build();
 
         response.put("user", preSignUpReturnDTO);
@@ -102,4 +98,5 @@ public class BasicController {
     public String ct() {
         return "connection test success";
     }
+
 }

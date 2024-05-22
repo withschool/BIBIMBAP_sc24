@@ -12,6 +12,5 @@ import lombok.ToString;
 public class PreSignUpRequestDTO {
     private Long schoolId;
     private String userName;
-    private String birthDate;
     private String userCode;
 }

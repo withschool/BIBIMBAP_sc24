@@ -9,7 +9,9 @@ import java.util.List;
 @Data
 @Getter
 @ToString
-public class ReqSchoolNoticeDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReqNoticeDTO {
     private String title;
     private String content;
     private List<MultipartFile> file;

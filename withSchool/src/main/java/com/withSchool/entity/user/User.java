@@ -2,6 +2,7 @@ package com.withSchool.entity.user;
 
 import com.withSchool.dto.user.BasicUserInfoDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
+import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.entity.base.BaseEntity;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
@@ -151,6 +152,15 @@ public class User extends BaseEntity implements UserDetails {
                 .userName(this.getUsername())
                 .build();
     }
+
+    public ResUserUsercodeDTO toResUserUsercodeDTO(){
+        return ResUserUsercodeDTO.builder()
+                .userId(this.getUserId())
+                .name(this.getName())
+                .userName(this.getId())
+                .userCode(this.getUserCode())
+                .build();
+    }
     public BasicUserInfoDTO entityToBasicUserInfoDTO(){
         Long classId = Optional.ofNullable(this.getClassInformation())
                 .map(ClassInformation::getClassId)
@@ -170,6 +180,9 @@ public class User extends BaseEntity implements UserDetails {
                 .classId(classId)
                 .schoolId(schoolId)
                 .build();
+    }
+    public void updateClassInfo(ClassInformation classInformation){
+        this.classInformation = classInformation;
     }
 
 }

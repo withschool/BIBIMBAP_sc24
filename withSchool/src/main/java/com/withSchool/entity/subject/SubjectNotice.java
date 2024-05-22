@@ -15,7 +15,6 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Builder
 public class SubjectNotice extends BasePostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

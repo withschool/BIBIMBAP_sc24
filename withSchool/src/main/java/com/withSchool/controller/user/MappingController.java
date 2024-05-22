@@ -1,8 +1,11 @@
 package com.withSchool.controller.user;
 
+import com.withSchool.dto.mapping.ReqTeacherSubjectMappingDTO;
 import com.withSchool.dto.mapping.ResStudentParentDefaultDTO;
+import com.withSchool.dto.mapping.ResTeacherSubjectDefaultDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentParentService;
+import com.withSchool.service.mapping.TeacherSubjectService;
 import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.List;
 public class MappingController {
     private final UserService userService;
     private final StudentParentService studentParentService;
+    private final TeacherSubjectService teacherSubjectService;
 
     @PostMapping("/student-parent")
     @Operation(summary = "부모와 학생의 매핑")
@@ -49,6 +53,14 @@ public class MappingController {
             return ResponseEntity.badRequest()
                     .body(e.getMessage());
         }
+    }
+
+    @PostMapping("/teacher-subject")
+    @Operation(summary = "교사와 과목을 매핑")
+    public ResponseEntity<ResTeacherSubjectDefaultDTO> mapTeacherSubject(@RequestBody ReqTeacherSubjectMappingDTO reqTeacherSubjectMappingDTO) {
+        ResTeacherSubjectDefaultDTO dto = teacherSubjectService.save(reqTeacherSubjectMappingDTO);
+        return ResponseEntity.ok()
+                .body(dto);
     }
 
     @GetMapping
