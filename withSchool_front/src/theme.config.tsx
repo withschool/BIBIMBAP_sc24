@@ -1,5 +1,5 @@
 const themeConfig = {
-    locale: 'ko',
+    locale: 'KR',
     theme: 'light', // light, dark, system
     menu: 'vertical', // vertical, collapsible-vertical, horizontal
     layout: 'full', // full, boxed-layout

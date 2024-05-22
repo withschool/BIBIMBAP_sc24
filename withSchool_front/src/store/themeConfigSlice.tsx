@@ -11,11 +11,11 @@ const defaultState = {
     rtlClass: 'ltr',
     animation: '',
     navbar: 'navbar-sticky',
-    locale: 'ko',
+    locale: 'KR',
     sidebar: false,
     pageTitle: '',
     languageList: [
-        { code: 'ko', name: 'Korean' },
+        { code: 'KR', name: 'Korean' },
         { code: 'en', name: 'English' },
     ],
     semidark: false,
@@ -33,7 +33,7 @@ const initialState = {
     sidebar: localStorage.getItem('sidebar') || defaultState.sidebar,
     semidark: localStorage.getItem('semidark') || themeConfig.semidark,
     languageList: [
-        { code: 'ko', name: 'Korean' },
+        { code: 'KR', name: 'Korean' },
         { code: 'en', name: 'English' },
     ],
 };

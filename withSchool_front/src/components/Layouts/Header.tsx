@@ -33,6 +33,9 @@ import IconMenuForms from '../Icon/Menu/IconMenuForms';
 import IconMenuPages from '../Icon/Menu/IconMenuPages';
 import IconMenuMore from '../Icon/Menu/IconMenuMore';
 
+import { getUserInfobyId } from '../../service/auth';
+
+
 const Header = () => {
     const location = useLocation();
     useEffect(() => {
@@ -64,7 +67,7 @@ const Header = () => {
     function createMarkup(messages: any) {
         return { __html: messages };
     }
-    
+
     const [messages, setMessages] = useState([
         {
             id: 1,
@@ -100,7 +103,7 @@ const Header = () => {
         setMessages(messages.filter((user) => user.id !== value));
     };
 
-    const ResetData = () =>{
+    const ResetData = () => {
         alert("로그아웃 되었습니다.");
         localStorage.clear();
     }
@@ -137,6 +140,42 @@ const Header = () => {
     const [flag, setFlag] = useState(themeConfig.locale);
 
     const { t } = useTranslation();
+
+    const [userName, setUserName] = useState('');
+    const [userEmail, setUserEmail] = useState('');
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            const id = localStorage.getItem('id');
+            if (id) {
+                const info = await getUserInfobyId(id);
+                setUserName(info.name);
+                setUserEmail(info.email);
+            }
+        };
+        fetchUserInfo();
+    }, []);
+
+    const accountTypes = localStorage.getItem('accountType') || '';
+
+    const getUserTypeInfo = (accountType: String) => {
+        switch (accountType) {
+            case "ROLE_STUDENT":
+                return { label: '학생', className: 'bg-primary-light text-primary' };
+            case "ROLE_PARENT":
+                return { label: '학부모', className: 'bg-info-light text-info' };
+            case "ROLE_TEACHER":
+                return { label: '교사', className: 'bg-success-light text-success' };
+            case "ROLE_ADMIN":
+                return { label: '어드민', className: 'bg-warning-light text-warning' };
+            case "ROLE_SUPER":
+                return { label: '슈퍼 어드민', className: 'bg-danger-light text-danger' };
+            default:
+                return { label: 'Unknown', className: 'bg-secondary-light text-secondary' };
+        }
+    };
+
+    const userTypeInfo = getUserTypeInfo(accountTypes);
 
     return (
         <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -187,7 +226,7 @@ const Header = () => {
                                     <input
                                         type="text"
                                         className="form-input ltr:pl-9 rtl:pr-9 ltr:sm:pr-4 rtl:sm:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
-                                        placeholder="Search..."
+                                        placeholder="통합 검색"
                                     />
                                     <button type="button" className="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary">
                                         <IconSearch className="mx-auto" />
@@ -208,10 +247,9 @@ const Header = () => {
                         <div>
                             {themeConfig.theme === 'light' ? (
                                 <button
-                                    className={`${
-                                        themeConfig.theme === 'light' &&
+                                    className={`${themeConfig.theme === 'light' &&
                                         'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                                    }`}
+                                        }`}
                                     onClick={() => {
                                         dispatch(toggleTheme('dark'));
                                     }}
@@ -223,10 +261,9 @@ const Header = () => {
                             )}
                             {themeConfig.theme === 'dark' && (
                                 <button
-                                    className={`${
-                                        themeConfig.theme === 'dark' &&
+                                    className={`${themeConfig.theme === 'dark' &&
                                         'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                                    }`}
+                                        }`}
                                     onClick={() => {
                                         dispatch(toggleTheme('system'));
                                     }}
@@ -236,10 +273,9 @@ const Header = () => {
                             )}
                             {themeConfig.theme === 'system' && (
                                 <button
-                                    className={`${
-                                        themeConfig.theme === 'system' &&
+                                    className={`${themeConfig.theme === 'system' &&
                                         'flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60'
-                                    }`}
+                                        }`}
                                     onClick={() => {
                                         dispatch(toggleTheme('light'));
                                     }}
@@ -427,11 +463,10 @@ const Header = () => {
                                             <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
                                             <div className="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 className="text-base">
-                                                    John Doe
-                                                    <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
-                                                </h4>
+                                                    {userName}
+                                                    <span className={`text-xs rounded px-1 ltr:ml-2 rtl:ml-2 ${userTypeInfo.className}`}>{userTypeInfo.label}</span>                                                </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    johndoe@gmail.com
+                                                    {userEmail}
                                                 </button>
                                             </div>
                                         </div>
@@ -439,25 +474,25 @@ const Header = () => {
                                     <li>
                                         <Link to="/users/profile" className="dark:hover:text-white">
                                             <IconUser className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                            Profile
+                                            프로필
                                         </Link>
                                     </li>
                                     <li>
                                         <Link to="/apps/mailbox" className="dark:hover:text-white">
                                             <IconMail className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                            Inbox
+                                            공지 사항
                                         </Link>
                                     </li>
                                     <li>
                                         <Link to="/auth/boxed-lockscreen" className="dark:hover:text-white">
                                             <IconLockDots className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                            Lock Screen
+                                            보안 설정
                                         </Link>
                                     </li>
                                     <li onClick={ResetData} className="border-t border-white-light dark:border-white-light/10">
                                         <Link to="/login" className="text-danger !py-3">
                                             <IconLogout className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
-                                            Sign Out
+                                            로그아웃
                                         </Link>
                                     </li>
                                 </ul>
