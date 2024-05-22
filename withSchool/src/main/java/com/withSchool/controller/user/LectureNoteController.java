@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/lecture-notes")
+@RequestMapping("/subject/lecture-notes")
 @RequiredArgsConstructor
 public class LectureNoteController {
 
