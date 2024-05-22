@@ -20,10 +20,9 @@ public class feat_55_2 {
     public void testPreSignUpUsingStudentCode(){
         Long schoolId = 9L;
         String name = "김민수";
-        String birthDate = "101013";
         String userCode = "6jEG3Hr0";
 
-        User user = userService.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
+        User user = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(schoolId, name, userCode);
         if(user==null) {
             System.out.println("해당하는 유저가 없습니다.");
             return;
@@ -33,7 +32,6 @@ public class feat_55_2 {
                 .userId(user.getUserId())
                 .userName(user.getName())
                 .schoolName(user.getSchoolInformation().getSchulNm())
-                .birthDate(user.getBirthDate())
                 .build();
 
         System.out.println(preSignUpReturnDTO);

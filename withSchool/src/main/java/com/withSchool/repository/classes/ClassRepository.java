@@ -14,7 +14,7 @@ public interface ClassRepository extends JpaRepository<ClassInformation, Long> {
     boolean checkDuplicate(int grade, int inClass, int year, Long schoolId);
 
     //@Query("select c from ClassInformation c where c.grade = :grade and c.inClass = :inClass")
-    Optional<ClassInformation> findByGradeAndInClass(int grade, int inClass);
+    Optional<ClassInformation> findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(int grade, int inClass, int year, Long schoolId);
     // 특정 학교의 모든 반 조회
     List<ClassInformation> findBySchoolInformation_SchoolId(Long schoolInformation_schoolId);
 

@@ -76,8 +76,8 @@ public class UserServiceTest {
         String falseUserCode = "UUU";
 
         // when
-        User user = userService.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, userName, birthDate, userCode);
-        User fail = userService.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, userName, birthDate, falseUserCode);
+        User user = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(schoolId, userName, userCode);
+        User fail = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(schoolId, userName, falseUserCode);
 
         // then
         Assertions.assertNotNull(user);

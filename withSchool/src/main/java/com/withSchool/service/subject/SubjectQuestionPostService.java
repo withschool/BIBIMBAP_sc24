@@ -6,6 +6,7 @@ import com.withSchool.dto.subject.ResSubjectQuestionPostDefaultDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.subject.SubjectQuestionPost;
 import com.withSchool.entity.subject.Subject;
+import com.withSchool.entity.user.User;
 import com.withSchool.repository.subject.SubjectQuestionPostRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.user.UserService;
@@ -97,24 +98,49 @@ public class SubjectQuestionPostService {
                 .build();
     }
 
-    public ResSubjectQuestionPostDefaultDTO updateByStudent(ReqQuestionPostModifyDTO reqQuestionPostModifyDTO) {
-        ResSubjectQuestionPostDefaultDTO questionPost = findById(reqQuestionPostModifyDTO.getQuestionPostId());
+    public void deleteById(Long questionPostId) {
+        subjectQuestionPostRepository.deleteById(questionPostId);
+    }
+
+    public ResSubjectQuestionPostDefaultDTO updateQuestion(Long questionPostId, ReqQuestionPostModifyDTO request) {
+        int accountType = userService.getCurrentUser().getAccountType();
+
+        ResSubjectQuestionPostDefaultDTO questionPost = findById(questionPostId);
+
+        int isAnswered;
+        String questionContent;
+        String answerContent;
+        User questionerId;
+        User answererId;
+
+        if(accountType == 0){
+            questionContent = request.getQuestionContent();
+            answerContent = null;
+            questionerId = userService.getCurrentUser();
+            answererId = null;
+            isAnswered = 0;
+        }
+        else if(accountType == 2){
+            questionContent = questionPost.getQuestionContent();
+            answerContent = request.getAnswerContent();
+            questionerId = userService.findByUserId(questionPost.getQuestioner().getUserId());
+            answererId = userService.getCurrentUser();
+            isAnswered = 1;
+        } else throw new RuntimeException("no student or teacher");
+
         if(questionPost.getIsAnswered() == 1){
             throw new RuntimeException("해당 질문은 답변이 완료되었기 때문에 수정할 수 없습니다.");
         }
 
         return entityToResDTO(subjectQuestionPostRepository.save(SubjectQuestionPost.builder()
-                .subjectQuestionPostId(reqQuestionPostModifyDTO.getQuestionPostId())
-                .questionContent(reqQuestionPostModifyDTO.getQuestionContent())
-                .answerContent(questionPost.getAnswerContent())
-                .questionerId(userService.findById(questionPost.getQuestioner().getUserName()))
-                .answererId(null)
-                .isAnswered(0)
+                .subjectQuestionPostId(questionPostId)
+                .questionContent(questionContent)
+                .answerContent(answerContent)
+                .questionerId(questionerId)
+                .answererId(answererId)
+                .isAnswered(isAnswered)
                 .subject(subjectRepository.findById(questionPost.getSubjectId()).get())
                 .build()));
     }
 
-    public void deleteById(Long questionPostId) {
-        subjectQuestionPostRepository.deleteById(questionPostId);
-    }
 }

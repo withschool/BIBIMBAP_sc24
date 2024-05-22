@@ -34,7 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     void deleteUserByUserId(Long userId);
 
-    Optional<User> findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode);
+    Optional<User> findBySchoolInformationSchoolIdAndNameAndUserCode(Long schoolId, String name, String userCode);
 
     List<User> findAllBySchoolInformation_SchoolId(Long schoolId);
 

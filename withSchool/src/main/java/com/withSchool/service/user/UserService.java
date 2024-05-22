@@ -1,15 +1,15 @@
 package com.withSchool.service.user;
 
+import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
-import com.withSchool.dto.user.BasicUserInfoDTO;
-import com.withSchool.dto.user.ResUserDefaultDTO;
-import com.withSchool.dto.user.SignUpDTO;
-import com.withSchool.dto.user.UserDeleteRequestDTO;
+import com.withSchool.dto.user.*;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
+import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +36,7 @@ import java.util.Optional;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final ClassRepository classRepository;
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -50,13 +51,13 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public List<ResUserDefaultDTO> findAllBySchool_SchoolId() {
+    public List<ResUserUsercodeDTO> findAllBySchool_SchoolId() {
         Long schoolId = getCurrentUserSchoolId();
         List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
 
-        List<ResUserDefaultDTO> dtos = new ArrayList<>();
+        List<ResUserUsercodeDTO> dtos = new ArrayList<>();
         for (User u : res) {
-            dtos.add(u.toResUserDefaultDTO());
+            dtos.add(u.toResUserUsercodeDTO());
         }
 
         return dtos;
@@ -208,8 +209,8 @@ public class UserService {
         return jwtToken;
     }
 
-    public User findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(Long schoolId, String name, String birthDate, String userCode) {
-        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndBirthDateAndUserCode(schoolId, name, birthDate, userCode);
+    public User findBySchoolInformationSchoolIdAndNameAndUserCode(Long schoolId, String name, String userCode) {
+        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndUserCode(schoolId, name, userCode);
         return user.orElse(null);
     }
     public SchoolInformation getCurrentUserSchoolInformation(Long childId) {
@@ -257,6 +258,15 @@ public class UserService {
         return this.findById(authentication.getName());
     }
 
+    public void mapById(UserClassDTO userClassDTO) {
+        User user = userRepository.findById(userClassDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id " + userClassDTO.getUserId()));
+        ClassInformation classInformation = classRepository.findById(userClassDTO.getClassId()).orElseThrow(() -> new EntityNotFoundException("Class not found with id " + userClassDTO.getClassId()));
+
+        user.updateClassInfo(classInformation);
+
+        userRepository.save(user);
+    }
+  
     public List<BasicUserInfoDTO> findAllClassInformation_ClassId(){
         User user = getCurrentUser();
         List<User> users = userRepository.findAllByClassInformation_ClassId(user.getClassInformation().getClassId());

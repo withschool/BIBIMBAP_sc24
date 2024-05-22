@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @Data
 @ToString
-public class ResSchoolNoticeDTO {
-    private Long schoolNoticeId;
+public class ResNoticeDTO {
+    private Long noticeId;
     private String title;
     private String content;
     private ResUserDefaultDTO user;

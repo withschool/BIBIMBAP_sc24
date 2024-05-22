@@ -2,11 +2,12 @@ package com.withSchool.controller.admin;
 
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
+import com.withSchool.dto.mapping.UserClassDTO;
+import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
-import com.withSchool.dto.user.ResUserDefaultDTO;
+import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
-import com.withSchool.dto.school.ReqSchoolNoticeDTO;
-import com.withSchool.dto.school.SchoolNoticeDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassService;
@@ -51,7 +52,7 @@ public class AdminController {
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
-    public ResponseEntity<String> createSubject(@RequestParam ReqSubjectDefaultDTO subjectDTO) {
+    public ResponseEntity<String> createSubject(@RequestBody ReqSubjectDefaultDTO subjectDTO) {
         try {
             Subject subject = subjectService.saveSubject(subjectDTO);
             return ResponseEntity.ok()
@@ -90,6 +91,15 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
+    }
+    @PostMapping("/users/{userId}/classes/{classId}")
+    @Operation(summary = "어드민의 유저 반 매핑", description = "어드민은 유저와 반을 매핑시킬수 있다.")
+    public ResponseEntity<String> mapUserClass(@PathVariable Long userId, @PathVariable Long classId){
+        userService.mapById(UserClassDTO.builder()
+                        .classId(classId)
+                        .userId(userId)
+                        .build());
+        return ResponseEntity.ok().body("success");
     }
 
     @GetMapping("/classes/byUser")
@@ -138,9 +148,13 @@ public class AdminController {
                 .id(user.getId())
                 .file(file)
                 .build();
-        csvService.registerUser(dto);
-        return ResponseEntity.ok()
-                .body("file upload");
+        try {
+            csvService.registerUser(dto);
+            return ResponseEntity.ok("Users registered successfully.");
+
+        }catch(RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     // 유저 리스트를 받아서 다 삭제
@@ -155,35 +169,17 @@ public class AdminController {
 
     @PostMapping("/schools/notices")
     @Operation(summary = "어드민의 학교 공지 작성", description = "어드민은 학교 공지를 작성할 수 있다.")
-    public ResponseEntity<Map<String, Object>> createNotice(@ModelAttribute ReqSchoolNoticeDTO request) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<ResNoticeDTO> createNotice(@ModelAttribute ReqNoticeDTO request) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = userService.findById(authentication.getName());
-
-        SchoolNoticeDTO schoolNoticeDto = SchoolNoticeDTO.builder()
-                .title(request.getTitle())
-                .content(request.getContent())
-                .user(admin)
-                .file(request.getFile())
-                .school(admin.getSchoolInformation())
-                .build();
-
-
-        SchoolNotice schoolNotice = schoolNoticeService.save(schoolNoticeDto);
-
-        response.put("message", "생성되었습니다.");
-        response.put("id", schoolNotice.getSchoolNoticeId());
-        response.put("title", request.getTitle());
-        response.put("content", request.getContent());
+        ResNoticeDTO resNoticeDTO = schoolNoticeService.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(response);
+                .body(resNoticeDTO);
     }
 
     @PatchMapping("/schools/notices/{notice-id}")
     @Operation(summary = "어드민의 학교 공지 수정", description = "어드민은 학교 공지를 수정할 수 있다.")
-    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqSchoolNoticeDTO request){
+    public ResponseEntity<Map<String, Object>> modifyOneNotice(@PathVariable(name = "notice-id") Long noticeId, @ModelAttribute ReqNoticeDTO request){
 
         Map<String, Object> response = new HashMap<>();
 
@@ -195,7 +191,6 @@ public class AdminController {
 
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body(response);
     }
 
@@ -212,7 +207,7 @@ public class AdminController {
     }
     @GetMapping("/users")
     @Operation(summary = "로그인한 유저가 속한 학교의 모든 유저 리스트업")
-    public ResponseEntity<List<ResUserDefaultDTO>> showAllUsersBySchool() {
+    public ResponseEntity<List<ResUserUsercodeDTO>> showAllUsersBySchool() {
         return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
 

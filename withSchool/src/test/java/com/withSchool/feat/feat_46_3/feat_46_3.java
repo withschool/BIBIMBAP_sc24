@@ -158,13 +158,12 @@ public class feat_46_3 {
         String modifiedQuestionContent = "modified question 1";
 
         ReqQuestionPostModifyDTO reqQuestionPostModifyDTO = ReqQuestionPostModifyDTO.builder()
-                .questionPostId(questionId)
                 .questionContent(modifiedQuestionContent)
                 .build();
 
         // when
         Assertions.assertEquals(questionContent, q.getQuestionContent());
-        q = subjectQuestionPostService.updateByStudent(reqQuestionPostModifyDTO);
+        q = subjectQuestionPostService.updateQuestion(questionId, reqQuestionPostModifyDTO);
 
         // then
         Assertions.assertEquals(modifiedQuestionContent, q.getQuestionContent());
