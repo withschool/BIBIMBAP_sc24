@@ -8,6 +8,7 @@ const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
 const Error = lazy(() => import('../components/Error'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
+const Landing = lazy(() => import('../pages/Users/Landing'));
 
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
@@ -57,6 +58,11 @@ const routes = [
         path: '/',
         element: localStorage.getItem('token') ? <Index /> : <Navigate to="/login" replace />,
         // element: localStorage.getItem('token') ? <Index /> : <Index />,
+    },
+    {
+        path: '/landing',
+        element: <Landing/>,
+        layout: 'blank',
     },
     {
         path: '/login',
