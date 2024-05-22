@@ -129,8 +129,8 @@ const ChooseSubject = () => {
                     <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
                         <h6 className="text-lg font-bold mb-5">과목 목록</h6>
                         <div className="flex flex-col sm:flex-row">
-                            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                <div>
+                            <div className="flex-1 grid grid-cols-1 gap-5">
+                                <div className='w-1/2'>
                                     <label htmlFor="id">담임</label>
                                     <div className="form-input">{userInfo.name}</div>
                                 </div>

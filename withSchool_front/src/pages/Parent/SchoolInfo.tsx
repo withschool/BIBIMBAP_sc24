@@ -5,7 +5,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import Tippy from '@tippyjs/react';
 import { mappingStudent, listingStudent, getStudentInfoById } from '../../service/parent';
 import { getSchoolNotice, getSchoolNoticeDetail, getSchoolInfo } from '../../service/school';
-import { getClassNotice } from '../../service/class';
+import { getClassNotice, getClassNoticeDetail } from '../../service/class';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -91,6 +91,17 @@ const SchoolInfo = () => {
     const handlePopUp = async (noticeId : number) => {
         try {
             const noticeDetail = await getSchoolNoticeDetail(noticeId);
+            setSelectedNotice(noticeDetail);
+            console.log(noticeDetail);
+            setShowModal(true);
+        } catch (error) {
+            console.error('Error fetching notice detail:', error);
+        }
+    };
+
+    const handlePopUpClass = async (noticeId : number) => {
+        try {
+            const noticeDetail = await getClassNoticeDetail(noticeId);
             setSelectedNotice(noticeDetail);
             console.log(noticeDetail);
             setShowModal(true);
@@ -247,7 +258,7 @@ const SchoolInfo = () => {
                                                     <p>
                                                         {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
                                                     </p>
-                                                        {(selectedNotice.filesURl) && (
+                                                        {(selectedNotice.filesURl.length >0) && (
                                                             <div className="mt-8">
                                                                 <br/>
                                                                 <div className="text-base mb-4">Attachments</div>
@@ -304,7 +315,7 @@ const SchoolInfo = () => {
                                                 {(classNoticeList.length === 0) ? (<h1 className="text-center pt-5">작성된 공지가 없습니다.</h1>) : (<></>)}
                                                 <tbody>
                                                     {classNoticeList.slice().reverse().map((data: any, index, array) => (
-                                                        <tr key={data.id} className="cursor-pointer" onClick={() => handlePopUp(data.noticeId)}>
+                                                        <tr key={data.id} className="cursor-pointer" onClick={() => handlePopUpClass(data.noticeId)}>
                                                             <td>
                                                                 <div className="whitespace-nowrap">{data.title}</div>
                                                             </td>
@@ -350,7 +361,7 @@ const SchoolInfo = () => {
                                                     <p>
                                                         {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
                                                     </p>
-                                                        {(selectedNotice.filesURl) && (
+                                                        {(selectedNotice.filesURl.length >0) && (
                                                             <div className="mt-8">
                                                                 <br/>
                                                                 <div className="text-base mb-4">Attachments</div>
