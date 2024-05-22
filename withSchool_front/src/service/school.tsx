@@ -26,7 +26,7 @@ export const getSchoolList = async (): Promise<any> => {
 //215a0c0d1fd74b64946efdc0ef79bc04
 
 export const getSchoolListFromNeis = async (search: string): Promise<any> => {
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const proxyUrl = 'http://www.withschool.site:8080/';
     const apiUrl = `https://open.neis.go.kr/hub/schoolInfo?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&pIndex=1&pSize=100&SCHUL_NM=${search}`;
 
     try {

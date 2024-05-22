@@ -85,7 +85,7 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/school_list',
+        path: '/super/home',
         element: <SchoolList />,
     },
     {
