@@ -12,6 +12,8 @@ const Landing = lazy(() => import('../pages/Users/Landing'));
 
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
+const AdminNo = lazy(() => import('../pages/Admin/AdminNotice'));
+
 
 //Teacher
 const TeacherHome = lazy(() => import('../pages/Teacher/TeacherHome'));
@@ -55,6 +57,8 @@ const Popovers = lazy(() => import('../pages/Elements/Popovers'));
 
 
 const routes = [
+
+    //home
     {
         path: '/',
         element: localStorage.getItem('token') ? <Index /> : <Navigate to="/landing" replace />,
@@ -85,10 +89,14 @@ const routes = [
         element: <SignIn />,
         layout: 'blank',
     },
+
+    //super
     {
         path: '/super/home',
         element: <SchoolList />,
     },
+
+    //teacher  
     {
         path: '/teacher/class/notice',
         element: <TeacherNotice />,
@@ -140,6 +148,14 @@ const routes = [
     {
         path: '/admin/home',
         element: <AdminMain />,
+    },
+    {
+        path: '/admin/notice',
+        element : <AdminNo />,
+    },
+    {
+        path: '/admin/schoolnotice',
+        element: <SchoolNotice />,
     },
 
     //Components

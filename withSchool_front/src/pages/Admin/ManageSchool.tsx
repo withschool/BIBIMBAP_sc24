@@ -401,7 +401,7 @@ const ManageSchool = () => {
                 const data = await getSchoolInfo(childId);
                 setSchoolName(data.SCHUL_NM);
             } catch (error) {
-                console.error('Error fetching school info:', error);
+                console.error('학교 이름 안나오는 중', error);
             }
         };
         fetchSchoolInfo();
