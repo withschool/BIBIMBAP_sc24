@@ -69,7 +69,14 @@ const SchoolList = () => {
                     ...item,
                     regDate: formatDate(item.regDate),
                 }));
-                setInitialRecords(sortBy(formattedData, 'schoolName'));
+    
+                // Sort by schoolId and add creationOrder
+                const sortedData = sortBy(formattedData, 'schoolId').map((item, index) => ({
+                    ...item,
+                    creationOrder: index + 1,
+                }));
+    
+                setInitialRecords(sortBy(sortedData, 'schoolName'));
             } catch (error) {
                 console.error('학교 목록 불러오기 오류', error);
             }
@@ -121,6 +128,7 @@ const SchoolList = () => {
                 if (Array.isArray(allData)) {
                     setFilteredItems(allData.filter((item: School) =>
                         item.schoolName.toLowerCase().includes(allSearch.toLowerCase())
+
                     ));
                 } else {
                     console.error('클라오류 1', allData);
@@ -129,6 +137,7 @@ const SchoolList = () => {
                 console.error('클라 오류 2', error);
             }
         };
+
         fetchAllData();
     }, [allSearch]);
 
@@ -144,6 +153,18 @@ const SchoolList = () => {
         setFilteredItems([]);
     }, [allSearch]);
 
+    const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
+
+    const handleSchoolSelect = (school: School) => {
+        setSelectedSchool(school);
+    };
+
+    const handleCreateSchool = async () => {
+        if (selectedSchool) {
+            await handleRegisterSchool(selectedSchool);
+        }
+    };
+
     const handleRegisterSchool = async (school: any) => {
         const schoolData = {
             ATPT_OFCDC_SC_CODE: school.ATPT_OFCDC_SC_CODE,
@@ -155,7 +176,7 @@ const SchoolList = () => {
             LCTN_SC_NM: school.LCTN_SC_NM,
             JU_ORG_NM: school.JU_ORG_NM,
             FOND_SC_NM: school.FOND_SC_NM,
-            ORG_RDNZC: school.ORG_RDNZC.trim(),
+            ORG_RDNZC: school.ORG_RDNZC,
             ORG_RDNMA: school.ORG_RDNMA,
             ORG_RDNDA: school.ORG_RDNDA,
             ORG_TELNO: school.ORG_TELNO,
@@ -165,7 +186,7 @@ const SchoolList = () => {
             HS_SC_NM: school.HS_SC_NM,
             INDST_SPECL_CCCCL_EXST_YN: school.INDST_SPECL_CCCCL_EXST_YN,
             HS_GNRL_BUSNS_SC_NM: school.HS_GNRL_BUSNS_SC_NM,
-            SPCLY_PURPS_HS_ORD_NM: school.SPCLY_PURPS_HS_ORD_NM || '',
+            SPCLY_PURPS_HS_ORD_NM: school.SPCLY_PURPS_HS_ORD_NM,
             ENE_BFE_SEHF_SC_NM: school.ENE_BFE_SEHF_SC_NM,
             DGHT_SC_NM: school.DGHT_SC_NM,
             FOND_YMD: school.FOND_YMD,
@@ -270,7 +291,12 @@ const SchoolList = () => {
                                                                             value={allSearch}
                                                                             placeholder="학교 전체 검색"
                                                                             className="form-input shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] bg-white rounded-full h-11 placeholder:tracking-wider ltr:pr-11 rtl:pl-11"
-                                                                            onChange={(e) => setAllSearch(e.target.value)}
+                                                                            onChange={(e) => {
+                                                                                setAllSearch(e.target.value);
+                                                                                if (e.target.value.trim() === '') {
+                                                                                    setFilteredItems([]);
+                                                                                }
+                                                                            }}
                                                                         />
                                                                         <button type="button" className="btn btn-primary absolute ltr:right-1 rtl:left-1 inset-y-0 m-auto rounded-full w-9 h-9 p-0 flex items-center justify-center" onClick={() => getSchoolListFromNeis(allSearch)}>
                                                                             <IconSearch className="mx-auto" />
@@ -278,25 +304,27 @@ const SchoolList = () => {
                                                                     </div>
                                                                 </form>
                                                                 <div className="p-4 border border-white-dark/20 rounded-lg space-y-4 overflow-x-auto w-full block max-h-96 overflow-y-auto">
-                                                                    {filteredItems.map((item: any) => {
-                                                                        return (
-                                                                            <div
-                                                                                key={item.schoolName}
-                                                                                className="bg-white dark:bg-[#1b2e4b] rounded-xl shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] p-3 flex items-center justify-between
-                text-gray-500 font-semibold min-w-[625px] hover:text-primary transition-all duration-300 hover:scale-[1.01]"
-                                                                                onClick={() => handleRegisterSchool(item)}
-                                                                            >
-                                                                                <div>{item.schoolName}</div>
-                                                                                <div>{item.educationOffice}</div>
-                                                                                <div>{item.schoolAddress}</div>
-                                                                                <div>{item.schoolPhoneNumber}</div>
-                                                                            </div>
-                                                                        );
-                                                                    })}
+                                                                    {filteredItems.map((item: School) => (
+
+                                                                        <div
+                                                                            key={item.schoolId}
+                                                                            className="bg-white dark:bg-[#1b2e4b] rounded-xl shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] p-3 flex items-center justify-between text-gray-500 font-semibold min-w-[625px] hover:text-primary transition-all duration-300 hover:scale-[1.01]"
+                                                                            onClick={(e) => {
+                                                                                e.currentTarget.classList.toggle('text-primary');
+                                                                                e.currentTarget.classList.toggle('scale-[1.01]');
+                                                                                handleSchoolSelect(item);
+                                                                            }}
+                                                                        >
+                                                                            <div>{item.schoolName}</div>
+                                                                            <div>{item.educationOffice}</div>
+                                                                            <div>{item.schoolAddress}</div>
+                                                                            <div>{item.schoolPhoneNumber}</div>
+                                                                        </div>
+                                                                    ))}
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <button className="btn btn-primary w-full">
+                                                        <button className="btn btn-primary w-full" onClick={handleCreateSchool}>
                                                             학교 생성하기
                                                         </button>
                                                     </form>
@@ -326,7 +354,8 @@ const SchoolList = () => {
                         className={`${isRtl ? 'whitespace-nowrap table-hover' : 'whitespace-nowrap table-hover'}`}
                         records={recordsData}
                         columns={[
-                            { accessor: 'schoolId', title: '학교 ID', sortable: true },
+                            { accessor: 'creationOrder', title: '학교 리스트', sortable: true },
+                            //{ accessor: 'schoolId', title: '학교 ID', sortable: true },
                             { accessor: 'schoolName', title: '학교 이름', sortable: true },
                             { accessor: 'schoolPhoneNumber', title: '전화 번호', sortable: true },
                             { accessor: 'educationOffice', title: '담당 교육청', sortable: true },

@@ -65,7 +65,7 @@ const LoginBoxed = () => {
                 console.log("accountType : "+localStorage.getItem('accountType'));
 
                 if(localStorage.getItem('accountType') == "ROLE_SUPER"){
-                    navigate('/superadmin/home');
+                    navigate('/super/home');
                 }
                 else if(localStorage.getItem('accountType') == "ROLE_ADMIN"){
                     navigate('/admin/home');
