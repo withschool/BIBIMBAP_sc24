@@ -32,6 +32,9 @@ const AccountSetting = () => {
               if (id) {
                 const info = await getUserInfobyId(id);
                 setUserInfo(info);
+                setAddress(info.address);
+                setEmail(info.email);
+                setPhoneNumber(info.phoneNumber);
               }
             } catch (error) {
               console.error("Error fetching user info:", error);
@@ -69,6 +72,7 @@ const AccountSetting = () => {
         await editUserPw(userinfo.userId, password);
         alert("비밀번호가 변경되었습니다.");
         setIslogined(false);
+        setPassword('');
     }
 
     const getcertify = async() => {
@@ -149,11 +153,11 @@ const AccountSetting = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="address">주소</label>
-                                        <input id="address" type="text" value={address} onChange={handleAddress} placeholder={userinfo.address} className="form-input" />
+                                        <input id="address" type="text" value={address} placeholder={userinfo.address} onChange={handleAddress} className="form-input" />
                                     </div>
                                     <div>
                                         <label htmlFor="phone">전화번호</label>
-                                        <input id="phone" type="text" value={phoneNumber} onChange={handlePhoneNumber} placeholder={userinfo.phoneNumber} className="form-input" />
+                                        <input id="phone" type="text" value={phoneNumber} placeholder={userinfo.email} onChange={handlePhoneNumber} className="form-input" />
                                     </div>
                                     <div>
                                         <label htmlFor="email">이메일</label>
