@@ -101,3 +101,27 @@ export const deleteSubject = async (subjectId: number): Promise<any> => {
         throw error;
     }
 };
+
+
+export const getSubjectInfo = async (subjectId: string | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects/${subjectId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}

@@ -128,6 +128,7 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="School">School</label>
                                     <div className="relative text-white-dark">
+                                    <div className='flex'>
                                     <select
                                         value={selectedSchool}
                                         onChange={handleSchoolChange}
@@ -141,7 +142,11 @@ const LoginBoxed = () => {
                                                 </option>
                                             ))}
                                     </select>
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                    <button className="ml-2 px-5 py-2 w-20 h-9 items-center btn btn-gradient rounded-md text-white font-bold uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)] focus:outline-none hover:bg-blue-600 btn-text">
+                                        검색
+                                    </button>
+                                    </div>
+                                        <span className="absolute start-3 pb-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
                                     </div>
@@ -153,38 +158,6 @@ const LoginBoxed = () => {
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="Birth" className="mr-2">Birth</label>
-                                    <div className="flex relative text-white-dark">
-                                        <select
-                                            value={year}
-                                            onChange={handleYearChange}
-                                            className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 75 }, (_, index) => 2024 - index).map(year => (
-                                                <option key={year} value={year}>{year}년</option>
-                                            ))}
-                                        </select>
-                                        <select
-                                            value={month}
-                                            onChange={handleMonthChange}
-                                            className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 12 }, (_, index) => index + 1).map(month => (
-                                                <option key={month} value={month.toString().padStart(2, '0')}>{month}월</option>
-                                            ))}
-                                        </select>
-                                        <select
-                                            value={day}
-                                            onChange={handleDayChange}
-                                            className="block w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 31 }, (_, index) => index + 1).map(day => (
-                                                <option key={day} value={day.toString().padStart(2, '0')}>{day}일</option>
-                                            ))}
-                                        </select>
                                     </div>
                                 </div>
                                 {loginError && <div className="text-red-500">로그인에 실패하였습니다.</div>}

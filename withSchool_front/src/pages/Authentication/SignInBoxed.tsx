@@ -209,15 +209,6 @@ const SignInBoxed = () => {
                                     </div>
                                 )}
                                 <label htmlFor="Birth">Birth</label>
-                                {isStudent ? (
-                                <div>
-                                    <div className="relative text-gray-500 bg-gray-300 rounded-md ps-5 p-2 flex items-center">
-                                        <div>
-                                            {'20'+((userInfo.user.birthDate)/10000|0)+' 년 '+(((userInfo.user.birthDate)/100)%100|0)+' 월 '+((userInfo.user.birthDate)%1000)+' 일'}
-                                        </div>
-                                    </div>
-                                </div>
-                                ) : (
                                     <div className="flex relative text-white-dark">
                                         <select
                                             value={year}
@@ -247,7 +238,6 @@ const SignInBoxed = () => {
                                             ))}
                                         </select>
                                     </div>
-                                )}
                                 <div>
                                     <label htmlFor="Sex">Sex</label>
                                     <div className="relative text-white-dark">

@@ -8,7 +8,7 @@ import i18next from 'i18next';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
-import { login, getSchoolId } from '../../service/auth';
+import { login, getSchoolId, getClassId } from '../../service/auth';
 import IconInstagram from '../../components/Icon/IconInstagram';
 import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
 import IconTwitter from '../../components/Icon/IconTwitter';
@@ -52,11 +52,15 @@ const LoginBoxed = () => {
                 localStorage.setItem('login', token ? 'true' : 'false');
 
                 const schoolData = await getSchoolId(token);
+                const classData = await getClassId(token);
 
                 if (schoolData) {
                     localStorage.setItem('schoolId', schoolData);
                 }
-
+                if (classData) {
+                    localStorage.setItem('classId', classData);
+                }
+                
                 navigate('/');
             } else {
                 setLoginError('Login failed');
@@ -89,7 +93,7 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="Email">ID</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" placeholder="이메일을 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange}  />
+                                        <input id="Email" placeholder="아이디를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange}  />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
