@@ -6,7 +6,7 @@ import com.withSchool.dto.subject.ReqHomeworkCreateDTO;
 import com.withSchool.dto.subject.ReqHomeworkSubmitDTO;
 import com.withSchool.dto.subject.ResHomeworkDTO;
 import com.withSchool.dto.subject.ResHomeworkSubmitDTO;
-import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.classes.ClassHomeworkService;
@@ -17,15 +17,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +46,7 @@ public class ClassController {
         Map<String, Object> response = new HashMap<>();
 
         Optional<ClassInformation> classInfo = classService.getClassById(classId);
-        List<BasicUserInfoDTO> basicUserInfoDTOS = userService.findAllClassInformation_ClassId();
+        List<ResUserUsercodeDTO> basicUserInfoDTOS = userService.findAllClassInformation_ClassId();
 
         response.put("class", classInfo);
         response.put("users", basicUserInfoDTOS);
