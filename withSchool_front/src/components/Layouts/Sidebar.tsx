@@ -185,31 +185,41 @@ const Sidebar = () => {
                                             <NavLink to="/student/home" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuChat className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('홈')}</span>
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학생 홈')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/apps/mailbox" className="group">
+                                        <li className="menu nav-item">
+                                            <button type="button" className={`${currentMenu === 'subject' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('subject')}>
                                                 <div className="flex items-center">
-                                                    <IconMenuMailbox className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('과목')}</span>
+                                                    <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('공지 확인')}</span>
                                                 </div>
-                                            </NavLink>
+
+                                                <div className={currentMenu !== 'subject' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                    <IconCaretDown />
+                                                </div>
+                                            </button>
+
+                                            <AnimateHeight duration={300} height={currentMenu === 'subject' ? 'auto' : 0}>
+                                                <ul className="sub-menu text-gray-500">
+                                                    <li>
+                                                        <NavLink to="/student/schoolnotice">{t('학교 공지')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/student/classnotice">{t('반 공지')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/student/schoolnotice">{t('과목 공지')}</NavLink>
+                                                    </li>
+                                                </ul>
+                                            </AnimateHeight>
                                         </li>
                                         <li className="nav-item">
-                                            <NavLink to="/apps/todolist" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuTodo className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 3')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
+                                            <NavLink to="/student/scrumboard" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('칼반 보드')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>
@@ -392,8 +402,8 @@ const Sidebar = () => {
 
                             </div>}
                             {accountTypes == "ROLE_ADMIN" && <div>admin
-                                
-                            <li className="menu nav-item">
+
+                                <li className="menu nav-item">
                                     <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
                                         <div className="flex items-center">
                                             <IconMenuDashboard
@@ -420,8 +430,8 @@ const Sidebar = () => {
                                         </ul>
                                     </AnimateHeight>
                                 </li>
-                                
-                                </div>}
+
+                            </div>}
                             {accountTypes == "ROLE_SUPER" && <div>
 
                                 <li className="menu nav-item">
