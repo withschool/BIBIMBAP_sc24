@@ -38,7 +38,7 @@ const ParentHome = () => {
 
     useEffect(() => {
         const fetchStudents = async () => {
-            try { 
+            try {
                 const data = await listingStudent();
                 setStudentList(data);
             } catch (error) {
@@ -47,13 +47,13 @@ const ParentHome = () => {
         };
         fetchStudents();
     }, []);
-    
+
     useEffect(() => {
         const fetchNoticeData = async () => {
             try {
                 const data = await getSchoolNotice(localStorage.getItem('TargetStudent'));
                 setNoticeList(data);
-                console.log(data);    
+                console.log(data);
             } catch (error) {
                 console.error('Error fetching student data:', error);
             }
@@ -62,7 +62,7 @@ const ParentHome = () => {
     }, []);
 
 
-    const handlePopUp = async (noticeId : number) => {
+    const handlePopUp = async (noticeId: number) => {
         try {
             const noticeDetail = await getSchoolNoticeDetail(noticeId);
             setSelectedNotice(noticeDetail);
@@ -82,20 +82,20 @@ const ParentHome = () => {
         setUserCode(event.target.value);
     }
 
-    const getmappingStudent = async (userCode : string) => {
+    const getmappingStudent = async (userCode: string) => {
         const ismaped = await mappingStudent(userCode);
-        if(ismaped) { 
+        if (ismaped) {
             alert("학생 연결이 완료되었습니다.");
             setModal21(false);
         }
         else alert("학생 연결에 실패하였습니다.");
     }
 
-    const handleChange = (userId : string) => {
+    const handleChange = (userId: string) => {
         setTargetStudent(userId);
         console.log(targetStudent);
     }
-     
+
     return (
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
@@ -165,7 +165,7 @@ const ParentHome = () => {
                                     ) : (
                                         <div className="table-responsive mb-10">
                                             {(noticeList.length === 0) ? (<h1>작성된 공지가 없습니다.</h1>) : (<></>)}
-                                            {(selectedNotice == '') &&(<table className="table-hover text-center">
+                                            {(selectedNotice == '') && (<table className="table-hover text-center">
                                                 <thead>
                                                     <tr>
                                                         <th>제목</th>
@@ -215,20 +215,20 @@ const ParentHome = () => {
                                                     </div>
                                                     <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                                                     <div className="p-4 relative">
-                                                    <div className="flex flex-wrap">
-                                                        <div className="ltr:mr-2 rtl:ml-2 flex-1">
-                                                            <div className="flex items-center justify-end">
-                                                                <div className="text-sm ltr:mr-2 rtl:ml-4 whitespace-nowrap">
-                                                                    작성자: {selectedNotice.user.name}
+                                                        <div className="flex flex-wrap">
+                                                            <div className="ltr:mr-2 rtl:ml-2 flex-1">
+                                                                <div className="flex items-center justify-end">
+                                                                    <div className="text-sm ltr:mr-2 rtl:ml-4 whitespace-nowrap">
+                                                                        작성자: {selectedNotice.user.name}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div className="text-2xl mb-4" dangerouslySetInnerHTML={{ __html: selectedNotice.content }}></div>
-                                                    <p>{selectedNotice.user.name}님이 공지함</p>
-                                                    <p>
-                                                        {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
-                                                    </p>
+                                                        <div className="text-2xl mb-4" dangerouslySetInnerHTML={{ __html: selectedNotice.content }}></div>
+                                                        <p>{selectedNotice.user.name}님이 공지함</p>
+                                                        <p>
+                                                            {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
+                                                        </p>
                                                         {selectedNotice.filesURI && (
                                                             <div className="mt-8">
                                                                 <div className="text-base mb-4">Attachments</div>
@@ -261,7 +261,7 @@ const ParentHome = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                            </div>
+                                                </div>
                                             )}
                                         </div>
                                     )}
@@ -297,7 +297,7 @@ const ParentHome = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {studentList.map((data : any) => (
+                                                {studentList.map((data: any) => (
                                                     <tr key={data.id}>
                                                         <td>
                                                             <div className="whitespace-nowrap">{data.user.name}</div>
@@ -383,7 +383,9 @@ const ParentHome = () => {
                                                                             </span>
                                                                             <input type="text" placeholder="유저코드" className="form-input ltr:pl-10 rtl:pr-10" id="userCode" value={userCode} onChange={handleUserCode} />
                                                                         </div>
-                                                                        <button type="button" onClick={() => getmappingStudent(userCode)} className="btn btn-primary w-full">
+                                                                        <button type="button" onClick={() => {
+                                                                            getmappingStudent(userCode);
+                                                                        }} className="btn btn-primary w-full">
                                                                             추가하기
                                                                         </button>
                                                                     </form>
@@ -399,9 +401,9 @@ const ParentHome = () => {
                             </Tab.Panel>
                             <Tab.Panel>
                                 <div className="active pt-5">
-                                    { (studentList.length == 0) ? (
+                                    {(studentList.length == 0) ? (
                                         <><h1>연결된 학생이 없습니다.</h1></>
-                                    ):(
+                                    ) : (
                                         <div>
                                             <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
                                                 <h6 className="text-lg font-bold mb-5">학교 기본정보</h6>
@@ -426,9 +428,9 @@ const ParentHome = () => {
                                                         <div>
                                                             <label htmlFor="email">학교 홈페이지</label>
                                                             <div className="form-input" >
-                                                            <a href={schoolInfo.HMPG_ADRES} target="_blank" rel="noopener noreferrer">
-                                                                {schoolInfo.HMPG_ADRES}
-                                                            </a>
+                                                                <a href={schoolInfo.HMPG_ADRES} target="_blank" rel="noopener noreferrer">
+                                                                    {schoolInfo.HMPG_ADRES}
+                                                                </a>
                                                             </div>
                                                         </div>
                                                         <div>
@@ -447,7 +449,7 @@ const ParentHome = () => {
                                                 </div>
                                             </form>
                                         </div>
-                                        )}
+                                    )}
                                 </div>
                             </Tab.Panel>
                         </Tab.Panels>

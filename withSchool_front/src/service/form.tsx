@@ -29,10 +29,33 @@ export const adminNotice = async (formData: FormData): Promise<any> => {
   }
 };
 
-
 export const teacherNotice = async (formData: FormData): Promise<any> => {
   try {
     const response = await fetch(`${url}/classes/notices`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('교사 공지 작성 완료:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('교사 공지 작성 실패:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (errorss) {
+    console.error('교사 공지 실패했어요:', errorss);
+  }
+};
+
+export const subjectNotice = async (formData: FormData): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/subjects/notices`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -170,6 +193,52 @@ export const getClassNotice = async (childId: number): Promise<any> => {
   }
 }
 
+export const getClassNotices = async (childId: number): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/classes/notices?childId=${childId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('공지 리스트 조회 완료:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('공지 리스트 조회 실패:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (errorss) {
+    console.error('공지 리스트 조회 실패:', errorss);
+  }
+};
+
+export const getSubjectNotices = async (subjectId: number): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/subjects/notices/list?subjectId=${subjectId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('공지 리스트 조회 완료:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('공지 리스트 조회 실패:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (errorss) {
+    console.error('공지 리스트 조회 실패:', errorss);
+  }
+};
+
 export const getClassNoticeDetail = async (noticeId: number): Promise<any> => {
   try {
       const response = await fetch(`${url}/classes/notices/${noticeId}`, {
@@ -193,3 +262,48 @@ export const getClassNoticeDetail = async (noticeId: number): Promise<any> => {
       throw error;
   }
 }
+
+
+export const deleteClassNotice = async (noticeId: number): Promise<any> => {
+  try {
+      const response = await fetch(`${url}/classes/notices/${noticeId}`, {
+          method: 'DELETE',
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+      });
+
+      if (response.ok) {
+          console.log('공지 삭제 완료');
+          return await response.json();
+      } else {
+          const errorMessage = await response.text();
+          console.error('공지 삭제 실패:', errorMessage);
+          throw new Error(errorMessage);
+      }
+  } catch (error) {
+      console.error('공지 삭제 에러:', error);
+  }
+};
+
+export const deleteSubjectNotice = async (noticeId: number): Promise<any> => {
+  try {
+      const response = await fetch(`${url}/classes/notices/${noticeId}`, {
+          method: 'DELETE',
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+      });
+
+      if (response.ok) {
+          console.log('공지 삭제 완료');
+          return await response.json();
+      } else {
+          const errorMessage = await response.text();
+          console.error('공지 삭제 실패:', errorMessage);
+          throw new Error(errorMessage);
+      }
+  } catch (error) {
+      console.error('공지 삭제 에러:', error);
+  }
+};

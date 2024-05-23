@@ -30,7 +30,7 @@ import IconOpenBook from '../../components/Icon/IconOpenBook';
 import IconBook from '../../components/Icon/IconBook';
 import IconTrash from '../../components/Icon/IconTrash';
 import IconRestore from '../../components/Icon/IconRestore';
-import { adminNotice, getSchoolNotices } from '../../service/form';
+import { subjectNotice, getSubjectNotices, deleteSubjectNotice } from '../../service/form';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconSearch from '../../components/Icon/IconSearch';
 import IconSettings from '../../components/Icon/IconSettings';
@@ -49,9 +49,8 @@ import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
-import { deleteAdminNotice } from '../../service/form';
 
-const AdminNotice = () => {
+const SubjectNotice = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -184,35 +183,41 @@ const AdminNotice = () => {
         const fetchNotices = async () => {
             try {
                 const childId = localStorage.getItem('schoolId');
-                const notices = await getSchoolNotices(Number(childId));
-                console.log(notices);
-                if (notices && Array.isArray(notices)) {
-                    const formattedNotices = notices.map((notice: any) => ({
-                        id: notice.noticeId,
-                        path: 'profile-15.jpeg',
-                        firstName: notice.user.name.split(' ')[0],
-                        lastName: notice.user.name.split(' ')[1] || '',
-                        email: 'test@test.com',
-                        date: notice.regDate, // Convert regDate to Date object
-                        time: '2:00 PM',
-                        title: notice.title,
-                        displayDescription: notice.title,
-                        type: 'inbox',
-                        isImportant: false,
-                        isStar: false,
-                        group: 'personal',
-                        isUnread: false,
-                        attachments: [
-                            {
-                                name: notice.fileURl,
-                                type: 'file',
-                            },
-                        ],
-                        description: notice.content,
-                    })).reverse(); // Reverse the order of notices
-                    setMailList(formattedNotices);
-                    setFilteredMailList(formattedNotices);
-                    setPagedMails(formattedNotices.slice(0, 10));
+                const targetSubject = localStorage.getItem('targetSubject');
+
+                if (childId && targetSubject) {
+                    const notices = await getSubjectNotices(Number(targetSubject));
+                    console.log(notices);
+                    if (notices && Array.isArray(notices)) {
+                        const formattedNotices = notices.map((notice: any) => ({
+                            id: notice.noticeId,
+                            path: 'profile-15.jpeg',
+                            firstName: notice.user.name.split(' ')[0],
+                            lastName: notice.user.name.split(' ')[1] || '',
+                            email: 'test@test.com',
+                            date: notice.regDate, // Convert regDate to Date object
+                            time: '2:00 PM',
+                            title: notice.title,
+                            displayDescription: notice.title,
+                            type: 'inbox',
+                            isImportant: false,
+                            isStar: false,
+                            group: 'personal',
+                            isUnread: false,
+                            attachments: [
+                                {
+                                    name: notice.fileURl,
+                                    type: 'file',
+                                },
+                            ],
+                            description: notice.content,
+                        })).reverse(); // Reverse the order of notices
+                        setMailList(formattedNotices);
+                        setFilteredMailList(formattedNotices);
+                        setPagedMails(formattedNotices.slice(0, 10));
+                    }
+
+
                 } else {
                     console.error('No notices found or invalid data format');
                 }
@@ -305,7 +310,7 @@ const AdminNotice = () => {
                     searchMails(false);
                 } else if (type === 'delete') {
                     try {
-                        await deleteAdminNotice(item.id);
+                        await deleteSubjectNotice(item.id);
                         setMailList((prevMailList) => prevMailList.filter((d: any) => d.id !== item.id));
                         showMessage(`${totalSelected} 공지가 영구적으로 삭제되었습니다.`);
                     } catch (error) {
@@ -497,7 +502,7 @@ const AdminNotice = () => {
                     });
                 }
 
-                const response = await adminNotice(formData);
+                const response = await subjectNotice(formData);
 
                 if (response.ok) {
                     searchMails();
@@ -1365,4 +1370,4 @@ const AdminNotice = () => {
     );
 };
 
-export default AdminNotice;
+export default SubjectNotice;

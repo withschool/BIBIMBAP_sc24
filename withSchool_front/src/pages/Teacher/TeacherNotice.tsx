@@ -30,7 +30,7 @@ import IconOpenBook from '../../components/Icon/IconOpenBook';
 import IconBook from '../../components/Icon/IconBook';
 import IconTrash from '../../components/Icon/IconTrash';
 import IconRestore from '../../components/Icon/IconRestore';
-import { teacherNotice } from '../../service/form';
+import { teacherNotice, getClassNotices, deleteClassNotice} from '../../service/form';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconSearch from '../../components/Icon/IconSearch';
 import IconSettings from '../../components/Icon/IconSettings';
@@ -51,69 +51,91 @@ import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
 
 const TeacherNotice = () => {
+
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('teacher-notice'));
-    });
-    const [mailList, setMailList] = useState([
-        {
-            id: 1,
-            path: 'profile-15.jpeg',
-            firstName: '김',
-            lastName: '창수',
-            email: 'laurieFox@mail.com',
-            date: new Date(),
-            time: '2:00 PM',
-            title: '학교 운동회 안내',
-            displayDescription: '다가오는 학교 운동회 일정 안내입니다.',
-            type: 'inbox',
-            isImportant: false,
-            isStar: true,
-            group: 'social',
-            isUnread: false,
-            attachments: [
-                {
-                    name: '운동회 일정표.txt',
-                    size: '450KB',
-                    type: 'file',
-                },
-                {
-                    name: '운동회 규칙.pdf',
-                    size: '2.1MB',
-                    type: 'file',
-                },
-            ],
-            description: `
-                              <p class="mail-content">안녕하세요, 학부모님들께 알려드립니다. 오는 5월 15일 금요일에 학교 운동회가 개최됩니다. 자세한 일정과 규칙은 첨부된 파일을 확인해 주시기 바랍니다. 많은 참여 부탁드립니다.</p>
-                              <div class="gallery text-center">
-                                  <img alt="image-gallery" src="${'/assets/images/sports_day1.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
-                                  <img alt="image-gallery" src="${'/assets/images/sports_day2.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
-                                  <img alt="image-gallery" src="${'/assets/images/sports_day3.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
-                              </div>
-                              <p>참가를 원하시는 학부모님께서는 미리 신청서를 제출해 주시기 바랍니다. 감사합니다.</p>
-                              `,
-        },
-        {
-            id: 2,
-            path: 'profile-14.jpeg',
-            firstName: '동현',
-            lastName: '민',
-            email: 'kingAndy@mail.com',
-            date: new Date(),
-            time: '6:28 PM',
-            title: '학부모 상담 주간 안내',
-            displayDescription: '학부모 상담 주간 일정 안내입니다.',
-            type: 'inbox',
-            isImportant: false,
-            isStar: false,
-            group: '',
-            isUnread: false,
-            description: `
-                              <p class="mail-content">안녕하세요, 다음 주는 학부모 상담 주간입니다. 자녀의 학습 진도 및 행동 발달에 대해 논의할 수 있는 좋은 기회입니다. 상담을 원하시는 학부모님께서는 미리 예약해 주시기 바랍니다.</p>
-                              <p>상담은 오전 9시부터 오후 4시까지 가능합니다. 감사합니다.</p>
-                              `,
-        },
-    ]);
+        dispatch(setPageTitle('adminNotice'));
+    }, [dispatch]);
+
+
+    // const [mailList, setMailList] = useState([
+    //     {
+    //         id: 1,
+    //         path: 'profile-15.jpeg',
+    //         firstName: '김',
+    //         lastName: '창수',
+    //         email: 'laurieFox@mail.com',
+    //         date: new Date(),
+    //         time: '2:00 PM',
+    //         title: '학교 운동회 안내',
+    //         displayDescription: '다가오는 학교 운동회 일정 안내입니다.', s
+    //         type: 'inbox',
+    //         isImportant: false,
+    //         isStar: true,
+    //         group: 'social',
+    //         isUnread: false,
+    //         attachments: [
+    //             {
+    //                 name: '운동회 일정표.txt',
+    //                 size: '450KB',
+    //                 type: 'file',
+    //             },
+    //             {
+    //                 name: '운동회 규칙.pdf',
+    //                 size: '2.1MB',
+    //                 type: 'file',
+    //             },
+    //         ],
+    //         description: `
+    //                           <p class="mail-content">안녕하세요, 학부모님들께 알려드립니다. 오는 5월 15일 금요일에 학교 운동회가 개최됩니다. 자세한 일정과 규칙은 첨부된 파일을 확인해 주시기 바랍니다. 많은 참여 부탁드립니다.</p>
+    //                           <div class="gallery text-center">
+    //                               <img alt="image-gallery" src="${'/assets/images/sports_day1.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
+    //                               <img alt="image-gallery" src="${'/assets/images/sports_day2.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
+    //                               <img alt="image-gallery" src="${'/assets/images/sports_day3.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
+    //                           </div>
+    //                           <p>참가를 원하시는 학부모님께서는 미리 신청서를 제출해 주시기 바랍니다. 감사합니다.</p>
+    //                           `,
+    //     },
+    //     {
+    //         id: 2,
+    //         path: 'profile-14.jpeg',
+    //         firstName: '동현',
+    //         lastName: '민',
+    //         email: 'kingAndy@mail.com',
+    //         date: new Date(),
+    //         time: '6:28 PM',
+    //         title: '학부모 상담 주간 안내',
+    //         displayDescription: '학부모 상담 주간 일정 안내입니다.',
+    //         type: 'inbox',
+    //         isImportant: false,
+    //         isStar: false,
+    //         group: '',
+    //         isUnread: false,
+    //         description: `
+    //                           <p class="mail-content">안녕하세요, 다음 주는 학부모 상담 주간입니다. 자녀의 학습 진도 및 행동 발달에 대해 논의할 수 있는 좋은 기회입니다. 상담을 원하시는 학부모님께서는 미리 예약해 주시기 바랍니다.</p>
+    //                           <p>상담은 오전 9시부터 오후 4시까지 가능합니다. 감사합니다.</p>
+    //                           `,
+    //     },
+
+    //     {
+    //         noticeId: 0,
+    //         title: "테스트 제목",
+    //         content: "테스트 내용",
+    //         user: {
+    //             userId: 0,
+    //             userName: "유저 이름",
+    //             name: "네임"
+    //         },
+    //         regDate: "2024-05-22T20:39:37.407Z",
+    //         filesURl: [
+    //             "링크"
+    //         ],
+    //         originalName: [
+    //             "string"
+    //         ]
+    //     },
+
+    // ]);
 
     const defaultParams = {
         id: null,
@@ -126,17 +148,19 @@ const TeacherNotice = () => {
         displayDescription: '',
     };
 
-    const [isShowMailMenu, setIsShowMailMenu] = useState(false);
+
+    const [mailList, setMailList] = useState<any[]>([]);
+    const [filteredMailList, setFilteredMailList] = useState<any[]>([]);
+    const [pagedMails, setPagedMails] = useState<any[]>([]);
+    const [selectedMail, setSelectedMail] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
     const [selectedTab, setSelectedTab] = useState('inbox');
-    const [filteredMailList, setFilteredMailList] = useState<any>(mailList.filter((d) => d.type === 'inbox'));
+    const [searchText, setSearchText] = useState('');
+    const [isShowMailMenu, setIsShowMailMenu] = useState(false);
     const [ids, setIds] = useState<any>([]);
-    const [searchText, setSearchText] = useState<any>('');
-    const [selectedMail, setSelectedMail] = useState<any>(null);
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
-    const [pagedMails, setPagedMails] = useState<any>([]);
-
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+
 
     const [pager] = useState<any>({
         currentPage: 1,
@@ -155,6 +179,49 @@ const TeacherNotice = () => {
         searchMails(false);
     };
 
+    useEffect(() => {
+        const fetchNotices = async () => {
+            try {
+                const childId = localStorage.getItem('schoolId');
+                const notices = await getClassNotices(Number(childId));
+                console.log(notices);
+                if (notices && Array.isArray(notices)) {
+                    const formattedNotices = notices.map((notice: any) => ({
+                        id: notice.noticeId,
+                        path: 'profile-15.jpeg',
+                        firstName: notice.user.name.split(' ')[0],
+                        lastName: notice.user.name.split(' ')[1] || '',
+                        email: 'test@test.com',
+                        date: notice.regDate, // Convert regDate to Date object
+                        time: '2:00 PM',
+                        title: notice.title,
+                        displayDescription: notice.title,
+                        type: 'inbox',
+                        isImportant: false,
+                        isStar: false,
+                        group: 'personal',
+                        isUnread: false,
+                        attachments: [
+                            {
+                                name: notice.fileURl,
+                                type: 'file',
+                            },
+                        ],
+                        description: notice.content,
+                    })).reverse(); // Reverse the order of notices
+                    setMailList(formattedNotices);
+                    setFilteredMailList(formattedNotices);
+                    setPagedMails(formattedNotices.slice(0, 10));
+                } else {
+                    console.error('No notices found or invalid data format');
+                }
+            } catch (error) {
+                console.error('Failed to fetch notices:', error);
+            }
+        };
+
+        fetchNotices();
+    }, []);
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
     const setArchive = () => {
@@ -164,9 +231,9 @@ const TeacherNotice = () => {
                 item.type = item.type === 'archive' ? 'inbox' : 'archive';
             }
             if (selectedTab === 'archive') {
-                showMessage(ids.length + ' 공지를 저장에 삭제하였습니다.');
+                showMessage(ids.length + '개의 공지를 저장에서 삭제하였습니다.');
             } else {
-                showMessage(ids.length + ' 공지를 저장에 추가하였습니다.');
+                showMessage(ids.length + '개의 공지를 저장에 추가하였습니다.');
             }
             searchMails(false);
         }
@@ -202,7 +269,7 @@ const TeacherNotice = () => {
         }
     };
 
-    const setAction = (type: any) => {
+    const setAction = async (type: any) => {
         if (ids.length) {
             const totalSelected = ids.length;
             let items = filteredMailList.filter((d: any) => ids.includes(d.id));
@@ -212,7 +279,7 @@ const TeacherNotice = () => {
                     item.group = '';
                     item.isStar = false;
                     item.isImportant = false;
-                    showMessage(totalSelected + ' Mail has been deleted.');
+                    showMessage(totalSelected + '개의 공지를 휴지통으로 옮겼습니다.');
                     searchMails(false);
                 } else if (type === 'read') {
                     item.isUnread = false;
@@ -236,12 +303,17 @@ const TeacherNotice = () => {
                     showMessage(totalSelected + ' Mail Restored.');
                     searchMails(false);
                 } else if (type === 'delete') {
-                    setMailList(mailList.filter((d: any) => d.id !== item.id));
-                    showMessage(totalSelected + ' Mail Permanently Deleted.');
-                    searchMails(false);
+                    try {
+                        await deleteClassNotice(item.id);
+                        setMailList((prevMailList) => prevMailList.filter((d: any) => d.id !== item.id));
+                        showMessage(`${totalSelected} 공지가 영구적으로 삭제되었습니다.`);
+                    } catch (error) {
+                        showMessage('공지 삭제에 실패했습니다.', 'error');
+                    }
                 }
             }
             clearSelection();
+            searchMails(false);
         }
     };
 
@@ -383,20 +455,20 @@ const TeacherNotice = () => {
             showMessage('제목을 작성해 주세요.', 'error');
             return false;
         }
-    
+
         let maxId = 0;
         if (!params.id) {
-            maxId = mailList.length ? mailList.reduce((max, character) => (character.id > max ? character.id : max), mailList[0].id) : 0;
+            maxId = mailList.length ? mailList.reduce((max, character) => (character.id && character.id > max ? character.id : max), 0) : 0;
         }
         let cDt = new Date();
-    
+
         let obj: any = {
             id: maxId + 1,
             path: '',
             firstName: '',
             lastName: '',
             email: params.to,
-            date: cDt.getMonth() + 1 + '/' + cDt.getDate() + '/' + cDt.getFullYear(),
+            date: cDt, // Set date as Date object
             time: cDt.toLocaleTimeString(),
             title: params.title,
             displayDescription: params.displayDescription,
@@ -407,10 +479,9 @@ const TeacherNotice = () => {
             description: params.description,
             attachments: null,
         };
-    
+
         if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
-            obj.type = 'draft';
-            mailList.splice(0, 0, obj);
+            setMailList((prevMailList) => [obj, ...prevMailList]);
             searchMails();
             showMessage('Mail has been saved successfully to draft.');
         } else if (type === 'send' || type === 'reply' || type === 'forward') {
@@ -418,35 +489,32 @@ const TeacherNotice = () => {
                 const formData = new FormData();
                 formData.append("title", params.title);
                 formData.append("content", params.description);
-    
+
                 if (selectedFiles) {
                     Array.from(selectedFiles).forEach(file => {
                         formData.append("file", file);
                     });
                 }
-    
+
                 const response = await teacherNotice(formData);
-    
+
                 if (response.ok) {
+                    searchMails();
                     console.log("Notice successfully created");
                 } else {
                     console.error("Failed to create notice");
                 }
-    
+
                 obj.type = 'sent_notice';
-                mailList.splice(0, 0, obj); // Add the new notice to the mailList
-                searchMails(); // Refresh the mail list to show the new notice
-    
+                setMailList((prevMailList) => [obj, ...prevMailList]);
+                searchMails();
                 showMessage('공지가 성공적으로 작성되었습니다.');
+                window.location.reload();
             } catch (error) {
                 showMessage('공지 작성에 실패했습니다.', 'error');
             }
-            obj.type = 'sent_notice';
-            mailList.splice(0, 0, obj);
-            searchMails();
-            showMessage('공지를 성공적으로 작성하였습니다.');
         }
-    
+
         setSelectedMail(null);
         setIsEdit(false);
     };
@@ -701,7 +769,7 @@ const TeacherNotice = () => {
                                     </div>
 
                                     <div className="ltr:mr-4 rtl:ml-4">
-                                        <Tippy content="Refresh">
+                                        <Tippy content="새로 고침">
                                             <button type="button" className="hover:text-primary flex items-center" onClick={() => refreshMails()}>
                                                 <IconRefresh />
                                             </button>
@@ -712,7 +780,7 @@ const TeacherNotice = () => {
                                         <ul className="flex grow items-center sm:flex-none gap-4 ltr:sm:mr-4 rtl:sm:ml-4">
                                             <li>
                                                 <div>
-                                                    <Tippy content="Archive">
+                                                    <Tippy content="저장하기">
                                                         <button type="button" className="hover:text-primary flex items-center" onClick={setArchive}>
                                                             <IconArchive />
                                                         </button>
@@ -783,19 +851,19 @@ const TeacherNotice = () => {
                                                             <li>
                                                                 <button type="button" onClick={() => setAction('read')}>
                                                                     <IconOpenBook className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    Mark as Read
+                                                                    공지 읽음 처리
                                                                 </button>
                                                             </li>
                                                             <li>
                                                                 <button type="button" onClick={() => setAction('unread')}>
                                                                     <IconBook className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    Mark as Unread
+                                                                    공지 안읽음 처리
                                                                 </button>
                                                             </li>
                                                             <li>
                                                                 <button type="button" onClick={() => setAction('trash')}>
                                                                     <IconTrashLines className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    Trash
+                                                                    휴지통
                                                                 </button>
                                                             </li>
                                                         </ul>
@@ -809,7 +877,7 @@ const TeacherNotice = () => {
                                         <ul className="flex flex-1 items-center sm:flex-none gap-4 ltr:sm:mr-3 rtl:sm:ml-4">
                                             <li>
                                                 <div>
-                                                    <Tippy content="Permanently Delete">
+                                                    <Tippy content="공지 삭제">
                                                         <button type="button" className="block hover:text-primary" onClick={() => setAction('delete')}>
                                                             <IconTrash />
                                                         </button>
@@ -818,7 +886,7 @@ const TeacherNotice = () => {
                                             </li>
                                             <li>
                                                 <div>
-                                                    <Tippy content="Restore">
+                                                    <Tippy content="되돌리기">
                                                         <button type="button" className="block hover:text-primary" onClick={() => setAction('restore')}>
                                                             <IconRestore />
                                                         </button>
@@ -1035,7 +1103,7 @@ const TeacherNotice = () => {
                                                                 )}
                                                             </div>
                                                         </td>
-                                                        <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{showTime(mail)}</td>
+                                                        <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{mail.date[1]}월 {mail.date[2]}일 {mail.date[3]}:{mail.date[4]}</td>
                                                     </tr>
                                                 );
                                             })}
@@ -1043,7 +1111,7 @@ const TeacherNotice = () => {
                                     </table>
                                 </div>
                             ) : (
-                                <div className="grid place-content-center min-h-[300px] font-semibold text-lg h-full">No data available</div>
+                                <div className="grid place-content-center min-h-[300px] font-semibold text-lg h-full">작성된 공지가 없습니다.</div>
                             )}
                         </div>
                     )}
@@ -1180,12 +1248,12 @@ const TeacherNotice = () => {
                                     className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
                                     dangerouslySetInnerHTML={{ __html: selectedMail.description }}
                                 ></div>
-                                <p className="mt-4">Best Regards,</p>
+                                <p className="mt-4">작성자 : </p>
                                 <p>{selectedMail.firstName + ' ' + selectedMail.lastName}</p>
 
                                 {selectedMail.attachments && (
                                     <div className="mt-8">
-                                        <div className="text-base mb-4">Attachments</div>
+                                        <div className="text-base mb-4">첨부파일 : </div>
                                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                                         <div className="flex items-center flex-wrap mt-6">
                                             {selectedMail.attachments.map((attachment: any, i: number) => {
@@ -1201,7 +1269,7 @@ const TeacherNotice = () => {
                                                         {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
 
                                                         <div className="ltr:ml-3 rtl:mr-3">
-                                                            <p className="text-xs text-primary font-semibold">{attachment.name}</p>
+                                                            <p className="text-xs text-primary font-semibold">{attachment.originalName}</p>
                                                             <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
                                                         </div>
                                                         <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
@@ -1284,7 +1352,7 @@ const TeacherNotice = () => {
                                         임시 저장
                                     </button>
                                     <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
-                                        공지 작성하기
+                                        공지 작성
                                     </button>
                                 </div>
                             </form>

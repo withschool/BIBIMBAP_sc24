@@ -397,8 +397,7 @@ const ManageSchool = () => {
     useEffect(() => {
         const fetchSchoolInfo = async () => {
             try {
-                const childId = localStorage.getItem('schoolId');
-                const data = await getSchoolInfo(childId);
+                const data = await getSchoolInfo('');
                 setSchoolName(data.SCHUL_NM);
             } catch (error) {
                 console.error('학교 이름 안나오는 중', error);

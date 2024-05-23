@@ -18,6 +18,7 @@ const AdminNo = lazy(() => import('../pages/Admin/AdminNotice'));
 //Teacher
 const TeacherHome = lazy(() => import('../pages/Teacher/TeacherHome'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
+const SubjectNotice = lazy(() => import('../pages/Teacher/SubjectNotice'));
 const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
 const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
 const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
@@ -32,6 +33,7 @@ const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'));
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 const StudentClassNotice = lazy(() => import('../pages/Student/ClassNotice'));
 const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
+const Calendar = lazy(() => import('../pages/Student/Calendar'));
 
 
 //Components
@@ -105,6 +107,10 @@ const routes = [
         element: <TeacherNotice />,
     },
     {
+        path: '/teacher/subject/notice',
+        element: <SubjectNotice />,
+    },
+    {
         path: '/teacher/home',
         element: <TeacherHome />,
     },
@@ -129,6 +135,7 @@ const routes = [
         element: <ChooseSubject />,
 
     },
+
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
@@ -139,6 +146,10 @@ const routes = [
         element: <StudentClassNotice />,
     },
 
+    {
+        path: '/student/calendar',
+        element: <Calendar />,
+    },
 
     {
         path: '/student/home',

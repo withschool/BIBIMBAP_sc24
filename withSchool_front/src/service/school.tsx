@@ -176,3 +176,25 @@ export const getSchoolInfo = async (childId: string | null): Promise<any> => {
         throw error;
     }
 };
+export const getClassNotices = async (childId: number): Promise<any> => {
+    try {
+      const response = await fetch(`${url}/classes/notices?childId=${childId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log('공지 리스트 조회 완료:', data);
+        return data;
+      } else {
+        const errorMessage = await response.text();
+        console.error('공지 리스트 조회 실패:', errorMessage);
+        throw new Error(errorMessage);
+      }
+    } catch (errorss) {
+      console.error('공지 리스트 조회 실패:', errorss);
+    }
+  };
