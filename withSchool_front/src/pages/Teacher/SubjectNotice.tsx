@@ -495,6 +495,7 @@ const SubjectNotice = () => {
                 const formData = new FormData();
                 formData.append("title", params.title);
                 formData.append("content", params.description);
+                formData.append("subjectId", localStorage.getItem("targetSubject") || '');
 
                 if (selectedFiles) {
                     Array.from(selectedFiles).forEach(file => {

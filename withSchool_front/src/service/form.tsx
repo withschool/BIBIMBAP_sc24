@@ -218,7 +218,7 @@ export const getClassNotices = async (childId: number): Promise<any> => {
 
 export const getSubjectNotices = async (subjectId: number): Promise<any> => {
   try {
-    const response = await fetch(`${url}/subjects/notices/list?subjectId=${subjectId}`, {
+    const response = await fetch(`${url}/subjects/notices/list/${subjectId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
