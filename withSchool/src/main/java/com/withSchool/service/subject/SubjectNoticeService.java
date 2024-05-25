@@ -6,7 +6,6 @@ import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectNoticeDTO;
 import com.withSchool.dto.user.ResUserDefaultDTO;
-import com.withSchool.entity.mapping.TeacherSubject;
 import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.subject.SubjectNotice;
 import com.withSchool.entity.subject.SubjectNoticeFile;
@@ -134,7 +133,7 @@ public class SubjectNoticeService {
         if(fileList.isPresent()){
             for(SubjectNoticeFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .originalName(files.getOriginalName())
+                        .savedName(files.getSavedName())
                         .repoType("subjectNotice")
                         .masterId(noticeId)
                         .build();
@@ -153,11 +152,11 @@ public class SubjectNoticeService {
         Optional<SubjectNotice> subjectNotice = subjectNoticeRepository.findById(noticeId);
         Optional<List<SubjectNoticeFile>> subjectNoticeFiles = subjectNoticeFileRepository.findBySubjectNoticeId(noticeId);
         List<String> filesUrl = new ArrayList<>();
-        List<String> orignalName = new ArrayList<>();
+        List<String> originalName = new ArrayList<>();
         if(subjectNoticeFiles.isPresent()) {
             for (SubjectNoticeFile file : subjectNoticeFiles.get()) {
                 filesUrl.add(file.getFileUrl());
-                orignalName.add(file.getOriginalName());
+                originalName.add(file.getOriginalName());
             }
         }
         if(subjectNotice.isEmpty())return null;
@@ -175,7 +174,7 @@ public class SubjectNoticeService {
                 .content(result.getContent())
                 .user(resUserDefaultDTO)
                 .filesURl(filesUrl)
-                .originalName(orignalName)
+                .originalName(originalName)
                 .regDate(result.getRegDate())
                 .build();
     }

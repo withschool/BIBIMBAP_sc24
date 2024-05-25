@@ -186,7 +186,7 @@ public class SchoolNoticeService {
         if(fileList.isPresent()){
             for(SchoolNoticeFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .originalName(files.getOriginalName())
+                        .savedName(files.getSavedName())
                         .repoType("schoolNotice")
                         .masterId(schoolNoticeId)
                         .build();

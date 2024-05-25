@@ -150,7 +150,7 @@ public class ClassNoticeService {
         if(fileList.isPresent()){
             for(ClassNoticeFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .originalName(files.getOriginalName())
+                        .savedName(files.getSavedName())
                         .repoType("classNotice")
                         .masterId(noticeId)
                         .build();
