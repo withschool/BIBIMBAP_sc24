@@ -1,5 +1,7 @@
 package com.withSchool.controller.user;
 
+import com.withSchool.dto.mapping.ReqStudentSubjectScoreDTO;
+import com.withSchool.dto.mapping.ResStudentSubjectDefaultDTO;
 import com.withSchool.dto.mapping.StudentSubjectDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
@@ -10,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,5 +41,25 @@ public class SugangController {
 
         return ResponseEntity.ok()
                 .body(studentSubjectService.findOnesSugang(user));
+    }
+
+    @GetMapping("/{subjectId}")
+    @Operation(summary = "성적 업로드를 위해 모든 학생을 리스트업 하는 API")
+    public ResponseEntity<List<ResStudentSubjectDefaultDTO>> findStudentsScore(@PathVariable Long subjectId) {
+        return ResponseEntity.ok().body(studentSubjectService.findStudentsScore(subjectId));
+    }
+
+    @GetMapping("/{subjectId}/scores")
+    @Operation(summary = "학생 개인의 성적을 확인하는 데 쓰이는 API")
+    public ResponseEntity<ResStudentSubjectDefaultDTO> findOnesScore(@PathVariable Long subjectId) {
+        return ResponseEntity.ok().body(studentSubjectService.findOnesScore(subjectId));
+    }
+
+    @PatchMapping("/scores")
+    @Operation(summary = "학생의 성적을 대량으로 넣는 API", description = "중간고사는 mid, 기말고사는 final, 수행평가는 activity")
+    public ResponseEntity<String> uploadScore(@RequestBody ReqStudentSubjectScoreDTO request){
+        studentSubjectService.updateScore(request);
+
+        return ResponseEntity.ok().body("upload Success");
     }
 }
