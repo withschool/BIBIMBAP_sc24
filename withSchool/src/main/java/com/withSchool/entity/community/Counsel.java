@@ -1,5 +1,6 @@
 package com.withSchool.entity.community;
 
+import com.withSchool.dto.community.ResCounselDefaultDTO;
 import com.withSchool.entity.base.BaseEntity;
 import com.withSchool.entity.user.User;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
@@ -25,7 +27,15 @@ public class Counsel extends BaseEntity {
     private Long counselId;
 
     @Column(name = "counsel_state", nullable = false)
-    @Comment("상담 상태")
+    @ColumnDefault("0")
+    @Comment("""
+            상담상태
+            
+            0 - 신청
+            1 - 승낙
+            2 - 반려
+            3 - 완료
+            """)
     private int counselState;
 
     @Column(name = "category", nullable = false)
@@ -46,5 +56,16 @@ public class Counsel extends BaseEntity {
     @Comment("상담 응답자")
     private User answerer;
 
+    public ResCounselDefaultDTO toResCounselDefaultDTO(){
+        return ResCounselDefaultDTO.builder()
+                .counselId(this.getCounselId())
+                .askerId(this.getAkser().getUserId())
+                .answererId(this.getAnswerer().getUserId())
+                .counselState(this.getCounselState())
+                .category(this.getCategory())
+                .schedule(this.getSchedule())
+                .regDate(this.getRegDate())
+                .build();
+    }
 
 }
