@@ -30,4 +30,10 @@ public class CounselController {
         counselService.delete(counselId);
         return ResponseEntity.ok().body("Deleted");
     }
+
+    @PatchMapping("/{counselId}")
+    @Operation(summary = "신청한 상담의 내용을 수정하는 API")
+    public ResponseEntity<ResCounselDefaultDTO> modifyCounsel(@PathVariable Long counselId, @RequestBody ReqCounselDefaultDTO req) {
+        return ResponseEntity.ok().body(counselService.modify(counselId, req));
+    }
 }
