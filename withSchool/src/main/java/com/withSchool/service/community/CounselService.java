@@ -35,4 +35,8 @@ public class CounselService {
 
         return counsel.toResCounselDefaultDTO();
     }
+
+    public void delete(Long counselId) {
+        counselRepository.deleteById(counselId);
+    }
 }
