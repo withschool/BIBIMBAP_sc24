@@ -10,6 +10,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -35,5 +37,11 @@ public class CounselController {
     @Operation(summary = "신청한 상담의 내용을 수정하는 API")
     public ResponseEntity<ResCounselDefaultDTO> modifyCounsel(@PathVariable Long counselId, @RequestBody ReqCounselDefaultDTO req) {
         return ResponseEntity.ok().body(counselService.modify(counselId, req));
+    }
+
+    @GetMapping("/requestedCounsel")
+    @Operation(summary = "학생, 학부모, 교사의 userID를 기반으로 요청된 상담 신청 리스트 확인")
+    public ResponseEntity<List<ResCounselDefaultDTO>> showAllRequestedCounsel(){
+        return ResponseEntity.ok().body(counselService.findAllRequestedCounsel());
     }
 }

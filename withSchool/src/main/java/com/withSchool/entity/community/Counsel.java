@@ -49,7 +49,7 @@ public class Counsel extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asker_id", nullable = false)
     @Comment("상담 요청자")
-    private User akser;
+    private User asker;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answerer_id", nullable = false)
@@ -59,7 +59,7 @@ public class Counsel extends BaseEntity {
     public ResCounselDefaultDTO toResCounselDefaultDTO(){
         return ResCounselDefaultDTO.builder()
                 .counselId(this.getCounselId())
-                .askerId(this.getAkser().getUserId())
+                .askerId(this.getAsker().getUserId())
                 .answererId(this.getAnswerer().getUserId())
                 .counselState(this.getCounselState())
                 .category(this.getCategory())

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +29,7 @@ public class CounselService {
         LocalDateTime schedule = LocalDateTime.parse(requestSchedule, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 
         Counsel request = Counsel.builder()
-                .akser(asker)
+                .asker(asker)
                 .answerer(answerer)
                 .category(category)
                 .schedule(schedule)
@@ -56,7 +58,7 @@ public class CounselService {
         Counsel newCounsel = counselRepository.save(Counsel.builder()
                 .counselState(existingCounsel.getCounselState())
                 .counselId(counselId)
-                .akser(asker)
+                .asker(asker)
                 .answerer(answerer)
                 .category(category)
                 .schedule(schedule)
@@ -64,5 +66,18 @@ public class CounselService {
                 .build());
 
         return newCounsel.toResCounselDefaultDTO();
+    }
+
+    public List<ResCounselDefaultDTO> findAllRequestedCounsel() {
+        User user = userService.getCurrentUser();
+
+        List<Counsel> counsels = counselRepository.findAllByAnswerer_UserId(user.getUserId());
+        List<ResCounselDefaultDTO> dtos = new ArrayList<>();
+
+        for(Counsel c : counsels){
+            dtos.add(c.toResCounselDefaultDTO());
+        }
+
+        return dtos;
     }
 }
