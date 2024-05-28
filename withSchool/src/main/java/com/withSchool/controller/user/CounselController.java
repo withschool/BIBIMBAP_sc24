@@ -26,6 +26,12 @@ public class CounselController {
         return ResponseEntity.ok().body(counselService.save(req));
     }
 
+    @GetMapping
+    @Operation(summary = "내가 신청한 상담 목록 조회", description = "학생, 학부모, 교사가 전부 같은 api를 씀")
+    public ResponseEntity<List<ResCounselDefaultDTO>> showAllMyCounsel(){
+        return ResponseEntity.ok().body(counselService.findAllMyCounsel());
+    }
+
     @DeleteMapping("/{counselId}")
     @Operation(summary = "신청한 상담을 삭제하여 취소하는 API")
     public ResponseEntity<String> cancelCounsel(@PathVariable Long counselId) {

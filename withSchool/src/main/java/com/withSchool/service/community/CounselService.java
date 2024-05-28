@@ -100,4 +100,16 @@ public class CounselService {
 
         return newCounsel.toResCounselDefaultDTO();
     }
+
+    public List<ResCounselDefaultDTO> findAllMyCounsel() {
+        User user = userService.getCurrentUser();
+        List<Counsel> counsels = counselRepository.findAllByAsker_UserId(user.getUserId());
+        List<ResCounselDefaultDTO> dtos = new ArrayList<>();
+
+        for (Counsel c : counsels) {
+            dtos.add(c.toResCounselDefaultDTO());
+        }
+
+        return dtos;
+    }
 }
