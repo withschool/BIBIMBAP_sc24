@@ -28,8 +28,14 @@ public class CounselController {
 
     @GetMapping
     @Operation(summary = "내가 신청한 상담 목록 조회", description = "학생, 학부모, 교사가 전부 같은 api를 씀")
-    public ResponseEntity<List<ResCounselDefaultDTO>> showAllMyCounsel(){
+    public ResponseEntity<List<ResCounselDefaultDTO>> showAllMyCounsels() {
         return ResponseEntity.ok().body(counselService.findAllMyCounsel());
+    }
+
+    @GetMapping("/{counselId}")
+    @Operation(summary = "상담 단건 정보 조회")
+    public ResponseEntity<ResCounselDefaultDTO> showOneCounsel(@PathVariable Long counselId){
+        return ResponseEntity.ok().body(counselService.findById(counselId));
     }
 
     @DeleteMapping("/{counselId}")

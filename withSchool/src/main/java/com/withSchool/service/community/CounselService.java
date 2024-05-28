@@ -112,4 +112,11 @@ public class CounselService {
 
         return dtos;
     }
+
+    public ResCounselDefaultDTO findById(Long counselId) {
+        Optional<Counsel> result = counselRepository.findById(counselId);
+        if(result.isEmpty())throw new RuntimeException("There is no appropriate counsel");
+
+        return result.get().toResCounselDefaultDTO();
+    }
 }
