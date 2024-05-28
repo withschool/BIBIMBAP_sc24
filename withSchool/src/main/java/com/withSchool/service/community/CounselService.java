@@ -80,4 +80,24 @@ public class CounselService {
 
         return dtos;
     }
+
+    public ResCounselDefaultDTO acceptCounsel(Long counselId, int isAccept) {
+        if(isAccept < 1 || isAccept > 2)throw new RuntimeException("Please check isAccept");
+
+        Optional<Counsel> result = counselRepository.findById(counselId);
+        if(result.isEmpty())throw new RuntimeException("There is no appropriate counsel");
+        Counsel existingCounsel = result.get();
+
+        Counsel newCounsel = counselRepository.save(Counsel.builder()
+                .counselState(isAccept)
+                .counselId(counselId)
+                .asker(existingCounsel.getAsker())
+                .answerer(existingCounsel.getAnswerer())
+                .category(existingCounsel.getCategory())
+                .schedule(existingCounsel.getSchedule())
+                .regDate(existingCounsel.getRegDate())
+                .build());
+
+        return newCounsel.toResCounselDefaultDTO();
+    }
 }

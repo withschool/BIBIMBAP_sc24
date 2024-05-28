@@ -28,7 +28,7 @@ public class CounselController {
 
     @DeleteMapping("/{counselId}")
     @Operation(summary = "신청한 상담을 삭제하여 취소하는 API")
-    public ResponseEntity<String> cancelCounsel(@PathVariable Long counselId){
+    public ResponseEntity<String> cancelCounsel(@PathVariable Long counselId) {
         counselService.delete(counselId);
         return ResponseEntity.ok().body("Deleted");
     }
@@ -41,7 +41,13 @@ public class CounselController {
 
     @GetMapping("/requestedCounsel")
     @Operation(summary = "학생, 학부모, 교사의 userID를 기반으로 요청된 상담 신청 리스트 확인")
-    public ResponseEntity<List<ResCounselDefaultDTO>> showAllRequestedCounsel(){
+    public ResponseEntity<List<ResCounselDefaultDTO>> showAllRequestedCounsel() {
         return ResponseEntity.ok().body(counselService.findAllRequestedCounsel());
+    }
+
+    @PostMapping("/{counselId}")
+    @Operation(summary = "상담에 대해서 승낙/거부 선택", description = "1을 보내면 승낙 2를 보내면 반려")
+    public ResponseEntity<ResCounselDefaultDTO> acceptCounsel(@PathVariable Long counselId, @RequestParam int isAccept){
+        return ResponseEntity.ok().body(counselService.acceptCounsel(counselId, isAccept));
     }
 }
