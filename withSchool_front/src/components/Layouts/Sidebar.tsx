@@ -210,7 +210,7 @@ const Sidebar = () => {
                                                         <NavLink to="/student/classnotice">{t('반 공지')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/student/schoolnotice">{t('과목 공지')}</NavLink>
+                                                        <NavLink to="/student/subjectnotice">{t('과목 공지')}</NavLink>
                                                     </li>
                                                 </ul>
                                             </AnimateHeight>
@@ -228,6 +228,14 @@ const Sidebar = () => {
                                                 <div className="flex items-center">
                                                     <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('일정 관리')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
+                                        <li className="nav-item">
+                                            <NavLink to="/student/counsel" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('상담')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>

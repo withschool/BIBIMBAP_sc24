@@ -34,6 +34,7 @@ const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 const StudentClassNotice = lazy(() => import('../pages/Student/ClassNotice'));
 const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
 const Calendar = lazy(() => import('../pages/Student/Calendar'));
+const Counsel = lazy(() => import('../pages/Student/Counsel'));
 
 
 //Components
@@ -141,6 +142,8 @@ const routes = [
         element: <AccountSetting />,
     },
 
+
+    //Student
     {
         path: '/student/classnotice',
         element: <StudentClassNotice />,
@@ -155,6 +158,13 @@ const routes = [
         path: '/student/home',
         element: <StudentHome />,
     },
+
+    {
+        path: '/student/counsel',
+        element: <Counsel />,
+    },
+
+
     {
         path: '/parent/studentinfo',
         element: <StudentInfo />,
