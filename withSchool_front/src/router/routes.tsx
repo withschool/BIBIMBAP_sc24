@@ -35,7 +35,7 @@ const StudentClassNotice = lazy(() => import('../pages/Student/ClassNotice'));
 const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
 const Calendar = lazy(() => import('../pages/Student/Calendar'));
 const Counsel = lazy(() => import('../pages/Student/Counsel'));
-
+const Assignment = lazy(() => import('../pages/Student/Assignment'));
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -176,6 +176,10 @@ const routes = [
     {
         path: '/student/scrumboard',
         element: <Scrumboard />,
+    },
+    {
+        path: '/student/assignment',
+        element: <Assignment />,
     },
 
     //Admin
