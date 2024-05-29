@@ -8,7 +8,7 @@
 <div align=center><h1>📚 STACKS</h1></div>
 
 <div align=center> 
-  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
   <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
   <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
   <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
@@ -28,10 +28,19 @@
   <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </div>
 
-### 필수 조건
-이 프로젝트를 실행하기 위해 필요한 소프트웨어와 그 버전을 나열하세요.
-- 예: Python 3.8 이상
-- 예: Node.js 14.x 이상
+### 팀원
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 백엔드 : 민동현</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 백엔드 : 이권민</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 백엔드 : 박찬빈</b></sub></a><br /></td>
+     <tr/>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>BE 프론트엔드 : 남창현</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>BE 프론트엔드 : 최현수</b></sub></a><br /></td>
+    </tr>
+  </tbody>
+</table>
 
 ### 설치
 프로젝트를 설치하는 단계별 지침을 작성합니다.
