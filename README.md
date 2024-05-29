@@ -30,11 +30,12 @@
   <img src="https://img.shields.io/badge/github Actions-2088FF?style=for-the-badge&logo=github Actions&logoColor=white">
   <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </div>
+
 ### System Architecture
 ![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/19a6efb1-21f1-4a0c-b24f-8e8b89debe51)
 
 
-### 팀원
+#### 팀원
 <table>
   <tbody>
     <th>Role</th>
