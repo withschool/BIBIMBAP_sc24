@@ -9,7 +9,6 @@
     <tr>
       <img src="https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/8699b392-b3bd-4956-b36f-862c6d14cad8">
     </tr>
-    ![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/8699b392-b3bd-4956-b36f-862c6d14cad8)
   </tbody>
 </table>
 
