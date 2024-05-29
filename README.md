@@ -84,10 +84,10 @@
     </tr>
     <tr>
       <td align="center">Backend</td>
-      <td align="center">Min DongHyun</td>
-      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Park ChanBin</td>
+      <td align="center">cksqls97@ajou.ac.kr</td>
       <td align="center">Software</td>
-      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
+      <td align="center"><a href="https://github.com/cksqls97"/>Chanbin</td>
     </tr>
     <tr>
       <td align="center">Frontend</td>
