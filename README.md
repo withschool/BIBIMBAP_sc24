@@ -32,11 +32,13 @@
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br />dcmin123@ajou.ac.kr</td>
-      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 이권민</b></sub></a><br />example2@example.com</td>
-      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 박찬빈</b></sub></a><br />example3@example.com</td>
+      <td align="center"><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br /></td>
+      <td align="center"><br /><sub><b>dcmin123@ajou.ac.kr</b></sub></a><br /></td>
+      <td align="center"><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br /></td>
     </tr>
     <tr>
+      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 이권민</b></sub></a><br />example2@example.com</td>
+      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 박찬빈</b></sub></a><br />example3@example.com</td>
       <td align="center"><a href=""><br /><sub><b>FE 팀원 : 남창현</b></sub></a><br />example4@example.com</td>
       <td align="center"><a href=""><br /><sub><b>FE 팀원 : 최현수</b></sub></a><br />example5@example.com</td>
     </tr>
