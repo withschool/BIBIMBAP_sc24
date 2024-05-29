@@ -31,6 +31,9 @@
 ### 팀원
 <table>
   <tbody>
+    <th>역할</th>
+    <th>이름</th>
+    <th>이메일</th>
     <tr>
       <td align="center"><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br /></td>
       <td align="center"><br /><sub><b>dcmin123@ajou.ac.kr</b></sub></a><br /></td>
