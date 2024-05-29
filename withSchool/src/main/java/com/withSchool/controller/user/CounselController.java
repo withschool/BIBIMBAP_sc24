@@ -51,10 +51,16 @@ public class CounselController {
         return ResponseEntity.ok().body(counselService.modify(counselId, req));
     }
 
-    @GetMapping("/requestedCounsel")
-    @Operation(summary = "학생, 학부모, 교사의 userID를 기반으로 요청된 상담 신청 리스트 확인")
+    @GetMapping("/requested-counsels")
+    @Operation(summary = "학생, 학부모, 교사의 userID를 기반으로 요청된 모든 상담 신청 리스트 확인")
     public ResponseEntity<List<ResCounselDefaultDTO>> showAllRequestedCounsel() {
         return ResponseEntity.ok().body(counselService.findAllRequestedCounsel());
+    }
+
+    @GetMapping("/requested-counsels/activated")
+    @Operation(summary = "학생, 학부모, 교사의 userId를 기반으로 신청 상태인 상담 리스트를 확인")
+    public ResponseEntity<List<ResCounselDefaultDTO>> showActivatedCounsel(){
+        return ResponseEntity.ok().body(counselService.findAllActivatedCounsel());
     }
 
     @PostMapping("/{counselId}")
