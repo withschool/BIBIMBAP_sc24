@@ -240,10 +240,10 @@ const Sidebar = () => {
                                             </NavLink>
                                         </li>
                                         <li className="nav-item">
-                                            <NavLink to="/apps/contacts" className="group">
+                                            <NavLink to="/student/assignment" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuContacts className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 6')}</span>
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('과제')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>
