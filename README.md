@@ -5,12 +5,10 @@
 
 </div>
 
-<div>
   
 ## 프로젝트 개요
 학교랑 프로젝트의 목적은 중학교, 고등학교에서 사용할 수 있는 커뮤니케이션 중심의 온라인 교육 지원 플랫폼을 구축하는 것이다. 이 플랫폼은 학생, 학부모, 교직원으로 이루어진 사용자가 학사 정보, 강의자료, 과제, 성적 조회 등 중요한 정보를 쉽게 접근하고 처리할 수 있도록 하여, 기존의 오프라인 방식보다 사용성을 크게 향상시키는 것을 목표로 한다. 또한, 사용자 간의 상담이 용이하도록 시스템을 구축하여, 기존의 대면 상담이나 전화 통화 방식보다 개선된 사용자 경험을 제공하고자 한다.
 
-</div>
 
 <div align=center><h1>📚 STACKS</h1></div>
 
@@ -37,12 +35,13 @@
   <img src="https://img.shields.io/badge/github Actions-2088FF?style=for-the-badge&logo=github Actions&logoColor=white">
   <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 </div>
-<div>
 
 ### System Architecture
-![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/19a6efb1-21f1-4a0c-b24f-8e8b89debe51)
 
+<div>
+  ![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/19a6efb1-21f1-4a0c-b24f-8e8b89debe51)
 </div>
+
 
 
 ### 팀원
