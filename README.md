@@ -33,8 +33,16 @@
   <tbody>
     <th>Role</th>
     <th>Name</th>
-    <th>e-mail</th>
+    <th>E-mail</th>
     <th>Major</th>
+    <th>Github</th>
+    <tr>
+      <td align="center">Backend</td>
+      <td align="center">Min DongHyun</td>
+      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Software</td>
+      <td align="center"><a href="https://mindongmindong.github.io"/>"</td>
+    </tr>
     <tr>
       <td align="center">Backend</td>
       <td align="center">Min DongHyun</td>
@@ -42,10 +50,22 @@
       <td align="center">Software</td>
     </tr>
     <tr>
-      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 이권민</b></sub></a><br />example2@example.com</td>
-      <td align="center"><a href=""><br /><sub><b>BE 팀원 : 박찬빈</b></sub></a><br />example3@example.com</td>
-      <td align="center"><a href=""><br /><sub><b>FE 팀원 : 남창현</b></sub></a><br />example4@example.com</td>
-      <td align="center"><a href=""><br /><sub><b>FE 팀원 : 최현수</b></sub></a><br />example5@example.com</td>
+      <td align="center">Backend</td>
+      <td align="center">Min DongHyun</td>
+      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Software</td>
+    </tr>
+    <tr>
+      <td align="center">Frontend</td>
+      <td align="center">Min DongHyun</td>
+      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Software</td>
+    </tr>
+    <tr>
+      <td align="center">Frontend</td>
+      <td align="center">Min DongHyun</td>
+      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Software</td>
     </tr>
   </tbody>
 </table>
