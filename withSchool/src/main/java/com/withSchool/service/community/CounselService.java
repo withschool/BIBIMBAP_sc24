@@ -119,4 +119,17 @@ public class CounselService {
 
         return result.get().toResCounselDefaultDTO();
     }
+
+    public List<ResCounselDefaultDTO> findAllActivatedCounsel() {
+        User user = userService.getCurrentUser();
+        List<Counsel> counsels = counselRepository.findAllByAnswerer_UserIdAndCounselState(user.getUserId(), 0);
+
+        List<ResCounselDefaultDTO> dtos = new ArrayList<>();
+
+        for (Counsel c : counsels) {
+            dtos.add(c.toResCounselDefaultDTO());
+        }
+
+        return dtos;
+    }
 }
