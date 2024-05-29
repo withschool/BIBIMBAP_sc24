@@ -54,7 +54,7 @@
       <td align=center>시스템 아키텍처</td>
     </tr>
     <tr>
-      <td><img src="https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/b6b6efc6-b86b-4d12-9803-b5fe4f557b71"></td>
+      <td><img src="https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/b676f0b3-0c0e-4664-8c47-bc67b3ea3745"></td>
     </tr>
   </tbody>
 </table>
