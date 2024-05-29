@@ -48,24 +48,28 @@
       <td align="center">Min DongHyun</td>
       <td align="center">dcmin123@ajou.ac.kr</td>
       <td align="center">Software</td>
+      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
     </tr>
     <tr>
       <td align="center">Backend</td>
       <td align="center">Min DongHyun</td>
       <td align="center">dcmin123@ajou.ac.kr</td>
       <td align="center">Software</td>
+      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
     </tr>
     <tr>
       <td align="center">Frontend</td>
       <td align="center">Min DongHyun</td>
       <td align="center">dcmin123@ajou.ac.kr</td>
       <td align="center">Software</td>
+      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
     </tr>
     <tr>
       <td align="center">Frontend</td>
       <td align="center">Min DongHyun</td>
       <td align="center">dcmin123@ajou.ac.kr</td>
       <td align="center">Software</td>
+      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
     </tr>
   </tbody>
 </table>
