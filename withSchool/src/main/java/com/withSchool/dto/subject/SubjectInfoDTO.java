@@ -13,5 +13,8 @@ import java.time.LocalDateTime;
 public class SubjectInfoDTO {
     private Long subjectId;
     private String subjectName;
+    private String year;
+    private String grade;
+    private String semester;
     private LocalDateTime regDate;
 }

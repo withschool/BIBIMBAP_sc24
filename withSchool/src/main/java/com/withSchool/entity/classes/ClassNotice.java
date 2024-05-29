@@ -4,14 +4,14 @@ import com.withSchool.entity.user.User;
 import com.withSchool.entity.base.BasePostEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "class_notice")

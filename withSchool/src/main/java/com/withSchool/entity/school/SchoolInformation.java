@@ -2,10 +2,8 @@ package com.withSchool.entity.school;
 
 import com.withSchool.entity.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 
@@ -13,7 +11,8 @@ import org.hibernate.annotations.Comment;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
+@ToString
 @Table(name = "school_information")
 public class SchoolInformation extends BaseEntity {
     @Id

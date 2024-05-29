@@ -3,54 +3,66 @@ package com.withSchool.service.classes;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.service.user.UserService;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ClassService {
 
-    @Autowired
-    private ClassRepository classRepository;
+    private final UserService userService;
 
-    @Autowired
-    private SchoolInformationRepository schoolInformationRepository;
+    private final ClassRepository classRepository;
+
+    private final SchoolInformationRepository schoolInformationRepository;
 
     // 반 정보 저장
     @PreAuthorize("hasRole('ADMIN')")
-    public ClassInformation saveClassInformation(ClassDTO classDTO) {
+    public ClassInformation saveClassInformation(ClassDTO classDTO) throws Exception {
 
-        ClassInformation newClass = classBuilder(classDTO);
-
-        return classRepository.save(newClass);
+        if(!classRepository.checkDuplicate(classDTO.getGrade(), classDTO.getInClass(), classDTO.getYear(), classDTO.getSchoolId())){
+            ClassInformation newClass = classBuilder(classDTO);
+            return classRepository.save(newClass);
+        }
+        throw new Exception("이미 존재하는 반입니다");
     }
-
     // 반 정보 조회
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation_SchoolId(Long schoolId) {
-        return classRepository.findBySchoolInformation_SchoolId(schoolId);
-    }
+    public List<ClassDTO> findBySchoolInformation(Integer grade, Integer inClass) {
+        Long schoolId = userService.getCurrentUserSchoolId();
+        List<ClassDTO> dtos = new ArrayList<>();
+        List<ClassInformation> classInformations;
+        if (grade != null && inClass != null) {
+            classInformations = classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+        } else if (grade != null) {
+            classInformations = classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
+        } else {
+            classInformations = classRepository.findBySchoolInformation_SchoolId(schoolId);
+        }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<ClassInformation> findBySchoolInformation_SchoolIdAndGrade(Long schoolId, int grade) {
-        return classRepository.findBySchoolInformation_SchoolIdAndGrade(schoolId, grade);
-    }
+        for (ClassInformation c : classInformations) {
+            ClassDTO dto = c.toClassDTO();
+            dtos.add(dto);
+        }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public Optional<ClassInformation> findBySchoolInformation_SchoolIdAndGradeAndInClass(Long schoolId, int grade, int inClass) {
-        return classRepository.findBySchoolInformation_SchoolIdAndGradeAndInClass(schoolId, grade, inClass);
+        return dtos;
     }
 
     // 특정 반 정보 조회
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'TEACHER')")
+    @Transactional
     public Optional<ClassInformation> getClassById(Long classId) {
         return classRepository.findById(classId);
     }
+
 
     // 반 정보 수정
     @PreAuthorize("hasRole('ADMIN')")

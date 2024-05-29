@@ -1,42 +1,46 @@
 package com.withSchool.entity.user;
 
+import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
+import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.entity.base.BaseEntity;
+import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
 @Table(name = "user")
-@Builder
+@SuperBuilder
 @AllArgsConstructor
+@ToString
 public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", unique = true, nullable = false)
+    @Column(name = "user_id", unique = true)
     @Comment("사용자 PK")
     private Long userId;
 
-    @Column(name = "id", unique = true, nullable = false)
+    @Column(name = "id", unique = true)
     @Comment("로그인 ID")
     private String id;
 
     @Setter
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     @Comment("비밀번호")
     private String password;
 
@@ -65,9 +69,10 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("주소")
     private String address;
 
-    @Column(name = "birth_date")
+    @Column(name = "birth_date", length = 6)
+
     @Comment("생일")
-    private LocalDateTime birthDate;
+    private String birthDate;
 
     @Column(name = "account_type")
     @Comment("""
@@ -85,14 +90,15 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("사용자 코드")
     private String userCode;
 
-    @Column(name = "parent_code", unique = true)
-    @Comment("부모 코드")
-    private String parentCode;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id")
     @Comment("사용자가 속한 학교 PK")
     private SchoolInformation schoolInformation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classs_id")
+    @Comment("사용자가 속한 반")
+    private ClassInformation classInformation;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -131,11 +137,54 @@ public class User extends BaseEntity implements UserDetails {
         return true;
     }
 
-    public void changeUserInfo(String id, String password, String email, String phoneNumber, String address) {
-        this.id = id;
-        this.password = password;
+    public void changeUserInfo(String email, String phoneNumber, String address) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
+    public void changeUserPassword(String password) {
+        this.password = password;
+    }
+
+    public ResUserDefaultDTO toResUserDefaultDTO(){
+        return ResUserDefaultDTO.builder()
+                .userId(this.getUserId())
+                .name(this.getName())
+                .userName(this.getUsername())
+                .build();
+    }
+
+    public ResUserUsercodeDTO toResUserUsercodeDTO(){
+        return ResUserUsercodeDTO.builder()
+                .userId(this.getUserId())
+                .name(this.getName())
+                .userName(this.getId())
+                .userCode(this.getUserCode())
+                .build();
+    }
+    public BasicUserInfoDTO entityToBasicUserInfoDTO(){
+        Long classId = Optional.ofNullable(this.getClassInformation())
+                .map(ClassInformation::getClassId)
+                .orElse(null);
+
+        Long schoolId = Optional.ofNullable(this.getSchoolInformation())
+                .map(SchoolInformation::getSchoolId)
+                .orElse(null);
+
+        return BasicUserInfoDTO.builder()
+                .userId(this.getUserId())
+                .id(this.getUsername())
+                .name(this.getName())
+                .email(this.getEmail())
+                .address(this.getAddress())
+                .phoneNumber(this.getPhoneNumber())
+                .sex(this.getSex())
+                .classId(classId)
+                .schoolId(schoolId)
+                .build();
+    }
+    public void updateClassInfo(ClassInformation classInformation){
+        this.classInformation = classInformation;
+    }
+
 }

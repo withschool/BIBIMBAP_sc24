@@ -1,5 +1,6 @@
 package com.withSchool.service.user;
 
+import com.withSchool.dto.user.ReqUserPasswordDTO;
 import com.withSchool.dto.user.UserInfoDTO;
 import com.withSchool.dto.user.UserUpdateDTO;
 import com.withSchool.entity.user.User;
@@ -9,11 +10,11 @@ public interface UserUpdateService {
 
     void updateUserInfo(UserUpdateDTO dto);
 
+    void updateUserPassword(ReqUserPasswordDTO dto);
+
     default User DtoToEntity(UserUpdateDTO dto) { // 클라이언트에서 받은 수정된 정보DTO들을 엔티티로 변환
         User user = User.builder()
                 .userId(dto.getUserId())
-                .id(dto.getId())
-                .password(dto.getPassword())
                 .email(dto.getEmail())
                 .phoneNumber(dto.getPhoneNumber())
                 .address(dto.getAddress())
@@ -36,4 +37,6 @@ public interface UserUpdateService {
                 .build();
         return userInfoDTO;
     }
+
+
 }
