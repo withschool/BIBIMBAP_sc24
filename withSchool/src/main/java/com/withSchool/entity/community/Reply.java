@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -35,6 +38,7 @@ public class Reply extends BaseEntity {
     @Comment("부모댓글ID")
     private Reply parent;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     @Comment("게시글ID")
@@ -44,4 +48,17 @@ public class Reply extends BaseEntity {
     @JoinColumn(name = "user_id")
     @Comment("사용자ID")
     private User user;
+
+    public void updateReply(String content){
+        this.content = content;
+    }
+
+    public void updateLike(boolean b) {
+        if(b){
+            this.likeCount++;
+        }
+        else{
+            this.likeCount--;
+        }
+    }
 }
