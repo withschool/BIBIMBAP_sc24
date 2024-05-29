@@ -51,6 +51,16 @@
   
   ![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/19a6efb1-21f1-4a0c-b24f-8e8b89debe51)
   
+  <table>
+  <tbody>
+    <tr>
+      <td align=center>시스템 아키텍처</td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/19a6efb1-21f1-4a0c-b24f-8e8b89debe51"></td>
+    </tr>
+  </tbody>
+</table>
 
 
 ## 팀원
