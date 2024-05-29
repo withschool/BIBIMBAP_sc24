@@ -409,14 +409,14 @@ const Sidebar = () => {
 
 
                             </div>}
-                            {accountTypes == "ROLE_ADMIN" && <div>admin
+                            {accountTypes == "ROLE_ADMIN" && <div>
 
                                 <li className="menu nav-item">
                                     <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
                                         <div className="flex items-center">
                                             <IconMenuDashboard
                                                 className="group-hover:!text-primary shrink-0" />
-                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Admin')}</span>
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('관리')}</span>
                                         </div>
 
                                         <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
@@ -435,8 +435,37 @@ const Sidebar = () => {
                                             <li>
                                                 <NavLink to="/admin/schoolnotice">{t('공지 확인하기')}</NavLink>
                                             </li>
+
+
                                         </ul>
                                     </AnimateHeight>
+
+                                    <li className="menu nav-item">
+                                        <button type="button" className={`${currentMenu === 'class' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('class')}>
+                                            <div className="flex items-center">
+                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('결제')}</span>
+                                            </div>
+
+                                            <div className={currentMenu !== 'class' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                <IconCaretDown />
+                                            </div>
+                                        </button>
+
+                                        <AnimateHeight duration={300} height={currentMenu === 'class' ? 'auto' : 0}>
+                                            <ul className="sub-menu text-gray-500">
+                                                <li>
+                                                    <NavLink to="/admin/invoice/list">{t('결제 목록')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/admin/invoice/preview">{t('결제 정보 조회')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/admin/invoice/add">{t('결제 진행')}</NavLink>
+                                                </li>
+                                            </ul>
+                                        </AnimateHeight>
+                                    </li>
                                 </li>
 
                             </div>}

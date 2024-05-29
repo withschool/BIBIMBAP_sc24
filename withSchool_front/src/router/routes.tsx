@@ -13,6 +13,8 @@ const Landing = lazy(() => import('../pages/Users/Landing'));
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
 const AdminNo = lazy(() => import('../pages/Admin/AdminNotice'));
+const InvoiceList = lazy(() => import('../pages/Admin/InvoiceList'));
+const InvoiceAdd = lazy(() => import('../pages/Admin/InvoiceAdd'));
 
 
 //Teacher
@@ -36,6 +38,8 @@ const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
 const Calendar = lazy(() => import('../pages/Student/Calendar'));
 const Counsel = lazy(() => import('../pages/Student/Counsel'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
+const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
+
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -165,6 +169,7 @@ const routes = [
     },
 
 
+
     {
         path: '/parent/studentinfo',
         element: <StudentInfo />,
@@ -196,6 +201,23 @@ const routes = [
         path: '/admin/schoolnotice',
         element: <SchoolNotice />,
     },
+
+    {
+        path: '/admin/invoice/list',
+        element: <InvoiceList />,
+    },
+
+    {
+        path: '/admin/invoice/preview',
+        element: <InvoicePreview />,
+    },
+
+    {
+        path: '/admin/invoice/add',
+        element: <InvoiceAdd />,
+    },
+
+
     {
         path: '/student/schoolnotice',
         element: <SchoolNotice />,

@@ -275,7 +275,7 @@ const ManageSchool = () => {
                 [grade]: data,
             }));
         } catch (error) {
-            console.error(`Error fetching class data for grade ${grade}:`, error);
+            console.error(`에러 학년 ${grade}:`, error);
         }
     };
 

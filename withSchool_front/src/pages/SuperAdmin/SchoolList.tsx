@@ -34,6 +34,7 @@ interface School {
     schoolAddress: string;
     sdSchulCode: string;
     regDate: string;
+    paymentStatus: string;
 }
 
 export const formatDate = (dateString: string): string => {
@@ -77,9 +78,9 @@ const SchoolList = () => {
                 const formattedData = data.map((item: School) => ({
                     ...item,
                     regDate: formatDate(item.regDate),
+                    paymentStatus: item.paymentStatus || "정상",
                 }));
 
-                // Sort by schoolId and add creationOrder
                 const sortedData = sortBy(formattedData, "schoolId").map(
                     (item, index) => ({
                         ...item,
@@ -126,7 +127,10 @@ const SchoolList = () => {
                 (item.regDate &&
                     item.regDate.toString().toLowerCase().includes(search.toLowerCase())) ||
                 (item.sdSchulCode &&
-                    item.sdSchulCode.toString().toLowerCase().includes(search.toLowerCase()))
+                    item.sdSchulCode.toString().toLowerCase().includes(search.toLowerCase())) ||
+                (item.paymentStatus &&
+                    item.paymentStatus.toString().toLowerCase().includes(search.toLowerCase()))
+
             );
         });
         setRecordsData(
@@ -379,6 +383,7 @@ const SchoolList = () => {
                                                                             <div>{item.educationOffice}</div>
                                                                             <div>{item.schoolAddress}</div>
                                                                             <div>{item.schoolPhoneNumber}</div>
+                                                                            <div>{item.paymentStatus}</div>
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -423,8 +428,8 @@ const SchoolList = () => {
                     <DataTable
                         highlightOnHover
                         className={`${isRtl
-                                ? "whitespace-nowrap table-hover"
-                                : "whitespace-nowrap table-hover"
+                            ? "whitespace-nowrap table-hover"
+                            : "whitespace-nowrap table-hover"
                             }`}
                         records={recordsData}
                         columns={[
@@ -448,6 +453,19 @@ const SchoolList = () => {
                             { accessor: "schoolAddress", title: "학교 주소", sortable: true },
                             { accessor: "regDate", title: "생성일", sortable: true },
                             { accessor: "sdSchulCode", title: "학교 코드", sortable: true },
+
+
+                            {
+                                accessor: "paymentStatus",
+                                title: "결제 상태",
+                                sortable: true,
+                                render: ({ paymentStatus }) => {
+                                    const status = paymentStatus === "정상" ? { tooltip: '정상', color: 'success' } : { tooltip: '결제 지연', color: 'danger' };
+                                    return <span className={`badge badge-outline-${status.color}`}>{status.tooltip}</span>;
+                                },
+                            },
+
+
                             {
                                 accessor: "deleteSchool",
                                 title: "삭제하기",
