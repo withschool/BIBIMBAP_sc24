@@ -5,6 +5,10 @@ import com.withSchool.dto.user.*;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
 import io.swagger.v3.oas.annotations.Operation;
+import com.withSchool.JWT.JwtTokenProvider;
+import com.withSchool.dto.user.SignUpDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -25,6 +31,7 @@ import java.util.Map;
 public class BasicController {
     private final UserService userService;
     private final SchoolInformationService schoolInformationService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/pre-sign-up")
     @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")
@@ -87,6 +94,20 @@ public class BasicController {
     public ResponseEntity<Boolean> isDuplicated(@RequestParam("id") String id){
         return ResponseEntity.ok()
                 .body(userService.isDuplicated(id));
+    }
+
+    @PostMapping("/sign-out")
+    public ResponseEntity<?> signOut(HttpServletRequest request) {
+        // 현재 요청에 사용된 토큰을 가져옴
+        String token = jwtTokenProvider.resolveToken(request);
+
+        // 블랙리스트에 토큰 추가
+        jwtTokenProvider.addToBlacklist(token);
+
+        // 현재 사용자의 컨텍스트를 비움
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @PostMapping("/test")
