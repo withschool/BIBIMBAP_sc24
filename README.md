@@ -48,7 +48,7 @@
 
 ## System Architecture
   
-  <table>
+  <table align=center>
   <tbody>
     <tr>
       <td align=center>시스템 아키텍처</td>
