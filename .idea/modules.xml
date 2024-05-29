@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/withSchool.iml" filepath="$PROJECT_DIR$/.idea/modules/withSchool.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/withSchool.main.iml" filepath="$PROJECT_DIR$/.idea/modules/withSchool.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/withSchool.test.iml" filepath="$PROJECT_DIR$/.idea/modules/withSchool.test.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/withSchool.main.iml" filepath="$PROJECT_DIR$/.idea/modules/withSchool.main.iml" />
+>>>>>>> c67bc06a1c0835420665405735e4bc54fec2f961
     </modules>
   </component>
 </project>
