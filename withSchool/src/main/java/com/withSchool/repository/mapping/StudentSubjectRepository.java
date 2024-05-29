@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StudentSubjectRepository extends JpaRepository<StudentSubject, Long> {
@@ -23,4 +24,8 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubject, 
     @Modifying
     @Query("DELETE FROM StudentSubject ss WHERE ss.user.userId = :userId")
     void deleteSsByUserId(@Param("userId") Long userId);
+
+    List<StudentSubject> findBySubject_SubjectId(Long subjectId);
+
+    Optional<StudentSubject> findByUser_UserIdAndSubject_SubjectId(Long userId, Long subjectId);
 }
