@@ -90,12 +90,12 @@ const StudentInfo = () => {
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
                     <li>
-                        <Link to="/parent-home" className="text-primary hover:underline">
+                        <Link to="/parent/home" className="text-primary hover:underline">
                             학부모
                         </Link>
                     </li>
                     <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                        <span>학생 정보</span>
+                        <span>{targetStudentInfo.name} 학생 정보</span>
                     </li>
                 </ul>
                 <div className="panel" id="icon_pills">
