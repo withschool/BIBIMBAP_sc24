@@ -2,7 +2,8 @@
 
 ### BIBIMBAP 팀
 
-# 학교랑
+# 너랑 학교랑
+![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/8699b392-b3bd-4956-b36f-862c6d14cad8)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
