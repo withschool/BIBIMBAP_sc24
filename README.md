@@ -1,9 +1,9 @@
-<div>
+
   
 # 학교랑(WithSchool)
 ![image](https://github.com/withschool/BIBIMBAP_sc24/assets/97661859/8699b392-b3bd-4956-b36f-862c6d14cad8)
 
-</div>
+
 
   
 ## 프로젝트 개요
@@ -89,10 +89,3 @@
   </tbody>
 </table>
 
-
-### 설치
-프로젝트를 설치하는 단계별 지침을 작성합니다.
-```bash
-git clone https://github.com/yourusername/yourproject.git
-cd yourproject
-npm install
