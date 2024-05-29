@@ -15,10 +15,10 @@ import org.hibernate.annotations.Comment;
 public class BasePostEntity extends BaseEntity {
     @Column(name = "title", nullable = false)
     @Comment("제목")
-    private String title;
+    protected String title;
 
     @Column(name = "content", columnDefinition = "TEXT")
     @Comment("본문")
-    private String content;
+    protected String content;
 
 }

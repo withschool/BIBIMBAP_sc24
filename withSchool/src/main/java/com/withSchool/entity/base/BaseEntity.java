@@ -25,10 +25,10 @@ public class BaseEntity {
     @CreatedDate
     @Column(updatable = false, insertable = true)
     @Comment("등록일자")
-    private LocalDateTime regDate;
+    protected LocalDateTime regDate;
 
     @LastModifiedDate
     @Column(updatable = true, insertable = false)
     @Comment("수정일자")
-    private LocalDateTime modDate;
+    protected LocalDateTime modDate;
 }
