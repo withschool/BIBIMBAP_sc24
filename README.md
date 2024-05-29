@@ -31,13 +31,15 @@
 ### 팀원
 <table>
   <tbody>
-    <th>역할</th>
-    <th>이름</th>
-    <th>이메일</th>
+    <th>Role</th>
+    <th>Name</th>
+    <th>e-mail</th>
+    <th>Major</th>
     <tr>
-      <td align="center"><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br /></td>
-      <td align="center"><br /><sub><b>dcmin123@ajou.ac.kr</b></sub></a><br /></td>
-      <td align="center"><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br /></td>
+      <td align="center">Backend</td>
+      <td align="center">Min DongHyun</td>
+      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Software</td>
     </tr>
     <tr>
       <td align="center"><a href=""><br /><sub><b>BE 팀원 : 이권민</b></sub></a><br />example2@example.com</td>
