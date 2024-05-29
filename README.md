@@ -32,12 +32,12 @@
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 백엔드 : 민동현</b></sub></a><br /></td>
-      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 백엔드 : 이권민</b></sub></a><br /></td>
-      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 백엔드 : 박찬빈</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVirYR895BzxnAptTCoO17clSZiCTtfINpEQ&s" width="100px;" alt=""/><br /><sub><b>BE 팀원 : 민동현</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>BE 팀원 : 이권민</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>BE 팀원 : 박찬빈</b></sub></a><br /></td>
      <tr/>
-      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>BE 프론트엔드 : 남창현</b></sub></a><br /></td>
-      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>BE 프론트엔드 : 최현수</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 남창현</b></sub></a><br /></td>
+      <td align="center"><a href=""><img src="" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 최현수</b></sub></a><br /></td>
     </tr>
   </tbody>
 </table>
