@@ -37,42 +37,62 @@ public class ClassNoticeService {
 
     @Transactional
     public ResNoticeDTO save(ReqNoticeDTO reqNoticeDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User teacher = userService.findById(authentication.getName());
-
-        ClassNotice classNotice = ClassNotice.builder()
-                .title(reqNoticeDTO.getTitle())
-                .content(reqNoticeDTO.getContent())
-                .teacher(teacher)
-                .classInformation(teacher.getClassInformation())
-                .build();
-
-        ClassNotice result = classNoticeRepository.save(classNotice);
-
-        List<MultipartFile> files = reqNoticeDTO.getFile();
-        for(MultipartFile s : files){
-            if(!s.isEmpty()) {
-                FileDTO fileDTO = FileDTO.builder()
-                        .file(s)
-                        .repoType("classNotice")
-                        .masterId(result.getClassNoticeId())
-                        .build();
-                fileService.saveFile(fileDTO);
+        try {
+            // 인증 정보에서 사용자 ID를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || authentication.getName() == null) {
+                throw new IllegalArgumentException("인증 정보가 유효하지 않습니다.");
             }
-        }
 
-        return ResNoticeDTO.builder()
-                .noticeId(result.getClassNoticeId())
-                .title(result.getTitle())
-                .content(result.getContent())
-                .user(ResUserDefaultDTO.builder()
-                        .userId(teacher.getUserId())
-                        .userName(teacher.getId())
-                        .name(teacher.getName())
-                        .build())
-                .regDate(LocalDateTime.now())
-                .build();
+            // 사용자 정보를 조회
+            User teacher = userService.findById(authentication.getName());
+            if (teacher == null) {
+                throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+            }
+
+            // ClassNotice 객체 생성
+            ClassNotice classNotice = ClassNotice.builder()
+                    .title(reqNoticeDTO.getTitle())
+                    .content(reqNoticeDTO.getContent())
+                    .teacher(teacher)
+                    .classInformation(teacher.getClassInformation())
+                    .build();
+
+            // ClassNotice 저장
+            ClassNotice result = classNoticeRepository.save(classNotice);
+
+            // 파일 처리
+            List<MultipartFile> files = reqNoticeDTO.getFile();
+            for (MultipartFile s : files) {
+                if (!s.isEmpty()) {
+                    FileDTO fileDTO = FileDTO.builder()
+                            .file(s)
+                            .repoType("classNotice")
+                            .masterId(result.getClassNoticeId())
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
+            }
+
+            // 결과 반환
+            return ResNoticeDTO.builder()
+                    .noticeId(result.getClassNoticeId())
+                    .title(result.getTitle())
+                    .content(result.getContent())
+                    .user(ResUserDefaultDTO.builder()
+                            .userId(teacher.getUserId())
+                            .userName(teacher.getId())
+                            .name(teacher.getName())
+                            .build())
+                    .regDate(LocalDateTime.now())
+                    .build();
+        } catch (Exception e) {
+            // 예외 발생 시 로그를 남기고 적절한 응답을 반환
+            System.err.println("공지 저장 중 오류 발생: " + e.getMessage());
+            throw new RuntimeException("공지 저장 중 오류가 발생했습니다.", e);
+        }
     }
+
     public ResNoticeDTO updateById(Long noticeId, ReqNoticeDTO reqNoticeDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User teacher = userService.findById(authentication.getName());
@@ -130,7 +150,7 @@ public class ClassNoticeService {
         if(fileList.isPresent()){
             for(ClassNoticeFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .originalName(files.getOriginalName())
+                        .savedName(files.getSavedName())
                         .repoType("classNotice")
                         .masterId(noticeId)
                         .build();
@@ -176,8 +196,7 @@ public class ClassNoticeService {
                 .build();
     }
     @Transactional
-    public List<ResNoticeDTO> findAll() {
-        User user = userService.getCurrentUser();
+    public List<ResNoticeDTO> findAll(User user) {
         List<ClassNotice> classNotices = classNoticeRepository.findAllByClassId(user.getClassInformation().getClassId());
 
         List<ResNoticeDTO> resNoticeDTOS = new ArrayList<>();

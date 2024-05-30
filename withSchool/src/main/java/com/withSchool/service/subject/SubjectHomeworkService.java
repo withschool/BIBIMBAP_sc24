@@ -6,9 +6,6 @@ import com.withSchool.dto.subject.ReqHomeworkCreateDTO;
 import com.withSchool.dto.subject.ReqHomeworkSubmitDTO;
 import com.withSchool.dto.subject.ResHomeworkDTO;
 import com.withSchool.dto.subject.ResHomeworkSubmitDTO;
-import com.withSchool.entity.classes.ClassHomework;
-import com.withSchool.entity.classes.ClassHomeworkSubmit;
-import com.withSchool.entity.classes.ClassHomeworkSubmitFile;
 import com.withSchool.entity.subject.*;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.file.SubjectHomeworkFileRepository;
@@ -158,7 +155,7 @@ public class SubjectHomeworkService {
         if(fileList.isPresent()){
             for(SubjectHomeworkFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .originalName(files.getOriginalName())
+                        .savedName(files.getSavedName())
                         .repoType("subjectHomework")
                         .masterId(homeworkId)
                         .build();
@@ -299,7 +296,7 @@ public class SubjectHomeworkService {
         if(fileList.isPresent()){
             for(SubjectHomeworkSubmitFile files : fileList.get()){
                 FileDeleteDTO dto = FileDeleteDTO.builder()
-                        .originalName(files.getOriginalName())
+                        .savedName(files.getSavedName())
                         .repoType("subjectHomeworkSubmit")
                         .masterId(homeworkSubmitId)
                         .build();

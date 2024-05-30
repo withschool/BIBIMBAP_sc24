@@ -137,12 +137,13 @@ public class User extends BaseEntity implements UserDetails {
         return true;
     }
 
-    public void changeUserInfo(String id, String password, String email, String phoneNumber, String address) {
-        this.id = id;
-        this.password = password;
+    public void changeUserInfo(String email, String phoneNumber, String address) {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
+    }
+    public void changeUserPassword(String password) {
+        this.password = password;
     }
 
     public ResUserDefaultDTO toResUserDefaultDTO(){
@@ -175,6 +176,7 @@ public class User extends BaseEntity implements UserDetails {
                 .id(this.getUsername())
                 .name(this.getName())
                 .email(this.getEmail())
+                .address(this.getAddress())
                 .phoneNumber(this.getPhoneNumber())
                 .sex(this.getSex())
                 .classId(classId)

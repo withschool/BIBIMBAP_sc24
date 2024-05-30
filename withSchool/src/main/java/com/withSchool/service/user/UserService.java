@@ -267,14 +267,14 @@ public class UserService {
         userRepository.save(user);
     }
   
-    public List<BasicUserInfoDTO> findAllClassInformation_ClassId(){
+    public List<ResUserUsercodeDTO> findAllClassInformation_ClassId(){
         User user = getCurrentUser();
         List<User> users = userRepository.findAllByClassInformation_ClassId(user.getClassInformation().getClassId());
 
-        List<BasicUserInfoDTO> dtos = new ArrayList<>();
+        List<ResUserUsercodeDTO> dtos = new ArrayList<>();
 
         for (User u : users) {
-            dtos.add(u.entityToBasicUserInfoDTO());
+            dtos.add(u.toResUserUsercodeDTO());
         }
 
         return dtos;

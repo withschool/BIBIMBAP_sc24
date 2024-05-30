@@ -13,15 +13,12 @@ import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
@@ -42,17 +39,15 @@ public class SubjectController {
         User user = userService.findById(authentication.getName());
         if (user == null) return null;
 
-        if (user.getAccountType() == 0 || user.getAccountType() == 2) {
+        if (user.getAccountType() == 0 || user.getAccountType() == 2) { // 교사 or 학생
             return ResponseEntity.ok().body(subjectService.findAllSugangByUser(user));
-        } else if (user.getAccountType() == 3 || user.getAccountType() == 4) {
+        } else if (user.getAccountType() == 3 || user.getAccountType() == 4) { // 어드민 or 슈어
             return ResponseEntity.ok().body(subjectService.findAllSubjectByUserSchool(user));
-        } else if (user.getAccountType() == 1) {
+        } else if (user.getAccountType() == 1) { //학부모
             if (childId == null) throw new RuntimeException("학생이 선택되지 않았습니다.");
 
             User child = userService.findByUserId(childId);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                    .body(subjectService.findAllSugangByUser(child));
+            return ResponseEntity.ok().body(subjectService.findAllSugangByUser(child));
         } else throw new RuntimeException("적절한 유저가 아닙니다.");
     }
 

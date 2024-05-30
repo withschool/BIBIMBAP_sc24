@@ -29,7 +29,7 @@ public class SchoolNoticeRepositoryTest {
         SchoolNoticeFile saved = schoolNoticeFileRepository.save(schoolNoticeFile);
 
         assertNotNull(saved.getSchoolNoticeFileId());
-        assertEquals("원래이름",saved.getOriginalName());
+        assertEquals("원래이름",saved.getSavedName());
         assertEquals("asdasdasdasdsa",saved.getFileUrl());
 
     }

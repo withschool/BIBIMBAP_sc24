@@ -29,6 +29,7 @@ public class SchoolInformationService {
                 schoolInformation.getOrgRdnma(),
                 schoolInformation.getOrgTelno(),
                 schoolInformation.getJuOrgNm(),
+                schoolInformation.getSdSchulCode(),
                 schoolInformation.getRegDate()
         )).collect(Collectors.toList());
     }

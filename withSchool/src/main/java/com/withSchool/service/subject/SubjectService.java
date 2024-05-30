@@ -2,10 +2,12 @@ package com.withSchool.service.subject;
 
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.subject.SubjectInfoDTO;
+import com.withSchool.entity.mapping.TeacherSubject;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.mapping.StudentSubject;
 import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
+import com.withSchool.repository.mapping.TeacherSubjectRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectRepository;
@@ -26,6 +28,7 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
+    private final TeacherSubjectRepository teacherSubjectRepository;
     private final UserService userService;
 
     public List<SubjectInfoDTO> findAllSubjectByUserSchool(User user) {
@@ -56,15 +59,25 @@ public class SubjectService {
     // 특정 유저의 수강 정보 가져오는 메서드
     @Transactional
     public List<SubjectInfoDTO> findAllSugangByUser(User user) {
-        List<StudentSubject> studentSubjects = studentSubjectRepository.findByStudent(user);
         List<Subject> subjects = new ArrayList<>();
         List<SubjectInfoDTO> subjectInfoDTOs = new ArrayList<>();
-
-        for (StudentSubject ss : studentSubjects) {
-            if (Objects.equals(ss.getSubject().getSchoolInformation().getSchoolId(), user.getSchoolInformation().getSchoolId())) {
-                subjects.add(ss.getSubject());
+        if(user.getAccountType() == 0){ // 학생
+            List<StudentSubject> studentSubjects = studentSubjectRepository.findByStudent(user);
+            for (StudentSubject ss : studentSubjects) {
+                if (Objects.equals(ss.getSubject().getSchoolInformation().getSchoolId(), user.getSchoolInformation().getSchoolId())) {
+                    subjects.add(ss.getSubject());
+                }
             }
         }
+        else if(user.getAccountType() == 2){ // 선생
+            List<TeacherSubject> teacherSubjects = teacherSubjectRepository.findByTeacher(user);
+            for (TeacherSubject ts : teacherSubjects) {
+                if (Objects.equals(ts.getSubject().getSchoolInformation().getSchoolId(), user.getSchoolInformation().getSchoolId())) {
+                    subjects.add(ts.getSubject());
+                }
+            }
+        }
+
 
         for (Subject s : subjects) {
             SubjectInfoDTO subjectInfoDTO = SubjectInfoDTO.builder()

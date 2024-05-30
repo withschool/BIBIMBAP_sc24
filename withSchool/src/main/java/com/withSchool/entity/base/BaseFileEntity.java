@@ -14,12 +14,17 @@ import org.hibernate.annotations.Comment;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseFileEntity extends BaseEntity {
-    @Column(name = "orignal_name", nullable = false)
-    @Comment("원본 파일 이름")
-    private String originalName;
+    @Column(name = "saved_name", nullable = false)
+    @Comment("저장 파일 이름")
+    private String savedName;
 
     @Column(name = "file_url", nullable = false)
     @Comment("파일 URI")
     private String fileUrl;
+
+    @Column(name = "orignal_name", nullable = false)
+    @Comment("원본 파일 이름")
+    private String originalName;
+
 
 }

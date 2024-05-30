@@ -84,7 +84,7 @@ public class SchoolNoticeServiceTest {
         verify(schoolNoticeFileRepository).save(captor.capture());
         SchoolNoticeFile captured = captor.getValue();
 
-        assertEquals("test.txt", captured.getOriginalName());
+        assertEquals("test.txt", captured.getSavedName());
         assertNotNull(captured.getFileUrl());
         assertEquals(schoolNotice.getSchoolNoticeId(), captured.getSchoolNotice().getSchoolNoticeId());
     }
