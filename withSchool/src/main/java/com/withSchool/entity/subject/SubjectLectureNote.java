@@ -1,6 +1,8 @@
 package com.withSchool.entity.subject;
 
 import com.withSchool.entity.base.BaseEntity;
+import com.withSchool.entity.base.BasePostEntity;
+import com.withSchool.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,18 +15,19 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class SubjectLectureNote extends BaseEntity {
+public class SubjectLectureNote extends BasePostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("강의노트 PK")
     private Long subjectLectureNoteId;
 
-    @Column(nullable = false)
-    @Comment("강의노트제목")
-    private String subjectTitle;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     @Comment("과목 PK")
     private Subject subject;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @Comment("사용자ID")
+    private User user;
 }

@@ -277,14 +277,19 @@ public class FileService {
         subjectHomeworkSubmitFileRepository.deleteAllBySubjectHomeworkSubmitId(dto.getMasterId());
     }
 
-    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
-        subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
-    }
-
     public void deletePostFile(FileDeleteDTO dto) {
         communityPostFileRepository.deleteAllByPostFileId(dto.getMasterId());
     }
     public String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
+    }
+    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
+        String repoType = dto.getRepoType();
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getOriginalName()));
+            subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
