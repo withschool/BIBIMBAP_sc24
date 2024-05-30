@@ -91,10 +91,10 @@
     </tr>
     <tr>
       <td align="center">Frontend</td>
-      <td align="center">Min DongHyun</td>
-      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Choi Hyunsu</td>
+      <td align="center">mysj923@ajou.ac.kr</td>
       <td align="center">Software</td>
-      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
+      <td align="center"><a href="https://github.com/HoshinoRipong"/>Hyunsu</td>
     </tr>
     <tr>
       <td align="center">Frontend</td>
