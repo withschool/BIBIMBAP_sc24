@@ -70,10 +70,10 @@
     <th>Github</th>
     <tr>
       <td align="center">Backend</td>
-      <td align="center">Min DongHyun</td>
-      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Lee GwonMin</td>
+      <td align="center"rnjsals0905@ajou.ac.kr</td>
       <td align="center">Software</td>
-      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
+      <td align="center"><a href="https://github.com/dradra0905"/>Gwonmin Lee</td>
     </tr>
     <tr>
       <td align="center">Backend</td>
