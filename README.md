@@ -98,10 +98,10 @@
     </tr>
     <tr>
       <td align="center">Frontend</td>
-      <td align="center">Min DongHyun</td>
-      <td align="center">dcmin123@ajou.ac.kr</td>
+      <td align="center">Changhyun Nam</td>
+      <td align="center">tabloni0719@ajou.ac.kr</td>
       <td align="center">Software</td>
-      <td align="center"><a href="https://github.com/mindongmindong"/>mindong</td>
+      <td align="center"><a href="https://github.com/TabloNi"/>Changhyun</td>
     </tr>
   </tbody>
 </table>
