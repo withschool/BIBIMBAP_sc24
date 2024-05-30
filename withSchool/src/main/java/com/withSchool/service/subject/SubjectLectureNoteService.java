@@ -191,7 +191,7 @@ public class SubjectLectureNoteService {
         if (files.isPresent()) {
             for (SubjectLectureNoteFile file : files.get()) {
                 FileDeleteDTO fileDeleteDTO = FileDeleteDTO.builder()
-                        .originalName(file.getOriginalName())
+                        .savedName(file.getSavedName())
                         .repoType("subjectLectureNote")
                         .masterId(lectureNoteId)
                         .build();

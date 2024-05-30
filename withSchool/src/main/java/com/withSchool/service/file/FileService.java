@@ -123,10 +123,10 @@ public class FileService {
                 saveSubjectHomeworkSubmitFile(dto, originalName, savedName, fileUrl);
                 break;
             case "subjectLectureNote":
-                saveSubjectLectureNoteFile(dto, originalName, savedName, fileUrl);;
+                saveSubjectLectureNoteFile(dto, originalName, savedName, fileUrl);
                 break;
             case "communityPost":
-                savePostFile(dto, originalName, savedName, fileUrl);;
+                savePostFile(dto, originalName, savedName, fileUrl);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid repository type: " + repoType);
@@ -286,7 +286,7 @@ public class FileService {
     public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
         String repoType = dto.getRepoType();
         try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getOriginalName()));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getSavedName()));
             subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
         } catch (Exception e) {
             e.printStackTrace();
