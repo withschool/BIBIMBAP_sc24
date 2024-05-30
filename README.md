@@ -94,7 +94,7 @@
       <td align="center">Choi Hyunsu</td>
       <td align="center">mysj923@ajou.ac.kr</td>
       <td align="center">Software</td>
-      <td align="center"><a href="https://github.com/HoshinoRipong"/>Hyunsu</td>
+      <td align="center"><a href="https://github.com/HosinoRipong"/>Hyunsu</td>
     </tr>
     <tr>
       <td align="center">Frontend</td>
