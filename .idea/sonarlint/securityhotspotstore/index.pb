@@ -67,3 +67,15 @@ XwithSchool/src/main/java/com/withSchool/repository/file/CommunityPostFileReposi
 `withSchool/src/main/java/com/withSchool/repository/file/SubjectHomeworkSubmitFileRepository.java,b\6\b6344d623defc2d7910c90da5969bb2daa317004
 }
 MwithSchool/src/main/java/com/withSchool/dto/user/ReqUpdateProjectTaskDTO.java,c\d\cd82ee41d905c4338bc4e9ff0ed645468d04a997
+t
+DwithSchool/src/main/java/com/withSchool/entity/user/UserImgFile.java,b\5\b5826be7be5cd9f2e13cabf25ff17c8ed23ac45c
+{
+KwithSchool/src/main/java/com/withSchool/controller/user/UserController.java,3\f\3f0c5fd9ea8c53490bcb48f52d4b25aaf400f161
+{
+KwithSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java,7\e\7e2ce73435da0168f4d196dd0b7d7710e874a083
+
+OwithSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java,d\1\d1af9fb9836a3ed126443f3d494082366a286480
+‚
+RwithSchool/src/main/java/com/withSchool/repository/user/UserImgFileRepository.java,a\8\a8e5049edb416d59d3adf6d06f0be588138b1e6b
+s
+CwithSchool/src/main/java/com/withSchool/dto/file/FileDeleteDTO.java,c\a\ca98a76dcf479e97b9dbc4d91cc0bd59e63639cc

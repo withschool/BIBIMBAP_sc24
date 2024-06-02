@@ -5,18 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__org_assertj_assertj_core_3_24_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/withSchool.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/withSchool.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/withSchool.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/withSchool.main.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/withSchool.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/withSchool.test.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/repository/file/CommunityPostFileRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/repository/file/CommunityPostFileRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/user/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/file/FileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/file/FileService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,8 +41,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -97,7 +92,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.WithSchoolApplication.executor": "Run",
-    "git-widget-placeholder": "kanban__board",
+    "git-widget-placeholder": "userImg",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Min Dong Hyeun/spring_study/BIBIMBAP_sc24",
     "node.js.detected.package.eslint": "true",
