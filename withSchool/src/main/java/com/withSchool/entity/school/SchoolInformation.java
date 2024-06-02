@@ -9,6 +9,7 @@ import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder

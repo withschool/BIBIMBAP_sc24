@@ -158,7 +158,7 @@ public class SchoolNoticeService {
                     .schoolInformation(schoolNotice.getSchoolInformation())
                     .build();
 
-             SchoolNotice resultNotice = schoolNoticeRepository.save(result);
+            SchoolNotice resultNotice = schoolNoticeRepository.save(result);
 
 
             // 여기에 해당 공지사항의 S3파일삭제 + db에 정보 삭제
