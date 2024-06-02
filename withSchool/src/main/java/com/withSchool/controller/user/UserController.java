@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
@@ -49,5 +50,11 @@ public class UserController {
         userUpdateService.updateUserPassword(dto);
 
         return ResponseEntity.ok().body("update success");
+    }
+    @PostMapping("/img")
+    @Operation(summary = "유저의 이미지를 수정하는 API")
+    public ResponseEntity<Void> updateUserImg(@ModelAttribute MultipartFile file){
+        userUpdateService.updateUserImg(file);
+        return ResponseEntity.ok().build();
     }
 }
