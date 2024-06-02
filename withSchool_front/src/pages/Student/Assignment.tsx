@@ -87,6 +87,7 @@ const Assignment = () => {
     const [selectedTab, setSelectedTab] = useState<any>('all');
     const [deletedNote, setDeletedNote] = useState<any>(null);
 
+
     const searchNotes = () => {
         if (selectedTab !== 'fav') {
             if (selectedTab !== 'all' || selectedTab === 'delete') {
