@@ -10,5 +10,5 @@ public interface CommunityPostFileRepository extends JpaRepository<PostFile,Long
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("DELETE FROM PostFile p WHERE p.post.postId = : postId")
-    void deleteAllByPostFileId(Long postId);
+    void deleteAllByPostId(Long postId);
 }

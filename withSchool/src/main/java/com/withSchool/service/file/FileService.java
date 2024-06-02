@@ -16,6 +16,7 @@ import com.withSchool.entity.subject.SubjectHomeworkFile;
 import com.withSchool.entity.subject.SubjectHomeworkSubmitFile;
 import com.withSchool.entity.subject.SubjectLectureNoteFile;
 import com.withSchool.entity.subject.SubjectNoticeFile;
+import com.withSchool.entity.user.ProjectTaskFile;
 import com.withSchool.repository.classes.ClassHomeworkRepository;
 import com.withSchool.repository.classes.ClassHomeworkSubmitRepository;
 import com.withSchool.repository.classes.ClassNoticeRepository;
@@ -26,6 +27,8 @@ import com.withSchool.repository.subject.SubjectHomeworkRepository;
 import com.withSchool.repository.subject.SubjectHomeworkSubmitRepository;
 import com.withSchool.repository.subject.SubjectLectureNoteRepository;
 import com.withSchool.repository.subject.SubjectNoticeRepository;
+import com.withSchool.repository.user.ProjectTaskFileRepository;
+import com.withSchool.repository.user.ProjectTaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,7 @@ public class FileService {
     private final SubjectHomeworkFileRepository subjectHomeworkFileRepository;
     private final SubjectHomeworkSubmitFileRepository subjectHomeworkSubmitFileRepository;
     private final CommunityPostFileRepository communityPostFileRepository;
+    private final ProjectTaskRepository projectTaskRepository;
 
     private final SchoolNoticeRepository schoolNoticeRepository;
     private final ClassNoticeRepository classNoticeRepository;
@@ -60,6 +64,7 @@ public class FileService {
     private final SubjectHomeworkRepository subjectHomeworkRepository;
     private final SubjectHomeworkSubmitRepository subjectHomeworkSubmitRepository;
     private final CommunityPostRepository communityPostRepository;
+    private final ProjectTaskFileRepository projectTaskFileRepository;
 
     @Value("${cloud.aws.credentials.bucket}")
     private String bucket;
@@ -128,10 +133,15 @@ public class FileService {
             case "communityPost":
                 savePostFile(dto, originalName, savedName, fileUrl);
                 break;
+            case "kanban":
+                saveTaskFile(dto,originalName,savedName,fileUrl);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid repository type: " + repoType);
         }
     }
+
+
     private void deleteFileMetadata(String repoType, FileDeleteDTO dto) {
         switch (repoType) {
             case "schoolNotice":
@@ -161,10 +171,14 @@ public class FileService {
             case "communityPost":
                 deletePostFile(dto);
                 break;
+            case "kanban":
+                deleteTaskFile(dto);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid repository type: " + repoType);
         }
     }
+
 
     private void saveSchoolNoticeFile(FileDTO dto,String originalName, String savedName, String fileUrl) {
         SchoolNoticeFile schoolNoticeFile = SchoolNoticeFile.builder()
@@ -249,6 +263,15 @@ public class FileService {
                 .build();
         communityPostFileRepository.save(postFile);
     }
+    private void saveTaskFile(FileDTO dto, String originalName, String savedName, String fileUrl) {
+        ProjectTaskFile projectTaskFile = ProjectTaskFile.builder()
+                .originalName(originalName)
+                .savedName(savedName)
+                .fileUrl(fileUrl)
+                .projectTask(projectTaskRepository.findById(dto.getMasterId()).get())
+                .build();
+        projectTaskFileRepository.save(projectTaskFile);
+    }
     public void deleteSchoolNoticeFile(FileDeleteDTO dto) {
         schoolNoticeFileRepository.deleteAllBySchoolNoticeId(dto.getMasterId());
     }
@@ -278,7 +301,10 @@ public class FileService {
     }
 
     public void deletePostFile(FileDeleteDTO dto) {
-        communityPostFileRepository.deleteAllByPostFileId(dto.getMasterId());
+        communityPostFileRepository.deleteAllByPostId(dto.getMasterId());
+    }
+    private void deleteTaskFile(FileDeleteDTO dto) {
+        projectTaskFileRepository.deleteAllByProjectTaskId(dto.getMasterId());
     }
     public String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
@@ -292,4 +318,5 @@ public class FileService {
             e.printStackTrace();
         }
     }
+
 }

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-<<<<<<< HEAD
-    <bytecodeTargetLevel>
-      <module name="withSchool" target="17" />
-      <module name="withSchool.main" target="17" />
-      <module name="withSchool.test" target="17" />
-    </bytecodeTargetLevel>
-=======
     <annotationProcessing>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
@@ -17,7 +10,10 @@
         <module name="withSchool.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="17" />
->>>>>>> c67bc06a1c0835420665405735e4bc54fec2f961
+    <bytecodeTargetLevel>
+      <module name="withSchool" target="17" />
+      <module name="withSchool.main" target="17" />
+      <module name="withSchool.test" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

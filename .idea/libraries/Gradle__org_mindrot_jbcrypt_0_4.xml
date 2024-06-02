@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: org.mindrot:jbcrypt:0.4" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.mindrot" artifactId="jbcrypt" version="0.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mindrot/jbcrypt/0.4/af7e61017f73abb18ac4e036954f9f28c6366c07/jbcrypt-0.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
