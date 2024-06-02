@@ -2,7 +2,7 @@ package com.withSchool.controller.user;
 
 import com.withSchool.dto.community.ReqCounselDefaultDTO;
 import com.withSchool.dto.community.ResCounselDefaultDTO;
-import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.service.community.CounselService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +72,7 @@ public class CounselController {
 
     @GetMapping("/partners")
     @Operation(summary = "현재 사용자의 상담 신청 대상을 불러오는 리스트")
-    public ResponseEntity<List<BasicUserInfoDTO>> showPartnersList(@RequestParam(required = false) Long childId){
+    public ResponseEntity<List<ResUserDefaultDTO>> showPartnersList(@RequestParam(required = false) Long childId){
         return ResponseEntity.ok().body(counselService.getPartners(childId));
     }
 }
