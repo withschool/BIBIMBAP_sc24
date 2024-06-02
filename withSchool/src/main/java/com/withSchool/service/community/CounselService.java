@@ -2,7 +2,7 @@ package com.withSchool.service.community;
 
 import com.withSchool.dto.community.ReqCounselDefaultDTO;
 import com.withSchool.dto.community.ResCounselDefaultDTO;
-import com.withSchool.dto.user.BasicUserInfoDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.community.Counsel;
 import com.withSchool.entity.mapping.StudentSubject;
 import com.withSchool.entity.mapping.TeacherSubject;
@@ -144,18 +144,18 @@ public class CounselService {
         return dtos;
     }
 
-    public List<BasicUserInfoDTO> getPartners(Long childId) {
+    public List<ResUserDefaultDTO> getPartners(Long childId) {
         log.info("getPartners");
 
         if(childId != null || userService.getCurrentUser().getAccountType() == 0) return getPartnersByStudents(childId);
         else throw new RuntimeException("No partners");
     }
 
-    public List<BasicUserInfoDTO> getPartnersByStudents(Long childId){
+    public List<ResUserDefaultDTO> getPartnersByStudents(Long childId){
         log.info("getPartnersByStudents");
 
-        List<BasicUserInfoDTO> response = new ArrayList<>();
-        Set<BasicUserInfoDTO> uniqueDTOs = new HashSet<>();
+        List<ResUserDefaultDTO> response = new ArrayList<>();
+        Set<ResUserDefaultDTO> uniqueDTOs = new HashSet<>();
 
         User user = (childId != null) ? userService.findByUserId(childId) : userService.getCurrentUser();
 
@@ -163,7 +163,7 @@ public class CounselService {
         if(classTeachers.isEmpty()) throw new RuntimeException("No Class Teacher");
 
         classTeachers.stream()
-                .map(User::entityToBasicUserInfoDTO)
+                .map(User::toResUserDefaultDTO)
                 .forEach(dto -> {
                     if (uniqueDTOs.add(dto)) {
                         response.add(dto);
@@ -176,7 +176,7 @@ public class CounselService {
             List<TeacherSubject> teacherSubjects = teacherSubjectRepository.findBySubject_SubjectId(subjectId);
             teacherSubjects.stream()
                     .map(TeacherSubject::getTeacher)
-                    .map(User::entityToBasicUserInfoDTO)
+                    .map(User::toResUserDefaultDTO)
                     .forEach(dto -> {
                         if (uniqueDTOs.add(dto)) {
                             response.add(dto);
