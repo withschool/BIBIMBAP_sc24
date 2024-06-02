@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/user/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/file/FileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/file/FileService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java" afterDir="false" />
     </list>

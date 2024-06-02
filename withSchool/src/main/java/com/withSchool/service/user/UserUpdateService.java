@@ -15,6 +15,8 @@ public interface UserUpdateService {
 
     void updateUserImg(MultipartFile file);
 
+    String getUserImg(Long userId);
+
     default User DtoToEntity(UserUpdateDTO dto) { // 클라이언트에서 받은 수정된 정보DTO들을 엔티티로 변환
         User user = User.builder()
                 .userId(dto.getUserId())
