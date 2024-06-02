@@ -69,12 +69,10 @@ useEffect(() => {
     const searchNotes = () => {
         if (selectedTab !== 'fav') {
             if (selectedTab !== 'all' || selectedTab === 'delete') {
-                setFilterdNotesList(notesList.filter((d) => d.tag === selectedTab));
             } else {
                 setFilterdNotesList(notesList);
             }
         } else {
-            setFilterdNotesList(notesList.filter((d) => d.isFav));
         }
     };
 
