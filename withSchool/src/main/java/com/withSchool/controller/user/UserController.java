@@ -57,4 +57,9 @@ public class UserController {
         userUpdateService.updateUserImg(file);
         return ResponseEntity.ok().build();
     }
+    @GetMapping("/img/{user-id}")
+    @Operation(summary = "현재 유저의 이미지를 조회하는 API")
+    public ResponseEntity<String> getUserImg(@PathVariable("user-id")Long userId){
+        return ResponseEntity.ok().body(userUpdateService.getUserImg(userId));
+    }
 }

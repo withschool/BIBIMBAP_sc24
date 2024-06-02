@@ -87,4 +87,12 @@ public class UserUpdateServiceImpl implements UserUpdateService {
             fileService.saveFile(fileDTO);
         }
     }
+    public String getUserImg(Long userId) {
+        Optional<UserImgFile> result = userImgFileRepository.findByUserId(userId);
+        if(result.isPresent()){
+            return result.get().getFileUrl();
+        }
+        return null;
+    }
+
 }
