@@ -1,0 +1,287 @@
+/* 
+// 05.Helper
+*/
+
+// Background color
+@each $color,
+$value in $theme-colors {
+    .text-#{$color} {
+        color: #{$value} !important;
+    }
+
+    .bg-#{$color} {
+        background-color: #{$value} !important;
+    }
+
+    .bg-soft-#{$color} {
+        background-color: rgba(($value), 0.12) !important;
+    }
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(to right, $primary 0%, $purple 100%);
+}
+
+
+// Shadow
+.shadow-sm {
+    box-shadow: $box-shadow-sm !important;
+}
+
+.shadow {
+    box-shadow: $box-shadow !important;
+}
+
+.shadow-lg {
+    box-shadow: $box-shadow-lg !important;
+}
+
+.text-lighten-warning {
+    color: rgba($warning, 0.50);
+}
+
+.text-white-70 {
+    color: rgba($white, 0.70);
+}
+
+// Font weight
+.font-weight-medium {
+    font-weight: 500;
+}
+
+.font-weight-semibold {
+    font-weight: 600;
+}
+
+.section {
+    padding-top: 100px;
+    padding-bottom: 100px;
+    position: relative;
+}
+
+// Bg overlay
+
+.bg-overlay {
+    background-color: $black;
+    opacity: 0.65;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.bg-overlay-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.bg-center {
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+// Play icon
+.play-icon-circle {
+    height: 52px;
+    width: 52px;
+    line-height: 48px;
+    text-align: center;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid $white;
+    color: $white;
+    transition: all 0.3s;
+
+    &:hover {
+        background-color: $white;
+        color: $primary;
+    }
+
+    &.play-icon-dark {
+        border: 2px solid $gray-700;
+        color: $gray-700;
+        transition: all 0.5s;
+
+        &:hover {
+            background: $primary;
+            border-color: $primary;
+            color: $white;
+        }
+    }
+}
+
+// Line height
+.line-height-1_6 {
+    line-height: 1.6;
+}
+
+.line-height-1_4 {
+    line-height: 1.4;
+}
+
+// Font size
+.font-size-12 {
+    font-size: 12px;
+}
+
+.font-size-13 {
+    font-size: 13px;
+}
+
+.font-size-14 {
+    font-size: 14px;
+}
+
+.font-size-15 {
+    font-size: 15px;
+}
+
+.font-size-16 {
+    font-size: 16px;
+}
+
+.font-size-17 {
+    font-size: 17px;
+}
+
+.font-size-18 {
+    font-size: 18px;
+}
+
+.font-size-19 {
+    font-size: 19px;
+}
+
+.font-size-20 {
+    font-size: 20px;
+}
+
+.font-size-21 {
+    font-size: 21px;
+}
+
+.font-size-22 {
+    font-size: 22px;
+}
+
+
+// Avatar
+
+.avatar-xxs {
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.avatar-xs {
+    height: 2rem;
+    width: 2rem;
+}
+
+.avatar-sm {
+    height: 3rem;
+    width: 3rem;
+}
+
+.avatar-md {
+    height: 4.5rem;
+    width: 4.5rem;
+}
+
+.avatar-lg {
+    height: 6rem;
+    width: 6rem;
+}
+
+.avatar-xl {
+    height: 7.5rem;
+    width: 7.5rem;
+}
+
+// Modal
+.modal {
+    .modal-dialog {
+        .btn-close {
+            width: 26px;
+            height: 26px;
+            background-color: #fff;
+            border-radius: 5px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 3;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        &:hover {
+            .btn-close {
+                opacity: 0.5;
+            }
+        }
+    }
+}
+
+//   subscribe form
+.subscribe-form {
+    form {
+        position: relative;
+        max-width: 500px;
+        margin: 0px auto;
+
+        .form-control {
+            padding: 15px 20px;
+            width: 100%;
+            height: 58px;
+            font-size: 17px;
+            border: none;
+            outline: none !important;
+            padding-right: 170px;
+            padding-left: 30px;
+            background-color: rgba($white, 0.9);
+            border-radius: 30px;
+        }
+
+        .btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 5px;
+            font-size: 16px;
+        }
+    }
+}
+
+.rounded-lg {
+    border-radius: $border-radius-lg !important;
+}
+
+.w-lg-75 {
+    width: 75%;
+}
+
+@media (max-width: 768px) {
+    .w-lg-75 {
+        width: 100%;
+    }
+}
+
+[data-bs-theme="dark"] {
+    .bg-light {
+        background-color: var(--bs-bg-light) !important;
+    }
+
+    .card {
+        background-color: var(--bs-bg-light);
+    }
+
+    .subscribe-form {
+        .form-control {
+            background-color: rgba($black, 0.9);
+        }
+    }
+}

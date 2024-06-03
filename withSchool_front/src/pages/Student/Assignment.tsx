@@ -286,7 +286,7 @@ const Assignment = () => {
                                     onClick={() => tabChanged('tag1')}
                                 >
                                     <IconSquareRotated className="fill-primary shrink-0" />
-                                    <div className="ltr:ml-3 rtl:mr-3">tag1</div>
+                                    <div className="ltr:ml-3 rtl:mr-3">국어</div>
                                 </button>
                                 <button
                                     type="button"
@@ -296,7 +296,7 @@ const Assignment = () => {
                                     onClick={() => tabChanged('tag2')}
                                 >
                                     <IconSquareRotated className="fill-warning shrink-0" />
-                                    <div className="ltr:ml-3 rtl:mr-3">tag2</div>
+                                    <div className="ltr:ml-3 rtl:mr-3">영어</div>
                                 </button>
                                 <button
                                     type="button"
@@ -306,7 +306,7 @@ const Assignment = () => {
                                     onClick={() => tabChanged('tag3')}
                                 >
                                     <IconSquareRotated className="fill-info shrink-0" />
-                                    <div className="ltr:ml-3 rtl:mr-3">tag3</div>
+                                    <div className="ltr:ml-3 rtl:mr-3">수학</div>
                                 </button>
                                 <button
                                     type="button"
@@ -316,7 +316,7 @@ const Assignment = () => {
                                     onClick={() => tabChanged('tag4')}
                                 >
                                     <IconSquareRotated className="fill-danger shrink-0" />
-                                    <div className="ltr:ml-3 rtl:mr-3">tag4</div>
+                                    <div className="ltr:ml-3 rtl:mr-3">사회</div>
                                 </button>
                             </div>
                         </PerfectScrollbar>

@@ -1,0 +1,64 @@
+/* 
+// 10. Features
+*/
+
+.features-img {
+    position: relative;
+    z-index: 1;
+}
+.dot-img-left {
+    position: absolute;
+    left: 0;
+    bottom: -50px;
+    opacity: 0.35;
+}
+.dot-img-right {
+    position: absolute;
+    right: 0;
+    bottom: -50px;
+    opacity: 0.35;
+}
+
+.form-bg {
+    .brand-logo {
+        .logo-light {
+            display: none;
+        }
+
+        .logo-dark {
+            display: inline-block;
+        }
+    }
+}
+
+[data-bs-theme=dark]{
+    .bg-account-pages {
+        background-image: url(../images/auth-bg-dark.png) !important;
+
+        .bottom-text{
+            color: rgba($white, 0.8);
+        }
+
+        .form-bg{
+            background-color: var(--bs-bg-light) !important;
+            color: rgba($white, 0.7);
+
+            .brand-logo{
+                .logo-dark{
+                    display: none;
+                }
+                .logo-light{
+                    display: inline-block;
+                }
+            }
+
+            a{
+                color: rgba($white, 0.8) !important;
+            }
+        }
+    }
+
+    .form-check-input{
+        border-color: $gray-700;
+    }
+}

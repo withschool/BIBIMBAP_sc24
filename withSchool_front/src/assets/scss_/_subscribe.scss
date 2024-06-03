@@ -1,0 +1,52 @@
+/* 
+// 12. Subscribe
+*/
+
+.subscribe-icon {
+    &:after {
+        content: "\F415";
+        font-family: "Material Design Icons";
+        position: absolute;
+        font-size: 24px;
+        right: 0;
+        color: $warning;
+        bottom: 50%;
+        transform: translateY(50%);
+    }
+}
+
+.subscribe-form {
+    input {
+        padding: 13px 20px;
+        width: 100%;
+        font-size: 17px;
+        color: $dark !important;
+        border: none;
+        outline: none !important;
+        padding-right: 180px;
+        padding-left: 30px;
+        background-color: rgba($white, 0.85);
+        border-radius: 30px;
+        box-shadow: 0 3px 8px rgba($black, 0.1);
+        &::placeholder {
+            color: lighten($muted, 10%);
+            font-size: 15px;
+        }
+    }
+    .btn {
+        position: absolute;
+        right: 0px;
+        outline: none !important;
+        border-radius: 30px;
+        padding: 13px 38px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        font-size: 16px;
+        box-shadow: none !important;
+    }
+    form {
+        position: relative;
+        max-width: 600px;
+        margin: 0px auto;
+    }
+}

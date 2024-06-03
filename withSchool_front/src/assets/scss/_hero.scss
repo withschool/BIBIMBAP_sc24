@@ -1,0 +1,344 @@
+/* 
+// 08.Hero
+*/
+
+// ***** Hero 1 *****// 
+.hero-1 {
+    padding: 150px 0 180px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+// Bottom shape
+.hero-bottom-shape {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.shape-light {
+    display: block;
+}
+
+.shape-dark {
+    display: none;
+}
+
+.home-modal {
+    border: 0;
+    background-color: transparent;
+
+    .btn-close {
+        color: $white;
+        width: 24px;
+        height: 24px;
+        background: rgba($white, 0.2);
+        box-shadow: none;
+        border-radius: 7px;
+        z-index: 3;
+        opacity: 1;
+
+        &:hover,
+        &:focus {
+            opacity: 0.8;
+        }
+    }
+
+    video {
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+.video-box {
+    width: 100%;
+}
+
+// ***** Hero 2 *****// 
+.hero-2 {
+    padding: 150px 0 90px;
+    // background-position: center center;
+    background-size: cover;
+
+    .custom-search {
+        width: 90%;
+
+        .form-control {
+            height: 52px;
+            padding: 10px 66px 10px 20px;
+
+            &::placeholder {
+                font-size: 15px;
+            }
+        }
+
+        .btn {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            padding: 8px !important;
+            transform: translateY(-50%);
+            z-index: 4;
+        }
+    }
+}
+
+// ***** Hero 3 *****//
+.hero-3 {
+    padding: 200px 0 180px;
+
+    .hero-3-title {
+        font-size: 50px;
+    }
+}
+
+// ***** Hero 4 *****//
+.hero-4 {
+    padding: 280px 0 220px;
+
+    .play-icon-circle {
+        height: 52px;
+        width: 52px;
+        line-height: 52px;
+        background: $white;
+        color: $primary;
+        border: none;
+        box-shadow: 0 0 0 10px rgba($white, 0.2);
+
+        &:hover {
+            box-shadow: 0 0 0 15px rgba($white, 0.15);
+        }
+    }
+}
+
+// ***** Hero 5 *****//
+.hero-5 {
+    padding: 130px 0 80px;
+
+    .hero-5-img-content {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 1;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+
+        .play-icon-circle {
+            &:hover {
+                box-shadow: 0 0 0 12px rgba($white, 0.12);
+            }
+        }
+    }
+        .rocket-image {
+            .img-dark {
+                display: inline-block;
+            }
+    
+            .img-light {
+                display: none;
+            }
+        }
+}
+
+// ***** Hero 6 *****//
+.hero-6 {
+    padding: 160px 0 120px;
+
+    .hero-6-title {
+        font-size: 48px;
+    }
+}
+
+// ***** Hero 7 *****//
+.hero-7 {
+    padding: 210px 0 170px;
+
+    .hero-7-title {
+        font-size: 48px;
+    }
+
+    .form-bg{
+        background-color: var(--bs-bg-light);
+    }
+}
+
+// ***** Hero 8 *****//
+.hero-8 {
+    padding: 280px 0 300px;
+
+    .hero-8-title {
+        font-size: 48px;
+    }
+}
+
+// ***** Hero 9 *****//
+.hero-9 {
+    padding: 320px 0 310px;
+
+    .hero-9-title {
+        font-size: 48px;
+    }
+}
+
+// ***** Responsive *****// 
+@media (max-width: 576px) {
+    .hero-1 {
+        .video-play-icon {
+            display: inline-block;
+            margin-top: 12px;
+        }
+    }
+
+    .hero-2 {
+        .custom-search {
+            width: 100%;
+        }
+    }
+
+    .hero-3 {
+        .hero-3-title {
+            font-size: 30px;
+        }
+
+        .subtitle {
+            width: 100% !important;
+        }
+    }
+
+    .hero-6 {
+        padding: 130px 0 60px;
+
+        .hero-6-title {
+            font-size: 38px;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .w-lg-75 {
+        width: 100%;
+    }
+
+    .img-md-responsive {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .hero-1 {
+        padding: 100px 0 50px;
+    }
+
+    .hero-3 {
+        padding: 120px 0 80px;
+    }
+
+    .hero-4 {
+        padding: 120px 0 70px;
+
+        .play-icon-circle {
+
+            background: $primary;
+            color: $white;
+            box-shadow: 0 0 0 10px rgba($primary, 0.15);
+
+            &:hover {
+                box-shadow: 0 0 0 15px rgba($primary, 0.1);
+            }
+        }
+    }
+
+    .hero-7 {
+        padding: 140px 0 80px;
+    }
+}
+
+@media (max-width: 991px) {
+    .img-md-responsive {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .hero-4 {
+        padding: 120px 0 60px;
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        .bg-overlay-img {
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    }
+}
+
+
+@media (max-width: 1024px) {
+    .img-xl-responsive {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .hero-8,
+    .hero-9 {
+        padding: 190px 0 130px;
+    }
+}
+
+
+[data-bs-theme="dark"] {
+    .shape-light {
+        display: none;
+    }
+
+    .shape-dark {
+        display: block;
+    }
+
+    .hero-2 {
+        background: var(--bs-secondary-bg) !important;
+    }
+
+    .hero-3 {
+        background-image: url(../images/hero-3-bg-dark.png) !important;
+    }
+
+    .hero-4{
+        .bg-overlay-img{
+            background-image: url(../images/hero-4-overlay-dark.png) !important;
+        }
+    }
+
+    .hero-5{
+        background-image: url(../images/hero-5-bg-dark.png) !important;
+
+        .rocket-image{
+            .img-dark{
+                display: none !important;
+            }
+            .img-light{
+                display: inline-block !important;
+            }
+        }
+    }
+}
+
+[data-bs-theme="dark"][class="home-4"]{
+    .navbar.navbar-custom{
+        background-color: var(--bs-navbar-bg) !important;
+    }
+}

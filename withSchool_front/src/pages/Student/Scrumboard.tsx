@@ -195,7 +195,7 @@ const Scrumboard = () => {
 
     const saveTask = () => {
         if (!paramsTask.title) {
-            showMessage('Title is required.', 'error');
+            showMessage('제목이 없습니다.', 'error');
             return false;
         }
         const project: any = projectList.find((d: any) => d.id === paramsTask.projectId);

@@ -21,7 +21,6 @@ const Calendar = () => {
         let month = dt.getMonth() + 1 + add;
         const str = (month < 10 ? '0' + month : month).toString();
         return str;
-        // return dt.getMonth() < 10 ? '0' + month : month;
     };
     const [events, setEvents] = useState<any>([
         {
@@ -171,7 +170,7 @@ const Calendar = () => {
                 setEvents(dataevent);
             });
         }
-        showMessage('Event has been saved successfully.');
+        showMessage('일정 생성이 완료되었습니다.');
         setIsAddEventModal(false);
     };
     const startDateChange = (event: any) => {

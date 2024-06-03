@@ -1,0 +1,33 @@
+/* 
+// 12. Team
+*/
+
+.team-box {
+    .team-social-item {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba($black, 0.4);
+        transform: translateY(60px);
+        transition: all 0.5s;
+        .team-social-icon {
+            color: $white;
+            transition: all 0.2s;
+        }
+    }
+    &:hover {
+        .team-social-item {
+            transform: translateY(0px);
+        }
+    }
+}
+@each $color, $value in $theme-colors {
+    .team-social-icon {
+        &:hover {
+            &.h-#{$color} {
+                color: #{$value};
+            }
+        }
+    }
+}

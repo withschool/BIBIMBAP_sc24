@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface SchoolInformationRepository extends JpaRepository<SchoolInformation, Long> {
 
     Optional<SchoolInformation> findByAtptOfcdcScCodeAndSdSchulCode(String atptOfcdcScCode, String sdSchulCode);
+
 }

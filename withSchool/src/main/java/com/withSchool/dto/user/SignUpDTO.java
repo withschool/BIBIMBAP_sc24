@@ -2,7 +2,6 @@ package com.withSchool.dto.user;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -16,8 +15,8 @@ public class SignUpDTO {
     private Boolean sex;
     private String phoneNumber;
     private String address;
-    private LocalDateTime birthDate;
+    private String birthDate;
+
     private int accountType;
     private String userCode;
-    private String parentCode;
 }

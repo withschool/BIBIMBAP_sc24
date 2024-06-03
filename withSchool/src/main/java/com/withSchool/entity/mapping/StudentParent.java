@@ -1,19 +1,24 @@
 package com.withSchool.entity.mapping;
 
+import com.withSchool.dto.mapping.ResStudentParentDefaultDTO;
+import com.withSchool.dto.user.ResUserMappingParentDTO;
 import com.withSchool.entity.base.BaseEntity;
+import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
+
+import java.util.Optional;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Table(name = "student_parent")
 public class StudentParent extends BaseEntity {
     @Id
@@ -31,4 +36,25 @@ public class StudentParent extends BaseEntity {
     @JoinColumn(name = "parent_id", nullable = false)
     @Comment("부모 PK")
     private User parent;
+
+    public ResStudentParentDefaultDTO toResStudentParentDefaultDTO() {
+        User user = this.getStudent();
+        SchoolInformation schoolInformation = user.getSchoolInformation();
+
+        String schoolName = Optional.ofNullable(schoolInformation)
+                .map(SchoolInformation::getSchulNm)
+                .orElse(null);
+
+        return ResStudentParentDefaultDTO.builder()
+                .studentParentId(this.getStudentParentId())
+                .regDate(this.getRegDate())
+                .user(ResUserMappingParentDTO.builder()
+                        .userId(user.getUserId())
+                        .name(user.getName())
+                        .birthdate(user.getBirthDate())
+                        .schoolName(schoolName)
+                        .userName(user.getUsername())
+                        .build())
+                .build();
+    }
 }
