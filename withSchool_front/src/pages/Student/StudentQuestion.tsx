@@ -384,9 +384,9 @@ const StudentQuestion = () => {
                                                 <button type="button" className="btn btn-outline-danger" onClick={() => setAddTaskModal(false)}>
                                                     취소
                                                 </button>
-                                                <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
+                                                {/* <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
                                                     {params.id ? '저장' : '저장'}
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </div>
                                     </Dialog.Panel>
