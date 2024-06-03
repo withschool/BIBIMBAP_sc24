@@ -28,7 +28,8 @@ const SubjectNotice = lazy(() => import('../pages/Teacher/SubjectNotice'));
 const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
 const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
 const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
-const ChooseSubject = lazy(() => import('../pages/Teacher/ChooseSubject'));
+const ChooseSubjectStudent = lazy(() => import('../pages/Student/ChooseSubjectStudent'));
+const ChooseSubjectTeacher = lazy(() => import('../pages/Teacher/ChooseSubjectTeacher'));
 const CounselTeacherAssign = lazy(() => import('../pages/Teacher/CounselTeacherAssign'));
 const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherList'));
 const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
@@ -154,8 +155,7 @@ const routes = [
     },
     {
         path: '/teacher/subject/choose',
-        element: <ChooseSubject />,
-
+        element: <ChooseSubjectTeacher />,
     },
     {
         path: '/teacher/subject/homework',
@@ -219,6 +219,12 @@ const routes = [
         path: '/parent/studentinfo',
         element: <StudentInfo />,
     },
+
+    {
+        path: '/student/subject/choose',
+        element: <ChooseSubjectStudent />,
+    },
+
     {
         path: '/parent/schoolinfo',
         element: <SchoolInfo />,
