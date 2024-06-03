@@ -34,8 +34,8 @@ const CounselTeacherAssign = lazy(() => import('../pages/Teacher/CounselTeacherA
 const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherList'));
 const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
 const Homework = lazy(() => import('../pages/Teacher/Homework'));
-const Score = lazy(() => import('../pages/Teacher/Score'));
-const ScoreClass = lazy(() => import('../pages/Teacher/ScoreClass'))
+// const Score = lazy(() => import('../pages/Teacher/Score'));
+// const ScoreClass = lazy(() => import('../pages/Teacher/ScoreClass'))
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
@@ -53,11 +53,8 @@ const Counsel = lazy(() => import('../pages/Student/Counsel'));
 const StudentQuestion = lazy(() => import('../pages/Student/StudentQuestion'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
 const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
-<<<<<<< HEAD
-=======
 const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
 
->>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -66,7 +63,6 @@ const Accordians = lazy(() => import('../pages/Components/Accordians'));
 const Tables = lazy(() => import('../pages/Components/Tables'));
 const Modals = lazy(() => import('../pages/Components/Modals'));
 const Notification = lazy(() => import('../pages/Components/Notification'));
-const SweetAlert = lazy(() => import('../pages/Components/SweetAlert'));
 
 
 // Elements
@@ -163,11 +159,11 @@ const routes = [
         path: '/teacher/subject/choose',
         element: <ChooseSubjectTeacher />,
     },
-    {
-        path: '/teacher/class/watchgrade',
-        element: <ScoreClass />,
+    // {
+    //     path: '/teacher/class/watchgrade',
+    //     element: <ScoreClass />,
 
-    },
+    // },
     {
         path: '/teacher/subject/homework',
         element: <Homework />,
@@ -189,11 +185,11 @@ const routes = [
         element: <LectureNote />,
 
     },
-    {
-        path: '/teacher/subject/grade',
-        element: <Score />,
+    // {
+    //     path: '/teacher/subject/grade',
+    //     element: <Score />,
 
-    },
+    // },
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
@@ -320,10 +316,6 @@ const routes = [
     {
         path: '/components/Notification',
         element: <Notification />,
-    },
-    {
-        path: '/components/SweetAlert',
-        element: <SweetAlert />,
     },
 
     //Elements
