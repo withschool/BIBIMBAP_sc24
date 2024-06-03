@@ -129,19 +129,14 @@ public class SubjectService {
     public SubjectInfoDTO findById(Long subjectId) {
         Optional<Subject> subject = subjectRepository.findById(subjectId);
 
-        if (subject.isPresent()) {
-            SubjectInfoDTO subjectInfoDTO = SubjectInfoDTO.builder()
-                    .subjectId(subject.get().getSubjectId())
-                    .subjectName(subject.get().getSubjectName())
-                    .semester(subject.get().getSemester())
-                    .year(subject.get().getYear())
-                    .grade(subject.get().getGrade())
-                    .regDate(subject.get().getRegDate())
-                    .build();
-
-            return subjectInfoDTO;
-        }
-        return null;
+        return subject.map(value -> SubjectInfoDTO.builder()
+                .subjectId(value.getSubjectId())
+                .subjectName(value.getSubjectName())
+                .semester(value.getSemester())
+                .year(value.getYear())
+                .grade(value.getGrade())
+                .regDate(value.getRegDate())
+                .build()).orElse(null);
     }
 
     public void deleteById(Long subjectId) {
