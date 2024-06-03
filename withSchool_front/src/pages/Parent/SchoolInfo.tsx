@@ -177,17 +177,6 @@ const SchoolInfo = () => {
                                         className={`${selected ? 'bg-warning text-white !outline-none' : ''}
                                             before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
                                     >
-                                        <IconPhone className="ltr:mr-2 rtl:ml-2" />
-                                        학사일정
-                                    </button>
-                                )}
-                            </Tab>
-                            <Tab as={Fragment}>
-                                {({ selected }) => (
-                                    <button
-                                        className={`${selected ? 'bg-warning text-white !outline-none' : ''}
-                                            before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
-                                    >
                                         <IconHome className="ltr:mr-2 rtl:ml-2" />
                                         기본정보
                                     </button>
@@ -399,22 +388,6 @@ const SchoolInfo = () => {
                                             )}
                                         </div>
                                     )}
-                                </div>
-                            </Tab.Panel>
-                            <Tab.Panel>
-                                <div>
-                                    <div className="flex items-start pt-5">
-                                        <div className="h-20 w-20 flex-none ltr:mr-4 rtl:ml-4">
-                                            <img
-                                                src="/assets/images/profile-34.jpeg"
-                                                alt="img"
-                                                className="m-0 h-20 w-20 rounded-full object-cover ring-2 ring-[#ebedf2] dark:ring-white-dark"
-                                            />
-                                        </div>
-                                        <div className="flex-auto">
-                                            <h1>구현중입니닷</h1>
-                                        </div>
-                                    </div>
                                 </div>
                             </Tab.Panel>
                             <Tab.Panel>

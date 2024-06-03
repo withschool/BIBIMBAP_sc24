@@ -25,11 +25,17 @@ const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
 const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
 const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
 const ChooseSubject = lazy(() => import('../pages/Teacher/ChooseSubject'));
+const CounselTeacherAssign = lazy(() => import('../pages/Teacher/CounselTeacherAssign'));
+const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherList'));
+const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
+const Homework = lazy(() => import('../pages/Teacher/Homework'));
+const Score = lazy(() => import('../pages/Teacher/Score'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
 const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'));
 const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'));
+const CounselParent = lazy(() => import('../pages/Parent/CounselParent'));
 
 //Student
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
@@ -38,6 +44,7 @@ const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
 const Calendar = lazy(() => import('../pages/Student/Calendar'));
 const Counsel = lazy(() => import('../pages/Student/Counsel'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
+const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
 const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
 
 
@@ -140,7 +147,32 @@ const routes = [
         element: <ChooseSubject />,
 
     },
+    {
+        path: '/teacher/subject/homework',
+        element: <Homework />,
 
+    },
+    {
+
+        path: '/teacher/counsel/view',
+        element: <CounselTeacherList />,
+
+    },
+    {
+        path: '/teacher/counsel/apply',
+        element: <CounselTeacherAssign />,
+
+    },
+    {
+        path: '/teacher/subject/lecturenote',
+        element: <LectureNote />,
+
+    },
+    {
+        path: '/teacher/subject/grade',
+        element: <Score />,
+
+    },
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
@@ -167,7 +199,10 @@ const routes = [
         path: '/student/counsel',
         element: <Counsel />,
     },
-
+    {
+        path: '/student/lecturenote',
+        element: <LectureNoteStudent />,
+    },
 
 
     {
@@ -179,11 +214,15 @@ const routes = [
         element: <SchoolInfo />,
     },
     {
+        path: '/parent/counsel',
+        element: <CounselParent />,
+    },
+    {
         path: '/student/scrumboard',
         element: <Scrumboard />,
     },
     {
-        path: '/student/assignment',
+        path: '/student/homework',
         element: <Assignment />,
     },
 

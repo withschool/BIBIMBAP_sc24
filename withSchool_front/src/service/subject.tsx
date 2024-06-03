@@ -149,3 +149,132 @@ export const getSubjectInfo = async (subjectId: string | null): Promise<any> => 
         throw error;
     }
 }
+
+export const getLectureNoteList = async (subjectId: string | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects/lecture-notes/bySubject/${subjectId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+interface LectureNoteBody {
+    title: string;
+    subjectId: string | null;
+    file: string;
+}
+
+export const loadLectureNote = async (title: string, subjectId: string | null, file: string): Promise<any> => {
+    try {
+        const body: LectureNoteBody= {
+            title,
+            subjectId,
+            file
+        };
+        const response = await fetch(`${url}/subjects/lecture-notes`, {
+            method: 'POST',
+             body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+export const updateLectureNote = async (formData: FormData, id: string): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects/lecture-notes/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: formData,
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+export const deleteLectureNote = async (id: string): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects/lecture-notes/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+
+export const getStudentList = async (subjectId: string | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/sugangs/${subjectId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
