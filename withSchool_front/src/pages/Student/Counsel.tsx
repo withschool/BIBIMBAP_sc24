@@ -27,6 +27,7 @@ import IconX from '../../components/Icon/IconX';
 import IconRestore from '../../components/Icon/IconRestore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 
 const Counsel = () => {
     const dispatch = useDispatch();
@@ -91,9 +92,10 @@ const Counsel = () => {
 
     const tryRegisterCounsel = () => {
         console.log(params.title);
-        console.log(selectedDate);
+        console.log(format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
         console.log(teacherId);
-        registerCounsel(teacherId, params.title, selectedDate);
+        registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+        setAddTaskModal(false);
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
@@ -351,6 +353,9 @@ const Counsel = () => {
                                             <div className="mb-5">
                                                 <label htmlFor="assignee">대상</label>
                                                 <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
+                                                <option >
+                                                            선생님을 선택하세요.
+                                                </option>
                                                 {teacherList.length > 0 ? (
                                                     teacherList.map((teacher) => (
                                                         <option key={teacher.userId} value={teacher.userId}>
@@ -368,7 +373,7 @@ const Counsel = () => {
                                                     <DatePicker
                                                         selected={selectedDate}
                                                         onChange={(date : any) => setSelectedDate(date)}
-                                                        dateFormat="yyyy/MM/dd"
+                                                        dateFormat="yyyy-MM-dd"
                                                         placeholderText="날짜를 선택하세요"
                                                         className="form-input"/>
                                                 </div>

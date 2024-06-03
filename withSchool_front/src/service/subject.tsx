@@ -271,3 +271,53 @@ export const getStudentList = async (subjectId: string | null): Promise<any> => 
         throw error;
     }
 }
+
+export const enrollScore = async (type: String, userScoreList : any[]): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/sugangs/scores`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                "type" : type,
+                "userScoreList" : userScoreList
+            })
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+export const getStudentScoreParent = async (subjectId : String, childId: string | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/sugangs/${subjectId}/scores?childId=${childId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
