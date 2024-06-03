@@ -1,8 +1,11 @@
 package com.withSchool.controller;
 
+import com.withSchool.dto.school.ReqApplicationDefaultDTO;
+import com.withSchool.dto.school.ResApplicationDefaultDTO;
 import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.dto.user.*;
 import com.withSchool.entity.user.User;
+import com.withSchool.service.school.SchoolApplicationService;
 import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.user.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +21,6 @@ import com.withSchool.JWT.JwtToken;
 import com.withSchool.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,6 +36,8 @@ public class BasicController {
     private final SchoolInformationService schoolInformationService;
     private final JwtTokenProvider jwtTokenProvider;
     private final NotificationService notificationService;
+    private final SchoolApplicationService schoolApplicationService;
+
 
     @PostMapping("/pre-sign-up")
     @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")
@@ -124,6 +128,12 @@ public class BasicController {
     @GetMapping("/connectionTest")
     public String ct() {
         return "connection test success";
+    }
+
+    @PostMapping("/schools/applications")
+    @Operation(summary = "학교 신청서 제출")
+    public ResponseEntity<ResApplicationDefaultDTO> submitApplication(@RequestBody ReqApplicationDefaultDTO reqApplicationDefaultDTO) {
+        return ResponseEntity.ok().body(schoolApplicationService.save(reqApplicationDefaultDTO));
     }
 
 }

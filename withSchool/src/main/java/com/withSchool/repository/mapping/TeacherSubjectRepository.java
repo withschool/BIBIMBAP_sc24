@@ -1,6 +1,5 @@
 package com.withSchool.repository.mapping;
 
-import com.withSchool.entity.mapping.StudentSubject;
 import com.withSchool.entity.mapping.TeacherSubject;
 import com.withSchool.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +14,6 @@ public interface TeacherSubjectRepository extends JpaRepository<TeacherSubject,L
 
     @Query("SELECT ts FROM TeacherSubject ts WHERE ts.teacher = :teacher")
     List<TeacherSubject> findByTeacher(@Param("teacher") User teacher);
+
+    List<TeacherSubject> findBySubject_SubjectId(Long subjectId);
 }

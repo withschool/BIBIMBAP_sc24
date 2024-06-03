@@ -25,8 +25,6 @@ public class UserUpdateServiceTest {
     public void updateUserInfoTest(){
         UserUpdateDTO dto = UserUpdateDTO.builder()
                 .userId(18L)
-                .id("id new")
-                .password(passwordEncoder.encode("newpassword"))
                 .email("newemail@ajou.ac.kr")
                 .phoneNumber("01012345678")
                 .address("new address")

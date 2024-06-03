@@ -9,6 +9,7 @@ import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -120,5 +121,12 @@ public class SchoolInformation extends BaseEntity {
     @Column(name = "LOAD_DTM")
     @Comment("수정일자")
     private String loadDtm;
+
+    @Comment("""
+            결제 상태
+            0 - 결제 안됨
+            1 - 결제 됨""")
+    @Column(columnDefinition = "int default 0")
+    private int paymentState;
 
 }

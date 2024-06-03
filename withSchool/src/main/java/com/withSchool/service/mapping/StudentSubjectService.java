@@ -124,8 +124,8 @@ public class StudentSubjectService {
         return response;
     }
 
-    public ResStudentSubjectDefaultDTO findOnesScore(Long subjectId) {
-        User currentUser = userService.getCurrentUser();
+    public ResStudentSubjectDefaultDTO findOnesScore(Long subjectId, Long childId) {
+        User currentUser = (childId != null) ? userService.findByUserId(childId) : userService.getCurrentUser();
         StudentSubject studentSubject = studentSubjectRepository.findByUser_UserIdAndSubject_SubjectId(currentUser.getUserId(), subjectId)
                 .orElseThrow(() -> new RuntimeException("There is no appropriate data"));
 
