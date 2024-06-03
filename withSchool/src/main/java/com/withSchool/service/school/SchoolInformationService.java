@@ -30,6 +30,7 @@ public class SchoolInformationService {
                 schoolInformation.getOrgTelno(),
                 schoolInformation.getJuOrgNm(),
                 schoolInformation.getSdSchulCode(),
+                schoolInformation.getPaymentState(),
                 schoolInformation.getRegDate()
         )).collect(Collectors.toList());
     }
