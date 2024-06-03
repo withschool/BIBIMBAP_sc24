@@ -271,7 +271,7 @@ useEffect(() => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {studentList.map((data) => {
+                                        {/* {studentList.map((data) => {
                                             return (
                                                 <tr key={data.userId}>
                                                     <td>
@@ -282,7 +282,7 @@ useEffect(() => {
                                                     </td>
                                                 </tr>
                                             );
-                                        })}
+                                        })} */}
                                     </tbody>
                                 </table>
                             </div>
@@ -304,7 +304,7 @@ useEffect(() => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {studentList.map((data) => {
+                                        {/* {studentList.map((data) => {
                                             return (
                                                 <tr key={data.userId}>
                                                     <td>
@@ -315,7 +315,7 @@ useEffect(() => {
                                                     </td>
                                                 </tr>
                                             );
-                                        })}
+                                        })} */}
                                     </tbody>
                                 </table>
                             </div>
@@ -337,7 +337,7 @@ useEffect(() => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {studentList.map((data) => {
+                                        {/* {studentList.map((data) => {
                                             return (
                                                 <tr key={data.userId}>
                                                     <td>
@@ -348,7 +348,7 @@ useEffect(() => {
                                                     </td>
                                                 </tr>
                                             );
-                                        })}
+                                        })} */}
                                     </tbody>
                                 </table>
                             </div>

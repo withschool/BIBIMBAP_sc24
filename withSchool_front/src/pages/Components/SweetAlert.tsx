@@ -126,7 +126,7 @@ const SweetAlert = () => {
                 customClass: 'sweet-alerts',
             });
         } else if (type === 7) {
-            let timerInterval: string | number | NodeJS.Timer | undefined;
+            let timerInterval: string | number | undefined;
             Swal.fire({
                 title: 'Auto close alert!',
                 html: 'I will close in <b></b> milliseconds.',
@@ -140,7 +140,7 @@ const SweetAlert = () => {
                     }, 100);
                 },
                 willClose: () => {
-                    clearInterval(timerInterval);
+                    // clearInterval(timerInterval);
                 },
             }).then((result) => {
                 if (result.dismiss === Swal.DismissReason.timer) {
