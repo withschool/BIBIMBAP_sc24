@@ -460,14 +460,9 @@ const Sidebar = () => {
                                                 <NavLink to="/super/home">{t('학교 목록')}</NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to="/analytics">{t('공지 작성하기')}</NavLink>
+                                                <NavLink to="/super/apply">{t('학교 신청 관리')}</NavLink>
                                             </li>
-                                            <li>
-                                                <NavLink to="/finance">{t('메뉴 3')}</NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to="/crypto">{t('메뉴 4')}</NavLink>
-                                            </li>
+                                       
                                         </ul>
                                     </AnimateHeight>
                                 </li>

@@ -8,7 +8,7 @@ import { Col, Container, Form, Input, Label, Row } from "reactstrap";
 //import images
 import contact from "../assets/images/contact.png";
 
-import { submitSchoolApplication } from '../service/school';
+import { submitSchoolApplication } from '../service/apply';
 
 
 interface ContactState {

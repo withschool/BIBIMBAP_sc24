@@ -44,7 +44,7 @@ export const formatDate = (dateString: string): string => {
     const hour = dateString.slice(3, 4);
     const minute = dateString.slice(4, 5);
 
-    return `${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분`;
+    return `${year}년 ${month}월 ${day}일`;
 };
 
 const SchoolList = () => {
@@ -253,19 +253,7 @@ const SchoolList = () => {
 
     return (
         <div>
-            <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-                <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
-                    <IconBell />
-                </div>
-                <span className="ltr:mr-3 rtl:ml-3">Documentation: </span>
-                <a
-                    href="https://www.npmjs.com/package/mantine-datatable"
-                    target="_blank"
-                    className="block hover:underline"
-                >
-                    https://www.npmjs.com/package/mantine-datatable
-                </a>
-            </div>
+       
 
             <div className="panel mt-6">
                 <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">

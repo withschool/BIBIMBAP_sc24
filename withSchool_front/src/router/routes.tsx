@@ -3,12 +3,16 @@ import { Navigate } from 'react-router-dom';
 import SelectStudentOrParent from '../pages/Authentication/SelectStudentOrParent';
 const Index = lazy(() => import('../pages/Index'));
 const SchoolList = lazy(() => import('../pages/SuperAdmin/SchoolList'));
+const SchoolApply = lazy(() => import('../pages/SuperAdmin/SchoolApply'));
+
+
 const Login = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
 const Error = lazy(() => import('../components/Error'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const Landing = lazy(() => import('../pages/Users/Landing'));
+
 
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
@@ -76,7 +80,7 @@ const routes = [
     },
     {
         path: '/landing',
-        element: <Landing/>,
+        element: <Landing />,
         layout: 'blank',
     },
     {
@@ -119,10 +123,16 @@ const routes = [
         path: '/teacher/home',
         element: <TeacherHome />,
     },
-   {
+    {
         path: '/parent/home',
         element: <TeacherNotice />,
     },
+
+    {
+        path: '/super/apply',
+        element: <SchoolApply />,
+    },
+
     {
         path: '/teacher/schoolnotice',
         element: <SchoolNotice />,
@@ -195,7 +205,7 @@ const routes = [
     },
     {
         path: '/admin/notice',
-        element : <AdminNo />,
+        element: <AdminNo />,
     },
     {
         path: '/admin/schoolnotice',

@@ -198,27 +198,3 @@ export const getClassNotices = async (childId: number): Promise<any> => {
       console.error('공지 리스트 조회 실패:', errorss);
     }
   };
-
-  export const submitSchoolApplication = async (applicationData: any): Promise<any> => {
-    try {
-        const response = await fetch(`${url}/basic/schools/applications`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(applicationData)
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return data;
-        } else {
-            const errorMessage = await response.text();
-            console.error('Failed to submit school application:', errorMessage);
-            throw new Error(errorMessage);
-        }
-    } catch (error) {
-        console.error('Error submitting school application:', error);
-        throw error;
-    }
-};
