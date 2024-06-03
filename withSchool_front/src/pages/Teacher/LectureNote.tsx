@@ -102,7 +102,7 @@ useEffect(() => {
             updateLectureNote(formData, note.subjectLectureNoteId);  
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
-            console.log("안돼~"+params.title+ params.fileURl);
+            console.log("안돼~"+localStorage.getItem('targetSubject'));
             loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
             showMessage('강의 노트 생성이 완료되었습니다.');
         }

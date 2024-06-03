@@ -27,6 +27,7 @@ import IconX from '../../components/Icon/IconX';
 import IconRestore from '../../components/Icon/IconRestore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 
 const Counsel = () => {
     const dispatch = useDispatch();
@@ -91,9 +92,9 @@ const Counsel = () => {
 
     const tryRegisterCounsel = () => {
         console.log(params.title);
-        console.log(selectedDate);
+        console.log(format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
         console.log(teacherId);
-        registerCounsel(teacherId, params.title, selectedDate);
+        registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
@@ -368,7 +369,7 @@ const Counsel = () => {
                                                     <DatePicker
                                                         selected={selectedDate}
                                                         onChange={(date : any) => setSelectedDate(date)}
-                                                        dateFormat="yyyy/MM/dd"
+                                                        dateFormat="yyyy-MM-dd"
                                                         placeholderText="날짜를 선택하세요"
                                                         className="form-input"
                                                     />
