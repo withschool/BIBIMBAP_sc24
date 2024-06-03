@@ -11,6 +11,7 @@ import com.withSchool.entity.user.User;
 import com.withSchool.repository.classes.ClassNoticeRepository;
 import com.withSchool.repository.file.ClassNoticeFileRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class ClassNoticeService {
     private final ClassNoticeRepository classNoticeRepository;
     private final ClassNoticeFileRepository classNoticeFileRepository;
     private final FileService fileService;
+    private final NotificationService notificationService;
 
 
     @Transactional
@@ -73,6 +75,8 @@ public class ClassNoticeService {
                     fileService.saveFile(fileDTO);
                 }
             }
+            List<User> userList = userService.findStudentByClassId(userService.getCurrentUserClassId());
+            notificationService.sendSMSGroup(userList, "반 공지사항", reqNoticeDTO.getTitle(), false);
 
             // 결과 반환
             return ResNoticeDTO.builder()

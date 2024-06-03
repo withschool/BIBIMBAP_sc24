@@ -283,4 +283,8 @@ public class UserService {
     public List<User> findStudentBySchoolInformationSchoolId(Long schoolId){
         return userRepository.findStudentBySchoolInformationSchoolId(schoolId);
     }
+
+    public List<User> findStudentByClassId(Long schoolId){
+        return userRepository.findStudentByClassId(schoolId);
+    }
 }
