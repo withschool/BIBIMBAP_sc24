@@ -1,0 +1,56 @@
+/* 
+// 06.Loader
+*/
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top left, $info 0%, $primary 100%);
+    z-index: 9999999;
+    transition: all 0.4s;
+    visibility: visible;
+    opacity: 1;
+
+    #status {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%);
+    }
+}
+  
+
+.spinner {
+  margin: 20px auto;
+  text-align: center;
+
+  > div {
+    width: 16px;
+    height: 16px;
+    background-color: $white;
+    border-radius: 100%;
+    display: inline-block;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    margin: 4px;
+  }
+
+  .bounce1 {
+    animation-delay: -0.32s;
+  }
+
+  .bounce2 {
+    animation-delay: -0.16s;
+  }
+}
+  
+  
+@keyframes sk-bouncedelay {
+    0%, 80%, 100% { 
+      transform: scale(0);
+    } 40% { 
+      transform: scale(1.0);
+    }
+}

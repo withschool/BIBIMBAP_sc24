@@ -1,0 +1,76 @@
+/* 
+// 2. Icons
+*/
+
+// Icon fill
+@each $color, $value in $theme-colors {
+    .icon-fill-#{$color} {
+        fill: #{$value};
+    }
+}
+
+.icon {
+    position: relative;
+    top: -2px;
+}
+
+.icon-xxs {
+    height: 14px;
+    width: 14px;
+}
+
+.icon-xs {
+    height: 16px;
+    width: 16px;
+}
+
+.icon-sm {
+    height: 20px;
+    width: 20px;
+}
+
+.icon-lg {
+    height: 32px;
+    width: 32px;
+}
+
+.icon-xl {
+    height: 48px;
+    width: 48px;
+}
+
+.icon-xxl {
+    height: 62px;
+    width: 62px;
+}
+.sw-1 {
+    stroke-width: 1px;
+}
+.sw-1_5 {
+    stroke-width: 1.5px;
+}
+
+// monochrome
+.icon-mono {
+    position: relative;
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+// icon spin
+.icon-spin {
+    animation-name: spin;
+    animation-duration: 3000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  
+  @keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}

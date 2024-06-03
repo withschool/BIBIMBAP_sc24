@@ -1,12 +1,14 @@
 package com.withSchool.entity.community;
 
+import com.withSchool.dto.community.ResCounselDefaultDTO;
 import com.withSchool.entity.base.BaseEntity;
 import com.withSchool.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Table(name = "counsel")
 public class Counsel extends BaseEntity {
     @Id
@@ -25,7 +27,15 @@ public class Counsel extends BaseEntity {
     private Long counselId;
 
     @Column(name = "counsel_state", nullable = false)
-    @Comment("상담 상태")
+    @ColumnDefault("0")
+    @Comment("""
+            상담상태
+            
+            0 - 신청
+            1 - 승낙
+            2 - 반려
+            3 - 완료
+            """)
     private int counselState;
 
     @Column(name = "category", nullable = false)
@@ -39,12 +49,23 @@ public class Counsel extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asker_id", nullable = false)
     @Comment("상담 요청자")
-    private User akser;
+    private User asker;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answerer_id", nullable = false)
     @Comment("상담 응답자")
     private User answerer;
 
+    public ResCounselDefaultDTO toResCounselDefaultDTO(){
+        return ResCounselDefaultDTO.builder()
+                .counselId(this.getCounselId())
+                .askerId(this.getAsker().getUserId())
+                .answererId(this.getAnswerer().getUserId())
+                .counselState(this.getCounselState())
+                .category(this.getCategory())
+                .schedule(this.getSchedule())
+                .regDate(this.getRegDate())
+                .build();
+    }
 
 }

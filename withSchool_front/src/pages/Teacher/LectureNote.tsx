@@ -151,12 +151,12 @@ export const LectureNote = () => {
     };
 
     const deleteNoteConfirm = (note: any) => {
-        setDeletedNote(note);
+        setDeletedNote(음표);
         setIsDeleteNoteModal(true);
     };
 
     const viewNote = (note: any) => {
-        setParams(note);
+        setParams(음표);
         setIsViewNoteModal(true);
     };
 
@@ -164,8 +164,8 @@ export const LectureNote = () => {
         setIsShowNoteMenu(false);
         const json = JSON.parse(JSON.stringify(defaultParams));
         setParams(json);
-        if (note) {
-            let json1 = JSON.parse(JSON.stringify(note));
+        if (음표) {
+            let json1 = JSON.parse(JSON.stringify(음표));
             setParams(json1);
         }
         setAddContactModal(true);
@@ -315,13 +315,13 @@ export const LectureNote = () => {
                                                         >
                                                             <ul className="text-sm font-medium">
                                                                 <li>
-                                                                    <button type="button" onClick={() => editNote(note)}>
+                                                                    <button type="button" onClick={() => editNote(음표)}>
                                                                         <IconPencil className="w-4 h-4 ltr:mr-3 rtl:ml-3 shrink-0" />
                                                                         수정
                                                                     </button>
                                                                 </li>
                                                                 <li>
-                                                                    <button type="button" onClick={() => deleteNoteConfirm(note)}>
+                                                                    <button type="button" onClick={() => deleteNoteConfirm(음표)}>
                                                                         <IconTrashLines className="w-4.5 h-4.5 ltr:mr-3 rtl:ml-3 shrink-0" />
                                                                         삭제
                                                                     </button>

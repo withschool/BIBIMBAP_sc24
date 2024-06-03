@@ -34,6 +34,7 @@ interface School {
     schoolAddress: string;
     sdSchulCode: string;
     regDate: string;
+    paymentStatus: string;
 }
 
 export const formatDate = (dateString: string): string => {
@@ -43,7 +44,7 @@ export const formatDate = (dateString: string): string => {
     const hour = dateString.slice(3, 4);
     const minute = dateString.slice(4, 5);
 
-    return `${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분`;
+    return `${year}년 ${month}월 ${day}일`;
 };
 
 const SchoolList = () => {
@@ -77,9 +78,9 @@ const SchoolList = () => {
                 const formattedData = data.map((item: School) => ({
                     ...item,
                     regDate: formatDate(item.regDate),
+                    paymentStatus: item.paymentStatus || "정상",
                 }));
 
-                // Sort by schoolId and add creationOrder
                 const sortedData = sortBy(formattedData, "schoolId").map(
                     (item, index) => ({
                         ...item,
@@ -126,7 +127,10 @@ const SchoolList = () => {
                 (item.regDate &&
                     item.regDate.toString().toLowerCase().includes(search.toLowerCase())) ||
                 (item.sdSchulCode &&
-                    item.sdSchulCode.toString().toLowerCase().includes(search.toLowerCase()))
+                    item.sdSchulCode.toString().toLowerCase().includes(search.toLowerCase())) ||
+                (item.paymentStatus &&
+                    item.paymentStatus.toString().toLowerCase().includes(search.toLowerCase()))
+
             );
         });
         setRecordsData(
@@ -249,19 +253,7 @@ const SchoolList = () => {
 
     return (
         <div>
-            <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-                <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
-                    <IconBell />
-                </div>
-                <span className="ltr:mr-3 rtl:ml-3">Documentation: </span>
-                <a
-                    href="https://www.npmjs.com/package/mantine-datatable"
-                    target="_blank"
-                    className="block hover:underline"
-                >
-                    https://www.npmjs.com/package/mantine-datatable
-                </a>
-            </div>
+       
 
             <div className="panel mt-6">
                 <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
@@ -379,6 +371,7 @@ const SchoolList = () => {
                                                                             <div>{item.educationOffice}</div>
                                                                             <div>{item.schoolAddress}</div>
                                                                             <div>{item.schoolPhoneNumber}</div>
+                                                                            <div>{item.paymentStatus}</div>
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -423,8 +416,8 @@ const SchoolList = () => {
                     <DataTable
                         highlightOnHover
                         className={`${isRtl
-                                ? "whitespace-nowrap table-hover"
-                                : "whitespace-nowrap table-hover"
+                            ? "whitespace-nowrap table-hover"
+                            : "whitespace-nowrap table-hover"
                             }`}
                         records={recordsData}
                         columns={[
@@ -448,6 +441,19 @@ const SchoolList = () => {
                             { accessor: "schoolAddress", title: "학교 주소", sortable: true },
                             { accessor: "regDate", title: "생성일", sortable: true },
                             { accessor: "sdSchulCode", title: "학교 코드", sortable: true },
+
+
+                            {
+                                accessor: "paymentStatus",
+                                title: "결제 상태",
+                                sortable: true,
+                                render: ({ paymentStatus }) => {
+                                    const status = paymentStatus === "정상" ? { tooltip: '정상', color: 'success' } : { tooltip: '결제 지연', color: 'danger' };
+                                    return <span className={`badge badge-outline-${status.color}`}>{status.tooltip}</span>;
+                                },
+                            },
+
+
                             {
                                 accessor: "deleteSchool",
                                 title: "삭제하기",

@@ -15,13 +15,16 @@ const Calendar = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('일정'));
-    });
+        const storedEvents = localStorage.getItem('events');
+        if (storedEvents) {
+            setEvents(JSON.parse(storedEvents));
+        }
+    }, [dispatch]);
     const now = new Date();
     const getMonth = (dt: Date, add: number = 0) => {
         let month = dt.getMonth() + 1 + add;
         const str = (month < 10 ? '0' + month : month).toString();
         return str;
-        // return dt.getMonth() < 10 ? '0' + month : month;
     };
     const [events, setEvents] = useState<any>([
         {
@@ -126,52 +129,69 @@ const Calendar = () => {
         editEvent(obj);
     };
 
-    const saveEvent = () => {
-        if (!params.title) {
-            return true;
-        }
-        if (!params.start) {
-            return true;
-        }
-        if (!params.end) {
-            return true;
-        }
-        if (params.id) {
-            //update event
-            let dataevent = events || [];
-            let event: any = dataevent.find((d: any) => d.id === parseInt(params.id));
-            event.title = params.title;
-            event.start = params.start;
-            event.end = params.end;
-            event.description = params.description;
-            event.className = params.type;
+    const deleteEvent = (id: number) => {
+        console.log("Deleting event with ID:", id); // 로그 추가
+        const updatedEvents = events.filter((event: any) => event.id !== id);
+        setEvents(updatedEvents);
+        console.log("Updated events state:", updatedEvents); // 상태 업데이트 로그 추가
+    };
+    
+    // 상태 변경 모니터링
+    useEffect(() => {
+        console.log("Updated events:", events);
+        localStorage.setItem('events', JSON.stringify(events));
+        console.log("Updated localStorage events:", localStorage.getItem('events')); // 로그 추가
+    }, [events]);
 
-            setEvents([]);
-            setTimeout(() => {
-                setEvents(dataevent);
-            });
-        } else {
-            //add event
-            let maxEventId = 0;
-            if (events) {
-                maxEventId = events.reduce((max: number, character: any) => (character.id > max ? character.id : max), events[0].id);
+    const eventClickHandler = (event: any) => {
+        Swal.fire({
+            title: '일정을 수정하거나 삭제하시겠습니까?',
+            showCancelButton: true,
+            confirmButtonText: '수정',
+            cancelButtonText: '삭제',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                editEvent(event);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                deleteEvent(event.event.id);
             }
-            maxEventId = maxEventId + 1;
+        });
+    };
+
+    const saveEvent = () => {
+        if (!params.title || !params.start || !params.end) {
+            return true;
+        }
+        let dataevent = [...events]; // Create a copy of the events array
+        if (params.id) {
+            // Update event
+            let eventIndex = dataevent.findIndex((d: any) => d.id === parseInt(params.id));
+            if (eventIndex !== -1) {
+                dataevent[eventIndex] = {
+                    ...dataevent[eventIndex],
+                    title: params.title,
+                    start: params.start,
+                    end: params.end,
+                    description: params.description,
+                    className: params.type,
+                };
+            }
+        } else {
+            // Add event
+            let maxEventId = dataevent.length ? Math.max(...dataevent.map((e: any) => e.id)) : 0;
             let event = {
-                id: maxEventId,
+                id: maxEventId + 1,
                 title: params.title,
                 start: params.start,
                 end: params.end,
                 description: params.description,
                 className: params.type,
             };
-            let dataevent = events || [];
             dataevent = dataevent.concat([event]);
-            setTimeout(() => {
-                setEvents(dataevent);
-            });
         }
-        showMessage('Event has been saved successfully.');
+        setEvents(dataevent);
+        localStorage.setItem('events', JSON.stringify(dataevent));
+        showMessage('일정 작업이 완료되었습니다.');
         setIsAddEventModal(false);
     };
     const startDateChange = (event: any) => {
@@ -202,7 +222,7 @@ const Calendar = () => {
 
     return (
         <div>
-            
+
             <div className="panel mb-5">
                 <div className="mb-4 flex items-center sm:flex-row flex-col sm:justify-between justify-center">
                     <div className="sm:mb-0 mb-4">
@@ -244,7 +264,7 @@ const Calendar = () => {
                         dayMaxEvents={true}
                         selectable={true}
                         droppable={true}
-                        eventClick={(event: any) => editEvent(event)}
+                        eventClick={eventClickHandler}
                         select={(event: any) => editDate(event)}
                         events={events}
                     />

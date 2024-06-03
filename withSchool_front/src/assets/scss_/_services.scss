@@ -1,0 +1,90 @@
+/* 
+// 07. Services
+*/
+
+.service-box {
+    border-radius: 10px;
+    padding: 28px 29px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s;
+    .service-icon {
+        font-size: 44px;
+        transition: all 0.5s;
+    }
+    .read-more-icon {
+        .right-icon {
+            font-size: 30px !important;
+            transition: all 0.5s;
+        }
+    }
+    &:before {
+        content: "";
+        height: 100px;
+        width: 100px;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border-radius: 10%;
+        z-index: -1;
+        transition: all 0.5s;
+    }
+    &:after {
+        content: "";
+        height: 0px;
+        width: 0px;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        border-radius: 10%;
+        z-index: -1;
+        transition: all 0.5s;
+    }
+    &:hover {
+        .service-icon {
+            color: $white;
+        }
+        .service-title {
+            color: $white !important;
+        }
+        .right-icon {
+            color: $white;
+        }
+        .service-subtitle {
+            color: rgba($white, 0.7) !important;
+        }
+        &:before {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            top: 0;
+            left: 0;
+            border-radius: 0;
+        }
+        &:after {
+            background: rgba($white, 0.06);
+            height: 100px;
+        width: 100px;
+        }
+    }
+}
+
+@each $color,
+$value in $theme-colors {
+    .service-#{$color} {
+        .service-icon, .right-icon {
+            color: #{$value};
+        }
+        &:before {
+            background: rgba($value, 0.05);
+        }
+        &:hover {
+            &:before {
+                background: #{$value};
+            }
+        }
+    }
+}

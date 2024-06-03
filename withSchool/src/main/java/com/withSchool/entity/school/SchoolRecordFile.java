@@ -3,11 +3,12 @@ package com.withSchool.entity.school;
 import com.withSchool.entity.base.BaseFileEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "school_record_file")

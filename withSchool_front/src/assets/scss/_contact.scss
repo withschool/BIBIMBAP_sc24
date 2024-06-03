@@ -1,0 +1,42 @@
+/* 
+// 13. Contact
+*/
+
+.form-control {
+    padding: 8px 10px;
+    font-size: 14px;
+    height: 40px;
+    background-color: var(--bs-bg-light);
+    border: 1px solid darken($gray-200, 2%);
+    &::placeholder {
+        color: lighten($gray-600, 6%);
+        font-size: 14px;
+    }
+}
+
+#success_page {
+    background-color: rgba($success, 0.25);
+    padding: 10px 20px;
+    border-radius: 4px;
+}
+
+.error_message {
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    background-color: rgba($danger, 0.1);
+    border-color: rgba($danger, 0.1);
+    color: $danger;
+    border-radius: 5px;
+    font-size: 14px;
+    
+}
+
+[data-bs-theme="dark"] {
+    .form-control {
+        border-color: $gray-700;
+    }
+    .social-icon{
+        background-color: $gray-700;
+    }
+}

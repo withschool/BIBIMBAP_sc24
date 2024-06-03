@@ -9,8 +9,6 @@ import lombok.*;
 @Data
 @Getter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
 public class SchoolInformationDTO {
     @JsonProperty("ATPT_OFCDC_SC_CODE")
     @SerializedName("ATPT_OFCDC_SC_CODE")

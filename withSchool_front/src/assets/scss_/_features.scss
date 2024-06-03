@@ -1,0 +1,20 @@
+/* 
+// 10. Features
+*/
+
+.features-img {
+    position: relative;
+    z-index: 1;
+}
+.dot-img-left {
+    position: absolute;
+    left: 0;
+    bottom: -50px;
+    opacity: 0.35;
+}
+.dot-img-right {
+    position: absolute;
+    right: 0;
+    bottom: -50px;
+    opacity: 0.35;
+}

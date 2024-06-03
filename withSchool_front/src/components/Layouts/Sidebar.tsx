@@ -163,14 +163,14 @@ const Sidebar = () => {
 
                                 <li className="nav-item">
                                     <ul>
-                                        <li className="nav-item">
+                                        {/* <li className="nav-item">
                                             <NavLink to="/student/home" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuChat className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학생 홈')}</span>
                                                 </div>
                                             </NavLink>
-                                        </li>
+                                        </li> */}
                                         <li className="menu nav-item">
                                             <button type="button" className={`${currentMenu === 'subject' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('subject')}>
                                                 <div className="flex items-center">
@@ -197,76 +197,59 @@ const Sidebar = () => {
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/scrumboard" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('칼반 보드')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/calendar" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('일정 관리')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/counsel" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('상담')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/homework" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuContacts className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('과제')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/lecturenote" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuContacts className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('강의 노트')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
+
                                         <li className="menu nav-item">
-                                            <button type="button" className={`${currentMenu === 'invoice' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('invoice')}>
+                                            <button type="button" className={`${currentMenu === 'studys' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('studys')}>
                                                 <div className="flex items-center">
                                                     <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 7')}</span>
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학습실')}</span>
                                                 </div>
 
-                                                <div className={currentMenu !== 'invoice' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                <div className={currentMenu !== 'studys' ? 'rtl:rotate-90 -rotate-90' : ''}>
                                                     <IconCaretDown />
                                                 </div>
                                             </button>
 
-                                            <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
+                                            <AnimateHeight duration={300} height={currentMenu === 'studys' ? 'auto' : 0}>
                                                 <ul className="sub-menu text-gray-500">
                                                     <li>
-                                                        <NavLink to="/apps/invoice/list">{t('내용 1')}</NavLink>
+                                                        <NavLink to="/student/lecturenote">{t('강의 노트')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/apps/invoice/preview">{t('내용 2')}</NavLink>
+                                                        <NavLink to="/student/calendar">{t('일정')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/apps/invoice/add">{t('내용 3')}</NavLink>
+                                                        <NavLink to="/student/scrumboard">{t('칼반 보드')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/apps/invoice/edit">{t('내용 4')}</NavLink>
+                                                        <NavLink to="/student/question">{t('Q&A')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/student/score">{t('성적')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
                                                     </li>
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
 
+                                        <li className="nav-item">
+                                            <NavLink to="/student/counsel" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('선생님과 상담')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
+                                        <li className="nav-item">
+                                            <NavLink to="/users/user-account-settings" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
 
                                     </ul>
                                 </li>
@@ -398,14 +381,14 @@ const Sidebar = () => {
 
 
                             </div>}
-                            {accountTypes == "ROLE_ADMIN" && <div>admin
+                            {accountTypes == "ROLE_ADMIN" && <div>
 
                                 <li className="menu nav-item">
                                     <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
                                         <div className="flex items-center">
                                             <IconMenuDashboard
                                                 className="group-hover:!text-primary shrink-0" />
-                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Admin')}</span>
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('관리')}</span>
                                         </div>
 
                                         <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
@@ -424,8 +407,37 @@ const Sidebar = () => {
                                             <li>
                                                 <NavLink to="/admin/schoolnotice">{t('공지 확인하기')}</NavLink>
                                             </li>
+
+
                                         </ul>
                                     </AnimateHeight>
+
+                                    <li className="menu nav-item">
+                                        <button type="button" className={`${currentMenu === 'class' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('class')}>
+                                            <div className="flex items-center">
+                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('결제')}</span>
+                                            </div>
+
+                                            <div className={currentMenu !== 'class' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                <IconCaretDown />
+                                            </div>
+                                        </button>
+
+                                        <AnimateHeight duration={300} height={currentMenu === 'class' ? 'auto' : 0}>
+                                            <ul className="sub-menu text-gray-500">
+                                                <li>
+                                                    <NavLink to="/admin/invoice/list">{t('결제 목록')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/admin/invoice/preview">{t('결제 정보 조회')}</NavLink>
+                                                </li>
+                                                <li>
+                                                    <NavLink to="/admin/invoice/add">{t('결제 진행')}</NavLink>
+                                                </li>
+                                            </ul>
+                                        </AnimateHeight>
+                                    </li>
                                 </li>
 
                             </div>}
@@ -451,19 +463,14 @@ const Sidebar = () => {
                                                 <NavLink to="/super/home">{t('학교 목록')}</NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to="/analytics">{t('공지 작성하기')}</NavLink>
+                                                <NavLink to="/super/apply">{t('학교 신청 관리')}</NavLink>
                                             </li>
-                                            <li>
-                                                <NavLink to="/finance">{t('메뉴 3')}</NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to="/crypto">{t('메뉴 4')}</NavLink>
-                                            </li>
+
                                         </ul>
                                     </AnimateHeight>
                                 </li>
                             </div>}
-
+                            {/* 
                             <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
                                 <IconMinus className="w-4 h-5 flex-none hidden" />
                                 <span>{t('컴포넌트 예시')}</span>
@@ -555,7 +562,7 @@ const Sidebar = () => {
                                         </li>
                                     </ul>
                                 </AnimateHeight>
-                            </li>
+                            </li> */}
 
                         </ul>
                     </PerfectScrollbar>

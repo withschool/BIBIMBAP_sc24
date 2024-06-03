@@ -375,8 +375,7 @@ const Counsel = () => {
                                                         onChange={(date : any) => setSelectedDate(date)}
                                                         dateFormat="yyyy-MM-dd"
                                                         placeholderText="날짜를 선택하세요"
-                                                        className="form-input"
-                                                    />
+                                                        className="form-input"/>
                                                 </div>
                                             </div>
                                             <div className="ltr:text-right rtl:text-left flex justify-end items-center mt-8">

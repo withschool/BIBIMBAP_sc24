@@ -1,0 +1,42 @@
+/* 
+// 10. Testimonial
+*/
+
+.testi-border {
+    background: $warning;
+    height: 2px;
+    width: 20%;
+}
+.owl-carousel {
+    .testi-content {
+        .testi-box {
+            box-shadow: 2px 2px 10px rgba($dark, 0.08);
+            border-radius: 6px;
+        }
+        .testi-user {
+            img {
+                max-width: 48px;
+            }
+        }
+    }
+    .owl-nav {
+        display: none;
+    }
+    .owl-dot {
+        margin-top: 20px;
+        &:focus {
+            outline: none;
+        }
+    }
+    &.owl-theme .owl-dots .owl-dot span {
+        width: 14px;
+        height: 4px;
+        background-color: rgba($warning, 0.4);
+    }
+    &.owl-theme .owl-dots .owl-dot.active span,
+    &.owl-theme .owl-dots .owl-dot:hover span {
+        width: 20px;
+        height: 4px;
+        background-color: $warning;
+    }
+}

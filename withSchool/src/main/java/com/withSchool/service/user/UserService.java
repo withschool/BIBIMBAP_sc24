@@ -1,11 +1,18 @@
 package com.withSchool.service.user;
 
+import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
-import com.withSchool.dto.user.SignUpDTO;
+import com.withSchool.dto.user.*;
+import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
+import com.withSchool.repository.classes.ClassRepository;
+import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +26,19 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
+    private final ClassRepository classRepository;
     private final SchoolInformationRepository schoolInformationRepository;
+    private final StudentSubjectRepository studentSubjectRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -37,6 +49,18 @@ public class UserService {
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
+    }
+
+    public List<ResUserUsercodeDTO> findAllBySchool_SchoolId() {
+        Long schoolId = getCurrentUserSchoolId();
+        List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
+
+        List<ResUserUsercodeDTO> dtos = new ArrayList<>();
+        for (User u : res) {
+            dtos.add(u.toResUserUsercodeDTO());
+        }
+
+        return dtos;
     }
 
     public User findByUserId(Long id) {
@@ -53,13 +77,19 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
+
+    public User findByUserCode(String userCode) {
+        Optional<User> user = userRepository.findByUserCode(userCode);
+        return user.orElse(null);
+    }
+
     public void registerAdmin(SchoolInformationDTO dto) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();
             User admin = User.builder()
-                    .id(schoolInformation.getSdSchulCode() + " admin")
-                    .password("1234")  // 초기 비밀번호 설정이여서 암호화 필요없을듯
+                    .id(schoolInformation.getSdSchulCode() + "_admin")
+                    .password(passwordEncoder.encode("1234"))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
                     .schoolInformation(schoolInformation)
@@ -68,27 +98,103 @@ public class UserService {
         }
     }
 
-    public void register(SignUpDTO signUpDTO) {
-        // DTO에서 엔티티로 변환
-        User user = User.builder()
-                .id(signUpDTO.getId())
-                .email(signUpDTO.getEmail())
-                .name(signUpDTO.getName())
-                .sex(signUpDTO.getSex())
-                .phoneNumber(signUpDTO.getPhoneNumber())
-                .address(signUpDTO.getAddress())
-                .birthDate(signUpDTO.getBirthDate())
-                .accountType(signUpDTO.getAccountType())
-                .userCode(signUpDTO.getUserCode())
-                .parentCode(signUpDTO.getParentCode())
-                .password(passwordEncoder.encode(signUpDTO.getPassword()))
-                .build();
-
-        // 회원가입
-        userRepository.save(user);
+    public boolean isDuplicated(String id){
+        return userRepository.existsById(id);
     }
 
-    @Transactional
+    private boolean isParent(int accountType){
+        return accountType == 1;
+    }
+
+    public void register(SignUpDTO signUpDTO) {
+        log.info("회원가입 요청");
+
+        String id = signUpDTO.getId();
+        String password = passwordEncoder.encode(signUpDTO.getPassword());
+        String name = signUpDTO.getName();
+        String birthDate = signUpDTO.getBirthDate();
+        String email = signUpDTO.getEmail();
+        String phoneNumber = signUpDTO.getPhoneNumber().isEmpty() ? null : signUpDTO.getPhoneNumber();
+        Boolean sex = signUpDTO.getSex();
+        String address = signUpDTO.getAddress();
+
+
+        // 중복된 아이디 체크
+        if (userRepository.existsById(id)) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+        }
+        else if(!signUpDTO.getPhoneNumber().isEmpty() && userRepository.existsByPhoneNumber(phoneNumber)){
+            throw new RuntimeException("해당 전화번호로 이미 회원가입이 되었습니다.");
+        }
+
+        int accountType = signUpDTO.getAccountType();
+        String userCode = signUpDTO.getUserCode();
+
+        User response;
+
+        if(isParent(accountType)){
+            response = User.builder()
+                .id(id)
+                .email(email)
+                .name(name)
+                .sex(sex)
+                .phoneNumber(phoneNumber)
+                .address(address)
+                .birthDate(birthDate)
+                .accountType(accountType)
+                .password(password)
+                .build();
+        }
+        else{
+            Optional<User> optionalUser = userRepository.findByUserCode(signUpDTO.getUserCode());
+            if(optionalUser.isEmpty()){
+                throw new RuntimeException("해당 유저코드를 가진 유저가 없습니다.");
+            }
+
+            User user = optionalUser.get();
+            if(user.getId() != null){
+                throw new RuntimeException("이미 회원가입이 된 계정입니다.");
+            } else if (!name.equals(user.getName())) {
+                throw new RuntimeException("잘못된 이름이 입력되었습니다.");
+            }
+
+            SchoolInformation schoolInformation = user.getSchoolInformation();
+            ClassInformation classInformation = user.getClassInformation();
+
+            Long userId = user.getUserId();
+            accountType = user.getAccountType();
+
+            response = User.builder()
+                    .userId(userId)
+                    .id(id)
+                    .email(email)
+                    .name(name)
+                    .sex(sex)
+                    .phoneNumber(phoneNumber)
+                    .address(address)
+                    .birthDate(birthDate)
+                    .accountType(accountType)
+                    .userCode(userCode)
+                    .password(password)
+                    .schoolInformation(schoolInformation)
+                    .classInformation(classInformation)
+                    .build();
+        }
+
+        // 회원가입
+        userRepository.save(response);
+    }
+
+    public void delete(UserDeleteRequestDTO dto){
+        List<Long> userId = dto.getUserId();
+        userId.stream().forEach(u->{
+            studentSubjectRepository.deleteSsByUserId(u);
+            userRepository.deleteUserByUserId(u);
+        });
+
+    }
+
+
     public JwtToken signIn(String id, String password) {
         // 입력받은 사용자 정보를 바탕으로 authentication token을 생성
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
@@ -101,5 +207,76 @@ public class UserService {
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
         return jwtToken;
+    }
+
+    public User findBySchoolInformationSchoolIdAndNameAndUserCode(Long schoolId, String name, String userCode) {
+        Optional<User> user = userRepository.findBySchoolInformationSchoolIdAndNameAndUserCode(schoolId, name, userCode);
+        return user.orElse(null);
+    }
+    public SchoolInformation getCurrentUserSchoolInformation(Long childId) {
+        // 1. childId가 null이면 현재 로그인된 사용자의 정보를 가져옴
+        if (childId == null) {
+            User user = getCurrentUser();
+            SchoolInformation schoolInformation = user.getSchoolInformation();
+            if (schoolInformation == null) {
+                throw new IllegalStateException("User is not associated with any school");
+            }
+            return schoolInformation;
+        }
+        // 2. childId가 null이 아니면 해당 child의 정보를 가져옴
+        else {
+            User child = userRepository.findById(childId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            SchoolInformation schoolInformation = child.getSchoolInformation();
+            if (schoolInformation == null) {
+                throw new IllegalStateException("User is not associated with any school");
+            }
+            return schoolInformation;
+        }
+    }
+
+    public Long getCurrentUserSchoolId() {
+        SchoolInformation schoolInformation = getCurrentUserSchoolInformation(null);
+        return schoolInformation.getSchoolId();
+    }
+
+    public ClassInformation getCurrentUserClassInformation(){
+        User user = getCurrentUser();
+        ClassInformation classInformation = user.getClassInformation();
+        if(classInformation == null){
+            throw new IllegalStateException("User is not associated with any class");
+        }
+        return classInformation;
+    }
+
+    public Long getCurrentUserClassId(){
+        ClassInformation classInformation = getCurrentUserClassInformation();
+        return classInformation.getClassId();
+    }
+
+    public User getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return this.findById(authentication.getName());
+    }
+
+    public void mapById(UserClassDTO userClassDTO) {
+        User user = userRepository.findById(userClassDTO.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found with id " + userClassDTO.getUserId()));
+        ClassInformation classInformation = classRepository.findById(userClassDTO.getClassId()).orElseThrow(() -> new EntityNotFoundException("Class not found with id " + userClassDTO.getClassId()));
+
+        user.updateClassInfo(classInformation);
+
+        userRepository.save(user);
+    }
+  
+    public List<ResUserUsercodeDTO> findAllClassInformation_ClassId(){
+        User user = getCurrentUser();
+        List<User> users = userRepository.findAllByClassInformation_ClassId(user.getClassInformation().getClassId());
+
+        List<ResUserUsercodeDTO> dtos = new ArrayList<>();
+
+        for (User u : users) {
+            dtos.add(u.toResUserUsercodeDTO());
+        }
+
+        return dtos;
     }
 }

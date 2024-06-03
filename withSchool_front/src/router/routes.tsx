@@ -3,6 +3,9 @@ import { Navigate } from 'react-router-dom';
 import SelectStudentOrParent from '../pages/Authentication/SelectStudentOrParent';
 const Index = lazy(() => import('../pages/Index'));
 const SchoolList = lazy(() => import('../pages/SuperAdmin/SchoolList'));
+const SchoolApply = lazy(() => import('../pages/SuperAdmin/SchoolApply'));
+
+
 const Login = lazy(() => import('../pages/Authentication/LoginBoxed'));
 const Register = lazy(() => import('../pages/Authentication/RegisterBoxed'));
 const SignIn = lazy(() => import('../pages/Authentication/SignInBoxed'));
@@ -10,19 +13,23 @@ const Error = lazy(() => import('../components/Error'));
 const AccountSetting = lazy(() => import('../pages/Users/AccountSetting'));
 const Landing = lazy(() => import('../pages/Users/Landing'));
 
+
 //Admin
 const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
 const AdminNo = lazy(() => import('../pages/Admin/AdminNotice'));
+const InvoiceList = lazy(() => import('../pages/Admin/InvoiceList'));
+const InvoiceAdd = lazy(() => import('../pages/Admin/InvoiceAdd'));
 
 
 //Teacher
 const TeacherHome = lazy(() => import('../pages/Teacher/TeacherHome'));
 const TeacherNotice = lazy(() => import('../pages/Teacher/TeacherNotice'));
-const SubjectNotice = lazy(() => import('../pages/Teacher/SubjectNotice'));
+const SubjectNotice = lazy(() => import('../pages/Teacher/TeacherSubjectNotice'));
 const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
 const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
 const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
-const ChooseSubject = lazy(() => import('../pages/Teacher/ChooseSubject'));
+const ChooseSubjectStudent = lazy(() => import('../pages/Student/ChooseSubjectStudent'));
+const ChooseSubjectTeacher = lazy(() => import('../pages/Teacher/ChooseSubjectTeacher'));
 const CounselTeacherAssign = lazy(() => import('../pages/Teacher/CounselTeacherAssign'));
 const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherList'));
 const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
@@ -39,11 +46,15 @@ const CounselParent = lazy(() => import('../pages/Parent/CounselParent'));
 //Student
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
 const StudentClassNotice = lazy(() => import('../pages/Student/ClassNotice'));
+const StudentSubjectNotice = lazy(() => import('../pages/Student/StudentSubjectNotice'));
 const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
 const Calendar = lazy(() => import('../pages/Student/Calendar'));
 const Counsel = lazy(() => import('../pages/Student/Counsel'));
+const StudentQuestion = lazy(() => import('../pages/Student/StudentQuestion'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
 const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
+const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
+
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -80,7 +91,7 @@ const routes = [
     },
     {
         path: '/landing',
-        element: <Landing/>,
+        element: <Landing />,
         layout: 'blank',
     },
     {
@@ -123,10 +134,16 @@ const routes = [
         path: '/teacher/home',
         element: <TeacherHome />,
     },
-   {
+    {
         path: '/parent/home',
         element: <TeacherNotice />,
     },
+
+    {
+        path: '/super/apply',
+        element: <SchoolApply />,
+    },
+
     {
         path: '/teacher/schoolnotice',
         element: <SchoolNotice />,
@@ -141,8 +158,7 @@ const routes = [
     },
     {
         path: '/teacher/subject/choose',
-        element: <ChooseSubject />,
-
+        element: <ChooseSubjectTeacher />,
     },
     {
         path: '/teacher/class/watchgrade',
@@ -188,6 +204,11 @@ const routes = [
     },
 
     {
+        path: '/student/subjectnotice',
+        element: <StudentSubjectNotice />,
+    },
+
+    {
         path: '/student/calendar',
         element: <Calendar />,
     },
@@ -201,15 +222,28 @@ const routes = [
         path: '/student/counsel',
         element: <Counsel />,
     },
+
+    {
+        path: '/student/question',
+        element: <StudentQuestion />,
+    },
+
     {
         path: '/student/lecturenote',
         element: <LectureNoteStudent />,
     },
 
+
     {
         path: '/parent/studentinfo',
         element: <StudentInfo />,
     },
+
+    {
+        path: '/student/subject/choose',
+        element: <ChooseSubjectStudent />,
+    },
+
     {
         path: '/parent/schoolinfo',
         element: <SchoolInfo />,
@@ -235,12 +269,29 @@ const routes = [
     },
     {
         path: '/admin/notice',
-        element : <AdminNo />,
+        element: <AdminNo />,
     },
     {
         path: '/admin/schoolnotice',
         element: <SchoolNotice />,
     },
+
+    {
+        path: '/admin/invoice/list',
+        element: <InvoiceList />,
+    },
+
+    {
+        path: '/admin/invoice/preview',
+        element: <InvoicePreview />,
+    },
+
+    {
+        path: '/admin/invoice/add',
+        element: <InvoiceAdd />,
+    },
+
+
     {
         path: '/student/schoolnotice',
         element: <SchoolNotice />,
