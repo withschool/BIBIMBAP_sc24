@@ -22,7 +22,7 @@ public class CounselController {
     private final CounselService counselService;
 
     @PostMapping
-    @Operation(summary = "상담 신청 API")
+    @Operation(summary = "상담 신청 API", description = "스케줄 양식 yyyy-MM-dd'T'HH:mm:ss")
     public ResponseEntity<ResCounselDefaultDTO> applyCounsel(@RequestBody ReqCounselDefaultDTO req) {
         return ResponseEntity.ok().body(counselService.save(req));
     }
