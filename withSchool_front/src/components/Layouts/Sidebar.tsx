@@ -222,7 +222,7 @@ const Sidebar = () => {
                                             </NavLink>
                                         </li>
                                         <li className="nav-item">
-                                            <NavLink to="/student/assignment" className="group">
+                                            <NavLink to="/student/homework" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuContacts className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('과제')}</span>
@@ -348,7 +348,7 @@ const Sidebar = () => {
                                                         <NavLink to="/teacher/subject/lecturenote">{t('강의 노트')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/teacher/subject/assignment">{t('과제')}</NavLink>
+                                                        <NavLink to="/teacher/subject/homework">{t('과제')}</NavLink>
                                                     </li>
                                                     <li>
                                                         <NavLink to="/teacher/subject/grade">{t('성적 관리')}</NavLink>

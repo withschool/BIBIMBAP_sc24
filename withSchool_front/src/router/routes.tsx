@@ -26,6 +26,8 @@ const ChooseSubject = lazy(() => import('../pages/Teacher/ChooseSubject'));
 const CounselTeacherAssign = lazy(() => import('../pages/Teacher/CounselTeacherAssign'));
 const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherList'));
 const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
+const Homework = lazy(() => import('../pages/Teacher/Homework'));
+const Score = lazy(() => import('../pages/Teacher/Score'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
@@ -140,7 +142,13 @@ const routes = [
         path: '/teacher/subject/choose',
         element: <ChooseSubject />,
 
-    },{
+    },
+    {
+        path: '/teacher/subject/homework',
+        element: <Homework />,
+
+    },
+    {
 
         path: '/teacher/counsel/view',
         element: <CounselTeacherList />,
@@ -156,7 +164,11 @@ const routes = [
         element: <LectureNote />,
 
     },
+    {
+        path: '/teacher/subject/grade',
+        element: <Score />,
 
+    },
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
@@ -205,7 +217,7 @@ const routes = [
         element: <Scrumboard />,
     },
     {
-        path: '/student/assignment',
+        path: '/student/homework',
         element: <Assignment />,
     },
 
