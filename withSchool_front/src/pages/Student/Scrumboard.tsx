@@ -15,74 +15,86 @@ import IconEdit from '../../components/Icon/IconEdit';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconX from '../../components/Icon/IconX';
 
+const LOCAL_STORAGE_KEY = 'scrumboardProjectList';
+
 const Scrumboard = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('Scrumboard'));
+        dispatch(setPageTitle('칼반 보드'));
     });
-    const [projectList, setProjectList] = useState<any>([
-        {
-            id: 1,
-            title: '진행 중',
-            tasks: [
-                {
-                    projectId: 1,
-                    id: 1,
-                    title: '새로운 포트폴리오 만들기',
-                    description: '포트폴리오 새로 만들기',
-                    image: true,
-                    date: '2024년 10월 01일',
-                    tags: ['작업'],
-                },
-                {
-                    projectId: 1,
-                    id: 2,
-                    title: '국어 숙제',
-                    description: '국어 숙제 진행하기',
-                    date: '2024년 10월 02일',
-                    tags: ['숙제'],
-                },
-            ],
-        },
-        {
-            id: 2,
-            title: '대기 중',
-            tasks: [
-                {
-                    projectId: 2,
-                    id: 3,
-                    title: '여행 계획 세우기',
-                    description: '',
-                    date: '2023년 10월 03일',
-                },
-            ],
-        },
-        {
-            id: 3,
-            title: '완료',
-            tasks: [
-                {
-                    projectId: 3,
-                    id: 4,
-                    title: '부모님 저녁 식사',
-                    description: '부모님 저녁 식사 하기',
-                    date: '2023년 10월 01일',
-                },
-                {
-                    projectId: 3,
-                    id: 5,
-                    title: '수학 숙제 하기',
-                    description: '4단원 수학 숙제 진행하기',
-                    date: '2023년 10월 02일',
-                },
-            ],
-        },
-        {
-            id: 4,
-            title: '작업 중',
-            tasks: [],
-        },
-    ]);
+    const loadProjectList = () => {
+        const savedProjectList = localStorage.getItem(LOCAL_STORAGE_KEY);
+        return savedProjectList ? JSON.parse(savedProjectList) : [
+            {
+                id: 1,
+                title: '진행 중',
+                tasks: [
+                    {
+                        projectId: 1,
+                        id: 1,
+                        title: '새로운 포트폴리오 만들기',
+                        description: '포트폴리오 새로 만들기',
+                        image: true,
+                        date: '2024. 10. 1.',
+                        tags: ['작업'],
+                    },
+                    {
+                        projectId: 1,
+                        id: 2,
+                        title: '국어 숙제',
+                        description: '국어 숙제 진행하기',
+                        date: '2024. 10. 2.',
+                        tags: ['숙제'],
+                    },
+                ],
+            },
+            {
+                id: 2,
+                title: '대기 중',
+                tasks: [
+                    {
+                        projectId: 2,
+                        id: 3,
+                        title: '여행 계획 세우기',
+                        description: '',
+                        date: '2023. 10. 3.',
+                    },
+                ],
+            },
+            {
+                id: 3,
+                title: '완료',
+                tasks: [
+                    {
+                        projectId: 3,
+                        id: 4,
+                        title: '부모님 저녁 식사',
+                        description: '부모님 저녁 식사 하기',
+                        date: '2023. 10. 1.',
+                    },
+                    {
+                        projectId: 3,
+                        id: 5,
+                        title: '수학 숙제 하기',
+                        description: '4단원 수학 숙제 진행하기',
+                        date: '2023. 10. 2.',
+                    },
+                ],
+            },
+            {
+                id: 4,
+                title: '작업 중',
+                tasks: [],
+            },
+        ];
+    };
+
+    const [projectList, setProjectList] = useState<any>(loadProjectList());
+
+    useEffect(() => {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projectList));
+    }, [projectList]);
+
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     const changeValue = (e: any) => {
         const { value, id } = e.target;
@@ -141,33 +153,40 @@ const Scrumboard = () => {
             return false;
         }
 
+        let updatedProjectList;
         if (params.id) {
-            //update project
-            const project = projectList.find((d: any) => d.id === params.id);
-            project.title = params.title;
+            // Update project
+            updatedProjectList = projectList.map((project: any) =>
+                project.id === params.id ? { ...project, title: params.title } : project
+            );
         } else {
-            //add project
-            const lastId = projectList.reduce((max: number, obj: any) => (obj.id > max ? obj.id : max), projectList[0].id) || 0;
-
-            const project = {
+            // Add project
+            const lastId = projectList.reduce((max: number, obj: any) => (obj.id > max ? obj.id : max), 0);
+            const newProject = {
                 id: lastId + 1,
                 title: params.title,
                 tasks: [],
             };
-            projectList.push(project);
+            updatedProjectList = [...projectList, newProject];
         }
 
+        setProjectList(updatedProjectList);
         showMessage('프로젝트 생성이 완료되었습니다.');
         setIsAddProjectModal(false);
     };
 
     const deleteProject = (project: any) => {
-        setProjectList(projectList.filter((d: any) => d.id !== project.id));
+        const updatedProjectList = projectList.filter((d: any) => d.id !== project.id);
+        setProjectList(updatedProjectList);
         showMessage('프로젝트 삭제가 완료되었습니다.');
     };
 
     const clearProjects = (project: any) => {
-        setParamsTask((project.tasks = []));
+        const updatedProjectList = projectList.map((p: any) =>
+            p.id === project.id ? { ...p, tasks: [] } : p
+        );
+        setProjectList(updatedProjectList);
+        showMessage('프로젝트의 모든 작업이 초기화되었습니다.');
     };
 
     const addTaskData = (e: any) => {
@@ -198,34 +217,40 @@ const Scrumboard = () => {
             showMessage('제목이 없습니다.', 'error');
             return false;
         }
-        const project: any = projectList.find((d: any) => d.id === paramsTask.projectId);
-        if (paramsTask.id) {
-            //update task
-            const task = project.tasks.find((d: any) => d.id === paramsTask.id);
-            task.title = paramsTask.title;
-            task.description = paramsTask.description;
-            task.tags = paramsTask.tags?.length > 0 ? paramsTask.tags.split(',') : [];
-        } else {
-            //add task
-            let maxId = 0;
-            maxId = project.tasks?.length ? project.tasks.reduce((max: number, obj: any) => (obj.id > max ? obj.id : max), project.tasks[0].id) : 0;
 
-            const today = new Date();
-            const dd = String(today.getDate()).padStart(2, '0');
-            const mm = String(today.getMonth()); //January is 0!
-            const yyyy = today.getFullYear();
-            const monthNames: any = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const task = {
-                projectId: paramsTask.projectId,
-                id: maxId + 1,
-                title: paramsTask.title,
-                description: paramsTask.description,
-                date: dd + ' ' + monthNames[mm] + ', ' + yyyy,
-                tags: paramsTask.tags?.length > 0 ? paramsTask.tags.split(',') : [],
-            };
-            setParamsTask(project.tasks.push(task));
-        }
+        const updatedProjectList = projectList.map((project: any) => {
+            if (project.id === paramsTask.projectId) {
+                if (paramsTask.id) {
+                    // Update task
+                    const updatedTasks = project.tasks.map((task: any) =>
+                        task.id === paramsTask.id
+                            ? {
+                                ...task,
+                                title: paramsTask.title,
+                                description: paramsTask.description,
+                                tags: paramsTask.tags?.length > 0 ? paramsTask.tags.split(',') : [],
+                            }
+                            : task
+                    );
+                    return { ...project, tasks: updatedTasks };
+                } else {
+                    // Add task
+                    const lastTaskId = project.tasks.reduce((max: number, obj: any) => (obj.id > max ? obj.id : max), 0);
+                    const newTask = {
+                        projectId: paramsTask.projectId,
+                        id: lastTaskId + 1,
+                        title: paramsTask.title,
+                        description: paramsTask.description,
+                        date: new Date().toLocaleDateString('KR'),
+                        tags: paramsTask.tags?.length > 0 ? paramsTask.tags.split(',') : [],
+                    };
+                    return { ...project, tasks: [...project.tasks, newTask] };
+                }
+            }
+            return project;
+        });
 
+        setProjectList(updatedProjectList);
         showMessage('작업 생성이 완료되었습니다.');
         setIsAddTaskModal(false);
     };
@@ -237,8 +262,15 @@ const Scrumboard = () => {
         }, 10);
     };
     const deleteTask = () => {
-        let project = projectList.find((d: any) => d.id === selectedTask.projectId);
-        project.tasks = project.tasks.filter((d: any) => d.id !== selectedTask.id);
+        const updatedProjectList = projectList.map((project: any) => {
+            if (project.id === selectedTask.projectId) {
+                const updatedTasks = project.tasks.filter((task: any) => task.id !== selectedTask.id);
+                return { ...project, tasks: updatedTasks };
+            }
+            return project;
+        });
+    
+        setProjectList(updatedProjectList);
         showMessage('작업 삭제가 완료되었습니다.');
         setIsDeleteModal(false);
     };

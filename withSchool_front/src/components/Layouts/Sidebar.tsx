@@ -222,7 +222,7 @@ const Sidebar = () => {
                                                         <NavLink to="/student/scrumboard">{t('칼반 보드')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/student/Q&A">{t('Q&A')}</NavLink>
+                                                        <NavLink to="/student/question">{t('Q&A')}</NavLink>
                                                     </li>
                                                     <li>
                                                         <NavLink to="/student/score">{t('성적')}</NavLink>
