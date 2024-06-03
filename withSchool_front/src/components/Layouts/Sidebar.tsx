@@ -132,31 +132,13 @@ const Sidebar = () => {
                                                 </div>
                                             </NavLink>
                                         </li>
-                                        <li className="menu nav-item">
-                                            <button type="button" className={`${currentMenu === 'invoice' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('invoice')}>
+                                        <li className="nav-item">
+                                            <NavLink to="/parent/counsel" className="group">
                                                 <div className="flex items-center">
-                                                    <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                                    <IconMenuChat className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('상담')}</span>
                                                 </div>
-
-                                                <div className={currentMenu !== 'invoice' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                    <IconCaretDown />
-                                                </div>
-                                            </button>
-
-                                            <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
-                                                <ul className="sub-menu text-gray-500">
-                                                    <li>
-                                                        <NavLink to="/apps/invoice/list">{t('상담 목록')}</NavLink>
-                                                    </li>
-                                                    <li>
-                                                        <NavLink to="/apps/invoice/preview">{t('상담 신청')}</NavLink>
-                                                    </li>
-                                                    <li>
-                                                        <NavLink to="/apps/invoice/add">{t('상담 신청')}</NavLink>
-                                                    </li>
-                                                </ul>
-                                            </AnimateHeight>
+                                            </NavLink>
                                         </li>
                                         <li className="nav-item">
                                             <NavLink to="/users/user-account-settings" className="group">
@@ -247,6 +229,44 @@ const Sidebar = () => {
                                                 </div>
                                             </NavLink>
                                         </li>
+                                        <li className="nav-item">
+                                            <NavLink to="/student/lecturenote" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuContacts className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('강의 노트')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
+                                        <li className="menu nav-item">
+                                            <button type="button" className={`${currentMenu === 'invoice' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('invoice')}>
+                                                <div className="flex items-center">
+                                                    <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메뉴 7')}</span>
+                                                </div>
+
+                                                <div className={currentMenu !== 'invoice' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                    <IconCaretDown />
+                                                </div>
+                                            </button>
+
+                                            <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
+                                                <ul className="sub-menu text-gray-500">
+                                                    <li>
+                                                        <NavLink to="/apps/invoice/list">{t('내용 1')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/apps/invoice/preview">{t('내용 2')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/apps/invoice/add">{t('내용 3')}</NavLink>
+                                                    </li>
+                                                    <li>
+                                                        <NavLink to="/apps/invoice/edit">{t('내용 4')}</NavLink>
+                                                    </li>
+                                                </ul>
+                                            </AnimateHeight>
+                                        </li>
+
 
                                     </ul>
                                 </li>
@@ -357,10 +377,10 @@ const Sidebar = () => {
                                             <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
                                                 <ul className="sub-menu text-gray-500">
                                                     <li>
-                                                        <NavLink to="/student/assignment">{t('상담 조회')}</NavLink>
+                                                        <NavLink to="/teacher/counsel/view">{t('상담 전체 조회')}</NavLink>
                                                     </li>
                                                     <li>
-                                                        <NavLink to="/teacher/counsel/apply">{t('상담 신청')}</NavLink>
+                                                        <NavLink to="/teacher/counsel/apply">{t('상담 신청 목록')}</NavLink>
                                                     </li>
                                                 </ul>
                                             </AnimateHeight>

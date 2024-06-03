@@ -1,77 +1,77 @@
 {
-  "hash": "f0f326aa",
-  "browserHash": "1896b929",
+  "hash": "9c2af543",
+  "browserHash": "7601a012",
   "optimized": {
     "react": {
       "src": "../../node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "af35ba50",
+      "fileHash": "fa2c7803",
       "needsInterop": true
     },
     "react-dom/client": {
       "src": "../../node_modules/react-dom/client.js",
       "file": "react-dom_client.js",
-      "fileHash": "60e62072",
+      "fileHash": "75069ab5",
       "needsInterop": true
     },
     "react-router-dom": {
       "src": "../../node_modules/react-router-dom/dist/index.js",
       "file": "react-router-dom.js",
-      "fileHash": "f0425320",
+      "fileHash": "370ec77c",
       "needsInterop": false
     },
     "react-redux": {
       "src": "../../node_modules/react-redux/es/index.js",
       "file": "react-redux.js",
-      "fileHash": "62616d30",
+      "fileHash": "8a166f36",
       "needsInterop": false
     },
     "i18next": {
       "src": "../../node_modules/i18next/dist/esm/i18next.js",
       "file": "i18next.js",
-      "fileHash": "13a5d755",
+      "fileHash": "b6995fb2",
       "needsInterop": false
     },
     "i18next-http-backend": {
       "src": "../../node_modules/i18next-http-backend/esm/index.js",
       "file": "i18next-http-backend.js",
-      "fileHash": "2fb1cd19",
+      "fileHash": "977c9cd7",
       "needsInterop": false
     },
     "i18next-browser-languagedetector": {
       "src": "../../node_modules/i18next-browser-languagedetector/dist/esm/i18nextBrowserLanguageDetector.js",
       "file": "i18next-browser-languagedetector.js",
-      "fileHash": "139f3beb",
+      "fileHash": "139e7fbb",
       "needsInterop": false
     },
     "react-i18next": {
       "src": "../../node_modules/react-i18next/dist/es/index.js",
       "file": "react-i18next.js",
-      "fileHash": "b00b5d8c",
+      "fileHash": "a60297d1",
       "needsInterop": false
     },
     "@reduxjs/toolkit": {
       "src": "../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js",
       "file": "@reduxjs_toolkit.js",
-      "fileHash": "d5a58c29",
+      "fileHash": "97abd70e",
       "needsInterop": false
     },
     "react-perfect-scrollbar": {
       "src": "../../node_modules/react-perfect-scrollbar/lib/index.js",
       "file": "react-perfect-scrollbar.js",
-      "fileHash": "4b3c06dd",
+      "fileHash": "b022fdf4",
       "needsInterop": true
     },
     "react-animate-height": {
       "src": "../../node_modules/react-animate-height/dist/esm/index.js",
       "file": "react-animate-height.js",
-      "fileHash": "ba7fa2a3",
+      "fileHash": "ff61e3b7",
       "needsInterop": false
     },
     "react-popper": {
       "src": "../../node_modules/react-popper/lib/esm/index.js",
       "file": "react-popper.js",
-      "fileHash": "8ebf5211",
+      "fileHash": "53b02b8a",
       "needsInterop": false
     }
   },

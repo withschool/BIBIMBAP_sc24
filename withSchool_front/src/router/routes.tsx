@@ -25,11 +25,15 @@ const ClassInfo = lazy(() => import('../pages/Teacher/ClassInfo'));
 const SubjectInfo = lazy(() => import('../pages/Teacher/SubjectInfo'));
 const SchoolNotice = lazy(() => import('../pages/Teacher/SchoolNotice'));
 const ChooseSubject = lazy(() => import('../pages/Teacher/ChooseSubject'));
+const CounselTeacherAssign = lazy(() => import('../pages/Teacher/CounselTeacherAssign'));
+const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherList'));
+const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
 const StudentInfo = lazy(() => import('../pages/Parent/StudentInfo'));
 const SchoolInfo = lazy(() => import('../pages/Parent/SchoolInfo'));
+const CounselParent = lazy(() => import('../pages/Parent/CounselParent'));
 
 //Student
 const StudentHome = lazy(() => import('../pages/Student/StudentHome'));
@@ -38,8 +42,7 @@ const Scrumboard = lazy(() => import('../pages/Student/Scrumboard'));
 const Calendar = lazy(() => import('../pages/Student/Calendar'));
 const Counsel = lazy(() => import('../pages/Student/Counsel'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
-const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
-
+const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -139,6 +142,21 @@ const routes = [
         path: '/teacher/subject/choose',
         element: <ChooseSubject />,
 
+    },{
+
+        path: '/teacher/counsel/view',
+        element: <CounselTeacherList />,
+
+    },
+    {
+        path: '/teacher/counsel/apply',
+        element: <CounselTeacherAssign />,
+
+    },
+    {
+        path: '/teacher/subject/lecturenote',
+        element: <LectureNote />,
+
     },
 
     {
@@ -167,7 +185,10 @@ const routes = [
         path: '/student/counsel',
         element: <Counsel />,
     },
-
+    {
+        path: '/student/lecturenote',
+        element: <LectureNoteStudent />,
+    },
 
 
     {
@@ -177,6 +198,10 @@ const routes = [
     {
         path: '/parent/schoolinfo',
         element: <SchoolInfo />,
+    },
+    {
+        path: '/parent/counsel',
+        element: <CounselParent />,
     },
     {
         path: '/student/scrumboard',
@@ -207,10 +232,6 @@ const routes = [
         element: <InvoiceList />,
     },
 
-    {
-        path: '/admin/invoice/preview',
-        element: <InvoicePreview />,
-    },
 
     {
         path: '/admin/invoice/add',

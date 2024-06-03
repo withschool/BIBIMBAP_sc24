@@ -254,6 +254,30 @@ export const getUserInfobyId = async (id: string | null): Promise<any> => {
   }
 }
 
+export const getUserInfobyPK = async (userPk: number | null): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/users/user-id/${userPk}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('UserInfo fetched successfully:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('Failed to fetch UserInfo:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (error) {
+    console.error('Error during fetching UserInfo:', error);
+  }
+}
+
 export const editUser = async (userId: number, email: string, phoneNumber: string, address: string): Promise<any> => {
   try {
     const body: EditBody = {
