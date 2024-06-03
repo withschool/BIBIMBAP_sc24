@@ -49,6 +49,20 @@ const Counsel = () => {
     const [allTasks, setAllTasks] = useState([
         {
             id: 1,
+            title: '수학이 너무 어렵습니다.',
+            date: '2024년 05월 30일',
+            description:
+                '이번 중간고사가 너무 어려워서 수학을 어떻게 공부해야 할지 모르겠습니다...',
+            descriptionText:
+                '이번 중간고사가 너무 어려워서 수학을 어떻게 공부해야 할지 모르겠습니다...',
+            tag: 'score',
+            priority: 'medium',
+            assignee: 'KV',
+            path: '',
+            status: 'before',
+        },
+        {
+            id: 2,
             title: '수학 문제 이해가 안 돼요',
             date: '2023년 10월 10일',
             description:
@@ -62,7 +76,7 @@ const Counsel = () => {
             status: 'before',
         },
         {
-            id: 2,
+            id: 3,
             title: '과학 실험 보고서 작성 방법',
             date: '2023년 10월 09일',
             description:
@@ -76,7 +90,7 @@ const Counsel = () => {
             status: 'before',
         },
         {
-            id: 3,
+            id: 4,
             title: '영어 단어 외우기 어려워요',
             date: '2023년 10월 08일',
             description:
@@ -90,7 +104,7 @@ const Counsel = () => {
             status: 'complete',
         },
         {
-            id: 4,
+            id: 5,
             title: '역사 숙제 도움 요청',
             date: '2023년 10월 07일',
             description:
@@ -786,10 +800,10 @@ const Counsel = () => {
                                                     <label htmlFor="assignee">대상</label>
                                                     <select id="assignee" className="form-select" value={params.assignee} onChange={(e) => changeValue(e)}>
                                                         <option value="">대상 선택</option>
-                                                        <option value="John Smith">반 담임</option>
-                                                        <option value="Kia Vega">과목 1</option>
-                                                        <option value="Sandy Doe">과목 2</option>
-                                                        <option value="Jane Foster">과목 3</option>
+                                                        <option value="John Smith">김미경(담임 선생님)</option>
+                                                        <option value="Kia Vega">박민수(수학 선생님)</option>
+                                                        <option value="Sandy Doe">이시연(영어 선생님)</option>
+                                                        <option value="Jane Foster">박민영(국어 선생님)</option>
                                                     </select>
                                                 </div>
                                                 <div className="mb-5 flex justify-between gap-4">

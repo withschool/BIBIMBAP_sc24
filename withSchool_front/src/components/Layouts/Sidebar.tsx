@@ -357,7 +357,7 @@ const Sidebar = () => {
                                             <AnimateHeight duration={300} height={currentMenu === 'invoice' ? 'auto' : 0}>
                                                 <ul className="sub-menu text-gray-500">
                                                     <li>
-                                                        <NavLink to="/student/assignment">{t('상담 조회')}</NavLink>
+                                                        <NavLink to="/student/counsel">{t('상담 조회')}</NavLink>
                                                     </li>
                                                     <li>
                                                         <NavLink to="/teacher/counsel/apply">{t('상담 신청')}</NavLink>

@@ -1,0 +1,30 @@
+/* 
+// 11. Pricing
+*/
+
+.pricing-tab {
+    .nav-pills {
+        background-color: lighten($gray-200, 1%);
+        padding: 5px;
+        .nav-link {
+            padding: 10px 24px;
+            &.active {
+                background-color: $primary;
+            }
+        }
+    }
+}
+
+.plan-card{
+    max-width: 356px;
+    margin: 0px auto;
+}
+
+.pricing-badge {
+    padding: 6px 40px;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 30px;
+    right: -46px;
+    // box-shadow: 0 1px 8px rgb(12 23 65 / 0.3);
+}

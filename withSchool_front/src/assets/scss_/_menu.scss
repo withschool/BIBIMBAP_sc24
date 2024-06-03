@@ -1,0 +1,225 @@
+/* 
+// 3. Menu
+*/
+
+.nav-item {
+  .nav-link {
+    display: inline-block;
+    color: $dark;
+    text-decoration: none;
+  }
+}
+
+.navbar {
+  padding: 14px 0px;
+  width: 100%;
+  border-radius: 0px;
+  z-index: 999;
+  margin-bottom: 0px;
+  transition: all 0.5s ease-in-out;
+  background-color: transparent;
+  .logo {
+    .logo-dark {
+      display: none;
+    }
+    .logo-light {
+      display: inline-block;
+    }
+  }
+  .navbar-nav {
+    li {
+      a {
+        line-height: 26px;
+        color: rgba($gray-200, 0.7);
+        font-size: 16px;
+        transition: all 0.3s;
+        background-color: transparent !important;
+        padding: 6px 0;
+        margin: 0 15px;
+        font-family: $font-secondary;
+        font-weight: 600;
+      }
+      .nav-link {
+        padding-right: 0px;
+        padding-left: 0px;
+        &.active,
+        &:hover,
+        &:focus {
+          color: $white !important;
+        }
+      }
+    }
+  }
+  .navbar-toggles {
+    padding: 0.25rem 0.75rem;
+    font-size: 18px;
+    background: 0 0;
+    border: 1px solid transparent;
+    color: $white;
+    outline: 0;
+  }
+  .nav-btn {
+    background-color: $light;
+    color: $primary;
+  }
+}
+.navbar-toggler {
+  padding: 0;
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.nav .open > a,
+.nav .open > a:focus,
+.nav .open > a:hover {
+  background-color: transparent;
+  border-color: $primary;
+}
+
+.menu-toggle {
+  padding: 4.5px 10px !important;
+  span {
+    line-height: 27px;
+  }
+}
+
+/*---NAVBAR STICKY--*/
+
+.nav-sticky {
+  &.navbar {
+    margin-top: 0px;
+    background-color: $white;
+    box-shadow: 0 0 10px 0 rgba($black, 0.06);
+    color: $black !important;
+    .navbar-nav {
+      margin-top: 0px;
+      li {
+        .nav-link {
+          color: $gray-600 !important;
+          &.active,
+          &:hover,
+          &:focus {
+            color: $primary !important;
+          }
+        }
+      }
+    }
+    .nav-btn {
+      background-color: $primary;
+      color: $white;
+    }
+  }
+
+  .logo {
+    .logo-dark {
+      display: inline-block !important;
+    }
+    .logo-light {
+      display: none !important;
+    }
+  }
+}
+
+.navbar-toggler {
+  color: $dark !important;
+  border: none !important;
+  &:focus {
+    outline: none;
+  }
+}
+
+// Navbar light
+.navbar-light {
+  .logo {
+    .logo-dark {
+      display: inline-block;
+    }
+    .logo-light {
+      display: none;
+    }
+  }
+  .navbar-nav {
+    li {
+      a {
+        color: $gray-600 !important;
+      }
+      .nav-link {
+        padding-right: 0px;
+        padding-left: 0px;
+
+        &.active,
+        &:hover,
+        &:focus {
+          color: $primary !important;
+        }
+      }
+    }
+  }
+  .nav-btn {
+    background-color: $primary;
+    color: $white;
+  }
+}
+
+@media (min-width: 200px) and (max-width: 991px) {
+  .navbar {
+    margin-top: 0px;
+    background-color: $white !important;
+    box-shadow: 0 3px 10px rgba($black, 0.08);
+    color: $white !important;
+    .navbar-nav {
+      margin-top: 0px;
+      li {
+        .nav-link {
+          padding: 6px 0;
+          transition: all 0.4s;
+          color: $gray-600 !important;
+          margin: 0px;
+          display: block;
+          &.active,
+          &:hover,
+          &:focus {
+            color: $primary !important;
+          }
+        }
+        &.active {
+          a {
+            border-color: transparent;
+          }
+        }
+      }
+    }
+    & > .container {
+      width: 90%;
+    }
+    .logo {
+      .logo-dark {
+        display: inline-block !important;
+      }
+      .logo-light {
+        display: none !important;
+      }
+    }
+    &.navbar-light {
+      .navbar-nav {
+        li {
+          .nav-link {
+            &.active,
+            &:hover,
+            &:focus {
+              color: $dark !important;
+            }
+          }
+        }
+      }
+    }
+    .nav-btn {
+      background-color: $primary;
+      color: $white;
+    }
+  }
+  .navbar-collapse {
+    padding: 0;
+  }
+}
