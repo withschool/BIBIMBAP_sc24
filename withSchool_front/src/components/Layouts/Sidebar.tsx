@@ -197,50 +197,6 @@ const Sidebar = () => {
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
-<<<<<<< HEAD
-                                        <li className="nav-item">
-                                            <NavLink to="/student/scrumboard" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('칼반 보드')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/calendar" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('일정 관리')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/counsel" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('상담')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/assignment" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuContacts className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('강의 노트')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/student/lecturenote" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuContacts className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('강의 노트')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-=======
-
->>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
                                         <li className="menu nav-item">
                                             <button type="button" className={`${currentMenu === 'studys' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('studys')}>
                                                 <div className="flex items-center">
@@ -277,8 +233,6 @@ const Sidebar = () => {
                                             </AnimateHeight>
                                         </li>
 
-<<<<<<< HEAD
-=======
                                         <li className="nav-item">
                                             <NavLink to="/student/counsel" className="group">
                                                 <div className="flex items-center">
@@ -295,7 +249,6 @@ const Sidebar = () => {
                                                 </div>
                                             </NavLink>
                                         </li>
->>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
 
                                     </ul>
                                 </li>
