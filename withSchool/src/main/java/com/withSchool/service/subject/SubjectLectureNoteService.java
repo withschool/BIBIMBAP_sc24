@@ -181,14 +181,17 @@ public class SubjectLectureNoteService {
     }
 
     private void saveFiles(List<MultipartFile> files, Long lectureNoteId) {
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                FileDTO fileDTO = FileDTO.builder()
-                        .file(file)
-                        .repoType("subjectLectureNote")
-                        .masterId(lectureNoteId)
-                        .build();
-                fileService.saveFile(fileDTO);
+
+        if(files != null && !files.isEmpty()){
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    FileDTO fileDTO = FileDTO.builder()
+                            .file(file)
+                            .repoType("subjectLectureNote")
+                            .masterId(lectureNoteId)
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
             }
         }
     }

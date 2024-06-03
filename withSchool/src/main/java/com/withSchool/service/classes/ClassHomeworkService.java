@@ -59,16 +59,19 @@ public class ClassHomeworkService {
             ClassHomework result = classHomeworkRepository.save(classHomework);
 
             List<MultipartFile> files = reqHomeworkCreateDTO.getFiles();
-            for(MultipartFile s : files){
-                if(!s.isEmpty()) {
-                    FileDTO fileDTO = FileDTO.builder()
-                            .file(s)
-                            .repoType("classHomework")
-                            .masterId(result.getClassHomeworkId())
-                            .build();
-                    fileService.saveFile(fileDTO);
+            if(files != null && !files.isEmpty()){
+                for(MultipartFile s : files){
+                    if(!s.isEmpty()) {
+                        FileDTO fileDTO = FileDTO.builder()
+                                .file(s)
+                                .repoType("classHomework")
+                                .masterId(result.getClassHomeworkId())
+                                .build();
+                        fileService.saveFile(fileDTO);
+                    }
                 }
             }
+
             List<User> userList = userService.findStudentByClassId(userService.getCurrentUserClassId());
             notificationService.sendSMSGroup(userList, "반 과제가", reqHomeworkCreateDTO.getTitle(), false);
 
@@ -109,16 +112,20 @@ public class ClassHomeworkService {
             this.deleteFileById(homeworkId);
             //ClientSchoolNoticeDTO의 파일 저장
             List<MultipartFile> dtoFile = req.getFiles();
-            for(MultipartFile s : dtoFile){
-                if(!s.isEmpty()){
-                    FileDTO fileDTO = FileDTO.builder()
-                            .repoType("classHomework")
-                            .file(s)
-                            .masterId(homeworkId)
-                            .build();
-                    fileService.saveFile(fileDTO);
+
+            if(dtoFile != null && !dtoFile.isEmpty()){
+                for(MultipartFile s : dtoFile){
+                    if(!s.isEmpty()){
+                        FileDTO fileDTO = FileDTO.builder()
+                                .repoType("classHomework")
+                                .file(s)
+                                .masterId(homeworkId)
+                                .build();
+                        fileService.saveFile(fileDTO);
+                    }
                 }
             }
+
 
             return ResHomeworkDTO.builder()
                     .id(classHomework.getClassHomeworkId())
@@ -194,16 +201,20 @@ public class ClassHomeworkService {
         ClassHomeworkSubmit result = classHomeworkSubmitRepository.save(classHomeworkSubmit);
 
         List<MultipartFile> files = reqHomeworkSubmitDTO.getFiles();
-        for(MultipartFile s : files){
-            if(!s.isEmpty()) {
-                FileDTO fileDTO = FileDTO.builder()
-                        .file(s)
-                        .repoType("classHomeworkSubmit")
-                        .masterId(result.getClassHomeworkSubmitId())
-                        .build();
-                fileService.saveFile(fileDTO);
+
+        if(files != null && !files.isEmpty()){
+            for(MultipartFile s : files){
+                if(!s.isEmpty()) {
+                    FileDTO fileDTO = FileDTO.builder()
+                            .file(s)
+                            .repoType("classHomeworkSubmit")
+                            .masterId(result.getClassHomeworkSubmitId())
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
             }
         }
+
         return "Homework submitted successfully.";
     }
 
@@ -224,16 +235,20 @@ public class ClassHomeworkService {
         this.deleteSubmitFileById(classHomeworkSubmitId);
 
         List<MultipartFile> dtoFile = reqHomeworkSubmitDTO.getFiles();
-        for(MultipartFile s : dtoFile){
-            if(!s.isEmpty()){
-                FileDTO fileDTO = FileDTO.builder()
-                        .repoType("classHomeworkSubmit")
-                        .file(s)
-                        .masterId(classHomeworkSubmitId)
-                        .build();
-                fileService.saveFile(fileDTO);
+
+        if(dtoFile != null && !dtoFile.isEmpty()) {
+            for(MultipartFile s : dtoFile){
+                if(!s.isEmpty()){
+                    FileDTO fileDTO = FileDTO.builder()
+                            .repoType("classHomeworkSubmit")
+                            .file(s)
+                            .masterId(classHomeworkSubmitId)
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
             }
         }
+
         return "Homework update successfully.";
     }
     public Long getId(Long homeworkId) {
