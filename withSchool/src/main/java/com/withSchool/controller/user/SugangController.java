@@ -51,8 +51,8 @@ public class SugangController {
 
     @GetMapping("/{subjectId}/scores")
     @Operation(summary = "학생 개인의 성적을 확인하는 데 쓰이는 API")
-    public ResponseEntity<ResStudentSubjectDefaultDTO> findOnesScore(@PathVariable Long subjectId) {
-        return ResponseEntity.ok().body(studentSubjectService.findOnesScore(subjectId));
+    public ResponseEntity<ResStudentSubjectDefaultDTO> findOnesScore(@PathVariable Long subjectId, @RequestParam Long childId) {
+        return ResponseEntity.ok().body(studentSubjectService.findOnesScore(subjectId, childId));
     }
 
     @PatchMapping("/scores")
