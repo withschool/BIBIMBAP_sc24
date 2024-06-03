@@ -53,6 +53,7 @@ useEffect(() => {
     };
 
     fetchLectureNote();
+    
 }, [studentList]);
 
     const defaultParams = { subjectLectureNoteId: null, title: '', description: '', tag: '', name: '', thumb: '' };
@@ -80,89 +81,12 @@ useEffect(() => {
         }
     };
 
-    const saveNote = () => {
-
-        const formData = new FormData();
-
-        if (!params.title) {
-            showMessage('제목을 입력해 주세요.', 'error');
-            return false;
-        }
-        if (params.subjectLectureNoteId) {
-            //update task
-            let note: any = studentList.find((d: any) => d.subjectLectureNoteId === params.subjectLectureNoteId);
-            note.title = params.title;
-            formData.append("title", params.title);
-            const subjectId = localStorage.getItem('targetSubject') || '';
-            formData.append("subjectId", subjectId);
-            if (selectedFiles) {
-                console.log(selectedFiles);
-                Array.from(selectedFiles).forEach(file => {
-                    formData.append("file", file);
-                });
-            }
-            updateLectureNote(formData, note.subjectLectureNoteId);  
-            showMessage('강의 노트 수정이 완료되었습니다.');
-        } else {
-            console.log("안돼~"+params.title+ params.fileURl);
-            createLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
-            showMessage('강의 노트 생성이 완료되었습니다.');
-        }
-        setAddContactModal(false);
-        searchNotes();
-    };
-
     const tabChanged = (type: string) => {
         setSelectedTab(type);
         setIsShowNoteMenu(false);
         searchNotes();
     };
-
-    const setFav = (note: any) => {
-        let list = filterdNotesList;
-        let item = list.find((d: any) => d.subjectLectureNoteId === note.subjectLectureNoteId);
-        item.isFav = !item.isFav;
-
-        setFilterdNotesList([...list]);
-        if (selectedTab !== 'mid' || selectedTab === 'final') {
-            searchNotes();
-        }
-    };
-
-    const changeValue = (e: any) => {
-        const { value, id } = e.target;
-        setParams({ ...params, [id]: value });
-    };
-
-    const deleteNoteConfirm = (note: any) => {
-        setDeletedNote(note);
-        setIsDeleteNoteModal(true);
-    };
-
-    const viewNote = (note: any) => {
-        setParams(note);
-        setIsViewNoteModal(true);
-    };
-
-    const editNote = (note: any = null) => {
-        setIsShowNoteMenu(false);
-        const json = JSON.parse(JSON.stringify(defaultParams));
-        setParams(json);
-        if (note) {
-            let json1 = JSON.parse(JSON.stringify(note));
-            setParams(json1);
-        }
-        setAddContactModal(true);
-    };
-
-    const deleteNote = () => {
-        setStudentList(studentList.filter((d: any) => d.subjectLectureNoteId !== deletedNote.subjectLectureNoteId));
-        searchNotes();
-        deleteLectureNote(deletedNote.subjectLectureNoteId);
-        showMessage('강의 노트 삭제가 완료되었습니다.');
-        setIsDeleteNoteModal(false);
-    };
-
+  
     const handleMidSubmit = () => {
         console.log(tempScores);
         const transformedObject = Object.keys(tempScores).map(key => ({
@@ -174,13 +98,57 @@ useEffect(() => {
         alert("등록되었습니다");
     }
 
+    const handleFinalSubmit = () => {
+        console.log(tempScores);
+        const transformedObject = Object.keys(tempScores).map(key => ({
+            studentSubjectId: parseInt(key),
+            score: parseInt(tempScores[key])
+        }));
+        console.log(transformedObject);
+        enrollScore("final", transformedObject);
+        alert("등록되었습니다");
+    }
+
+    const handleActivitySubmit = () => {
+        console.log(tempScores);
+        const transformedObject = Object.keys(tempScores).map(key => ({
+            studentSubjectId: parseInt(key),
+            score: parseInt(tempScores[key])
+        }));
+        console.log(transformedObject);
+        enrollScore("activity", transformedObject);
+        alert("등록되었습니다");
+    }
+
     interface Student {
         userId: number;
         userName: string;
         midtermScore: string;
     }
 
+    useEffect(() => {
+        const initialTempScores = [];
+        studentList.forEach((student) => {
+            initialTempScores[student.studentSubjectId] = student.midtermScore;
+        });
+        setTempScores(initialTempScores);
+    }, []);
+
     const handleMidScoreChange = (studentSubjectId, newScore) => {
+        setTempScores((prevTempScores) => ({
+            ...prevTempScores,
+            [studentSubjectId]: newScore
+        }));
+    };
+
+    const handleFinalScoreChange = (studentSubjectId, newScore) => {
+        setTempScores((prevTempScores) => ({
+            ...prevTempScores,
+            [studentSubjectId]: newScore
+        }));
+    };
+
+    const handleActivityScoreChange = (studentSubjectId, newScore) => {
         setTempScores((prevTempScores) => ({
             ...prevTempScores,
             [studentSubjectId]: newScore
@@ -309,7 +277,12 @@ useEffect(() => {
                                                         <div className="whitespace-nowrap">{data.userName}</div>
                                                     </td>
                                                     <td className="w-1/3 text-center">
-                                                        <input type="text" className="w-10" value={tempScores[data.studentSubjectId] !== undefined ? tempScores[data.studentSubjectId] : data.MidScore}  onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)} />
+                                                        <input
+                                                            type="text"
+                                                            className="w-10"
+                                                            value={tempScores[data.studentSubjectId] || ''}
+                                                            onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)}
+                                                        />
                                                     </td>
                                                 </tr>
                                             );
@@ -322,65 +295,77 @@ useEffect(() => {
                     ) : (
                         <div>
                         {filterdNotesList.length && selectedTab == "final" ? (
-                            <div className="sm:min-h-[300px] min-h-[400px]">
-                            <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-                                <div className="table-responsive mb-5">
+                            <div className="table-responsive mb-5">
+                            <table className="table-striped">
+                                <thead>
+                                    <tr>
+                                        <th className="w-1/3">ID</th>
+                                        <th className="w-1/3">이름</th>
+                                        <th className="w-1/3 text-center">기말고사 성적</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {studentList.map((data) => {
+                                        return (
+                                            <tr key={data.studentSubjectId}>
+                                                <td className="w-1/3">
+                                                    <div className="whitespace-nowrap">{data.userId}</div>
+                                                </td>
+                                                <td className="w-1/3">
+                                                    <div className="whitespace-nowrap">{data.userName}</div>
+                                                </td>
+                                                <td className="w-1/3 text-center">
+                                                    <input
+                                                        type="text"
+                                                        className="w-10"
+                                                        value={tempScores[data.studentSubjectId] || ''}
+                                                        onChange={(e) => handleFinalScoreChange(data.studentSubjectId, e.target.value)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                            <button className="mt-5 flex-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleFinalSubmit}>제출</button>
+                        </div>
+                        
+                        ) : (
+                            <div>
+                                {filterdNotesList.length && selectedTab == "activity" ? (
+                                    <div className="table-responsive mb-5">
                                     <table className="table-striped">
                                         <thead>
                                             <tr>
-                                                <th>이름</th>
-                                                <th>성적</th>
+                                                <th className="w-1/3">ID</th>
+                                                <th className="w-1/3">이름</th>
+                                                <th className="w-1/3 text-center">수행평가 성적</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {studentList.map((data) => {
                                                 return (
-                                                    <tr key={data.userId}>
-                                                        <td>
+                                                    <tr key={data.studentSubjectId}>
+                                                        <td className="w-1/3">
+                                                            <div className="whitespace-nowrap">{data.userId}</div>
+                                                        </td>
+                                                        <td className="w-1/3">
                                                             <div className="whitespace-nowrap">{data.userName}</div>
                                                         </td>
-                                                        <td>
-                                                            <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.userId, e.target.value)} />
+                                                        <td className="w-1/3 text-center">
+                                                            <input
+                                                                type="text"
+                                                                className="w-10"
+                                                                value={tempScores[data.studentSubjectId] || ''}
+                                                                onChange={(e) => handleActivityScoreChange(data.studentSubjectId, e.target.value)}
+                                                            />
                                                         </td>
                                                     </tr>
                                                 );
                                             })}
                                         </tbody>
                                     </table>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        ) : (
-                            <div>
-                                {filterdNotesList.length && selectedTab == "activity" ? (
-                                    <div className="sm:min-h-[300px] min-h-[400px]">
-                                    <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-                                        <div className="table-responsive mb-5">
-                                            <table className="table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>이름</th>
-                                                        <th>성적</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {studentList.map((data) => {
-                                                        return (
-                                                            <tr key={data.studentSubjectId}>
-                                                                <td>
-                                                                    <div className="whitespace-nowrap">{data.userName}</div>
-                                                                </td>
-                                                                <td>
-                                                                    <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.studentSubjectId, e.target.value)} />
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                    <button className="mt-5 flex-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleActivitySubmit}>제출</button>
                                 </div>
                                 
                                 ) : (

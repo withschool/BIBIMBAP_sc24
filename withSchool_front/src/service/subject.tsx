@@ -173,6 +173,12 @@ export const getLectureNoteList = async (subjectId: string | null): Promise<any>
     }
 }
 
+interface LectureNoteBody {
+    title: string;
+    subjectId: string | null;
+    file: string;
+}
+
 export const createLectureNote = async (formData: FormData): Promise<any> => {
     try {
         const response = await fetch(`${url}/subjects/lecture-notes`, {
@@ -266,16 +272,8 @@ export const getStudentList = async (subjectId: string | null): Promise<any> => 
     }
 }
 
-interface scoreBody {
-    title: string;
-    subjectId: string | null;
-    file: string;
-}
-
-export const enrollScore = async (type: string, userScoreList: any[]): Promise<any> => {
-
+export const enrollScore = async (type: String, userScoreList : any[]): Promise<any> => {
     try {
-        console.log(type, userScoreList);
         const response = await fetch(`${url}/sugangs/scores`, {
             method: 'PATCH',
             headers: {
@@ -286,6 +284,29 @@ export const enrollScore = async (type: string, userScoreList: any[]): Promise<a
                 "type" : type,
                 "userScoreList" : userScoreList
             })
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+export const getStudentScoreParent = async (subjectId : String, childId: string | null): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/sugangs/${subjectId}/scores?childId=${childId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
         if (response.ok) {
             const data = await response.json();
