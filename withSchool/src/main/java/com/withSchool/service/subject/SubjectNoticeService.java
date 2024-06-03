@@ -15,6 +15,8 @@ import com.withSchool.repository.mapping.TeacherSubjectRepository;
 import com.withSchool.repository.subject.SubjectNoticeRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,9 @@ public class SubjectNoticeService {
     private final SubjectNoticeRepository subjectNoticeRepository;
     private final SubjectNoticeFileRepository subjectNoticeFileRepository;
     private final TeacherSubjectRepository teacherSubjectRepository;
+    private final StudentSubjectService studentSubjectService;
     private final SubjectRepository subjectRepository;
+    private final NotificationService notificationService;
     @Transactional
     public ResNoticeDTO save(ReqSubjectNoticeDTO reqSubjectNoticeDTO) {
 
@@ -63,6 +67,9 @@ public class SubjectNoticeService {
                 fileService.saveFile(fileDTO);
             }
         }
+
+        List<User> userList = studentSubjectService.findSugangStudent(reqSubjectNoticeDTO.getSubjectId());
+        notificationService.sendSMSGroup(userList, "과목 공지가", reqSubjectNoticeDTO.getTitle(), true);
 
         return ResNoticeDTO.builder()
                 .noticeId(result.getSubjectNoticeId())

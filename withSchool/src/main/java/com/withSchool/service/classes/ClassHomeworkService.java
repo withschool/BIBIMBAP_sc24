@@ -14,6 +14,8 @@ import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.file.ClassHomeworkFileRepository;
 import com.withSchool.repository.file.ClassHomeworkSubmitFileRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,8 @@ public class ClassHomeworkService {
     private final ClassHomeworkFileRepository classHomeworkFileRepository;
     private final ClassHomeworkSubmitRepository classHomeworkSubmitRepository;
     private final ClassHomeworkSubmitFileRepository classHomeworkSubmitFileRepository;
+    private final StudentSubjectService studentSubjectService;
+    private final NotificationService notificationService;
     @Transactional
     public ResHomeworkDTO save(ReqHomeworkCreateDTO reqHomeworkCreateDTO) {
 
@@ -65,6 +69,9 @@ public class ClassHomeworkService {
                     fileService.saveFile(fileDTO);
                 }
             }
+            List<User> userList = userService.findStudentByClassId(userService.getCurrentUserClassId());
+            notificationService.sendSMSGroup(userList, "반 과제가", reqHomeworkCreateDTO.getTitle(), false);
+
             return ResHomeworkDTO.builder()
                     .id(result.getClassHomeworkId())
                     .title(result.getTitle())
