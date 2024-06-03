@@ -221,12 +221,12 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/student/scrumboard">{t('칼반 보드')}</NavLink>
                                                     </li>
-                                                    <li>
+                                                    {/* <li>
                                                         <NavLink to="/student/question">{t('Q&A')}</NavLink>
-                                                    </li>
-                                                    <li>
+                                                    </li> */}
+                                                    {/* <li>
                                                         <NavLink to="/student/score">{t('성적')}</NavLink>
-                                                    </li>
+                                                    </li> */}
                                                     <li>
                                                         <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
                                                     </li>
@@ -301,9 +301,9 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/teacher/class/infomation">{t('기본 정보')}</NavLink>
                                                     </li>
-                                                    <li>
+                                                    {/* <li>
                                                         <NavLink to="/teacher/class/watchgrade">{t('성적 조회')}</NavLink>
-                                                    </li>
+                                                    </li> */}
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
@@ -333,12 +333,12 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/teacher/subject/homework">{t('과제')}</NavLink>
                                                     </li>
-                                                    <li>
+                                                    {/* <li>
                                                         <NavLink to="/teacher/subject/grade">{t('성적 관리')}</NavLink>
-                                                    </li>
-                                                    <li>
+                                                    </li> */}
+                                                    {/* <li>
                                                         <NavLink to="/teacher/subject/qna">{t('Q & A')}</NavLink>
-                                                    </li>
+                                                    </li> */}
                                                     <li>
                                                         <NavLink to="/teacher/subject/choose">{t('과목 목록')}</NavLink>
                                                     </li>

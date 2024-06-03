@@ -119,7 +119,7 @@ const AccountSetting = () => {
                                 비밀번호 변경
                             </button>
                         </li>
-                        <li className="inline-block">
+                        {/* <li className="inline-block">
                             <button
                                 onClick={() => toggleTabs('danger-zone')}
                                 className={`flex gap-2 p-4 border-b border-transparent hover:border-primary hover:text-primary ${tabs === 'danger-zone' ? '!border-primary text-primary' : ''}`}
@@ -127,7 +127,7 @@ const AccountSetting = () => {
                                 <IconPhone />
                                 계정 설정
                             </button>
-                        </li>
+                        </li> */}
                     </ul>
                 </div>
                 {tabs === 'home' ? (
