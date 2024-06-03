@@ -4,6 +4,7 @@ import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.dto.user.*;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.school.SchoolInformationService;
+import com.withSchool.service.user.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import com.withSchool.JWT.JwtTokenProvider;
 import com.withSchool.dto.user.SignUpDTO;
@@ -32,6 +33,7 @@ public class BasicController {
     private final UserService userService;
     private final SchoolInformationService schoolInformationService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final NotificationService notificationService;
 
     @PostMapping("/pre-sign-up")
     @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")
@@ -112,6 +114,10 @@ public class BasicController {
 
     @PostMapping("/test")
     public String test() {
+        User user = userService.getCurrentUser();
+        String type= "학교공지";
+        String title = "캡스톤디자인 제출 안내";
+        notificationService.sendSMS(user, type, title, false);
         return "Success";
     }
 

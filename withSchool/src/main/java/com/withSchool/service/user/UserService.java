@@ -279,4 +279,8 @@ public class UserService {
 
         return dtos;
     }
+
+    public List<User> findStudentBySchoolInformationSchoolId(Long schoolId){
+        return userRepository.findStudentBySchoolInformationSchoolId(schoolId);
+    }
 }
