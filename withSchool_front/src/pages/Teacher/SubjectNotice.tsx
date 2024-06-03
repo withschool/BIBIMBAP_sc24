@@ -49,6 +49,7 @@ import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
+import { useNavigate } from 'react-router-dom';
 
 const SubjectNotice = () => {
 
@@ -179,8 +180,15 @@ const SubjectNotice = () => {
         searchMails(false);
     };
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchNotices = async () => {
+
+            if(localStorage.getItem("targetSubject") == null){
+                alert("과목을 선택해 주세요.");
+                navigate('/teacher/subject/choose');
+            }
             try {
                 const childId = localStorage.getItem('schoolId');
                 const targetSubject = localStorage.getItem('targetSubject');
