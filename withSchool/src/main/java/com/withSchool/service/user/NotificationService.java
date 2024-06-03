@@ -37,18 +37,22 @@ public class NotificationService {
         }
     }
     public void sendSMS(User user, String type, String title, boolean onlyStudent) {
-        if (!onlyStudent) { // 학생+학부모
-            User parent = studentParentService.findParentByStudent(user);
-            if (parent != null) {
+        if (!onlyStudent ) { // 학생+학부모
+            try {
+                User parent = studentParentService.findParentByStudent(user);
                 sendSMS(parent, type, title, true);
             }
+            catch (Exception e) {
+                log.error("학부모 정보를 찾을 수 없습니다. 학생: " + user.getName());
+            }
+
         }
         Message message = new Message(apiKey, apiSecret);
         HashMap<String, String> params = new HashMap<>();
         params.put("to", user.getPhoneNumber());
         params.put("from", apiPhone);
         params.put("type", "SMS");
-        params.put("text", "안녕하세요. " + user.getName() + "님, " + type + "이(가) 등록되었습니다. \n제목: " + title);
+        params.put("text", "안녕하세요 " + user.getName() + "님.\n" + type + " 등록되었습니다. \n제목: " + title);
         try {
             message.send(params);
         } catch (CoolsmsException e) {

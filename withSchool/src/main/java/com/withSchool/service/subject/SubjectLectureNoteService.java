@@ -14,6 +14,8 @@ import com.withSchool.repository.subject.SubjectLectureNoteRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.repository.file.SubjectLectureNoteFileRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -37,6 +39,8 @@ public class SubjectLectureNoteService {
     private final FileService fileService;
     private final UserService userService;
     private final StudentSubjectRepository studentSubjectRepository;
+    private final StudentSubjectService studentSubjectService;
+    private final NotificationService notificationService;
 
     @Transactional
     public List<ResSubjectLectureNoteDTO> getAllSubjectLectureNotes() {
@@ -98,6 +102,9 @@ public class SubjectLectureNoteService {
 
             // Save files to S3 and update database
             saveFiles(reqSubjectLectureNoteDTO.getFile(), savedSubjectLectureNote.getSubjectLectureNoteId());
+
+            List<User> userList = studentSubjectService.findSugangStudent(reqSubjectLectureNoteDTO.getSubjectId());
+            notificationService.sendSMSGroup(userList, "과목 강의노트가", reqSubjectLectureNoteDTO.getTitle(), true);
 
             return mapToSubjectLectureNoteDTO(savedSubjectLectureNote);
         } else {

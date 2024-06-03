@@ -69,7 +69,7 @@ public class SubjectNoticeService {
         }
 
         List<User> userList = studentSubjectService.findSugangStudent(reqSubjectNoticeDTO.getSubjectId());
-        notificationService.sendSMSGroup(userList, "과목 공지", reqSubjectNoticeDTO.getTitle(), true);
+        notificationService.sendSMSGroup(userList, "과목 공지가", reqSubjectNoticeDTO.getTitle(), true);
 
         return ResNoticeDTO.builder()
                 .noticeId(result.getSubjectNoticeId())

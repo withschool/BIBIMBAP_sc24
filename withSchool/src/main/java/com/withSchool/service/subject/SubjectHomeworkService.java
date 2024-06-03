@@ -68,7 +68,7 @@ public class SubjectHomeworkService {
             }
 
             List<User> userList = studentSubjectService.findSugangStudent(reqHomeworkCreateDTO.getId());
-            notificationService.sendSMSGroup(userList, "과목 과제", reqHomeworkCreateDTO.getTitle(), true);
+            notificationService.sendSMSGroup(userList, "과목 과제가", reqHomeworkCreateDTO.getTitle(), true);
 
             return ResHomeworkDTO.builder()
                     .id(result.getSubjectHomeworkId())

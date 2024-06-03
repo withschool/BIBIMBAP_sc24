@@ -60,7 +60,7 @@ public class SchoolNoticeService {
         }
 
         List<User> userList = userService.findStudentBySchoolInformationSchoolId(admin.getSchoolInformation().getSchoolId());
-        notificationService.sendSMSGroup(userList, "학교 공지사항", reqNoticeDTO.getTitle(), false);
+        notificationService.sendSMSGroup(userList, "학교 공지사항이", reqNoticeDTO.getTitle(), false);
 
         return ResNoticeDTO.builder()
                 .noticeId(notice.getSchoolNoticeId())

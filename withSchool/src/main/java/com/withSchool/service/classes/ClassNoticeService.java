@@ -76,7 +76,7 @@ public class ClassNoticeService {
                 }
             }
             List<User> userList = userService.findStudentByClassId(userService.getCurrentUserClassId());
-            notificationService.sendSMSGroup(userList, "반 공지사항", reqNoticeDTO.getTitle(), false);
+            notificationService.sendSMSGroup(userList, "반 공지사항이", reqNoticeDTO.getTitle(), false);
 
             // 결과 반환
             return ResNoticeDTO.builder()

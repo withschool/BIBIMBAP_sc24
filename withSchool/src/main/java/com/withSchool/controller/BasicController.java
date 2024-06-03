@@ -121,7 +121,7 @@ public class BasicController {
         User user = userService.getCurrentUser();
         String type= "학교공지";
         String title = "캡스톤디자인 제출 안내";
-        notificationService.sendSMS(user, type, title, false);
+        notificationService.sendSMS(user, type, title, true);
         return "Success";
     }
 
