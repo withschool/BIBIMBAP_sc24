@@ -169,17 +169,19 @@ public class SchoolNoticeService {
             this.deleteFileById(schoolNoticeId);
             //ClientSchoolNoticeDTO의 파일 저장
             List<MultipartFile> dtoFile = reqNoticeDTO.getFile();
-            for(MultipartFile s : dtoFile){
-                if(!s.isEmpty()){
-                    FileDTO fileDTO = FileDTO.builder()
-                            .repoType("schoolNotice")
-                            .file(s)
-                            .masterId(schoolNoticeId)
-                            .build();
-                    fileService.saveFile(fileDTO);
+
+            if(dtoFile != null && !dtoFile.isEmpty()){
+                for(MultipartFile s : dtoFile){
+                    if(!s.isEmpty()){
+                        FileDTO fileDTO = FileDTO.builder()
+                                .repoType("schoolNotice")
+                                .file(s)
+                                .masterId(schoolNoticeId)
+                                .build();
+                        fileService.saveFile(fileDTO);
+                    }
                 }
             }
-
             return resultNotice;
         }
 
