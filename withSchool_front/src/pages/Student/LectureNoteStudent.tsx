@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getLectureNoteList, loadLectureNote, updateLectureNote, deleteLectureNote } from '../../service/subject';
+import { getLectureNoteList, updateLectureNote, deleteLectureNote } from '../../service/subject';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconNotesEdit from '../../components/Icon/IconNotesEdit';
 import IconStar from '../../components/Icon/IconStar';
@@ -40,12 +40,10 @@ const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 const searchNotes = () => {
     if (selectedTab !== 'fav') {
         if (selectedTab !== 'all' || selectedTab === 'delete') {
-            setFilterdNotesList(notesList.filter((d) => d.tag === selectedTab));
         } else {
             setFilterdNotesList(notesList);
         }
     } else {
-        setFilterdNotesList(notesList.filter((d) => d.isFav));
     }
 };
 
@@ -102,7 +100,6 @@ useEffect(() => {
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
             console.log("안돼~"+params.title+ params.fileURl);
-            loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
             showMessage('강의 노트 생성이 완료되었습니다.');
         }
         setAddContactModal(false);

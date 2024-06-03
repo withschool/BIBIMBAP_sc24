@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import Tippy from '@tippyjs/react';
 import { mappingStudent, listingStudent, getStudentInfoById } from '../../service/parent';
-import { getSubjectsParent } from '../../service/subject';
+import { getSubjectsParent, getStudentScoreParent } from '../../service/subject';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -85,6 +85,22 @@ const StudentInfo = () => {
         console.log(targetStudent);
         alert("전환 되었습니다.")
     }
+
+    const fetchScores = async (subjectId:string, childId:string) => {
+        const response = await fetch(`/sugangs/${subjectId}/scores?childId=${childId}`);
+        const data = await response.json();
+        return data;
+    };
+
+    const [scores, setScores] = useState<any>([]);
+
+    const generateKey = async (subjectId : string) => {
+        const studentId = localStorage.getItem("TargetStudent");
+        console.log("student : "+studentId+"subject : "+subjectId);
+        const res = await getStudentScoreParent(subjectId, studentId);
+        setScores(res);
+    }
+
      
     return(
         <div>
@@ -232,19 +248,47 @@ const StudentInfo = () => {
                                     
                                 </Tab.Panel>
                                 <Tab.Panel>
-                                    <div>
-                                        <div className="flex items-start pt-5">
-                                            <div className="h-20 w-20 flex-none ltr:mr-4 rtl:ml-4">
-                                                <img
-                                                    src="/assets/images/profile-34.jpeg"
-                                                    alt="img"
-                                                    className="m-0 h-20 w-20 rounded-full object-cover ring-2 ring-[#ebedf2] dark:ring-white-dark"
-                                                />
-                                            </div>
-                                            <div className="flex-auto">
-                                                <h1>구현중입니닷</h1>
-                                            </div>
+                                    <div className="active pt-5">
+                                        { (studentList.length == 0) ? (
+                                            <><h1>연결된 학생이 없습니다.</h1></>
+                                        ):(
+                                        <div>
+                                            <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
+                                                <h6 className="text-lg font-bold mb-5">{targetStudentInfo.name} 학생의 성적</h6>
+                                                <div className="flex flex-col ">
+                                                <div className="table-responsive mb-5">
+                                                    <table className="table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>과목명</th>
+                                                                <th>중간고사</th>
+                                                                <th>기말고사</th>
+                                                                <th>수행평가</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {subjectList.length > 0 ? (
+                                                                subjectList.map((data) => {
+                                                                    const key = generateKey(data.subjectId); // generateKey 함수를 호출하여 각 행의 키를 생성
+                                                                    return (
+                                                                        <tr key={data.subjectId}>
+                                                                            <td>{data.subjectName}</td>
+                                                                            <td>{scores.midtermScore || 'Loading...'}</td>
+                                                                            <td>{scores.finalScore || 'Loading...'}</td>
+                                                                            <td>{scores.activityScore || 'Loading...'}</td>
+                                                                        </tr>
+                                                                    );
+                                                                })
+                                                            ) : (
+                                                                <p className='pl-5 pt-5 text-bold'>수강중인 과목이 없습니다.</p>
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                </div>
+                                            </form>
                                         </div>
+                                        )}
                                     </div>
                                 </Tab.Panel>
                                 <Tab.Panel>

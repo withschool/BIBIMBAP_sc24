@@ -1,0 +1,52 @@
+/* 
+// 1. General
+*/
+
+
+a {
+    text-decoration: none !important;
+    outline: none;
+    color: $dark;
+    transition: all 0.2s;
+
+    &:hover {
+        color: $primary;
+    }
+}
+
+body {
+    font-family: $font-primary;
+    color: $dark;
+    background: $body-bg;
+    font-size: 15px;
+}
+
+p {
+    line-height: 1.7;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: $font-secondary;
+    font-weight: 600;
+}
+
+[data-bs-theme="dark"] {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: rgba($white, 0.8);
+    }
+
+    a{
+        color: rgba($white, 0.8);
+    }
+}

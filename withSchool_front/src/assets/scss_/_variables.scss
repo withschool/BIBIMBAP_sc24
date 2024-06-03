@@ -1,0 +1,62 @@
+/* 
+// variables.scss
+*/
+
+
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+// Color variables
+$white:                     #fff;
+$gray-100:                  #f8f9fb;
+$gray-200:                  #eff1f5;
+$gray-300:                  #e2e7f1;
+$gray-400:                  #ced4da;
+$gray-500:                  #adb5bd;
+$gray-600:                  #6c757d;
+$gray-700:                  #4B4B5A;
+$gray-800:                  #343a40;
+$gray-900:                  #212529;
+$black:                     #000;
+
+
+$primary:                   #2753ff;
+$purple:                    #a369ff;
+$success:                   #2ac297;
+$info:                      #56c6e6;
+$warning:                   #ffbb13;
+$danger:                    #f43958;
+$dark:                      #29344a;
+$light:                     #fbfbfb;
+$body-bg:                   #ffffff;
+
+$bg-counter:                #5e62ff;
+$footer-bg:                 #343a40;
+
+
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $gray-600,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "dark": $dark,
+    "light": $light,
+    "body-bg": $body-bg,
+    "black": $black,
+    "white": $white
+);
+
+$display-light: block;
+
+$display-dark: none;
+
+$box-shadow-sm: 0 0 0.25rem rgba($gray-700, .05);
+$box-shadow: 0 0.2rem 0.6rem rgba($gray-900, 0.05);
+$box-shadow-lg: 0 0rem 2rem rgba($black, 0.12);
+
+$border-radius-lg: 14px;
+
+// Font
+$font-primary:            'Open Sans', sans-serif;
+$font-secondary:          'Assistant', sans-serif;

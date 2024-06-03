@@ -95,6 +95,10 @@ const Counsel = () => {
         console.log(format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
         console.log(teacherId);
         registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+<<<<<<< HEAD
+=======
+        setAddTaskModal(false);
+>>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
@@ -352,6 +356,9 @@ const Counsel = () => {
                                             <div className="mb-5">
                                                 <label htmlFor="assignee">대상</label>
                                                 <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
+                                                <option >
+                                                            선생님을 선택하세요.
+                                                </option>
                                                 {teacherList.length > 0 ? (
                                                     teacherList.map((teacher) => (
                                                         <option key={teacher.userId} value={teacher.userId}>
@@ -371,8 +378,7 @@ const Counsel = () => {
                                                         onChange={(date : any) => setSelectedDate(date)}
                                                         dateFormat="yyyy-MM-dd"
                                                         placeholderText="날짜를 선택하세요"
-                                                        className="form-input"
-                                                    />
+                                                        className="form-input"/>
                                                 </div>
                                             </div>
                                             <div className="ltr:text-right rtl:text-left flex justify-end items-center mt-8">

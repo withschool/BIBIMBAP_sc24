@@ -7,18 +7,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getLectureNoteList, loadLectureNote, updateLectureNote, deleteLectureNote } from '../../service/subject';
+import { getLectureNoteList, createLectureNote, updateLectureNote, deleteLectureNote , enrollScore} from '../../service/subject';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconNotesEdit from '../../components/Icon/IconNotesEdit';
 import IconStar from '../../components/Icon/IconStar';
-import IconSquareRotated from '../../components/Icon/IconSquareRotated';
 import IconPlus from '../../components/Icon/IconPlus';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconUser from '../../components/Icon/IconUser';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconEye from '../../components/Icon/IconEye';
 import IconX from '../../components/Icon/IconX';
 import IconGallery from '../../components/Icon/IconGallery';
 import IconFolder from '../../components/Icon/IconFolder';
@@ -26,34 +24,34 @@ import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
 
-const LectureNote = () => {
+export const LectureNote = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('강의 노트'));
     });
     const [notesList, setNoteList] = useState([]);
 
-const navigate = useNavigate();
+    const navigate = useNavigate();
 
-const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+    const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
 
-useEffect(() => {
-    const fetchLectureNote = async () => {
-        if(localStorage.getItem("targetSubject") == null){
-            alert("과목을 선택해 주세요.");
-            navigate('/teacher/subject/choose');
-        }
-        try {
-            const lecturenotes = await getLectureNoteList(localStorage.getItem("targetSubject"));
-            setNoteList(lecturenotes);
-        } catch (error) {
-            console.error("Failed to fetch lectureNotes:", error);
-        }
-    };
+    useEffect(() => {
+        const fetchLectureNote = async () => {
+            if (localStorage.getItem("targetSubject") == null) {
+                alert("과목을 선택해 주세요.");
+                navigate('/teacher/subject/choose');
+            }
+            try {
+                const lecturenotes = await getLectureNoteList(localStorage.getItem("targetSubject"));
+                setNoteList(lecturenotes);
+            } catch (error) {
+                console.error("Failed to fetch lectureNotes:", error);
+            }
+        };
 
-    fetchLectureNote();
-}, [notesList]);
+        fetchLectureNote();
+    }, [notesList]);
 
     const defaultParams = { subjectLectureNoteId: null, title: '', description: '', tag: '', name: '', thumb: '' };
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
@@ -69,12 +67,10 @@ useEffect(() => {
     const searchNotes = () => {
         if (selectedTab !== 'fav') {
             if (selectedTab !== 'all' || selectedTab === 'delete') {
-                setFilterdNotesList(notesList.filter((d) => d.tag === selectedTab));
             } else {
                 setFilterdNotesList(notesList);
             }
         } else {
-            setFilterdNotesList(notesList.filter((d) => d.isFav));
         }
     };
 
@@ -99,11 +95,28 @@ useEffect(() => {
                     formData.append("file", file);
                 });
             }
-            updateLectureNote(formData, note.subjectLectureNoteId);  
+            updateLectureNote(formData, note.subjectLectureNoteId);
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
+<<<<<<< HEAD
             console.log("안돼~"+localStorage.getItem('targetSubject'));
             loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
+=======
+            console.log("안돼~" + localStorage.getItem('targetSubject'));
+            formData.append("title", params.title);
+            const subjectId = localStorage.getItem('targetSubject') || '';
+            formData.append("subjectId", subjectId);
+            if (selectedFiles) {
+                console.log(selectedFiles);
+                Array.from(selectedFiles).forEach(file => {
+                    formData.append("file", file);
+                });
+            }
+            for (let pair of formData.entries()) {
+                console.log(pair[0], pair[1]);
+            }
+            createLectureNote(formData);
+>>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
             showMessage('강의 노트 생성이 완료되었습니다.');
         }
         setAddContactModal(false);
@@ -227,9 +240,7 @@ useEffect(() => {
                             <div className="space-y-1">
                                 <button
                                     type="button"
-                                    className={`w-full flex justify-between items-center p-2  hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
-                                        selectedTab === 'all' && 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]'
-                                    }`}
+                                    className={`w-full flex justify-between items-center p-2  hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${selectedTab === 'all' && 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]'}`}
                                     onClick={() => tabChanged('all')}
                                 >
                                     <div className="flex items-center">
@@ -260,17 +271,15 @@ useEffect(() => {
                                 {filterdNotesList.map((note: any) => {
                                     return (
                                         <div
-                                            className={`panel pb-12 ${
-                                                note.tag === 'tag1'
+                                            className={`panel pb-12 ${note.tag === 'tag1'
                                                     ? 'bg-primary-light shadow-primary'
                                                     : note.tag === 'tag2'
-                                                    ? 'bg-warning-light shadow-warning'
-                                                    : note.tag === 'tag3'
-                                                    ? 'bg-info-light shadow-info'
-                                                    : note.tag === 'tag4'
-                                                    ? 'bg-danger-light shadow-danger'
-                                                    : 'dark:shadow-dark'
-                                            }`}
+                                                        ? 'bg-warning-light shadow-warning'
+                                                        : note.tag === 'tag3'
+                                                            ? 'bg-info-light shadow-info'
+                                                            : note.tag === 'tag4'
+                                                                ? 'bg-danger-light shadow-danger'
+                                                                : 'dark:shadow-dark'}`}
                                             key={note.subjectLectureNoteId}
                                         >
                                             <div className="min-h-[142px]">
@@ -297,11 +306,11 @@ useEffect(() => {
                                                         <div className="ltr:ml-2 rtl:mr-2">
                                                             <div className="font-semibold">{note.user.name}</div>
                                                             {note.regDate && (
-                                                                <div className="text-sx text-white-dark">{note.regDate[0]}/{note.regDate[1]}/{note.regDate[2]}</div> 
+                                                                <div className="text-sx text-white-dark">{note.regDate[0]}/{note.regDate[1]}/{note.regDate[2]}</div>
                                                             )}
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div className="dropdown">
                                                         <Dropdown
                                                             offset={[0, 5]}
@@ -326,50 +335,50 @@ useEffect(() => {
                                                         </Dropdown>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div>
                                                     <h4 className="font-semibold mt-4">{note.title}</h4>
                                                     <p className="text-white-dark mt-2">{note.description}</p>
                                                 </div>
                                                 <div className="absolute bottom-5 left-0 w-full px-5">
-                                                <div className="flex items-center justify-between mt-2">
-                                                    {note.filesURl && (
-                                                        <div className="mt-5">
-                                                            <br/>
-                                                            <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                            <div className="flex items-center flex-wrap mt-6">
-                                                                {note.filesURl.map((attachment: any, i: number) => {
-                                                                    <p>hi</p>
-                                                                    return (
-                                                                        <a 
-                                                                            href={attachment}
-                                                                            key={i}
-                                                                            type="button"
-                                                                            className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
-                                                                        >
-                                                                            {attachment.type === 'image' && <IconGallery />}
-                                                                            {attachment.type === 'folder' && <IconFolder />}
-                                                                            {attachment.type === 'zip' && <IconZipFile />}
-                                                                            {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+                                                    <div className="flex items-center justify-between mt-2">
+                                                        {note.filesURl && (
+                                                            <div className="mt-5">
+                                                                <br />
+                                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                                <div className="flex items-center flex-wrap mt-6">
+                                                                    {note.filesURl.map((attachment: any, i: number) => {
+                                                                        <p>hi</p>;
+                                                                        return (
+                                                                            <a
+                                                                                href={attachment}
+                                                                                key={i}
+                                                                                type="button"
+                                                                                className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                            >
+                                                                                {attachment.type === 'image' && <IconGallery />}
+                                                                                {attachment.type === 'folder' && <IconFolder />}
+                                                                                {attachment.type === 'zip' && <IconZipFile />}
+                                                                                {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
 
-                                                                            <div className="ltr:ml-3 rtl:mr-3">
-                                                                                <p className="text-xs text-primary font-semibold">{note.originalName}</p>
-                                                                                <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
-                                                                            </div>
-                                                                            <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
-                                                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
-                                                                                <IconDownload className="w-4.5 h-4.5" />
-                                                                            </div>
-                                                                        </a>
-                                                                    );
-                                                                })}
+                                                                                <div className="ltr:ml-3 rtl:mr-3">
+                                                                                    <p className="text-xs text-primary font-semibold">{note.originalName}</p>
+                                                                                    <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                                </div>
+                                                                                <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                                    <IconDownload className="w-4.5 h-4.5" />
+                                                                                </div>
+                                                                            </a>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            </div>
-                                            
+
                                         </div>
                                     );
                                 })}
@@ -432,12 +441,11 @@ useEffect(() => {
                                                             accept="image/*,.zip,.pdf,.xls,.xlsx,.txt,.doc,.docx"
                                                             required
                                                             id="fileId"
-                                                            onChange={(e) => setSelectedFiles(e.target.files)}
-                                                        />
+                                                            onChange={(e) => setSelectedFiles(e.target.files)} />
                                                     </div>
                                                     <div className="flex justify-end items-center mt-8">
                                                         <button type="button" className="btn btn-outline-danger gap-2" onClick={() => setAddContactModal(false)}>
-                                                            취소 
+                                                            취소
                                                         </button>
                                                         <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={saveNote}>
                                                             {params.subjectLectureNoteId ? '강의 노트 수정' : '강의 노트 추가'}
@@ -545,12 +553,12 @@ useEffect(() => {
                                                 <div className="ltr:mr-3 rtl:ml-3">{params.title}</div>
                                                 {params.fileURl && (
                                                     <div className="mt-8">
-                                                        <br/>
+                                                        <br />
                                                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                                                         <div className="flex items-center flex-wrap mt-6">
                                                             {params.filesURl.map((attachment: any, i: number) => {
                                                                 return (
-                                                                    <a 
+                                                                    <a
                                                                         href={attachment}
                                                                         key={i}
                                                                         type="button"
