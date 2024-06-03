@@ -21,6 +21,9 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubject, 
     @Query("SELECT ss.user FROM StudentSubject ss WHERE ss.subject = :subject")
     List<User> findUsersBySubject(@Param("subject") Subject subject);
 
+    @Query("SELECT ss.subject FROM StudentSubject ss WHERE ss.user = :user")
+    List<Subject> findSubjectsByUser(@Param("user") User user);
+
     @Modifying
     @Query("DELETE FROM StudentSubject ss WHERE ss.user.userId = :userId")
     void deleteSsByUserId(@Param("userId") Long userId);

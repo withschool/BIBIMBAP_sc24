@@ -37,4 +37,9 @@ public class StudentParentService {
 
         return dtos;
     }
+
+    public User findParentByStudent(User student) {
+        StudentParent studentParent = studentParentRepository.findByStudent(student);
+        return studentParent.getParent();
+    }
 }

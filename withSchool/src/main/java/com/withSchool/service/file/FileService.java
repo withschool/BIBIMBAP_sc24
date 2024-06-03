@@ -16,6 +16,8 @@ import com.withSchool.entity.subject.SubjectHomeworkFile;
 import com.withSchool.entity.subject.SubjectHomeworkSubmitFile;
 import com.withSchool.entity.subject.SubjectLectureNoteFile;
 import com.withSchool.entity.subject.SubjectNoticeFile;
+import com.withSchool.entity.user.ProjectTaskFile;
+import com.withSchool.entity.user.UserImgFile;
 import com.withSchool.repository.classes.ClassHomeworkRepository;
 import com.withSchool.repository.classes.ClassHomeworkSubmitRepository;
 import com.withSchool.repository.classes.ClassNoticeRepository;
@@ -26,6 +28,10 @@ import com.withSchool.repository.subject.SubjectHomeworkRepository;
 import com.withSchool.repository.subject.SubjectHomeworkSubmitRepository;
 import com.withSchool.repository.subject.SubjectLectureNoteRepository;
 import com.withSchool.repository.subject.SubjectNoticeRepository;
+import com.withSchool.repository.user.ProjectTaskFileRepository;
+import com.withSchool.repository.user.ProjectTaskRepository;
+import com.withSchool.repository.user.UserImgFileRepository;
+import com.withSchool.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,6 +56,8 @@ public class FileService {
     private final SubjectHomeworkFileRepository subjectHomeworkFileRepository;
     private final SubjectHomeworkSubmitFileRepository subjectHomeworkSubmitFileRepository;
     private final CommunityPostFileRepository communityPostFileRepository;
+    private final ProjectTaskFileRepository projectTaskFileRepository;
+    private final UserImgFileRepository userImgFileRepository;
 
     private final SchoolNoticeRepository schoolNoticeRepository;
     private final ClassNoticeRepository classNoticeRepository;
@@ -60,6 +68,8 @@ public class FileService {
     private final SubjectHomeworkRepository subjectHomeworkRepository;
     private final SubjectHomeworkSubmitRepository subjectHomeworkSubmitRepository;
     private final CommunityPostRepository communityPostRepository;
+    private final ProjectTaskRepository projectTaskRepository;
+    private final UserRepository userRepository;
 
     @Value("${cloud.aws.credentials.bucket}")
     private String bucket;
@@ -123,15 +133,23 @@ public class FileService {
                 saveSubjectHomeworkSubmitFile(dto, originalName, savedName, fileUrl);
                 break;
             case "subjectLectureNote":
-                saveSubjectLectureNoteFile(dto, originalName, savedName, fileUrl);;
+                saveSubjectLectureNoteFile(dto, originalName, savedName, fileUrl);
                 break;
             case "communityPost":
-                savePostFile(dto, originalName, savedName, fileUrl);;
+                savePostFile(dto, originalName, savedName, fileUrl);
+                break;
+            case "kanban":
+                saveTaskFile(dto,originalName,savedName,fileUrl);
+                break;
+            case "userImg":
+                saveUserImgFile(dto,originalName,savedName,fileUrl);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid repository type: " + repoType);
         }
     }
+
+
     private void deleteFileMetadata(String repoType, FileDeleteDTO dto) {
         switch (repoType) {
             case "schoolNotice":
@@ -161,10 +179,18 @@ public class FileService {
             case "communityPost":
                 deletePostFile(dto);
                 break;
+            case "kanban":
+                deleteTaskFile(dto);
+                break;
+            case "userImg":
+                deleteUserImgFile(dto);
+                break;
             default:
                 throw new IllegalArgumentException("Invalid repository type: " + repoType);
         }
     }
+
+
 
     private void saveSchoolNoticeFile(FileDTO dto,String originalName, String savedName, String fileUrl) {
         SchoolNoticeFile schoolNoticeFile = SchoolNoticeFile.builder()
@@ -249,6 +275,24 @@ public class FileService {
                 .build();
         communityPostFileRepository.save(postFile);
     }
+    private void saveTaskFile(FileDTO dto, String originalName, String savedName, String fileUrl) {
+        ProjectTaskFile projectTaskFile = ProjectTaskFile.builder()
+                .originalName(originalName)
+                .savedName(savedName)
+                .fileUrl(fileUrl)
+                .projectTask(projectTaskRepository.findById(dto.getMasterId()).get())
+                .build();
+        projectTaskFileRepository.save(projectTaskFile);
+    }
+    private void saveUserImgFile(FileDTO dto,String originalName,String savedName,String fileUrl){
+        UserImgFile userImgFile = UserImgFile.builder()
+                .originalName(originalName)
+                .savedName(savedName)
+                .fileUrl(fileUrl)
+                .user(userRepository.findById(dto.getMasterId()).get())
+                .build();
+        userImgFileRepository.save(userImgFile);
+    }
     public void deleteSchoolNoticeFile(FileDeleteDTO dto) {
         schoolNoticeFileRepository.deleteAllBySchoolNoticeId(dto.getMasterId());
     }
@@ -277,14 +321,26 @@ public class FileService {
         subjectHomeworkSubmitFileRepository.deleteAllBySubjectHomeworkSubmitId(dto.getMasterId());
     }
 
-    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
-        subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
-    }
-
     public void deletePostFile(FileDeleteDTO dto) {
-        communityPostFileRepository.deleteAllByPostFileId(dto.getMasterId());
+        communityPostFileRepository.deleteAllByPostId(dto.getMasterId());
+    }
+    private void deleteTaskFile(FileDeleteDTO dto) {
+        projectTaskFileRepository.deleteAllByProjectTaskId(dto.getMasterId());
+    }
+    private void deleteUserImgFile(FileDeleteDTO dto) {
+        userImgFileRepository.deleteByUserId(dto.getMasterId());
     }
     public String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
+    public void deleteSubjectLectureNoteFile(FileDeleteDTO dto) {
+        String repoType = dto.getRepoType();
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, dto.getSavedName()));
+            subjectLectureNoteFileRepository.deleteAllBySubjectLectureNoteId(dto.getMasterId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

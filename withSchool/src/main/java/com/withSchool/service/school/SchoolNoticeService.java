@@ -11,11 +11,10 @@ import com.withSchool.entity.user.User;
 import com.withSchool.repository.file.SchoolNoticeFileRepository;
 import com.withSchool.repository.school.SchoolNoticeRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,12 +32,11 @@ public class SchoolNoticeService {
     private final SchoolNoticeFileRepository schoolNoticeFileRepository;
     private final FileService fileService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Transactional
     public ResNoticeDTO save(ReqNoticeDTO reqNoticeDTO) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User admin = userService.findById(authentication.getName());
+        User admin = userService.getCurrentUser();
 
         SchoolNotice schoolNotice = SchoolNotice.builder()
                 .title(reqNoticeDTO.getTitle())
@@ -60,6 +58,10 @@ public class SchoolNoticeService {
                 fileService.saveFile(fileDTO);
             }
         }
+
+        List<User> userList = userService.findStudentBySchoolInformationSchoolId(admin.getSchoolInformation().getSchoolId());
+        notificationService.sendSMSGroup(userList, "학교 공지사항이", reqNoticeDTO.getTitle(), false);
+
         return ResNoticeDTO.builder()
                 .noticeId(notice.getSchoolNoticeId())
                 .title(notice.getTitle())
@@ -158,7 +160,7 @@ public class SchoolNoticeService {
                     .schoolInformation(schoolNotice.getSchoolInformation())
                     .build();
 
-             SchoolNotice resultNotice = schoolNoticeRepository.save(result);
+            SchoolNotice resultNotice = schoolNoticeRepository.save(result);
 
 
             // 여기에 해당 공지사항의 S3파일삭제 + db에 정보 삭제

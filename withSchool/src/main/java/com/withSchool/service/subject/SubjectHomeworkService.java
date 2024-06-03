@@ -10,10 +10,13 @@ import com.withSchool.entity.subject.*;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.file.SubjectHomeworkFileRepository;
 import com.withSchool.repository.file.SubjectHomeworkSubmitFileRepository;
+import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectHomeworkRepository;
 import com.withSchool.repository.subject.SubjectHomeworkSubmitRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.mapping.StudentSubjectService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +36,10 @@ public class SubjectHomeworkService {
     private final SubjectHomeworkFileRepository subjectHomeworkFileRepository;
     private final SubjectHomeworkSubmitFileRepository subjectHomeworkSubmitFileRepository;
     private final SubjectRepository subjectRepository;
+    private final StudentSubjectService studentSubjectService;
     private final FileService fileService;
     private final UserService userService;
+    private final NotificationService notificationService;
     @Transactional
     public ResHomeworkDTO save(ReqHomeworkCreateDTO reqHomeworkCreateDTO) {
 
@@ -61,6 +66,10 @@ public class SubjectHomeworkService {
                     fileService.saveFile(fileDTO);
                 }
             }
+
+            List<User> userList = studentSubjectService.findSugangStudent(reqHomeworkCreateDTO.getId());
+            notificationService.sendSMSGroup(userList, "과목 과제가", reqHomeworkCreateDTO.getTitle(), true);
+
             return ResHomeworkDTO.builder()
                     .id(result.getSubjectHomeworkId())
                     .title(result.getSubjectHomeworkTitle())

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.opencsv:opencsv:5.5.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.opencsv" artifactId="opencsv" version="5.5.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.opencsv/opencsv/5.5.2/cf58631e2efa9a202bbeaea09321be68232efb19/opencsv-5.5.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="" />
+    <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/user/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/user/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/UserUpdateServiceImpl.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,32 +28,35 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="withSchool" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="backend" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "mindongmindong"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;mindongmindong&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -64,7 +72,9 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2eofcLgS7xYUi5d7mZm7D0Y3sKz" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -79,8 +89,9 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.WithSchoolApplication.executor": "Run",
+    "git-widget-placeholder": "userImg",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Min Dong Hyeun/spring_study/guestbook",
+    "last_opened_file_path": "C:/Users/Min Dong Hyeun/spring_study/BIBIMBAP_sc24",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -93,6 +104,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.withSchool.repository.user" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="WithSchoolApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -125,17 +141,31 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="c6d5d7bb-a474-40f8-bd28-00723d18bc68" name="Changes" comment="" />
+      <changelist id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="" />
       <created>1712575930173</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1712575930173</updated>
       <workItem from="1712575931422" duration="1565000" />
       <workItem from="1712821860715" duration="2479000" />
+      <workItem from="1717221938030" duration="20448000" />
+      <workItem from="1717247965349" duration="3542000" />
+      <workItem from="1717251540903" duration="4532000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

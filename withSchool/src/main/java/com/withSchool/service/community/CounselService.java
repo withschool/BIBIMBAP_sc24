@@ -2,24 +2,35 @@ package com.withSchool.service.community;
 
 import com.withSchool.dto.community.ReqCounselDefaultDTO;
 import com.withSchool.dto.community.ResCounselDefaultDTO;
+import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.community.Counsel;
+import com.withSchool.entity.mapping.StudentSubject;
+import com.withSchool.entity.mapping.TeacherSubject;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.community.CounselRepository;
+import com.withSchool.repository.mapping.StudentSubjectRepository;
+import com.withSchool.repository.mapping.TeacherSubjectRepository;
+import com.withSchool.repository.user.UserRepository;
 import com.withSchool.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class CounselService {
     private final CounselRepository counselRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final StudentSubjectRepository studentSubjectRepository;
+    private final TeacherSubjectRepository teacherSubjectRepository;
 
     public ResCounselDefaultDTO save(ReqCounselDefaultDTO req) {
         User asker = userService.getCurrentUser();
@@ -131,5 +142,48 @@ public class CounselService {
         }
 
         return dtos;
+    }
+
+    public List<ResUserDefaultDTO> getPartners(Long childId) {
+        log.info("getPartners");
+
+        if(childId != null || userService.getCurrentUser().getAccountType() == 0) return getPartnersByStudents(childId);
+        else throw new RuntimeException("No partners");
+    }
+
+    public List<ResUserDefaultDTO> getPartnersByStudents(Long childId){
+        log.info("getPartnersByStudents");
+
+        List<ResUserDefaultDTO> response = new ArrayList<>();
+        Set<ResUserDefaultDTO> uniqueDTOs = new HashSet<>();
+
+        User user = (childId != null) ? userService.findByUserId(childId) : userService.getCurrentUser();
+
+        List<User> classTeachers = userRepository.findByClassInformation_ClassIdAndAccountType(user.getClassInformation().getClassId(), 2);
+        if(classTeachers.isEmpty()) throw new RuntimeException("No Class Teacher");
+
+        classTeachers.stream()
+                .map(User::toResUserDefaultDTO)
+                .forEach(dto -> {
+                    if (uniqueDTOs.add(dto)) {
+                        response.add(dto);
+                    }
+                });
+
+        List<StudentSubject> sugangs = studentSubjectRepository.findByStudent(user);
+        for (StudentSubject s : sugangs) {
+            Long subjectId = s.getSubject().getSubjectId();
+            List<TeacherSubject> teacherSubjects = teacherSubjectRepository.findBySubject_SubjectId(subjectId);
+            teacherSubjects.stream()
+                    .map(TeacherSubject::getTeacher)
+                    .map(User::toResUserDefaultDTO)
+                    .forEach(dto -> {
+                        if (uniqueDTOs.add(dto)) {
+                            response.add(dto);
+                        }
+                    });
+        }
+
+        return response;
     }
 }
