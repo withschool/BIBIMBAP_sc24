@@ -179,16 +179,11 @@ interface LectureNoteBody {
     file: string;
 }
 
-export const loadLectureNote = async (title: string, subjectId: string | null, file: string): Promise<any> => {
+export const loadLectureNote = async (formData: FormData): Promise<any> => {
     try {
-        const body: LectureNoteBody= {
-            title,
-            subjectId,
-            file
-        };
         const response = await fetch(`${url}/subjects/lecture-notes`, {
             method: 'POST',
-             body: JSON.stringify(body),
+            body: formData,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
