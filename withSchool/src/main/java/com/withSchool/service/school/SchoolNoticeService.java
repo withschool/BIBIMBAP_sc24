@@ -48,14 +48,16 @@ public class SchoolNoticeService {
         SchoolNotice notice = schoolNoticeRepository.save(schoolNotice);
         // schoolNoticeDTO의 MultiPartFile 리스트를 가져와서 s3 스토리지에 저장하는 로직 구현
         List<MultipartFile> files = reqNoticeDTO.getFile();
-        for(MultipartFile s : files){
-            if(!s.isEmpty()) {
-                FileDTO fileDTO = FileDTO.builder()
-                        .file(s)
-                        .repoType("schoolNotice")
-                        .masterId(notice.getSchoolNoticeId())
-                        .build();
-                fileService.saveFile(fileDTO);
+        if(files != null && !files.isEmpty()){
+            for(MultipartFile s : files){
+                if(!s.isEmpty()) {
+                    FileDTO fileDTO = FileDTO.builder()
+                            .file(s)
+                            .repoType("schoolNotice")
+                            .masterId(notice.getSchoolNoticeId())
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
             }
         }
 
