@@ -173,19 +173,12 @@ export const getLectureNoteList = async (subjectId: string | null): Promise<any>
     }
 }
 
-interface LectureNoteBody {
-    title: string;
-    subjectId: string | null;
-    file: string;
-}
-
-export const loadLectureNote = async (formData: FormData): Promise<any> => {
+export const createLectureNote = async (formData: FormData): Promise<any> => {
     try {
         const response = await fetch(`${url}/subjects/lecture-notes`, {
             method: 'POST',
             body: formData,
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
@@ -208,7 +201,6 @@ export const updateLectureNote = async (formData: FormData, id: string): Promise
         const response = await fetch(`${url}/subjects/lecture-notes/${id}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: formData,
@@ -259,6 +251,41 @@ export const getStudentList = async (subjectId: string | null): Promise<any> => 
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch subject information:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching subject information:', error);
+        throw error;
+    }
+}
+
+interface scoreBody {
+    title: string;
+    subjectId: string | null;
+    file: string;
+}
+
+export const enrollScore = async (type: string, userScoreList: any[]): Promise<any> => {
+
+    try {
+        console.log(type, userScoreList);
+        const response = await fetch(`${url}/sugangs/scores`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                "type" : type,
+                "userScoreList" : userScoreList
+            })
         });
         if (response.ok) {
             const data = await response.json();

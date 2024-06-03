@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getLectureNoteList, loadLectureNote, updateLectureNote, deleteLectureNote } from '../../service/subject';
+import { getLectureNoteList, createLectureNote, updateLectureNote, deleteLectureNote } from '../../service/subject';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconNotesEdit from '../../components/Icon/IconNotesEdit';
 import IconStar from '../../components/Icon/IconStar';
@@ -108,7 +108,10 @@ export const LectureNote = () => {
                     formData.append("file", file);
                 });
             }
-            loadLectureNote(formData);
+            for (let pair of formData.entries()) {
+                console.log(pair[0], pair[1]);
+            }
+            createLectureNote(formData);
             showMessage('강의 노트 생성이 완료되었습니다.');
         }
         setAddContactModal(false);

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getLectureNoteList, loadLectureNote, updateLectureNote, deleteLectureNote, getStudentList } from '../../service/subject';
+import { getLectureNoteList, createLectureNote, updateLectureNote, deleteLectureNote, getStudentList, enrollScore} from '../../service/subject';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconNotesEdit from '../../components/Icon/IconNotesEdit';
 import IconStar from '../../components/Icon/IconStar';
@@ -64,6 +64,11 @@ useEffect(() => {
     const [filterdNotesList, setFilterdNotesList] = useState<any>([]);
     const [selectedTab, setSelectedTab] = useState<any>('');
     const [deletedNote, setDeletedNote] = useState<any>(null);
+    const [prevTempScores, setPrevTempScores] = useState('');
+    
+
+    const [tempScores, setTempScores] = useState([]);
+
 
     const searchNotes = () => {
         if (selectedTab !== 'fav') {
@@ -100,7 +105,7 @@ useEffect(() => {
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
             console.log("안돼~"+params.title+ params.fileURl);
-            loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
+            createLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
             showMessage('강의 노트 생성이 완료되었습니다.');
         }
         setAddContactModal(false);
@@ -156,6 +161,30 @@ useEffect(() => {
         deleteLectureNote(deletedNote.subjectLectureNoteId);
         showMessage('강의 노트 삭제가 완료되었습니다.');
         setIsDeleteNoteModal(false);
+    };
+
+    const handleMidSubmit = () => {
+        console.log(tempScores);
+        const transformedObject = Object.keys(tempScores).map(key => ({
+            studentSubjectId: parseInt(key),
+            score: parseInt(tempScores[key])
+        }));
+        console.log(transformedObject);
+        enrollScore("mid", transformedObject);
+        alert("등록되었습니다");
+    }
+
+    interface Student {
+        userId: number;
+        userName: string;
+        midtermScore: string;
+    }
+
+    const handleMidScoreChange = (studentSubjectId, newScore) => {
+        setTempScores((prevTempScores) => ({
+            ...prevTempScores,
+            [studentSubjectId]: newScore
+        }));
     };
 
     const showMessage = (msg = '', type = 'success') => {
@@ -260,104 +289,108 @@ useEffect(() => {
                         </button>
                     </div>
                     {filterdNotesList.length && selectedTab == "mid" ? (
-                        <div className="sm:min-h-[300px] min-h-[400px]">
-                        <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
                             <div className="table-responsive mb-5">
                                 <table className="table-striped">
                                     <thead>
                                         <tr>
-                                            <th>이름</th>
-                                            <th>성적</th>
+                                            <th className="w-1/3">ID</th>
+                                            <th className="w-1/3">이름</th>
+                                            <th className="w-1/3 text-center">중간고사 성적</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {studentList.map((data) => {
                                             return (
-                                                <tr key={data.userId}>
-                                                    <td>
+                                                <tr key={data.studentSubjectId}>
+                                                    <td className="w-1/3">
+                                                        <div className="whitespace-nowrap">{data.userId}</div>
+                                                    </td>
+                                                    <td className="w-1/3">
                                                         <div className="whitespace-nowrap">{data.userName}</div>
                                                     </td>
-                                                    <td>
-                                                        <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.userId, e.target.value)} />
+                                                    <td className="w-1/3 text-center">
+                                                        <input type="text" className="w-10" value={tempScores[data.studentSubjectId] !== undefined ? tempScores[data.studentSubjectId] : data.MidScore}  onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)} />
                                                     </td>
                                                 </tr>
                                             );
                                         })}
                                     </tbody>
                                 </table>
+                                <button className="mt-5 flex-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleMidSubmit}>제출</button>
                             </div>
-                        </div>
-                    </div>
                     
                     ) : (
-                        <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">시험 종류를 선택해주세요.</div>
-                    )}
-                    {filterdNotesList.length && selectedTab == "final" ? (
-                        <div className="sm:min-h-[300px] min-h-[400px]">
-                        <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-                            <div className="table-responsive mb-5">
-                                <table className="table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>이름</th>
-                                            <th>성적</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {studentList.map((data) => {
-                                            return (
-                                                <tr key={data.userId}>
-                                                    <td>
-                                                        <div className="whitespace-nowrap">{data.userName}</div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.userId, e.target.value)} />
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                        <div>
+                        {filterdNotesList.length && selectedTab == "final" ? (
+                            <div className="sm:min-h-[300px] min-h-[400px]">
+                            <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
+                                <div className="table-responsive mb-5">
+                                    <table className="table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>이름</th>
+                                                <th>성적</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {studentList.map((data) => {
+                                                return (
+                                                    <tr key={data.userId}>
+                                                        <td>
+                                                            <div className="whitespace-nowrap">{data.userName}</div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.userId, e.target.value)} />
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    ) : (
-                        <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">시험 종류를 선택해주세요.</div>
-                    )}
-                    {filterdNotesList.length && selectedTab == "activity" ? (
-                        <div className="sm:min-h-[300px] min-h-[400px]">
-                        <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-                            <div className="table-responsive mb-5">
-                                <table className="table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>이름</th>
-                                            <th>성적</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {studentList.map((data) => {
-                                            return (
-                                                <tr key={data.userId}>
-                                                    <td>
-                                                        <div className="whitespace-nowrap">{data.userName}</div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.userId, e.target.value)} />
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                        
+                        ) : (
+                            <div>
+                                {filterdNotesList.length && selectedTab == "activity" ? (
+                                    <div className="sm:min-h-[300px] min-h-[400px]">
+                                    <div className="grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
+                                        <div className="table-responsive mb-5">
+                                            <table className="table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>이름</th>
+                                                        <th>성적</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {studentList.map((data) => {
+                                                        return (
+                                                            <tr key={data.studentSubjectId}>
+                                                                <td>
+                                                                    <div className="whitespace-nowrap">{data.userName}</div>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" value={data.midtermScore} onChange={(e) => handleScoreChange(data.studentSubjectId, e.target.value)} />
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                ) : (
+                                    <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">시험 종류를 선택해주세요.</div>
+                                )}
                             </div>
+                        )}
                         </div>
-                    </div>
-                    
-                    ) : (
-                        <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">시험 종류를 선택해주세요.</div>
                     )}
+                
 
                     <Transition appear show={isDeleteNoteModal} as={Fragment}>
                         <Dialog as="div" open={isDeleteNoteModal} onClose={() => setIsDeleteNoteModal(false)} className="relative z-[51]">
