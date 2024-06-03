@@ -98,10 +98,6 @@ export const LectureNote = () => {
             updateLectureNote(formData, note.subjectLectureNoteId);
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
-<<<<<<< HEAD
-            console.log("안돼~"+localStorage.getItem('targetSubject'));
-            loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
-=======
             console.log("안돼~" + localStorage.getItem('targetSubject'));
             formData.append("title", params.title);
             const subjectId = localStorage.getItem('targetSubject') || '';
@@ -116,7 +112,6 @@ export const LectureNote = () => {
                 console.log(pair[0], pair[1]);
             }
             createLectureNote(formData);
->>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
             showMessage('강의 노트 생성이 완료되었습니다.');
         }
         setAddContactModal(false);

@@ -179,11 +179,7 @@ interface LectureNoteBody {
     file: string;
 }
 
-<<<<<<< HEAD
-export const loadLectureNote = async (formData: FormData): Promise<any> => {
-=======
 export const createLectureNote = async (formData: FormData): Promise<any> => {
->>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
     try {
         const response = await fetch(`${url}/subjects/lecture-notes`, {
             method: 'POST',
