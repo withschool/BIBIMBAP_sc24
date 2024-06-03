@@ -95,10 +95,7 @@ const Counsel = () => {
         console.log(format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
         console.log(teacherId);
         registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
-<<<<<<< HEAD
-=======
         setAddTaskModal(false);
->>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
