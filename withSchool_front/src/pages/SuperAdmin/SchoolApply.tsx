@@ -7,7 +7,7 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { useDispatch } from 'react-redux';
 import IconXCircle from '../../components/Icon/IconXCircle';
 import { fetchSchoolApplications } from '../../service/apply';
-import { updateSchoolApplicationState } from '../../service/apply';
+import { updateSchoolApplicationState, deleteSchoolApplication } from '../../service/apply';
 
 
 interface SchoolApplication {
@@ -98,6 +98,17 @@ const SchoolApply = () => {
         }
     };
 
+    const handleDelete = async (schoolApplicationId: number) => {
+        try {
+            await deleteSchoolApplication(schoolApplicationId);
+            const updatedRecords = initialRecords.filter(record => record.schoolApplicationId !== schoolApplicationId);
+            setInitialRecords(updatedRecords);
+            setRecordsData(updatedRecords.slice((page - 1) * pageSize, page * pageSize));
+        } catch (error) {
+            console.error('Error deleting school application:', error);
+        }
+    };
+
     return (
         <div>
             <div className="panel mt-6">
@@ -132,20 +143,20 @@ const SchoolApply = () => {
                                     </select>
                                 ),
                             },
-                            // {
-                            //     accessor: 'change',
-                            //     title: '변경',
-                            //     titleClassName: '!text-center',
-                            //     render: () => (
-                            //         <div className="flex items-center w-max mx-auto">
-                            //             <Tippy content="Delete">
-                            //                 <button type="button">
-                            //                     <IconXCircle />
-                            //                 </button>
-                            //             </Tippy>
-                            //         </div>
-                            //     ),
-                            // },
+                            {
+                                accessor: 'delete',
+                                title: '삭제하기',
+                                titleClassName: '!text-center',
+                                render: ({ schoolApplicationId }) => (
+                                    <div className="flex items-center w-max mx-auto">
+                                        <Tippy content="삭제">
+                                            <button type="button" onClick={() => handleDelete(schoolApplicationId)}>
+                                                <IconXCircle />
+                                            </button>
+                                        </Tippy>
+                                    </div>
+                                ),
+                            },
                         ]}
                         totalRecords={initialRecords.length}
                         page={page}
