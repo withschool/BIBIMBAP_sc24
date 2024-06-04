@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getLectureNoteList, createLectureNote, updateLectureNote, deleteLectureNote , enrollScore} from '../../service/subject';
+import { getLectureNoteList, updateLectureNote, deleteLectureNote , enrollScore} from '../../service/subject';
 import IconNotes from '../../components/Icon/IconNotes';
 import IconNotesEdit from '../../components/Icon/IconNotesEdit';
 import IconStar from '../../components/Icon/IconStar';
@@ -98,7 +98,7 @@ export const LectureNote = () => {
             updateLectureNote(formData, note.subjectLectureNoteId);
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
-            loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
+            // loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
             console.log("안돼~" + localStorage.getItem('targetSubject'));
             formData.append("title", params.title);
             const subjectId = localStorage.getItem('targetSubject') || '';
@@ -112,7 +112,7 @@ export const LectureNote = () => {
             for (let pair of formData.entries()) {
                 console.log(pair[0], pair[1]);
             }
-            createLectureNote(formData);
+            // createLectureNote(formData);
             showMessage('강의 노트 생성이 완료되었습니다.');
         }
         setAddContactModal(false);
