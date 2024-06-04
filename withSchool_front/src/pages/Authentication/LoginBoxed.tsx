@@ -58,6 +58,9 @@ const LoginBoxed = () => {
                 localStorage.setItem('userinfo', userinfo);
                 localStorage.setItem('token', token);
                 localStorage.setItem('accountType', userinfo.auth);
+                const timestamp: number = userinfo.exp;
+                const date = new Date(timestamp * 1000);
+                localStorage.setItem('expDate', date);
                 localStorage.setItem('id', email);
                 localStorage.setItem('login', token ? 'true' : 'false');
 
