@@ -53,8 +53,11 @@ const Counsel = lazy(() => import('../pages/Student/Counsel'));
 const StudentQuestion = lazy(() => import('../pages/Student/StudentQuestion'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
 const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
-
+<<<<<<< HEAD
+=======
 const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
+
+>>>>>>> bdb6fdad30fbba642763176b0ae78b18afa039dc
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -159,10 +162,11 @@ const routes = [
         path: '/teacher/subject/choose',
         element: <ChooseSubjectTeacher />,
     },
-    // {
-    //     path: '/teacher/class/watchgrade',
-    //     element: <ScoreClass />,
-    // },
+    {
+        path: '/teacher/class/watchgrade',
+        element: <ScoreClass />,
+
+    },
     {
         path: '/teacher/subject/homework',
         element: <Homework />,
@@ -184,10 +188,11 @@ const routes = [
         element: <LectureNote />,
 
     },
-    // {
-    //     path: '/teacher/subject/grade',
-    //     element: <Score />,
-    // },
+    {
+        path: '/teacher/subject/grade',
+        element: <Score />,
+
+    },
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
@@ -315,10 +320,11 @@ const routes = [
         path: '/components/Notification',
         element: <Notification />,
     },
-    // {
-    //     path: '/components/SweetAlert',
-    //     element: <SweetAlert />,
-    // },
+    {
+        path: '/components/SweetAlert',
+        element: <SweetAlert />,
+    },
+
     //Elements
     {
         path: '/Elements/Alerts',
