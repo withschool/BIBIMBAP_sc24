@@ -61,4 +61,11 @@ public class SchoolApplicationService {
 
         return savedApplication.toResApplicationDefaultDTO();
     }
+
+    public void deleteById(Long schoolApplicationId) {
+        if(!schoolApplicationRepository.existsById(schoolApplicationId)) {
+            throw new RuntimeException("There is no appropriate application to delete");
+        }
+        schoolApplicationRepository.deleteById(schoolApplicationId);
+    }
 }

@@ -86,4 +86,19 @@ public class SuperController {
     public ResponseEntity<ResApplicationDefaultDTO> changeApplicationState(@PathVariable Long schoolApplicationId, @RequestParam int state) {
         return ResponseEntity.ok().body(schoolApplicationService.changeState(schoolApplicationId, state));
     }
+
+    @DeleteMapping("/schools/applications/{schoolApplicationId}")
+    @Operation(summary = "학교 신청서 삭제")
+    public ResponseEntity<String> deleteApplication(@PathVariable Long schoolApplicationId) {
+        try {
+            schoolApplicationService.deleteById(schoolApplicationId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body("삭제 실패: " + e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body("삭제 성공");
+    }
 }
