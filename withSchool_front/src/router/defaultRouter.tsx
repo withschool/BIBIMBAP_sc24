@@ -15,7 +15,7 @@ const DefaultRouter = () => {
         case 'ROLE_PARENT':
             navigate('/parent/home');
         case 'ROLE_STUDENT':
-            navigate('/student/home');
+            navigate('/student/calendar');
     }
 
     return(

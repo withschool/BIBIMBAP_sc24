@@ -81,13 +81,13 @@ const LoginBoxed = () => {
                     navigate('/admin/home');
                 }
                 else if (localStorage.getItem('accountType') == "ROLE_TEACHER") {
-                    navigate('/teacher/home');
+                    navigate('/teacher/class/notice');
                 }
                 else if (localStorage.getItem('accountType') == "ROLE_PARENT") {
                     navigate('/parent/home');
                 }
                 else if (localStorage.getItem('accountType') == "ROLE_STUDENT") {
-                    navigate('/student/home');
+                    navigate('/student/calendar');
                 }
 
             } else {
