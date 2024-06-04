@@ -80,13 +80,18 @@ export const deleteSchoolApplication = async (schoolApplicationId: number): Prom
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
+
+
         if (response.ok) {
-            return await response.json();
-        } else {
-            const errorMessage = await response.text();
-            console.error('Failed to delete school application:', errorMessage);
-            throw new Error(errorMessage);
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
         }
+
+
     } catch (error) {
         console.error('Error deleting school application:', error);
         throw error;
