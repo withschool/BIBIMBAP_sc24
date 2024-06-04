@@ -115,7 +115,7 @@ public class ProjectService {
         ProjectTask result = projectTaskRepository.save(projectTask);
 
         List<MultipartFile> files = reqProjectTaskDTO.getFiles();
-        if (files != null) {
+        if(files != null && !files.isEmpty()) {
             for (MultipartFile s : files) {
                 if (!s.isEmpty()) {
                     FileDTO fileDTO = FileDTO.builder()
@@ -148,16 +148,20 @@ public class ProjectService {
         this.deleteFileById(reqUpdateProjectTaskDTO.getTaskId());
 
         List<MultipartFile> dtoFile = reqUpdateProjectTaskDTO.getFiles();
-        for(MultipartFile s : dtoFile){
-            if(!s.isEmpty()){
-                FileDTO fileDTO = FileDTO.builder()
-                        .repoType("kanban")
-                        .file(s)
-                        .masterId(reqUpdateProjectTaskDTO.getTaskId())
-                        .build();
-                fileService.saveFile(fileDTO);
+
+        if(dtoFile != null && !dtoFile.isEmpty()){
+            for(MultipartFile s : dtoFile){
+                if(!s.isEmpty()){
+                    FileDTO fileDTO = FileDTO.builder()
+                            .repoType("kanban")
+                            .file(s)
+                            .masterId(reqUpdateProjectTaskDTO.getTaskId())
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
             }
         }
+
     }
     public void deleteTask(Long projectTaskId) {
         this.deleteFileById(projectTaskId);

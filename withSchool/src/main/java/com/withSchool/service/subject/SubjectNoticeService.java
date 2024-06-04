@@ -57,14 +57,17 @@ public class SubjectNoticeService {
         SubjectNotice result = subjectNoticeRepository.save(subjectNotice);
 
         List<MultipartFile> files = reqSubjectNoticeDTO.getFile();
-        for(MultipartFile s : files){
-            if(!s.isEmpty()) {
-                FileDTO fileDTO = FileDTO.builder()
-                        .file(s)
-                        .repoType("subjectNotice")
-                        .masterId(result.getSubjectNoticeId())
-                        .build();
-                fileService.saveFile(fileDTO);
+
+        if(files != null && !files.isEmpty()){
+            for(MultipartFile s : files){
+                if(!s.isEmpty()) {
+                    FileDTO fileDTO = FileDTO.builder()
+                            .file(s)
+                            .repoType("subjectNotice")
+                            .masterId(result.getSubjectNoticeId())
+                            .build();
+                    fileService.saveFile(fileDTO);
+                }
             }
         }
 
@@ -109,16 +112,20 @@ public class SubjectNoticeService {
             this.deleteFileById(noticeId);
             //ClientSchoolNoticeDTO의 파일 저장
             List<MultipartFile> dtoFile = reqNoticeDTO.getFile();
-            for(MultipartFile s : dtoFile){
-                if(!s.isEmpty()){
-                    FileDTO fileDTO = FileDTO.builder()
-                            .repoType("subjectNotice")
-                            .file(s)
-                            .masterId(noticeId)
-                            .build();
-                    fileService.saveFile(fileDTO);
+
+            if(dtoFile != null && !dtoFile.isEmpty()){
+                for(MultipartFile s : dtoFile){
+                    if(!s.isEmpty()){
+                        FileDTO fileDTO = FileDTO.builder()
+                                .repoType("subjectNotice")
+                                .file(s)
+                                .masterId(noticeId)
+                                .build();
+                        fileService.saveFile(fileDTO);
+                    }
                 }
             }
+
 
             return ResNoticeDTO.builder()
                     .noticeId(resultNotice.getSubjectNoticeId())

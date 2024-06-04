@@ -65,16 +65,20 @@ public class ClassNoticeService {
 
             // 파일 처리
             List<MultipartFile> files = reqNoticeDTO.getFile();
-            for (MultipartFile s : files) {
-                if (!s.isEmpty()) {
-                    FileDTO fileDTO = FileDTO.builder()
-                            .file(s)
-                            .repoType("classNotice")
-                            .masterId(result.getClassNoticeId())
-                            .build();
-                    fileService.saveFile(fileDTO);
+
+            if(files != null && !files.isEmpty()){
+                for (MultipartFile s : files) {
+                    if (!s.isEmpty()) {
+                        FileDTO fileDTO = FileDTO.builder()
+                                .file(s)
+                                .repoType("classNotice")
+                                .masterId(result.getClassNoticeId())
+                                .build();
+                        fileService.saveFile(fileDTO);
+                    }
                 }
             }
+
             List<User> userList = userService.findStudentByClassId(userService.getCurrentUserClassId());
             notificationService.sendSMSGroup(userList, "반 공지사항이", reqNoticeDTO.getTitle(), false);
 
@@ -123,16 +127,20 @@ public class ClassNoticeService {
             this.deleteFileById(noticeId);
             //ClientSchoolNoticeDTO의 파일 저장
             List<MultipartFile> dtoFile = reqNoticeDTO.getFile();
-            for(MultipartFile s : dtoFile){
-                if(!s.isEmpty()){
-                    FileDTO fileDTO = FileDTO.builder()
-                            .repoType("classNotice")
-                            .file(s)
-                            .masterId(noticeId)
-                            .build();
-                    fileService.saveFile(fileDTO);
+
+            if(dtoFile != null && !dtoFile.isEmpty()){
+                for(MultipartFile s : dtoFile){
+                    if(!s.isEmpty()){
+                        FileDTO fileDTO = FileDTO.builder()
+                                .repoType("classNotice")
+                                .file(s)
+                                .masterId(noticeId)
+                                .build();
+                        fileService.saveFile(fileDTO);
+                    }
                 }
             }
+
 
             return ResNoticeDTO.builder()
                     .noticeId(resultNotice.getClassNoticeId())
