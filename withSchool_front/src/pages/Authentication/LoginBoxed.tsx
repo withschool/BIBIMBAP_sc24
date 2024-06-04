@@ -27,7 +27,9 @@ const LoginBoxed = () => {
         dispatch(setPageTitle('Withschool-Login'));
         if (!localStorage.getItem('reloaded')) {
             localStorage.setItem('reloaded', 'true');
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 200); // 300ms = 0.3초
         }
 
         return () => {
