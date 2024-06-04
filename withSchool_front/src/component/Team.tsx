@@ -74,7 +74,7 @@ export default class Team extends Component<{}, TeamState> {
                         alt=""
                         className="img-fluid d-block mx-auto"
                       />
-                      <ul className="list-inline p-3 mb-0 team-social-item">
+                      {/* <ul className="list-inline p-3 mb-0 team-social-item">
                         <li className="list-inline-item mx-3">
                           <Link to="#" className="team-social-icon h-primary">
                             <i>
@@ -102,7 +102,7 @@ export default class Team extends Component<{}, TeamState> {
                             </i>
                           </Link>
                         </li>
-                      </ul>
+                      </ul> */}
                     </div>
                     <div className="p-4">
                       <h5 className="font-size-19 mb-1">{team.name}</h5>

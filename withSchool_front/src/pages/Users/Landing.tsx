@@ -171,7 +171,7 @@ class Landing extends Component<{}, SectionState> {
           <Pricing />
           <Team />
           <Blog />
-          <Contact />
+          <Contact/>
           <Footer />
           <Switch />
         </Suspense>

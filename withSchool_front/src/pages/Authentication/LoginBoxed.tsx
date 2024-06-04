@@ -25,7 +25,15 @@ const LoginBoxed = () => {
 
     useEffect(() => {
         dispatch(setPageTitle('Withschool-Login'));
-    });
+        if (!localStorage.getItem('reloaded')) {
+            localStorage.setItem('reloaded', 'true');
+            window.location.reload();
+        }
+
+        return () => {
+            localStorage.removeItem('reloaded');
+        };
+    }, [dispatch]);
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
@@ -41,16 +49,16 @@ const LoginBoxed = () => {
             const user = await login(email, password);
             if (user && user.accessToken) {
                 let token = user.accessToken;
-                let payload = token.substring(token.indexOf('.')+1,token.lastIndexOf('.'));
+                let payload = token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'));
 
                 let dec = base64.decode(payload);
                 const userinfo = await JSON.parse(dec);
-                localStorage.setItem('userinfo',userinfo);
+                localStorage.setItem('userinfo', userinfo);
                 localStorage.setItem('token', token);
                 localStorage.setItem('accountType', userinfo.auth);
                 localStorage.setItem('id', email);
                 localStorage.setItem('login', token ? 'true' : 'false');
-                
+
                 const schoolData = await getSchoolId(token);
                 const classData = await getClassId(token);
 
@@ -62,21 +70,21 @@ const LoginBoxed = () => {
                 }
 
                 console.log(userinfo);
-                console.log("accountType : "+localStorage.getItem('accountType'));
+                console.log("accountType : " + localStorage.getItem('accountType'));
 
-                if(localStorage.getItem('accountType') == "ROLE_SUPER"){
+                if (localStorage.getItem('accountType') == "ROLE_SUPER") {
                     navigate('/super/home');
                 }
-                else if(localStorage.getItem('accountType') == "ROLE_ADMIN"){
+                else if (localStorage.getItem('accountType') == "ROLE_ADMIN") {
                     navigate('/admin/home');
                 }
-                else if(localStorage.getItem('accountType') == "ROLE_TEACHER"){
+                else if (localStorage.getItem('accountType') == "ROLE_TEACHER") {
                     navigate('/teacher/home');
                 }
-                else if(localStorage.getItem('accountType') == "ROLE_PARENT"){
+                else if (localStorage.getItem('accountType') == "ROLE_PARENT") {
                     navigate('/parent/home');
                 }
-                else if(localStorage.getItem('accountType') == "ROLE_STUDENT"){
+                else if (localStorage.getItem('accountType') == "ROLE_STUDENT") {
                     navigate('/student/home');
                 }
 
@@ -96,7 +104,7 @@ const LoginBoxed = () => {
             </div>
 
             <div className="relative flex min-h-screen items-center justify-center bg-[url(/assets/images/auth/map.png)] bg-cover bg-center bg-no-repeat px-6 py-10 dark:bg-[#060818] sm:px-16">
-            <img src="/assets/images/auth/coming-soon-object1.png" alt="image" className="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
+                <img src="/assets/images/auth/coming-soon-object1.png" alt="image" className="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
                 <img src="/assets/images/auth/coming-soon-object2.png" alt="image" className="absolute left-24 top-0 h-40 md:left-[30%]" />
                 <img src="/assets/images/auth/coming-soon-object3.png" alt="image" className="absolute right-0 top-0 h-[300px]" />
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
@@ -111,7 +119,7 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="Email">ID</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" placeholder="아이디를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange}  />
+                                        <input id="Email" placeholder="아이디를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmailChange} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
@@ -120,7 +128,7 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="비밀번호를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={password} onChange={handlePasswordChange}/>
+                                        <input id="Password" type="password" placeholder="비밀번호를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={password} onChange={handlePasswordChange} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>

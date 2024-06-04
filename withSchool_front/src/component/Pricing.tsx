@@ -16,6 +16,7 @@ import classnames from "classnames";
 import price2 from "../assets/images/pricing/2.png";
 import price1 from "../assets/images/pricing/1.png";
 import price3 from "../assets/images/pricing/3.png";
+import { Link as ScrollLink } from 'react-scroll';
 import { Link } from "react-router-dom";
 
 interface PricingData {
@@ -196,13 +197,13 @@ export default class Pricing extends Component<{}, PricingState> {
                                 {monthly.price} / 명 (사용자 수)
                               </p>
                               {monthly.isPrimary ? (
-                                <Link to="#" className="btn btn-primary">
+                                <ScrollLink to="contact" className="btn btn-primary">
                                   문의 하기
-                                </Link>
+                                </ScrollLink>
                               ) : (
-                                <Link to="#" className="btn btn-soft-primary">
+                                <ScrollLink to="contact" className="btn btn-soft-primary">
                                   문의 하기
-                                </Link>
+                                </ScrollLink>
                               )}
                             </CardBody>
                           </Card>
@@ -250,13 +251,13 @@ export default class Pricing extends Component<{}, PricingState> {
                                 {yearly.price} / 명 (사용자 수)
                               </p>
                               {yearly.isPrimary ? (
-                                <Link to="#" className="btn btn-primary">
+                                <ScrollLink to="contact" className="btn btn-primary">
                                   문의 하기
-                                </Link>
+                                </ScrollLink>
                               ) : (
-                                <Link to="#" className="btn btn-soft-primary">
+                                <ScrollLink to="contact" className="btn btn-soft-primary">
                                   문의 하기
-                                </Link>
+                                </ScrollLink>
                               )}
                             </CardBody>
                           </Card>

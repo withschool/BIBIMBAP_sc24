@@ -139,7 +139,7 @@ export default class Blog extends Component<BlogProps, BlogState> {
                             학교랑 서비스의 지속적인 지원을 받아 보세요
                           </h2>
                           <p className="text-white-70 font-size-16 mb-4 pb-3">
-                            학교랑 서비스 이용 중에 불편한 점이 있으신가요?<br/>아래 이메일을 통해 언제든지 문의해 보세요</p>
+                            학교랑 서비스 이용 중에 불편한 점이 있으신가요?<br />아래 이메일을 통해 언제든지 문의해 보세요</p>
                           <Link to="mailto:withschool.service@gmail.com" className="btn btn-light rounded-pill">
                             문의하기
                           </Link>

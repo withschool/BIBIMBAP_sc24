@@ -38,12 +38,19 @@ export default class Contact extends Component<{}, ContactState> {
     try {
       const response = await submitSchoolApplication(this.state);
       console.log('Application submitted successfully:', response);
-      // Handle the response as needed, e.g., show a success message or redirect
+      alert('문의가 완료되었습니다.');
+      this.setState({
+        schoolName: '',
+        schoolPhoneNumber: '',
+        schoolAdminName: '',
+        schoolAdminEmail: ''
+      });
     } catch (error) {
       console.error('Error submitting application:', error);
-      // Handle the error as needed, e.g., show an error message
+      alert('문의 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
+
   render() {
     return (
       <React.Fragment>
@@ -150,7 +157,7 @@ export default class Contact extends Component<{}, ContactState> {
                     경기도 수원시 영통구 월드컵로 206
                   </p>
                   <ul className="list-inline pt-4">
-                    <li className="list-inline-item me-3">
+                    {/* <li className="list-inline-item me-3">
                       <Link to="#" className="social-icon icon-mono avatar-xs rounded-circle">
                         <i>
                           <FeatherIcon icon="facebook" className="icon-xs" />
@@ -170,7 +177,7 @@ export default class Contact extends Component<{}, ContactState> {
                           <FeatherIcon icon="instagram" className="icon-xs" />
                         </i>{" "}
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </Col>
