@@ -70,3 +70,25 @@ export const updateSchoolApplicationState = async (schoolApplicationId: number, 
         throw error;
     }
 };
+
+export const deleteSchoolApplication = async (schoolApplicationId: number): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/super/schools/applications/${schoolApplicationId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to delete school application:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error deleting school application:', error);
+        throw error;
+    }
+};
