@@ -197,7 +197,6 @@ const Sidebar = () => {
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
-
                                         <li className="menu nav-item">
                                             <button type="button" className={`${currentMenu === 'studys' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('studys')}>
                                                 <div className="flex items-center">

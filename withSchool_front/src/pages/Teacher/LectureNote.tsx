@@ -98,7 +98,7 @@ export const LectureNote = () => {
             updateLectureNote(formData, note.subjectLectureNoteId);
             showMessage('강의 노트 수정이 완료되었습니다.');
         } else {
-            console.log("안돼~" + localStorage.getItem('targetSubject'));
+            loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
             formData.append("title", params.title);
             const subjectId = localStorage.getItem('targetSubject') || '';
             formData.append("subjectId", subjectId);

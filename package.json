@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "base-64": "^1.0.0"
+    "base-64": "^1.0.0",
+    "date-fns": "^3.6.0",
+    "react-datepicker": "^6.9.0"
   }
 }

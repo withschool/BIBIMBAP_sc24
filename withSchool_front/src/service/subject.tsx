@@ -175,11 +175,10 @@ export const getLectureNoteList = async (subjectId: string | null): Promise<any>
 
 interface LectureNoteBody {
     title: string;
-    subjectId: string | null;
+    id: string | null;
     file: string;
 }
-
-export const createLectureNote = async (formData: FormData): Promise<any> => {
+export const loadLectureNote = async (formData: FormData): Promise<any> => {
     try {
         const response = await fetch(`${url}/subjects/lecture-notes`, {
             method: 'POST',

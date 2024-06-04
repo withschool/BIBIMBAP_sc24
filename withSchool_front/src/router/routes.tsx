@@ -53,8 +53,8 @@ const Counsel = lazy(() => import('../pages/Student/Counsel'));
 const StudentQuestion = lazy(() => import('../pages/Student/StudentQuestion'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
 const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
-const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
 
+const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -278,10 +278,6 @@ const routes = [
         element: <InvoiceList />,
     },
 
-    {
-        path: '/admin/invoice/preview',
-        element: <InvoicePreview />,
-    },
 
     {
         path: '/admin/invoice/add',
