@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class SubjectQuestionPostServiceTest {
+class SubjectQuestionPostServiceTest {
     @InjectMocks
     private SubjectQuestionPostService subjectQuestionPostService;
 
@@ -44,11 +44,7 @@ public class SubjectQuestionPostServiceTest {
     User student = User.builder().userId(18L).id("id1").password("$2a$10$ObJRKLgEVLam.jWp.qssiuYlQ4Nq.mY8pZw8It3Ae6spt45Hiy0sm").email("newemail@ajou.ac.kr").name("황근출1").sex(false).phoneNumber("01012345678").address("new address").birthDate(null).accountType(0).userCode("asdas12as1").schoolInformation(schoolInformation).classInformation(classInfo).build();
     User teacher = User.builder().userId(19L).id("id2").password("$2a$10$ObJRKLgEVLam.jWp.qssiuYlQ4Nq.mY8pZw8It3Ae6spt45Hiy0sm").email("newemail@ajou.ac.kr").name("황근출1").sex(false).phoneNumber("01012345678").address("new address").birthDate(null).accountType(2).userCode("asdas12as1").schoolInformation(schoolInformation).classInformation(classInfo).build();
     SubjectQuestionPost subjectQuestionPost = SubjectQuestionPost.builder().questionerId(student).subject(subject).questionContent("content").isAnswered(0).build();
-//    @BeforeEach
-//    public void init() {
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        context.setAuthentication(new UsernamePasswordAuthenticationToken(student, student.getPassword()));
-//    }
+
 
     @Test
     @DisplayName("과목별 질문 저장")
