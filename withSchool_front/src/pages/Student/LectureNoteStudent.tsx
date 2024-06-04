@@ -48,7 +48,6 @@ const searchNotes = () => {
 };
 
 useEffect(() => {
-    localStorage.setItem("targetSubject", "37");
     const fetchLectureNote = async () => {
         if(localStorage.getItem("targetSubject") == null){
             alert("과목을 선택해 주세요.");
