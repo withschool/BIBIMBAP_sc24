@@ -80,6 +80,7 @@ public class SchoolInformationService {
                 .fondYmd(dto.getFOND_YMD())
                 .foasMemrd(dto.getFOAS_MEMRD())
                 .loadDtm(dto.getLOAD_DTM())
+                .paymentState(dto.getPaymentState())
                 .build();
     }
 
@@ -110,6 +111,7 @@ public class SchoolInformationService {
                 .FOND_YMD(entity.getFondYmd())
                 .FOAS_MEMRD(entity.getFoasMemrd())
                 .LOAD_DTM(entity.getLoadDtm())
+                .paymentState(entity.getPaymentState())
                 .build();
     }
 
