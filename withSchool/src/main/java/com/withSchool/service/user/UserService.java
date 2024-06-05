@@ -4,13 +4,18 @@ import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.user.*;
 import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.entity.mapping.StudentSubject;
+import com.withSchool.entity.mapping.TeacherSubject;
 import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
+import com.withSchool.repository.mapping.TeacherSubjectRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
+import com.withSchool.repository.subject.SubjectRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,12 +44,11 @@ public class UserService {
     private final ClassRepository classRepository;
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
+    private final TeacherSubjectRepository teacherSubjectRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
-
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final SubjectRepository subjectRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
@@ -286,5 +290,58 @@ public class UserService {
 
     public List<User> findStudentByClassId(Long schoolId){
         return userRepository.findStudentByClassId(schoolId);
+    }
+
+    public void addOneUser(ReqUserRegisterDTO reqUserRegisterDTO) {
+        int accountType = reqUserRegisterDTO.getType().equals("학생") ? 0 : 2;
+        String name = reqUserRegisterDTO.getName();
+        String birthDate = reqUserRegisterDTO.getBirthDate();
+
+        Long schoolId = getCurrentUserSchoolId();
+        SchoolInformation schoolInformation = getCurrentUserSchoolInformation(null);
+        int grade = reqUserRegisterDTO.getGrade();
+        int classNumber = reqUserRegisterDTO.getClassNumber();
+        int semester = reqUserRegisterDTO.getSemester();
+        int year = reqUserRegisterDTO.getYear();
+
+        Optional<ClassInformation> optionalClassInformation = classRepository.findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(grade, classNumber, year, schoolId);
+        if(optionalClassInformation.isEmpty()) throw new RuntimeException("Check Class");
+        ClassInformation classInformation = optionalClassInformation.get();
+
+        String[] subjects = reqUserRegisterDTO.getSubjects();
+
+        User user = User.builder()
+                .name(name)
+                .schoolInformation(schoolInformation)
+                .classInformation(classInformation)
+                .accountType(accountType)
+                .birthDate(birthDate)
+                .userCode(RandomStringUtils.randomAlphanumeric(8))
+                .build();
+
+        userRepository.save(user);
+
+        for (String subjectName : subjects) {
+            Optional<Subject> optionalSubject = subjectRepository.findBySubjectNameAndGradeAndYearAndSemester(subjectName, Integer.toString(grade), Integer.toString(year),Integer.toString(semester), schoolId);
+            if(optionalSubject.isEmpty()) throw new RuntimeException("No subject with " + subjectName);
+            Subject subject = optionalSubject.get();
+
+            if(accountType == 0){
+                StudentSubject studentSubject = StudentSubject.builder()
+                        .subject(subject)
+                        .user(user)
+                        .build();
+
+                studentSubjectRepository.save(studentSubject);
+            }
+            else{
+                TeacherSubject teacherSubject = TeacherSubject.builder()
+                        .teacher(user)
+                        .subject(subject)
+                        .build();
+
+                teacherSubjectRepository.save(teacherSubject).toResTeacherSubjectDefaultDTO();
+            }
+        }
     }
 }

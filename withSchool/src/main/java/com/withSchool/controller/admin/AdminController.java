@@ -6,6 +6,7 @@ import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
+import com.withSchool.dto.user.ReqUserRegisterDTO;
 import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.entity.classes.ClassInformation;
@@ -155,6 +156,13 @@ public class AdminController {
         }catch(RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/users")
+    @Operation(summary = "유저 단건 추가")
+    public ResponseEntity<String> addOneUser(@RequestBody ReqUserRegisterDTO reqUserRegisterDTO) {
+        userService.addOneUser(reqUserRegisterDTO);
+        return ResponseEntity.ok("User registered successfully.");
     }
 
     // 유저 리스트를 받아서 다 삭제
