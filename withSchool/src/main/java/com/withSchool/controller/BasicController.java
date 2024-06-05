@@ -55,6 +55,7 @@ public class BasicController {
                 .userId(user.getUserId())
                 .userName(user.getName())
                 .schoolName(user.getSchoolInformation().getSchulNm())
+                .birthDate(user.getBirthDate())
                 .build();
 
         response.put("user", preSignUpReturnDTO);

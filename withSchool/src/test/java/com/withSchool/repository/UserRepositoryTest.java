@@ -26,15 +26,15 @@ public class UserRepositoryTest {
     @DisplayName("유저 저장 테스트")
     public void registerUserTest() {
         User user = User.builder()
-                .id("test1")
-                .password(passwordEncoder.encode("dd1"))
+                .id("super")
+                .password(passwordEncoder.encode("123456"))
                 .email("abc123@ajou.ac.kr")
                 .name("관리자")
                 .sex(false)
                 .phoneNumber("01094657112")
                 .address("아주대학교동")
                 .birthDate("991108")
-                .accountType(3)
+                .accountType(4)
                 .userCode("asdas122sasd")
                 .build();
         User saveduser = userRepository.save(user);

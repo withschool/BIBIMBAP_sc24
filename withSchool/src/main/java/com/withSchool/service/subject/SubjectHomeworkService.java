@@ -10,7 +10,6 @@ import com.withSchool.entity.subject.*;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.file.SubjectHomeworkFileRepository;
 import com.withSchool.repository.file.SubjectHomeworkSubmitFileRepository;
-import com.withSchool.repository.mapping.StudentSubjectRepository;
 import com.withSchool.repository.subject.SubjectHomeworkRepository;
 import com.withSchool.repository.subject.SubjectHomeworkSubmitRepository;
 import com.withSchool.repository.subject.SubjectRepository;
@@ -219,40 +218,34 @@ public class SubjectHomeworkService {
     public Long getId(Long homeworkId) {
         User user = userService.getCurrentUser();
         Optional<SubjectHomeworkSubmit> subjectHomeworkSubmit = subjectHomeworkSubmitRepository.findByUserIdHomeworkId(user.getUserId(),homeworkId);
-        if(subjectHomeworkSubmit.isPresent()){
-            return subjectHomeworkSubmit.get().getSubjectHomeworkSubmitId();
-        }
-        else{
-            return null;
-        }
+        return subjectHomeworkSubmit.map(SubjectHomeworkSubmit::getSubjectHomeworkSubmitId).orElse(null);
     }
 
     public List<ResHomeworkSubmitDTO> getAll(Long homeworkId) {
         List<ResHomeworkSubmitDTO> result = new ArrayList<>();
         Optional<List<SubjectHomeworkSubmit>> subjectHomeworkSubmitList = subjectHomeworkSubmitRepository.findAllByHomeworkId(homeworkId);
-        if(subjectHomeworkSubmitList.isPresent()){
-            for(SubjectHomeworkSubmit s : subjectHomeworkSubmitList.get()){
-                Optional<List<SubjectHomeworkSubmitFile>> subjectHomeworkSubmitFileList = subjectHomeworkSubmitFileRepository.findBySubjectHomeworkSubmitId(s.getSubjectHomeworkSubmitId());
-                List<String> filesUrl = new ArrayList<>();
-                List<String> originalName = new ArrayList<>();
-                if(subjectHomeworkSubmitFileList.isPresent()) {
-                    for (SubjectHomeworkSubmitFile file : subjectHomeworkSubmitFileList.get()) {
-                        filesUrl.add(file.getFileUrl());
-                        originalName.add(file.getOriginalName());
-                    }
-                }
-                ResHomeworkSubmitDTO resHomeworkSubmitDTO = ResHomeworkSubmitDTO.builder()
-                        .id(s.getSubjectHomeworkSubmitId())
-                        .content(s.getSubjectSubmitContent())
-                        .originalName(originalName)
-                        .filesURl(filesUrl)
-                        .build();
+        if(subjectHomeworkSubmitList.isEmpty()) return null;
 
-                result.add(resHomeworkSubmitDTO);
+        for(SubjectHomeworkSubmit s : subjectHomeworkSubmitList.get()){
+            Optional<List<SubjectHomeworkSubmitFile>> subjectHomeworkSubmitFileList = subjectHomeworkSubmitFileRepository.findBySubjectHomeworkSubmitId(s.getSubjectHomeworkSubmitId());
+            List<String> filesUrl = new ArrayList<>();
+            List<String> originalName = new ArrayList<>();
+            if(subjectHomeworkSubmitFileList.isPresent()) {
+                for (SubjectHomeworkSubmitFile file : subjectHomeworkSubmitFileList.get()) {
+                    filesUrl.add(file.getFileUrl());
+                    originalName.add(file.getOriginalName());
+                }
             }
-            return result;
+            ResHomeworkSubmitDTO resHomeworkSubmitDTO = ResHomeworkSubmitDTO.builder()
+                    .id(s.getSubjectHomeworkSubmitId())
+                    .content(s.getSubjectSubmitContent())
+                    .originalName(originalName)
+                    .filesURl(filesUrl)
+                    .build();
+
+            result.add(resHomeworkSubmitDTO);
         }
-        return null;
+        return result;
     }
 
     public ResHomeworkSubmitDTO getOne(Long subjectHomeworkSubmitId) {
