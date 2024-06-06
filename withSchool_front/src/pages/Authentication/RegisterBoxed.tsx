@@ -38,6 +38,7 @@ const LoginBoxed = () => {
     const [searchModal, setSearchModal] = useState(false);
     const [searchWord, setSearchWord] = useState('');
     const [schoolList, setSchoolList] = useState<SchoolType[]>([]);
+    const [schoolInfo, setSchoolInfo] = useState('');
     const [filteredSchools, setFilteredSchools] = useState<SchoolType[]>([]);
 
     interface SchoolType {
@@ -65,6 +66,7 @@ const LoginBoxed = () => {
         setSelectedSchool(school.schoolId);
         setSearchWord('');
         setSearchModal(false);
+        setSchoolInfo(school.schoolName+' ('+school.schoolAddress+')');
     };
 
     const handleBlur = () => {
@@ -174,19 +176,13 @@ const LoginBoxed = () => {
                                     <label htmlFor="School">School</label>
                                     <div className="relative text-white-dark">
                                     <div className='flex'>
-                                    <select
-                                        value={selectedSchool}
-                                        onChange={handleSchoolChange}
-                                        className="block w-full px-9 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500 placeholder:text-white-dark"
+                                    <input
+                                        value={schoolInfo}
+                                        placeholder='학교를 검색해 주세요.'
+                                        readOnly
+                                        className="block w-full form-input px-9 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500 placeholder:text-white-dark"
                                     >
-                                        <option value="">학교를 선택해 주세요.</option>
-                                        {schoolList && // 학교 목록이 있을 때만 map() 함수 실행
-                                            schoolList.map(school => (
-                                                <option key={school.schoolId} value={school.schoolId}>
-                                                    {school.schoolName} ({school.schoolAddress})
-                                                </option>
-                                            ))}
-                                    </select>
+                                    </input>
 
                                     <div className="mb-5">
                                         <div className="flex flex-wrap items-center justify-center gap-2">
