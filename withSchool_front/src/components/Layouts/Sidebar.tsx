@@ -140,14 +140,6 @@ const Sidebar = () => {
                                                 </div>
                                             </NavLink>
                                         </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
                                     </ul>
                                 </li>
 
@@ -238,14 +230,6 @@ const Sidebar = () => {
                                                 <div className="flex items-center">
                                                     <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('선생님과 상담')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>
@@ -366,14 +350,6 @@ const Sidebar = () => {
                                                     </li>
                                                 </ul>
                                             </AnimateHeight>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
-                                                </div>
-                                            </NavLink>
                                         </li>
                                     </ul>
                                 </li>
