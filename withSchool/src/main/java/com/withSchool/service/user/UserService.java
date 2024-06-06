@@ -87,7 +87,7 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public void registerAdmin(SchoolInformationDTO dto) throws Exception{
+    public void registerAdmin(SchoolInformationDTO dto, String adminEmail) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();
@@ -96,6 +96,7 @@ public class UserService {
                     .password(passwordEncoder.encode("1234"))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
+                    .email(adminEmail)
                     .schoolInformation(schoolInformation)
                     .build();
             userRepository.save(admin);
