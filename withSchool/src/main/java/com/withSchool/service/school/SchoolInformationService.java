@@ -2,7 +2,10 @@ package com.withSchool.service.school;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.school.SchoolInformationListDTO;
+import com.withSchool.entity.payment.Plan;
+import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.repository.payment.SubscriptionRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 public class SchoolInformationService {
 
     private final SchoolInformationRepository schoolInformationRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
 
     public List<SchoolInformationListDTO> findAll() {
@@ -52,6 +57,50 @@ public class SchoolInformationService {
             return null;
         } else return schoolInformationRepository.save(schoolInformation);
     }
+
+    @Transactional
+    public Subscription subscribeSchool(Long schoolId, Plan plan, String billingKey, LocalDateTime endDate) {
+        Optional<SchoolInformation> schoolOpt = schoolInformationRepository.findById(schoolId);
+        if (schoolOpt.isEmpty()) {
+            throw new RuntimeException("해당하는 학교가 없습니다");
+        }
+
+        SchoolInformation school = schoolOpt.get();
+
+        Subscription subscription = Subscription.builder()
+                .plan(plan)
+                .startDate(LocalDateTime.now())
+                .endDate(endDate)
+                .billingKey(billingKey)
+                .schoolInformation(school)
+                .build();
+
+        return subscriptionRepository.save(subscription);
+    }
+
+    @Transactional
+    public Subscription upgradeSubscription(Long subscriptionId, Plan newPlan,LocalDateTime endDate) {
+        Optional<Subscription> subscriptionOpt = subscriptionRepository.findById(subscriptionId);
+        if (subscriptionOpt.isEmpty()) {
+            throw new RuntimeException("이용하시고 있는 플랜이 없습니다");
+        }
+
+        Subscription subscription = subscriptionOpt.get();
+        // 기존 플랜 종료
+        subscription.changeEndDate(LocalDateTime.now());
+        subscriptionRepository.save(subscription);
+        // 새로운 플랜 등록
+        Subscription newSubscription = Subscription.builder()
+                .plan(newPlan)
+                .startDate(LocalDateTime.now())
+                .endDate(endDate)
+                .billingKey(subscription.getBillingKey())
+                .schoolInformation(subscription.getSchoolInformation())
+                .build();
+
+        return subscriptionRepository.save(newSubscription);
+    }
+
 
     public SchoolInformation dtoToEntity(SchoolInformationDTO dto) {
         return SchoolInformation.builder()

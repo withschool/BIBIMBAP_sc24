@@ -4,16 +4,20 @@ import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
 import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.school.ReqSubscriptionDTO;
+import com.withSchool.dto.school.ReqUpgradePlanDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.dto.user.UserDeleteRequestDTO;
 import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassService;
 import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.csv.CsvService;
+import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
 
@@ -29,10 +33,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,7 @@ public class AdminController {
     private final ClassService classService;
     private final CsvService csvService;
     private final SchoolNoticeService schoolNoticeService;
+    private final SchoolInformationService schoolInformationService;
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
@@ -210,5 +212,17 @@ public class AdminController {
     public ResponseEntity<List<ResUserUsercodeDTO>> showAllUsersBySchool() {
         return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
+    @PostMapping("/schools/{schoolId}/subscriptions")
+    public ResponseEntity<Subscription> subscribeSchool(@PathVariable Long schoolId,
+                                                        @RequestBody ReqSubscriptionDTO reqSubscriptionDTO) {
+        Subscription subscription = schoolInformationService.subscribeSchool(schoolId, reqSubscriptionDTO.getPlan(), reqSubscriptionDTO.getBillingKey(), reqSubscriptionDTO.getEndDate());
+        return ResponseEntity.ok(subscription);
+    }
 
+    @PutMapping("/schools/subscriptions/{subscriptionId}/upgrade")
+    public ResponseEntity<Subscription> upgradeSubscription(@PathVariable Long subscriptionId,
+                                                            @RequestBody ReqUpgradePlanDTO reqUpgradePlanDTO) {
+        Subscription subscription = schoolInformationService.upgradeSubscription(subscriptionId, reqUpgradePlanDTO.getNewPlan(),reqUpgradePlanDTO.getEndDate());
+        return ResponseEntity.ok(subscription);
+    }
 }
