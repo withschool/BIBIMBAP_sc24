@@ -66,6 +66,7 @@ const AccountSetting = () => {
     const editinfo = async () =>{
         console.log(userinfo.userId, email, phoneNumber, address);
         await editUser(userinfo.userId, email, phoneNumber, address);
+        alert("저장되었습니다.");
     }
 
     const editpasswordinfo = async () =>{

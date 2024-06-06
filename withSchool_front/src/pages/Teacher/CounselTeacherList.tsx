@@ -193,72 +193,72 @@ const CounselTeacherList = () => {
 
                         {filteredTasks.length ? (
                             <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
-                                <table className="table-hover">
-                                    <tbody>
-                                        {filteredTasks.map((task: any) => (
-                                            <tr
-                                                className={`group cursor-pointer ${
-                                                    task.counselState === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
-                                                } ${task.counselState === 2 ? 'line-through' : ''}`}
-                                                key={task.counselId}
-                                            >
-                                                <td className="w-1">
-                                                    <input
-                                                        type="checkbox"
-                                                        id={`chk-${task.counselId}`}
-                                                        className={`form-checkbox${
-                                                            task.counselState === 1 ? ' checked:bg-gray-700' : ''
-                                                        } disabled:opacity-50`}
-                                                        disabled={true}
-                                                        defaultChecked={task.counselState === 1}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <div onClick={() => viewTask(task)}>
-                                                        <div
-                                                            className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${
-                                                                task.counselState
-                                                            }`}
-                                                        >
-                                                            {task.category}
-                                                        </div>
+                            <table className="table-hover">
+                                <tbody>
+                                    {filteredTasks.map((task: any) => (
+                                        <tr
+                                            className={`group cursor-pointer ${
+                                                task.counselState === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
+                                            } `}
+                                            key={task.counselId}
+                                        >
+                                            <td className="w-1">
+                                            <input
+                                               type="checkbox"
+                                               id={`chk-${task.counselId}`}
+                                               className={`form-checkbox ${
+                                                    task.counselState === 1 ? 'checked:bg-blue-700' : (task.counselState === 2 ? 'checked:bg-red-700' : '')
+                                                }`}
+                                               defaultChecked={task.counselState !== 0}
+                                               disabled={true}
+                                            />
+                                            </td>
+                                            <td>
+                                                <div onClick={() => viewTask(task)}>
+                                                    <div
+                                                        className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${
+                                                            task.counselState
+                                                        }`}
+                                                    >
+                                                        {task.category}
                                                     </div>
-                                                </td>
-                                                <td className="w-1">
-                                                    {task.schedule && (
-                                                        <p className="whitespace-nowrap text-white-dark font-medium">
-                                                            상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
-                                                        </p>
-                                                    )}
-                                                </td>
-                                                <td className="w-1">
-                                                    <div className="flex items-center justify-between w-max ltr:ml-auto rtl:mr-auto">
-                                                        <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
-                                                            {task.path ? (
-                                                                <div>
-                                                                    <img
-                                                                        src={`/assets/images/${task.path}`}
-                                                                        className="h-8 w-8 rounded-full object-cover"
-                                                                        alt="avatar"
-                                                                    />
-                                                                </div>
-                                                            ) : task.teacherId ? (
-                                                                <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
-                                                                    {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
-                                                                </div>
-                                                            ) : (
-                                                                <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
-                                                                    <IconUser className="w-4.5 h-4.5" />
-                                                                </div>
-                                                            )}
-                                                        </div>
+                                                </div>
+                                            </td>
+                                            <td className="w-1">
+                                                {task.schedule && (
+                                                    <p className="whitespace-nowrap text-white-dark font-medium">
+                                                        상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
+                                                    </p>
+                                                )}
+                                            </td>
+                                            <td className="w-1">
+                                                <div className="flex items-center justify-between w-max ltr:ml-auto rtl:mr-auto">
+                                                    <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
+                                                        {task.path ? (
+                                                            <div>
+                                                                <img
+                                                                    src={`/assets/images/${task.path}`}
+                                                                    className="h-8 w-8 rounded-full object-cover"
+                                                                    alt="avatar"
+                                                                />
+                                                            </div>
+                                                        ) : task.teacherId ? (
+                                                            <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
+                                                                {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
+                                                            </div>
+                                                        ) : (
+                                                            <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
+                                                                <IconUser className="w-4.5 h-4.5" />
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                         ) : (
                             <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">
                                 상담이 없습니다.
