@@ -18,6 +18,8 @@ import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
 import IconSettings from '../../components/Icon/IconSettings';
 import IconLaptop from '../../components/Icon/IconLaptop';
+import DaumPost from './DaumPost';
+import DaumPostcode from 'react-daum-postcode';
 
 const SignInBoxed = () => {
     const dispatch = useDispatch();
@@ -25,15 +27,16 @@ const SignInBoxed = () => {
     const [name, setName] = useState('');
     const [id, setId] = useState('');
     const [sex, setSex] = useState('');
-    const [year, setYear] = useState('2000');
-    const [month, setMonth] = useState('01');
-    const [day, setDay] = useState('01');
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [day, setDay] = useState(new Date().getDate());
     const [password, setPassword] = useState('');
     const [checkPassword, setCheckPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [loginError, setLoginError] = useState('');
     const [result, setResult] = useState(true);
+    const [daysInMonth, setDaysInMonth] = useState(31);
 
     let userInfoString = localStorage.getItem('certifyinfo')!;
     const userInfo = JSON.parse(userInfoString);
@@ -54,15 +57,15 @@ const SignInBoxed = () => {
     }
 
     const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setYear(event.target.value);
+        setYear(parseInt(event.target.value, 10));
     }
     
     const handleMonthChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setMonth(event.target.value);
+        setMonth(parseInt(event.target.value, 10));
     }
     
     const handleDayChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setDay(event.target.value);
+        setDay(parseInt(event.target.value, 10));
     }
 
     const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +99,11 @@ const SignInBoxed = () => {
         try {
             console.log(userInfo);
 
-            if (await DuplicateId(id)) {
+            const isValidFormat = /^[a-zA-Z0-9]+$/.test(id);
+            if (!isValidFormat) {
+                alert("아이디는 영어와 숫자만 포함할 수 있습니다.");
+            } 
+            else if (await DuplicateId(id)) {
                 alert("중복된 아이디입니다. 다시 설정해주세요.");
             }
             else if(id.length < 5){
@@ -136,7 +143,7 @@ const SignInBoxed = () => {
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const birthDate = `${(parseInt(year) % 100).toString().padStart(2, '0')}${month}${day}`;
+        const birthDate = `${(year % 100).toString().padStart(2, '0')}${month}${day}`;
         const reqphoneNumber = changePhoneForm(phoneNumber);
         try {
             // 무결성 검사
@@ -175,6 +182,46 @@ const SignInBoxed = () => {
         }
 
     };
+
+    useEffect(() => {
+        const isLeapYear = (year : any) => {
+            return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+        };
+
+        const calculateDaysInMonth = (year : any, month : any) => {
+            switch (month) {
+                case 2:
+                    return isLeapYear(year) ? 29 : 28;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    return 30;
+                default:
+                    return 31;
+            }
+        };
+        setDaysInMonth(calculateDaysInMonth(year, month));
+    }, [year, month]);
+
+    const [address, setAddress] = useState('');
+    const [detailaddress, setDetailaddress] = useState('');
+    const [detail2address, setDetail2address] = useState('');
+    const [openPostcode, setOpenPostcode] = useState(false);
+
+    const clickButton =() =>{
+        setOpenPostcode(current => !current);
+    }
+
+    const selectAddress = (data : any) => {
+        console.log(`
+                주소: ${data.address},
+                우편번호: ${data.zonecode}
+            `)
+            setAddress(data.zonecode);
+            setDetailaddress(data.address);
+            setOpenPostcode(false);
+    }
 
     return (
         <div>
@@ -234,35 +281,35 @@ const SignInBoxed = () => {
                                     </div>
                                 </div>
                                 ) : (
-                                    <div className="flex relative text-white-dark">
-                                        <select
-                                            value={year}
-                                            onChange={handleYearChange}
-                                            className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 75 }, (_, index) => 2024 - index).map(year => (
-                                                <option key={year} value={year}>{year}년</option>
-                                            ))}
-                                        </select>
-                                        <select
-                                            value={month}
-                                            onChange={handleMonthChange}
-                                            className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 12 }, (_, index) => index + 1).map(month => (
-                                                <option key={month} value={month.toString().padStart(2, '0')}>{month}월</option>
-                                            ))}
-                                        </select>
-                                        <select
-                                            value={day}
-                                            onChange={handleDayChange}
-                                            className="block w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 31 }, (_, index) => index + 1).map(day => (
-                                                <option key={day} value={day.toString().padStart(2, '0')}>{day}일</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                <div className="flex relative text-white-dark">
+                                    <select
+                                        value={year}
+                                        onChange={handleYearChange}
+                                        className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    >
+                                        {Array.from({ length: 75 }, (_, index) => 2024 - index).map(year => (
+                                            <option key={year} value={year}>{year}년</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={month}
+                                        onChange={handleMonthChange}
+                                        className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    >
+                                        {Array.from({ length: 12 }, (_, index) => index + 1).map(month => (
+                                            <option key={month} value={month}>{month}월</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={day}
+                                        onChange={handleDayChange}
+                                        className="block w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    >
+                                        {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(day => (
+                                            <option key={day} value={day}>{day}일</option>
+                                        ))}
+                                    </select>
+                                </div>
                                     )}
                                 <div>
                                     <label htmlFor="Sex">Sex</label>
@@ -313,6 +360,18 @@ const SignInBoxed = () => {
                                 )) : (
                                     <></>
                                 )}
+                                <div>
+                                    <label htmlFor="Address">Address</label>
+                                    <div className="relative text-white-dark">
+                                        <input type="text" id="sample4_roadAddress" className="form-input" placeholder="도로명주소"/>
+                                        <DaumPost/>
+                                        <input id="Email" type="email" placeholder="이메일을 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmail}/>
+                                        <script></script>
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconLockDots fill={true} />
+                                        </span>
+                                    </div>
+                                </div>
                                 <div>
                                     <label htmlFor="PhoneNumber">Phone Number</label>
                                     <div className="relative text-white-dark">

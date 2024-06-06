@@ -130,9 +130,14 @@ const LoginBoxed = () => {
         console.log(selectedSchool, name, birthDate, individualCode);
         try {
             const data = await certify(selectedSchool, name, birthDate, individualCode);
+            console.log(data.message);
             if(data.message == "해당하는 유저가 없습니다.") {
                 alert("해당하는 유저가 없습니다.");
                 throw new SyntaxError("Can't find a user");
+            }
+            else if(data.message == "해당하는 유저는 이미 회원가입 되었습니다."){
+                alert("이미 회원가입을 진행한 유저입니다.");
+                throw new SyntaxError("Already Signed user");
             }
             else {
                 await handleUserInfo(data);
