@@ -16,4 +16,5 @@ public class ResApplicationDefaultDTO {
     private String schoolAdminName;
     private String schoolAdminEmail;
     private int state;
+    private int serviceType;
 }

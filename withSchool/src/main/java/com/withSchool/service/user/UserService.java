@@ -344,4 +344,21 @@ public class UserService {
             }
         }
     }
+
+    public Boolean isModified() {
+        User user = getCurrentUser();
+        return user.getModDate() != null;
+    }
+
+    public void changeSuperSchool(Long schoolId) {
+        User user = getCurrentUser();
+
+        Optional<SchoolInformation> optionalSchoolInformation = schoolInformationRepository.findById(schoolId);
+        if(optionalSchoolInformation.isEmpty()) throw new RuntimeException("No School");
+        SchoolInformation schoolInformation = optionalSchoolInformation.get();
+
+        user.setSchoolInformation(schoolInformation);
+
+        userRepository.save(user);
+    }
 }

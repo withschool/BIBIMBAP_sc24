@@ -101,4 +101,11 @@ public class SuperController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("삭제 성공");
     }
+
+    @PatchMapping("/to-admin")
+    @Operation(summary = "슈퍼 어드민을 선택한 학교의 어드민으로 변경")
+    public ResponseEntity<String> changeSuperSchool(@RequestParam Long schoolId){
+        userService.changeSuperSchool(schoolId);
+        return ResponseEntity.ok().body("change success");
+    }
 }

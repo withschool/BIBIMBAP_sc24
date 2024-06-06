@@ -26,19 +26,20 @@ public class PaymetFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         User user = userService.getCurrentUser();
-        if(user.getAccountType() == 1) filterChain.doFilter(request, response);
+        if(user.getAccountType() == 1 || user.getAccountType() == 4) filterChain.doFilter(request, response);
+        else{
+            Long schoolId = user.getSchoolInformation().getSchoolId();
+            SchoolInformation schoolInformation = schoolInformationService.dtoToEntity(schoolInformationService.findById(schoolId));
 
-        Long schoolId = user.getSchoolInformation().getSchoolId();
-        SchoolInformation schoolInformation = schoolInformationService.dtoToEntity(schoolInformationService.findById(schoolId));
+            // 결제 검증 로직 바뀌면 여기 조건문 수정해야 함
+            if(schoolInformation.getPaymentState() == 0){
+                response.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
+                response.getWriter().write("Payment required");
+                return;
+            }
 
-        // 결제 검증 로직 바뀌면 여기 조건문 수정해야 함
-        if(schoolInformation.getPaymentState() == 0){
-            response.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
-            response.getWriter().write("Payment required");
-            return;
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     @Override

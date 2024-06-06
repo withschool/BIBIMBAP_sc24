@@ -219,4 +219,12 @@ public class AdminController {
         return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
 
+
+
+    @GetMapping("/users/is-modififed")
+    @Operation(summary = "어드민의 pw 변경 확인을 위한 API", description = "false이면 수정이 안 된 것, true이면 수정이 된 것")
+    public ResponseEntity<Boolean> checkModification(){
+        return ResponseEntity.ok().body(userService.isModified());
+    }
+
 }
