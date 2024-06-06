@@ -241,7 +241,9 @@ const SignInBoxed = () => {
                                 <p className="text-base font-bold leading-normal text-white-dark">사용할 아이디와 비밀번호를 입력해주세요.</p>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
-                                <label htmlFor="Name">Name</label>
+                                <label htmlFor="Name">Name
+                                <span className="text-red-500">*</span>
+                                </label>
                                 {isStudent ? (
                                 <div>
                                     <div className="relative text-gray-500 bg-gray-300 rounded-md ps-10 p-2 flex items-center">
@@ -261,7 +263,9 @@ const SignInBoxed = () => {
                                         </div>
                                     </div>
                                 )}
-                                <label htmlFor="Birth">Birth</label>
+                                <label htmlFor="Birth">Birth
+                                <span className="text-red-500">*</span>
+                                </label>
                                 {isStudent ? (
                                 <div>
                                     <div className="relative text-gray-500 bg-gray-300 rounded-md ps-10 p-2 flex items-center">
@@ -312,7 +316,9 @@ const SignInBoxed = () => {
                                 </div>
                                     )}
                                 <div>
-                                    <label htmlFor="Sex">Sex</label>
+                                    <label htmlFor="Sex">Sex
+                                    <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="relative text-white-dark">
                                         <label><input id="male" type="radio" name="Sex" className="relative w-6 h-4 rounded border border-gray-400 mr-2" value="male" onChange={handleSex}/>남자</label>
                                         <label><input id="female" type="radio" name="Sex" className="relative w-6 h-4 rounded border border-gray-400 mr-2" value="female" onChange={handleSex}/>여자</label>
@@ -320,7 +326,9 @@ const SignInBoxed = () => {
                                 </div>
                                 <hr/>
                                 <div>
-                                    <label htmlFor="IndividualCode">ID</label>
+                                    <label htmlFor="IndividualCode">ID
+                                    <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="relative text-white-dark flex">
                                         <input id="Id" placeholder="아이디를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={id} onChange={handleId}  />
                                         <button onClick={handleCheckDuplicate} className="ml-2 px-6 flex py-2 rounded-md bg-blue-500 text-white font-bold focus:outline-none hover:bg-blue-600">
@@ -332,7 +340,9 @@ const SignInBoxed = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="Password">Password</label>
+                                    <label htmlFor="Password">Password
+                                    <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="relative text-white-dark">
                                     <input id="Password" type="password" placeholder="비밀번호를 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={password} onChange={handlePassword}  />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
@@ -341,7 +351,9 @@ const SignInBoxed = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="CheckPassword">Confirm Password</label>
+                                    <label htmlFor="CheckPassword">Confirm Password
+                                    <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="relative text-white-dark">
                                         <input id="CheckPassword" type="password" placeholder="비밀번호를 재입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={checkPassword} onChange={handleCheckPassword}/>
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
@@ -361,12 +373,14 @@ const SignInBoxed = () => {
                                     <></>
                                 )}
                                 <div>
-                                    <label htmlFor="Address">Address</label>
+                                    <label htmlFor="Address">Address 
+                                    <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="relative text-white-dark">
                                         <input
                                             id="addr"
                                             type="text"
-                                            className="form-input ps-10"
+                                            className="form-input ps-10 mb-2"
                                             readOnly
                                             placeholder='주소를 입력해주세요.'
                                             onClick={onClickAddr}
@@ -380,13 +394,15 @@ const SignInBoxed = () => {
                                             type="text"
                                             placeholder='상세 주소를 입력해주세요.'
                                         />
-                                        <span className="absolute start-4 top-1/2 pt-9 -translate-y-1/2">
+                                        <span className="absolute start-4 top-1/2 pt-11 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="PhoneNumber">Phone Number</label>
+                                    <label htmlFor="PhoneNumber">Phone Number
+                                    <span className="text-red-500">*</span>
+                                    </label>
                                     <div className="relative text-white-dark">
                                         <input id="PhoneNumber" type="tel" placeholder="핸드폰 번호를 입력해 주세요." value={formatPhoneNumber(phoneNumber)} className="form-input ps-10 placeholder:text-white-dark" onChange={handlePhoneNumber}/>
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
@@ -395,7 +411,9 @@ const SignInBoxed = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="Email">Email</label>
+                                    <label htmlFor="Email" className="text-black">
+                                        Email
+                                    </label>
                                     <div className="relative text-white-dark">
                                         <input id="Email" type="email" placeholder="이메일을 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmail}/>
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
