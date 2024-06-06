@@ -471,18 +471,20 @@ const Header = () => {
                                             </div>
                                         </div>
                                     </li>
-                                    <li>
-                                        <Link to="/users/user-account-settings" className="dark:hover:text-white">
-                                            <IconUser className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                            프로필
-                                        </Link>
-                                    </li>
-                                    <li>
+                                    {localStorage.getItem("accountType") !== 'ROLE_SUPER' && (
+                                        <li>
+                                            <Link to="/users/user-account-settings" className="dark:hover:text-white">
+                                                <IconUser className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                프로필
+                                            </Link>
+                                        </li>
+                                    )}
+                                    {/* <li>
                                         <Link to="/student/schoolnotice" className="dark:hover:text-white">
                                             <IconMail className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
                                             공지 사항
                                         </Link>
-                                    </li>
+                                    </li> */}
                                     {/* <li>
                                         <Link to="/auth/boxed-lockscreen" className="dark:hover:text-white">
                                             <IconLockDots className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
