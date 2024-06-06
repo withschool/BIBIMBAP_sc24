@@ -47,22 +47,22 @@ const searchNotes = () => {
     }
 };
 
-useEffect(() => {
-    const fetchLectureNote = async () => {
-        if(localStorage.getItem("targetSubject") == null){
-            alert("과목을 선택해 주세요.");
-            navigate('/teacher/subject/choose');
-        }
-        try {
-            const lecturenotes = await getLectureNoteList(localStorage.getItem("targetSubject"));
-            setNoteList(lecturenotes);
-        } catch (error) {
-            console.error("Failed to fetch lectureNotes:", error);
-        }
-    };
+const fetchLectureNote = async () => {
+    if(localStorage.getItem("targetSubject") == null){
+        alert("과목을 선택해 주세요.");
+        navigate('/teacher/subject/choose');
+    }
+    try {
+        const lecturenotes = await getLectureNoteList(localStorage.getItem("targetSubject"));
+        setNoteList(lecturenotes);
+    } catch (error) {
+        console.error("Failed to fetch lectureNotes:", error);
+    }
+};
 
+useEffect(() => {
     fetchLectureNote();
-}, [notesList]);
+}, []);
 
     const defaultParams = { subjectLectureNoteId: null, title: '', description: '', tag: '', name: '', thumb: '' };
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
