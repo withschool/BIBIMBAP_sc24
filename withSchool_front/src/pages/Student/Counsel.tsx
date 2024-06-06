@@ -138,6 +138,7 @@ const Counsel = () => {
 
     const viewTask = (item: any = null) => {
         setSelectedTask(item);
+        findTeacherName(item.answererId);
         console.log(item.schedule);
         setTimeout(() => {
             setViewTaskModal(true);
