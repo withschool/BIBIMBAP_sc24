@@ -344,4 +344,9 @@ public class UserService {
             }
         }
     }
+
+    public Boolean isModified() {
+        User user = getCurrentUser();
+        return user.getModDate() != null;
+    }
 }
