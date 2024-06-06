@@ -4,13 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/modules/withSchool.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/withSchool.iml" afterDir="false" />
+    <list default="true" id="08c6a1cd-6e7b-4e31-9a15-15ccf88176b6" name="Changes" comment="학교 신청서 삭제 로직 구현">
       <change beforePath="$PROJECT_DIR$/.idea/modules/withSchool.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/withSchool.main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules/withSchool.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/withSchool.test.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/superadmin/SuperController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/superadmin/SuperController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/BasicController.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/controller/BasicController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/school/SchoolApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/school/SchoolApplicationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/NotificationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/withSchool/src/main/java/com/withSchool/service/user/NotificationService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,15 +46,15 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="backend" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -97,7 +98,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.WithSchoolApplication.executor": "Run",
-    "git-widget-placeholder": "backend",
+    "git-widget-placeholder": "feat__email",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Min Dong Hyeun/spring_study/BIBIMBAP_sc24",
     "node.js.detected.package.eslint": "true",
@@ -115,6 +116,9 @@
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.withSchool.repository.user" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Steve\Desktop\BIBIMBAP_sc24\withSchool\src\main\resources\templates" />
     </key>
   </component>
   <component name="RunManager">
@@ -160,8 +164,20 @@
       <workItem from="1717247965349" duration="3542000" />
       <workItem from="1717251540903" duration="4532000" />
       <workItem from="1717418418085" duration="559000" />
-      <workItem from="1717419505007" duration="3331000" />
+      <workItem from="1717419505007" duration="7518000" />
+      <workItem from="1717578408631" duration="852000" />
+      <workItem from="1717650752496" duration="1206000" />
+      <workItem from="1717656807488" duration="6948000" />
     </task>
+    <task id="LOCAL-00001" summary="학교 신청서 삭제 로직 구현">
+      <option name="closed" value="true" />
+      <created>1717467320138</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1717467320138</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,5 +193,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="학교 신청서 삭제 로직 구현" />
+    <option name="LAST_COMMIT_MESSAGE" value="학교 신청서 삭제 로직 구현" />
   </component>
 </project>

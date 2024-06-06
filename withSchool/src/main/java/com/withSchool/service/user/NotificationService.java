@@ -1,18 +1,29 @@
 package com.withSchool.service.user;
 
+import com.withSchool.dto.school.ReqApplicationDefaultDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentParentService;
+import com.withSchool.dto.user.MailDTO;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +32,7 @@ import java.util.List;
 public class NotificationService {
 
     private final StudentParentService studentParentService;
+    private final JavaMailSender emailSender;
 
     @Value("${coolsms-API-KEY}")
     String apiKey;
@@ -30,6 +42,9 @@ public class NotificationService {
 
     @Value("${coolsms-phone}")
     String apiPhone;
+
+    @Value("${spring.mail.username}")
+    String fromEmail;
 
     public void sendSMSGroup(List<User> userList, String type, String title, boolean onlyStudent) {
         for (User user : userList) {
@@ -43,7 +58,7 @@ public class NotificationService {
                 sendSMS(parent, type, title, true);
             }
             catch (Exception e) {
-                log.error("학부모 정보를 찾을 수 없습니다. 학생: " + user.getName());
+                NotificationService.log.error("학부모 정보를 찾을 수 없습니다. 학생: " + user.getName());
             }
 
         }
@@ -59,4 +74,28 @@ public class NotificationService {
             throw new RuntimeException(e);
         }
     }
+
+    public void sendSimpleMessage(MailDTO mailDTO) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(mailDTO.getAddress());
+        message.setSubject(mailDTO.getTitle());
+        message.setText(mailDTO.getContent());
+        emailSender.send(message);
+    }
+
+    public void sendApplicationMessage(ReqApplicationDefaultDTO reqApplicationDefaultDTO) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        try {
+            helper.setFrom(fromEmail);
+            helper.setTo(reqApplicationDefaultDTO.getSchoolAdminEmail());
+            helper.setSubject("신청서 등록");
+            helper.setText("신청서가 등록되었습니다. 확인해주세요.");
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        emailSender.send(message);
+    }
+
 }

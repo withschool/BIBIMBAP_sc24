@@ -14,6 +14,7 @@ import com.withSchool.dto.user.SignUpDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -37,6 +38,9 @@ public class BasicController {
     private final JwtTokenProvider jwtTokenProvider;
     private final NotificationService notificationService;
     private final SchoolApplicationService schoolApplicationService;
+
+    @Value("${spring.mail.username}")
+    String fromEmail;
 
 
     @PostMapping("/pre-sign-up")
@@ -128,6 +132,16 @@ public class BasicController {
         String title = "캡스톤디자인 제출 안내";
         notificationService.sendSMS(user, type, title, true);
         return "Success";
+    }
+
+    @PostMapping("/testEmail")
+    public void testEmail() {
+        MailDTO mailDTO = MailDTO.builder()
+                .address(fromEmail)
+                .title("test title")
+                .content("test content")
+                .build();
+        notificationService.sendSimpleMessage(mailDTO);
     }
 
     @GetMapping("/connectionTest")

@@ -29,6 +29,7 @@
     <orderEntry type="library" name="Gradle: io.jsonwebtoken:jjwt-api:0.11.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: net.nurigo:javaSDK:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-mail:3.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-test:3.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-test:6.2.3" level="project" />
     <orderEntry type="library" name="Gradle: org.assertj:assertj-core:3.25.3" level="project" />
@@ -60,6 +61,8 @@
     <orderEntry type="library" name="Gradle: org.apache.maven.plugins:maven-source-plugin:3.0.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.maven.plugins:maven-gpg-plugin:1.6" level="project" />
     <orderEntry type="library" name="Gradle: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-context-support:6.1.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.eclipse.angus:jakarta.mail:2.0.3" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-test-autoconfigure:3.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-test:3.2.4" level="project" />
     <orderEntry type="library" name="Gradle: com.jayway.jsonpath:json-path:2.9.0" level="project" />
@@ -221,12 +224,12 @@
     <orderEntry type="library" scope="RUNTIME" name="Gradle: io.smallrye:jandex:3.1.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.fasterxml:classmate:1.6.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: jakarta.inject:jakarta.inject-api:2.0.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.eclipse.angus:angus-activation:2.0.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.10.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.objenesis:objenesis:3.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:jaxb-core:4.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.apache.maven:maven-aether-provider:3.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.10.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.eclipse.angus:angus-activation:2.0.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:txw2:4.0.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.sun.istack:istack-commons-runtime:4.1.2" level="project" />
   </component>

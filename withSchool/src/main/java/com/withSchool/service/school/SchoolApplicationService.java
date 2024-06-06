@@ -4,6 +4,7 @@ import com.withSchool.dto.school.ReqApplicationDefaultDTO;
 import com.withSchool.dto.school.ResApplicationDefaultDTO;
 import com.withSchool.entity.school.SchoolApplication;
 import com.withSchool.repository.school.SchoolApplicationRepository;
+import com.withSchool.service.user.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,11 @@ import java.util.Optional;
 @Slf4j
 public class SchoolApplicationService {
     private final SchoolApplicationRepository schoolApplicationRepository;
+    private final NotificationService notificationService;
 
     public ResApplicationDefaultDTO save(ReqApplicationDefaultDTO reqApplicationDefaultDTO) {
         SchoolApplication req = reqApplicationDefaultDTO.toEntity(0);
+        notificationService.sendApplicationMessage(reqApplicationDefaultDTO);
         return schoolApplicationRepository.save(req).toResApplicationDefaultDTO();
     }
 
