@@ -35,21 +35,20 @@ export const LectureNote = () => {
 
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
+    const fetchLectureNote = async () => {
+        if (localStorage.getItem("targetSubject") == null) {
+            alert("과목을 선택해 주세요.");
+            navigate('/teacher/subject/choose');
+        }
+        try {
+            const lecturenotes = await getLectureNoteList(localStorage.getItem("targetSubject"));
+            setNoteList(lecturenotes);
+        } catch (error) {
+            console.error("Failed to fetch lectureNotes:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchLectureNote = async () => {
-            if (localStorage.getItem("targetSubject") == null) {
-                alert("과목을 선택해 주세요.");
-                navigate('/teacher/subject/choose');
-            }
-            try {
-                const lecturenotes = await getLectureNoteList(localStorage.getItem("targetSubject"));
-                setNoteList(lecturenotes);
-            } catch (error) {
-                console.error("Failed to fetch lectureNotes:", error);
-            }
-        };
-
         fetchLectureNote();
     }, []);
 
@@ -74,52 +73,61 @@ export const LectureNote = () => {
         }
     };
 
-    const saveNote = () => {
+    const [isLoading, setIsLoading] = useState(false);
 
+    const saveNote = async () => {
         const formData = new FormData();
-
         if (!params.title) {
             showMessage('제목을 입력해 주세요.', 'error');
             return false;
         }
-        if (params.subjectLectureNoteId) {
-            //update task
-            let note: any = notesList.find((d: any) => d.subjectLectureNoteId === params.subjectLectureNoteId);
-            note.title = params.title;
-            formData.append("title", params.title);
-            const subjectId = localStorage.getItem('targetSubject') || '';
-            formData.append("subjectId", subjectId);
-            if (selectedFiles) {
-                console.log(selectedFiles);
-                Array.from(selectedFiles).forEach(file => {
-                    formData.append("file", file);
-                });
+        setIsLoading(true);
+        try {
+            if (params.subjectLectureNoteId) {
+                let note = notesList.find((d: any) => d.subjectLectureNoteId === params.subjectLectureNoteId);
+                if (note) {
+                    let note: any = notesList.find((d: any) => d.subjectLectureNoteId === params.subjectLectureNoteId);
+                    note.title = params.title;
+                    formData.append("title", params.title);
+                    const subjectId = localStorage.getItem('targetSubject') || '';
+                    formData.append("subjectId", subjectId);
+                    if (selectedFiles) {
+                        console.log(selectedFiles);
+                        Array.from(selectedFiles).forEach(file => {
+                            formData.append("file", file);
+                        });
+                    }
+                    await updateLectureNote(formData, note.subjectLectureNoteId);
+                    showMessage('강의 노트 수정이 완료되었습니다.');
+                    setIsLoading(false);
+                } else {
+                    console.error("Note not found!"); 
+                }
+            } else {
+                // Create new note
+                formData.append("title", params.title);
+                const subjectId = localStorage.getItem('targetSubject') || '';
+                formData.append("subjectId", subjectId);
+                if (selectedFiles) {
+                    Array.from(selectedFiles).forEach(file => {
+                        formData.append("file", file);
+                    });
+                } else {
+                    formData.append("file", "");
+                }
+                await createLectureNote(formData);
+                showMessage('강의 노트 생성이 완료되었습니다.');
+                setIsLoading(false);
             }
-            updateLectureNote(formData, note.subjectLectureNoteId);
-            showMessage('강의 노트 수정이 완료되었습니다.');
-        } else {
-            // loadLectureNote(params.title, localStorage.getItem('targetSubject'), params.fileURl);
-            console.log("안돼~" + localStorage.getItem('targetSubject'));
-            formData.append("title", params.title);
-            const subjectId = localStorage.getItem('targetSubject') || '';
-            formData.append("subjectId", subjectId);
-            if (selectedFiles) {
-                console.log(selectedFiles);
-                Array.from(selectedFiles).forEach(file => {
-                    formData.append("file", file);
-                });
-            }
-            else {
-                formData.append("file", "");
-            }
-            for (let pair of formData.entries()) {
-                console.log(pair[0], pair[1]);
-            }
-            createLectureNote(formData);
-            showMessage('강의 노트 생성이 완료되었습니다.');
+    
+            // Update notes list
+            await fetchLectureNote();
+            setSelectedFiles(null);
+            setAddContactModal(false);
+            searchNotes();
+        } catch (error) {
+            console.error("Failed to save note:", error);
         }
-        setAddContactModal(false);
-        searchNotes();
     };
 
     const tabChanged = (type: string) => {
@@ -172,6 +180,7 @@ export const LectureNote = () => {
             let json1 = JSON.parse(JSON.stringify(note));
             setParams(json1);
         }
+        console.log(note);
         setAddContactModal(true);
     };
 
@@ -412,7 +421,7 @@ export const LectureNote = () => {
                                         leaveFrom="opacity-100 scale-100"
                                         leaveTo="opacity-0 scale-95"
                                     >
-                                        <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
+                                        <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">        
                                             <button
                                                 type="button"
                                                 onClick={() => setAddContactModal(false)}
@@ -422,7 +431,15 @@ export const LectureNote = () => {
                                             </button>
                                             <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
                                                 {params.subjectLectureNoteId ? '강의 노트 수정' : '강의 노트 추가'}
+                                            </div> 
+                                            {isLoading ? (
+                                                <div className="flex items-center justify-center w-full h-full">
+                                                <div className="text-center">
+                                                    <p className='mt-5'>Loading....</p>
+                                                    <span className="animate-spin border-8 border-[#f1f2f3] border-l-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                                </div>
                                             </div>
+                                            ):(
                                             <div className="p-5">
                                                 <form>
                                                     <div className="mb-5">
@@ -452,7 +469,9 @@ export const LectureNote = () => {
                                                     </div>
                                                 </form>
                                             </div>
+                                            )}
                                         </Dialog.Panel>
+
                                     </Transition.Child>
                                 </div>
                             </div>

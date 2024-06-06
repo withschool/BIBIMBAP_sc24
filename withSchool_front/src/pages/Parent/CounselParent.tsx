@@ -49,18 +49,18 @@ const CounselParent = () => {
 
     const [allTasks, setAllTasks] = useState([]);
 
-    useEffect(() => {
-        const fetchCounsels = async () => {
-            try {
-                const counsels = await getCounselInfo();
-                setAllTasks(counsels);
-            } catch (error) {
-                console.error("Failed to fetch counsels:", error);
-            }
-        };
+    const fetchCounsels = async () => {
+        try {
+            const counsels = await getCounselInfo();
+            setAllTasks(counsels);
+        } catch (error) {
+            console.error("Failed to fetch counsels:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchCounsels();
-    }, [allTasks]);
+    }, []);
 
     const [teacherList, setTeacherList] = useState<any[]>([]);
     const [title, setTitle] = useState('');
@@ -90,21 +90,26 @@ const CounselParent = () => {
         fetchTeachers();
     }, []);
 
-    const tryRegisterCounsel = () => {
+    const tryRegisterCounsel = async () => {
         if(selectedDate < new Date()){
             alert("내일 이후부터 상담 신청이 가능합니다.");
             return;
         }
-        if(params.counselId){
-            editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+        try {
+            if(params.counselId){
+                await editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+            }
+            else{
+                await registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+            }
+            setAddTaskModal(false);
+            setTeacherId('');
+            setSelectedDate('');
+            await fetchCounsels();
+        } catch (error) {
+            console.error("Failed to register or edit counsel:", error);
         }
-        else{
-            registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
-        }
-        setAddTaskModal(false);
-        setTeacherId('');
-        setSelectedDate('');
-    }
+    };
 
     const [searchTask, setSearchTask] = useState<any>('');
     const [selectedTask, setSelectedTask] = useState<any>(defaultParams);
@@ -135,9 +140,15 @@ const CounselParent = () => {
         setIsShowTaskMenu(false);
     };
 
-    const deleteTask = (counselId : number) => {
-        deleteCounsel(counselId);
-        alert("삭제 완료!");
+    const deleteTask = async (counselId : number) => {
+        try{
+            deleteCounsel(counselId);
+            alert("삭제 완료!");
+            await fetchCounsels();
+        }
+        catch {
+            console.error("Failed to delete counsel");
+        }
     }
 
     const viewTask = (item: any = null) => {
@@ -275,56 +286,58 @@ const CounselParent = () => {
                                                      </div>
                                                  </div>
                                              </td>
-                                             <td className="w-1">
-                                                 {task.schedule && (
-                                                     <p className="whitespace-nowrap text-white-dark font-medium">
-                                                         상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
-                                                     </p>
-                                                 )}
-                                             </td>
-                                             <td className="w-1">
-                                                 <div className="flex items-center justify-between w-max ltr:ml-auto rtl:mr-auto">
-                                                     <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
-                                                         {task.path ? (
-                                                             <div>
-                                                                 <img
-                                                                     src={`/assets/images/${task.path}`}
-                                                                     className="h-8 w-8 rounded-full object-cover"
-                                                                     alt="avatar"
-                                                                 />
-                                                             </div>
-                                                         ) : task.teacherId ? (
-                                                             <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
-                                                                 {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
-                                                             </div>
-                                                         ) : (
-                                                             <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
-                                                                 <IconUser className="w-4.5 h-4.5" />
-                                                             </div>
-                                                         )}
-                                                     </div>
-                                                 </div>
-                                             </td>
-                                             <td>
-                                             <div className="flex space-x-2">
-                                                 <button
-                                                     type="button"
-                                                     onClick={() => addEditTask(task)}
-                                                     className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-blue-600 text-blue-600 rounded hover:bg-blue-100"
-                                                 >
-                                                     <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                     <span className="!no-underline">수정</span>
-                                                 </button>
-                                                 <button
-                                                     type="button"
-                                                     onClick={() => deleteTask(task.counselId)}
-                                                     className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-red-600 text-red-600 rounded hover:bg-red-100"
-                                                 >
-                                                     <IconTrashLines className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                     <span className="!no-underline">삭제</span>
-                                                 </button>
-                                             </div>
-                                             </td>
+                                             <td className="w-full">
+                                                    {task.schedule && (
+                                                        <p className="whitespace-nowrap text-white-dark font-medium">
+                                                            상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
+                                                        </p>
+                                                    )}
+                                                </td>
+                                                <td className="w-full">
+                                                    <div className="flex items-center justify-between w-full">
+                                                        <div className="flex items-center">
+                                                            <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
+                                                                {task.path ? (
+                                                                    <div>
+                                                                        <img
+                                                                            src={`/assets/images/${task.path}`}
+                                                                            className="h-8 w-8 rounded-full object-cover"
+                                                                            alt="avatar"
+                                                                        />
+                                                                    </div>
+                                                                ) : task.teacherId ? (
+                                                                    <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
+                                                                        {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
+                                                                        <IconUser className="w-4.5 h-4.5" />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="flex justify-end space-x-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => addEditTask(task)}
+                                                            className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-blue-600 text-blue-600 rounded hover:bg-blue-100"
+                                                        >
+                                                            <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                            <span className="!no-underline">수정</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => deleteTask(task.counselId)}
+                                                            className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-red-600 text-red-600 rounded hover:bg-red-100"
+                                                        >
+                                                            <IconTrashLines className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                            <span className="!no-underline">삭제</span>
+                                                        </button>
+                                                    </div>
+                                                </td>
                                          </tr>
                                      ))}
                                  </tbody>

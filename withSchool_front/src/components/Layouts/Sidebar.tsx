@@ -140,14 +140,6 @@ const Sidebar = () => {
                                                 </div>
                                             </NavLink>
                                         </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
                                     </ul>
                                 </li>
 
@@ -238,14 +230,6 @@ const Sidebar = () => {
                                                 <div className="flex items-center">
                                                     <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('선생님과 상담')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>
@@ -367,20 +351,17 @@ const Sidebar = () => {
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
-                                        <li className="nav-item">
-                                            <NavLink to="/users/user-account-settings" className="group">
-                                                <div className="flex items-center">
-                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('프로필')}</span>
-                                                </div>
-                                            </NavLink>
-                                        </li>
                                     </ul>
                                 </li>
 
 
                             </div>}
                             {accountTypes == "ROLE_ADMIN" && <div>
+
+                            <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                                    <IconMinus className="w-4 h-5 flex-none hidden" />
+                                    <span>{t('어드민')}</span>
+                                </h2>
 
                                 <li className="menu nav-item">
                                     <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
@@ -442,32 +423,29 @@ const Sidebar = () => {
                             </div>}
                             {accountTypes == "ROLE_SUPER" && <div>
 
-                                <li className="menu nav-item">
-                                    <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
+                                <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                                    <IconMinus className="w-4 h-5 flex-none hidden" />
+                                    <span>{t('슈퍼 어드민')}</span>
+                                </h2>
+
+                                <li className="nav-item">
+                                    <NavLink to="/super/home" className="group">
                                         <div className="flex items-center">
-                                            <IconMenuDashboard
-                                                className="group-hover:!text-primary shrink-0" />
-                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Super Admin')}</span>
+                                            <IconMenuDashboard className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학교 목록')}</span>
                                         </div>
-
-
-                                        <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-
-                                    <AnimateHeight duration={300} height={currentMenu === 'dashboard' ? 'auto' : 0}>
-                                        <ul className="sub-menu text-gray-500">
-                                            <li>
-                                                <NavLink to="/super/home">{t('학교 목록')}</NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to="/super/apply">{t('학교 신청 관리')}</NavLink>
-                                            </li>
-
-                                        </ul>
-                                    </AnimateHeight>
+                                    </NavLink>
                                 </li>
+
+                                <li className="nav-item">
+                                    <NavLink to="/super/apply" className="group">
+                                        <div className="flex items-center">
+                                            <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학교 신청 관리')}</span>
+                                        </div>
+                                    </NavLink>
+                                </li>
+
                             </div>}
                             {/* 
                             <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">

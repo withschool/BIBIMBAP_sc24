@@ -49,29 +49,31 @@ const CounselTeacherAssign = () => {
 
     const [allTasks, setAllTasks] = useState([]);
 
+    const fetchCounsels = async () => {
+        try {
+            const counsels = await getRequestCounsel();
+            setAllTasks(counsels);
+        } catch (error) {
+            console.error("Failed to fetch counsels:", error);
+        }
+    };
+
     useEffect(() => {
-        const fetchCounsels = async () => {
-            try {
-                const counsels = await getRequestCounsel();
-                setAllTasks(counsels);
-            } catch (error) {
-                console.error("Failed to fetch counsels:", error);
-            }
-        };
-
         fetchCounsels();
-    }, [allTasks]);
+    }, []);
 
-    const handleAssign = () => {
+    const handleAssign = async () => {
         assignCounsel(selectedTask.counselId, 1);
         setViewTaskModal(false);
         alert("처리 되었습니다.");
+        await fetchCounsels();
     }
 
-    const handleReject = () => {
+    const handleReject = async () => {
         assignCounsel(selectedTask.counselId, 2)
         setViewTaskModal(false);
         alert("처리 되었습니다.");
+        await fetchCounsels();
     }
 
     const [teacherList, setTeacherList] = useState<any[]>([]);

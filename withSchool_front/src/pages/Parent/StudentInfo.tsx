@@ -36,21 +36,23 @@ const StudentInfo = () => {
         fetchSubjectList();
     }, [targetStudent]);
 
-    useEffect(() => {
-        const fetchStudents = async () => {
-            try {
-                const data = await listingStudent();
-                setStudentList(data);
-                if (data.length > 0) {
-                    setTargetStudent(data[0].user.userId);
-                    localStorage.setItem('TargetStudent', data[0].user.userId);
-                }
-            } catch (error) {
-                console.error('Error fetching student list:', error);
+    const fetchStudents = async () => {
+        try {
+            const data = await listingStudent();
+            setStudentList(data);
+            if (data.length > 0) {
+                setTargetStudent(data[0].user.userId);
+                localStorage.setItem('TargetStudent', data[0].user.userId);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching student list:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchStudents();
     }, []);
+    
     
     useEffect(() => {
         const fetchStudentData = async () => {
@@ -75,6 +77,7 @@ const StudentInfo = () => {
         const ismaped = await mappingStudent(userCode);
         if(ismaped) { 
             alert("학생 연결이 완료되었습니다.");
+            await fetchStudents();
             setModal21(false);
         }
         else alert("학생 연결에 실패하였습니다.");
@@ -323,7 +326,7 @@ const StudentInfo = () => {
                                                             </td>
                                                             <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일</td>
                                                             <td className="text-center">
-                                                                <Tippy content="전환">
+                                                                <Tippy >
                                                                     <button type="button" onClick={() => handleChange(data.user.userId)}>
                                                                         <IconAt className="m-auto" />
                                                                     </button>
@@ -373,7 +376,7 @@ const StudentInfo = () => {
                                                             <div className="flex items-center justify-between pl-5 pt-5 text-lg font-semibold dark:text-white">
                                                                 <h5>학생 추가하기</h5>
                                                                 <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
-                                                                    <IconAt className="w-5 h-5" />
+                                                                    <IconX className="pr-5 w-10 h-10" />
                                                                 </button>
                                                             </div>
                                                             <div className="p-5">

@@ -153,6 +153,11 @@ const SignInBoxed = () => {
         const numbersArray = Phone.match(numberPattern);
         return numbersArray ? numbersArray.join('') : '';
     }
+    
+    function validatePassword(password: string): boolean {
+        const regex = /^(?:(?=.*?[a-zA-Z])(?=.*?\d)(?=.*?[^\w\s]).{10,}|(?=.*?[a-zA-Z])(?=.*?\d)(?=.*?[^\w\s]).{8,})$/;
+        return regex.test(password);
+    }
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -162,6 +167,7 @@ const SignInBoxed = () => {
         const addrDetailInput = document.getElementById("addrDetail") as HTMLInputElement;
 
         const address = addrInput.value + " " + addrDetailInput.value
+
         try {
             // 무결성 검사
             if(
@@ -175,8 +181,11 @@ const SignInBoxed = () => {
             else if(result){
                 throw new Error('아이디 중복 확인 후 시도바랍니다.');
             }
-            else if(password.length < 6 || password != checkPassword){
-                throw new Error('비밀번호가 6자리 미만이거나 일치하지 않습니다.');
+            else if(password.length < 8 || password != checkPassword){
+                throw new Error('비밀번호가 8자리 미만이거나 일치하지 않습니다.');
+            }
+            else if(validatePassword(password)){
+                throw new Error('비밀번호는 영문, 숫자, 특수문자를 모두 포함하여야 합니다.')
             }
 
             // 학생, 교사
@@ -367,16 +376,20 @@ const SignInBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
-                                {password ? ( password.length >= 6 && checkPassword.length >= 6 ? (
-                                    password === checkPassword ? (
-                                        <p className="text-xs text-blue-500">비밀번호가 일치합니다.</p>
+                                {password && (
+                                    password.length >= 8 ? (
+                                        validatePassword(password) ? (
+                                            password === checkPassword ? (
+                                                <p className="text-xs text-blue-500">비밀번호가 일치합니다.</p>
+                                            ) : (
+                                                <p className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+                                            )
+                                        ) : (
+                                            <p className="text-xs text-red-500">비밀번호는 영문, 숫자, 특수문자를 모두 포함하고 최소 8자 이상이어야 합니다.</p>
+                                        )
                                     ) : (
-                                        <p className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+                                        <p className="text-xs text-red-500">비밀번호는 최소 8자 이상이어야 합니다.</p>
                                     )
-                                ) : (
-                                    <p className="text-xs text-red-500">비밀번호는 최소 6자 이상이어야 합니다.</p>
-                                )) : (
-                                    <></>
                                 )}
                                 <div>
                                     <label htmlFor="Address">Address 

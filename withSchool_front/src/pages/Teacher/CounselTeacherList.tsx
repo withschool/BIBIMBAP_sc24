@@ -49,18 +49,18 @@ const CounselTeacherList = () => {
 
     const [allTasks, setAllTasks] = useState([]);
 
-    useEffect(() => {
-        const fetchCounsels = async () => {
-            try {
-                const counsels = await getTotalCounsel();
-                setAllTasks(counsels);
-            } catch (error) {
-                console.error("Failed to fetch counsels:", error);
-            }
-        };
+    const fetchCounsels = async () => {
+        try {
+            const counsels = await getTotalCounsel();
+            setAllTasks(counsels);
+        } catch (error) {
+            console.error("Failed to fetch counsels:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchCounsels();
-    }, [allTasks]);
+    }, []);
 
     const [teacherList, setTeacherList] = useState<any[]>([]);
     const [title, setTitle] = useState('');
