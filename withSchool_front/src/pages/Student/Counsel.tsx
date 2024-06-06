@@ -8,7 +8,7 @@ import Dropdown from '../../components/Dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getCounselInfo, getTeacherListStudent, registerCounsel, deleteCounsel} from '../../service/counsel';
+import { getCounselInfo, getTeacherListStudent, registerCounsel, deleteCounsel, editCounsel} from '../../service/counsel';
 import { getUserInfobyPK } from '../../service/auth';
 import IconClipboardText from '../../components/Icon/IconClipboardText';
 import IconListCheck from '../../components/Icon/IconListCheck';
@@ -91,11 +91,15 @@ const Counsel = () => {
     }, []);
 
     const tryRegisterCounsel = () => {
-        console.log(params.title);
-        console.log(format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
-        console.log(teacherId);
-        registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+        if(params.counselId){
+            editCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+        }
+        else{
+            registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+        }
         setAddTaskModal(false);
+        setTeacherId('');
+        setSelectedDate('');
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
@@ -279,7 +283,7 @@ const Counsel = () => {
                                                                         {selectedTab !== 'trash' && (
                                                                             <>
                                                                                 <li>
-                                                                                    <button type="button" onClick={() => addEditTask(task.counselId)}>
+                                                                                    <button type="button" onClick={() => addEditTask(task)}>
                                                                                         <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
                                                                                         수정
                                                                                     </button>
@@ -343,7 +347,7 @@ const Counsel = () => {
                                             <IconX />
                                         </button>
                                         <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                            {params.id ? '상담 수정' : '상담 신청'}
+                                            {params.counselId ? '상담 수정' : '상담 신청'}
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
@@ -351,7 +355,7 @@ const Counsel = () => {
                                                 <input id="title" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.title} onChange={(e) => changeValue(e)}/>
                                             </div>
                                             <div className="mb-5">
-                                                <label htmlFor="assignee">대상</label>
+                                                <label htmlFor="assignee">상담 대상</label>
                                                 <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
                                                 <option >
                                                             선생님을 선택하세요.
@@ -383,7 +387,7 @@ const Counsel = () => {
                                                     취소
                                                 </button>
                                                 <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
-                                                    {params.id ? '저장' : '저장'}
+                                                    {params.counselId ? '수정' : '저장'}
                                                 </button>
                                             </div>
                                         </div>
@@ -437,7 +441,7 @@ const Counsel = () => {
                                                     <p id="title" className="form-input">{selectedTask.category}</p>
                                                 </div>
                                                 <div className="mb-5">
-                                                    <label htmlFor="assignee">대상</label>
+                                                    <label htmlFor="assignee">상담 대상</label>
                                                     <p id="title" className="form-input">{teacherName} 선생님</p>
                                                 </div>
                                                 <div className="mb-5 flex justify-between gap-4">

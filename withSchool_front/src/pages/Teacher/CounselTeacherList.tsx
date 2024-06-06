@@ -292,7 +292,7 @@ const CounselTeacherList = () => {
                                                 <input id="title" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.title} onChange={(e) => changeValue(e)}/>
                                             </div>
                                             <div className="mb-5">
-                                                <label htmlFor="assignee">대상</label>
+                                                <label htmlFor="assignee">상담 요청자</label>
                                                 <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
                                                 {teacherList.length > 0 ? (
                                                     teacherList.map((teacher) => (
@@ -376,7 +376,7 @@ const CounselTeacherList = () => {
                                                     <p id="title" className="form-input">{selectedTask.category}</p>
                                                 </div>
                                                 <div className="mb-5">
-                                                    <label htmlFor="assignee">대상</label>
+                                                    <label htmlFor="assignee">상담 요청자</label>
                                                     <p id="title" className="form-input">{teacherName}</p>
                                                 </div>
                                                 <div className="mb-5 flex justify-between gap-4">
