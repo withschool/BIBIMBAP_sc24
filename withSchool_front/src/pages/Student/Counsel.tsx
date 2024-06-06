@@ -49,18 +49,18 @@ const Counsel = () => {
 
     const [allTasks, setAllTasks] = useState([]);
 
-    useEffect(() => {
-        const fetchCounsels = async () => {
-            try {
-                const counsels = await getCounselInfo();
-                setAllTasks(counsels);
-            } catch (error) {
-                console.error("Failed to fetch counsels:", error);
-            }
-        };
+    const fetchCounsels = async () => {
+        try {
+            const counsels = await getCounselInfo();
+            setAllTasks(counsels);
+        } catch (error) {
+            console.error("Failed to fetch counsels:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchCounsels();
-    }, [allTasks]);
+    }, []);
 
     const [teacherList, setTeacherList] = useState<any[]>([]);
     const [title, setTitle] = useState('');
@@ -90,21 +90,27 @@ const Counsel = () => {
         fetchTeachers();
     }, []);
 
-    const tryRegisterCounsel = () => {
+    const tryRegisterCounsel = async () => {
         if(selectedDate < new Date()){
             alert("내일 이후부터 상담 신청이 가능합니다.");
             return;
         }
-        if(params.counselId){
-            editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+        try {
+            if(params.counselId){
+                await editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+            }
+            else{
+                await registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+            }
+            setAddTaskModal(false);
+            setTeacherId('');
+            setSelectedDate('');
+            await fetchCounsels();
+        } catch (error) {
+            console.error("Failed to register or edit counsel:", error);
         }
-        else{
-            registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
-        }
-        setAddTaskModal(false);
-        setTeacherId('');
-        setSelectedDate('');
-    }
+    };
+    
 
     const [searchTask, setSearchTask] = useState<any>('');
     const [selectedTask, setSelectedTask] = useState<any>(defaultParams);
@@ -135,21 +141,28 @@ const Counsel = () => {
         setIsShowTaskMenu(false);
     };
 
-    const deleteTask = (counselId : number) => {
-        deleteCounsel(counselId);
-        alert("삭제 완료!");
+    const deleteTask = async (counselId : number) => {
+        try{
+            deleteCounsel(counselId);
+            alert("삭제 완료!");
+            await fetchCounsels();
+        }
+        catch {
+            console.error("Failed to delete counsel");
+        }
     }
 
-    const viewTask = (item: any = null) => {
+    const viewTask = async (item: any = null) => {
         setSelectedTask(item);
         findTeacherName(item.answererId);
         console.log(item.schedule);
         setTimeout(() => {
             setViewTaskModal(true);
         });
+        await fetchCounsels();
     };
 
-    const addEditTask = (task: any | null) => {
+    const addEditTask = async (task: any | null) => {
         setIsShowTaskMenu(false);
         let json = JSON.parse(JSON.stringify(defaultParams));
         setParams(json);
