@@ -126,7 +126,23 @@ public class SchoolInformation extends BaseEntity {
             결제 상태
             0 - 결제 안됨
             1 - 결제 됨""")
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "int default 1")
     private int paymentState;
+
+    @Comment("""
+            서비스 타입
+                        
+            0 ~ 2(월간)
+            0 - 소규모(300명)
+            1 - 중규모(500명)
+            2 - 대규모(700명)
+                        
+            3 ~ 5(연간)
+            3 - 소규모
+            4 - 중규모
+            5 - 대규모
+            """)
+    @Column(columnDefinition = "int default 0")
+    private int serviceType;
 
 }

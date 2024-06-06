@@ -45,17 +45,18 @@ public class SchoolApplication extends BaseEntity {
 
     @Comment("""
             서비스 타입
-            
+                        
             0 ~ 2(월간)
-            0 - 소규모
-            1 - 중규모
-            2 - 대규모
-            
+            0 - 소규모(300명)
+            1 - 중규모(500명)
+            2 - 대규모(700명)
+                        
             3 ~ 5(연간)
             3 - 소규모
             4 - 중규모
             5 - 대규모
             """)
+    @Column(columnDefinition = "int default 0")
     private int serviceType;
 
     public ResApplicationDefaultDTO toResApplicationDefaultDTO(){
