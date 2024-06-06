@@ -38,6 +38,7 @@ const LoginBoxed = () => {
     const [searchModal, setSearchModal] = useState(false);
     const [searchWord, setSearchWord] = useState('');
     const [schoolList, setSchoolList] = useState<SchoolType[]>([]);
+    const [schoolInfo, setSchoolInfo] = useState('');
     const [filteredSchools, setFilteredSchools] = useState<SchoolType[]>([]);
 
     interface SchoolType {
@@ -65,6 +66,7 @@ const LoginBoxed = () => {
         setSelectedSchool(school.schoolId);
         setSearchWord('');
         setSearchModal(false);
+        setSchoolInfo(school.schoolName+' ('+school.schoolAddress+')');
     };
 
     const handleBlur = () => {
@@ -128,9 +130,14 @@ const LoginBoxed = () => {
         console.log(selectedSchool, name, birthDate, individualCode);
         try {
             const data = await certify(selectedSchool, name, birthDate, individualCode);
+            console.log(data.message);
             if(data.message == "해당하는 유저가 없습니다.") {
                 alert("해당하는 유저가 없습니다.");
                 throw new SyntaxError("Can't find a user");
+            }
+            else if(data.message == "해당하는 유저는 이미 회원가입 되었습니다."){
+                alert("이미 회원가입을 진행한 유저입니다.");
+                throw new SyntaxError("Already Signed user");
             }
             else {
                 await handleUserInfo(data);
@@ -174,19 +181,13 @@ const LoginBoxed = () => {
                                     <label htmlFor="School">School</label>
                                     <div className="relative text-white-dark">
                                     <div className='flex'>
-                                    <select
-                                        value={selectedSchool}
-                                        onChange={handleSchoolChange}
-                                        className="block w-full px-9 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500 placeholder:text-white-dark"
+                                    <input
+                                        value={schoolInfo}
+                                        placeholder='학교를 검색해 주세요.'
+                                        readOnly
+                                        className="block w-full form-input px-9 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500 placeholder:text-white-dark"
                                     >
-                                        <option value="">학교를 선택해 주세요.</option>
-                                        {schoolList && // 학교 목록이 있을 때만 map() 함수 실행
-                                            schoolList.map(school => (
-                                                <option key={school.schoolId} value={school.schoolId}>
-                                                    {school.schoolName} ({school.schoolAddress})
-                                                </option>
-                                            ))}
-                                    </select>
+                                    </input>
 
                                     <div className="mb-5">
                                         <div className="flex flex-wrap items-center justify-center gap-2">

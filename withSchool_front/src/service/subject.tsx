@@ -183,10 +183,10 @@ export const createLectureNote = async (formData: FormData): Promise<any> => {
     try {
         const response = await fetch(`${url}/subjects/lecture-notes`, {
             method: 'POST',
-            body: formData,
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: formData,
         });
         if (response.ok) {
             const data = await response.json();

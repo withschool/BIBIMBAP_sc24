@@ -51,7 +51,7 @@ export const LectureNote = () => {
         };
 
         fetchLectureNote();
-    }, [notesList]);
+    }, []);
 
     const defaultParams = { subjectLectureNoteId: null, title: '', description: '', tag: '', name: '', thumb: '' };
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
@@ -108,6 +108,9 @@ export const LectureNote = () => {
                 Array.from(selectedFiles).forEach(file => {
                     formData.append("file", file);
                 });
+            }
+            else {
+                formData.append("file", "");
             }
             for (let pair of formData.entries()) {
                 console.log(pair[0], pair[1]);

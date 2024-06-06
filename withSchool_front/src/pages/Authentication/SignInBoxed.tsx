@@ -18,22 +18,38 @@ import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
 import IconSettings from '../../components/Icon/IconSettings';
 import IconLaptop from '../../components/Icon/IconLaptop';
+import DaumPost from './DaumPost';
+import DaumPostcode from 'react-daum-postcode';
 
 const SignInBoxed = () => {
+
+    
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [id, setId] = useState('');
     const [sex, setSex] = useState('');
-    const [year, setYear] = useState('2000');
-    const [month, setMonth] = useState('01');
-    const [day, setDay] = useState('01');
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [day, setDay] = useState(new Date().getDate());
     const [password, setPassword] = useState('');
     const [checkPassword, setCheckPassword] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [loginError, setLoginError] = useState('');
     const [result, setResult] = useState(true);
+    const [daysInMonth, setDaysInMonth] = useState(31);
+
+    const onClickAddr = () => {
+        new window.daum.Postcode({
+          oncomplete: function (data: IAddr) {
+            (document.getElementById("addr") as HTMLInputElement).value =
+              data.address;
+            document.getElementById("addrDetail")?.focus();
+          },
+        }).open();
+      };
 
     let userInfoString = localStorage.getItem('certifyinfo')!;
     const userInfo = JSON.parse(userInfoString);
@@ -54,15 +70,15 @@ const SignInBoxed = () => {
     }
 
     const handleYearChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setYear(event.target.value);
+        setYear(parseInt(event.target.value, 10));
     }
     
     const handleMonthChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setMonth(event.target.value);
+        setMonth(parseInt(event.target.value, 10));
     }
     
     const handleDayChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        setDay(event.target.value);
+        setDay(parseInt(event.target.value, 10));
     }
 
     const handleName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +112,11 @@ const SignInBoxed = () => {
         try {
             console.log(userInfo);
 
-            if (await DuplicateId(id)) {
+            const isValidFormat = /^[a-zA-Z0-9]+$/.test(id);
+            if (!isValidFormat) {
+                alert("아이디는 영어와 숫자만 포함할 수 있습니다.");
+            } 
+            else if (await DuplicateId(id)) {
                 alert("중복된 아이디입니다. 다시 설정해주세요.");
             }
             else if(id.length < 5){
@@ -136,14 +156,19 @@ const SignInBoxed = () => {
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const birthDate = `${(parseInt(year) % 100).toString().padStart(2, '0')}${month}${day}`;
+        const birthDate = `${(year % 100).toString().padStart(2, '0')}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
         const reqphoneNumber = changePhoneForm(phoneNumber);
+        const addrInput = document.getElementById("addr") as HTMLInputElement;
+        const addrDetailInput = document.getElementById("addrDetail") as HTMLInputElement;
+
+        const address = addrInput.value + " " + addrDetailInput.value
         try {
             // 무결성 검사
             if(
                 (!isStudent && (name === '')) ||
                 (sex === '') || 
-                (phoneNumber === '')
+                (phoneNumber === '') ||
+                (addrInput.value === '' || addrDetailInput.value === '')
                 ){
                     throw new Error('기입하지 않는 항목이 있습니다. 입력해 주세요.');
                 }
@@ -157,14 +182,15 @@ const SignInBoxed = () => {
             // 학생, 교사
             if(isStudent){
                 const userCode: string = localStorage.getItem('userCode') ?? '';
-                console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, "", userInfo.user.birthDate, -1)
-                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, "" , userInfo.user.birthDate, -1 , userCode);
+                console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1)
+                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1 , userCode);
             }
 
             // 학부모
             else{
-                console.log(id, email, password, name, sex==="male", phoneNumber, "", birthDate, 1)
-                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, "" , birthDate, 1 , "");
+                console.log(year, month, day);
+                console.log(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1)
+                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1 , "");
             }
 
             alert("회원가입이 완료되었습니다.");
@@ -175,6 +201,27 @@ const SignInBoxed = () => {
         }
 
     };
+
+    useEffect(() => {
+        const isLeapYear = (year : any) => {
+            return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+        };
+
+        const calculateDaysInMonth = (year : any, month : any) => {
+            switch (month) {
+                case 2:
+                    return isLeapYear(year) ? 29 : 28;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    return 30;
+                default:
+                    return 31;
+            }
+        };
+        setDaysInMonth(calculateDaysInMonth(year, month));
+    }, [year, month]);
 
     return (
         <div>
@@ -215,35 +262,55 @@ const SignInBoxed = () => {
                                     </div>
                                 )}
                                 <label htmlFor="Birth">Birth</label>
-                                    <div className="flex relative text-white-dark">
-                                        <select
-                                            value={year}
-                                            onChange={handleYearChange}
-                                            className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 75 }, (_, index) => 2024 - index).map(year => (
-                                                <option key={year} value={year}>{year}년</option>
-                                            ))}
-                                        </select>
-                                        <select
-                                            value={month}
-                                            onChange={handleMonthChange}
-                                            className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 12 }, (_, index) => index + 1).map(month => (
-                                                <option key={month} value={month.toString().padStart(2, '0')}>{month}월</option>
-                                            ))}
-                                        </select>
-                                        <select
-                                            value={day}
-                                            onChange={handleDayChange}
-                                            className="block w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                                        >
-                                            {Array.from({ length: 31 }, (_, index) => index + 1).map(day => (
-                                                <option key={day} value={day.toString().padStart(2, '0')}>{day}일</option>
-                                            ))}
-                                        </select>
+                                {isStudent ? (
+                                <div>
+                                    <div className="relative text-gray-500 bg-gray-300 rounded-md ps-10 p-2 flex items-center">
+                                        {((userInfo.user.birthDate) < 500000) ? (
+                                        <div>
+                                            {'20'+((userInfo.user.birthDate)/10000|0)+' 년 '+(((userInfo.user.birthDate)/100)%100|0)+' 월 '+((userInfo.user.birthDate)%100)+' 일'}
+                                        </div>
+                                        ) : (
+                                        <div>
+                                            {'19'+((userInfo.user.birthDate)/10000|0)+' 년 '+(((userInfo.user.birthDate)/100)%100|0)+' 월 '+((userInfo.user.birthDate)%100)+' 일'}
+                                        </div>
+                                        )
+                                        }
+                                        <span className="absolute start-3 mr-3 top-1/2 -translate-y-1/2">
+                                            <IconLaptop fill={true} />
+                                        </span>
                                     </div>
+                                </div>
+                                ) : (
+                                <div className="flex relative text-white-dark">
+                                    <select
+                                        value={year}
+                                        onChange={handleYearChange}
+                                        className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    >
+                                        {Array.from({ length: 75 }, (_, index) => 2024 - index).map(year => (
+                                            <option key={year} value={year}>{year}년</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={month}
+                                        onChange={handleMonthChange}
+                                        className="block w-1/3 px-4 py-2 mr-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    >
+                                        {Array.from({ length: 12 }, (_, index) => index + 1).map(month => (
+                                            <option key={month} value={month}>{month}월</option>
+                                        ))}
+                                    </select>
+                                    <select
+                                        value={day}
+                                        onChange={handleDayChange}
+                                        className="block w-1/3 px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                                    >
+                                        {Array.from({ length: daysInMonth }, (_, index) => index + 1).map(day => (
+                                            <option key={day} value={day}>{day}일</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                    )}
                                 <div>
                                     <label htmlFor="Sex">Sex</label>
                                     <div className="relative text-white-dark">
@@ -293,6 +360,31 @@ const SignInBoxed = () => {
                                 )) : (
                                     <></>
                                 )}
+                                <div>
+                                    <label htmlFor="Address">Address</label>
+                                    <div className="relative text-white-dark">
+                                        <input
+                                            id="addr"
+                                            type="text"
+                                            className="form-input ps-10"
+                                            readOnly
+                                            placeholder='주소를 입력해주세요.'
+                                            onClick={onClickAddr}
+                                            />
+                                        <span className="absolute start-4 top-1/2 pb-10 -translate-y-1/2">
+                                            <IconLockDots fill={true} />
+                                        </span>
+                                        <input
+                                            id="addrDetail"
+                                            className="form-input ps-10"
+                                            type="text"
+                                            placeholder='상세 주소를 입력해주세요.'
+                                        />
+                                        <span className="absolute start-4 top-1/2 pt-9 -translate-y-1/2">
+                                            <IconLockDots fill={true} />
+                                        </span>
+                                    </div>
+                                </div>
                                 <div>
                                     <label htmlFor="PhoneNumber">Phone Number</label>
                                     <div className="relative text-white-dark">
