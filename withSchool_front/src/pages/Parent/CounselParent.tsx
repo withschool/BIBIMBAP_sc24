@@ -8,7 +8,7 @@ import Dropdown from '../../components/Dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getCounselInfo, getTeacherListParent, registerCounsel, deleteCounsel} from '../../service/counsel';
+import { getCounselInfo, getTeacherListParent, registerCounsel, deleteCounsel, editCounsel} from '../../service/counsel';
 import { getUserInfobyPK } from '../../service/auth';
 import IconClipboardText from '../../components/Icon/IconClipboardText';
 import IconListCheck from '../../components/Icon/IconListCheck';
@@ -27,6 +27,7 @@ import IconX from '../../components/Icon/IconX';
 import IconRestore from '../../components/Icon/IconRestore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 
 const CounselParent = () => {
     const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const CounselParent = () => {
     });
     const defaultParams = {
         id: null,
-        title: '',
+        category: '',
         teacher: 0,
         date: '',
     };
@@ -80,7 +81,7 @@ const CounselParent = () => {
     useEffect(() => {
         const fetchTeachers = async () => {
             try {
-                const teachers = await getTeacherListParent(localStorage.getItem('TargetStudent'));
+                const teachers = await getTeacherListParent(localStorage.getItem("TargetStudent"));
                 setTeacherList(teachers);
             } catch (error) {
                 console.error("Failed to fetch teachers:", error);
@@ -90,16 +91,27 @@ const CounselParent = () => {
     }, []);
 
     const tryRegisterCounsel = () => {
-        console.log(params.title);
-        console.log(selectedDate);
-        console.log(teacherId);
-        registerCounsel(teacherId, params.title, selectedDate);
+        if(params.counselId){
+            editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+        }
+        else{
+            registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+        }
+        setAddTaskModal(false);
+        setTeacherId('');
+        setSelectedDate('');
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
     const [selectedTask, setSelectedTask] = useState<any>(defaultParams);
     const [isPriorityMenu] = useState<any>(null);
     const [isTagMenu] = useState<any>(null);
+
+    const filteredTasks = allTasks.filter((task : any) => {
+        const categoryMatch = task.category.toLowerCase().includes(searchTask.toLowerCase());
+        const scheduleMatch = task.schedule.join(' ').includes(searchTask);
+        return categoryMatch || scheduleMatch;
+    });
 
     const [pager] = useState<any>({
         currentPage: 1,
@@ -127,18 +139,29 @@ const CounselParent = () => {
     const viewTask = (item: any = null) => {
         setSelectedTask(item);
         findTeacherName(item.answererId);
+        console.log(item.schedule);
         setTimeout(() => {
             setViewTaskModal(true);
         });
     };
 
-    const addEditTask = (task: any = null) => {
+    const addEditTask = (task: any | null) => {
         setIsShowTaskMenu(false);
         let json = JSON.parse(JSON.stringify(defaultParams));
         setParams(json);
         if (task) {
-            let json1 = JSON.parse(JSON.stringify(task));
-            setParams(json1);
+            if(!task.counselState){
+                console.log(task);
+                let json1 = JSON.parse(JSON.stringify(task));
+                setParams(json1);
+                setTeacherId(task.answererId);
+                const date = new Date(task.schedule[0], task.schedule[1] - 1, task.schedule[2], task.schedule[3], task.schedule[4]);
+                setSelectedDate(date);
+            }
+            else {
+                alert("이미 승인 또는 반려된 상담입니다.");
+                return;
+            }
         }
         setAddTaskModal(true);
     };
@@ -185,7 +208,7 @@ const CounselParent = () => {
                             </div>
                         </PerfectScrollbar>
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
-                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask()}>
+                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask(null)}>
                                 <IconPlus className="ltr:mr-2 rtl:ml-2 shrink-0" />
                                 상담 신청하기
                             </button>
@@ -215,94 +238,105 @@ const CounselParent = () => {
                             </div>
                         </div>
 
-                        {allTasks.length ? (
+                        {filteredTasks.length ? (
                             <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
                                 <table className="table-hover">
                                     <tbody>
-                                        {allTasks.map((task: any) => {
-                                            return (
-                                                <tr className={`group cursor-pointer ${task.counselState == 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''} ${task.counselState == 2 ? 'line-through' : ''}`} key={task.counselId}>
-                                                    <td className="w-1">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={`chk-${task.counselId}`}
-                                                            className={`form-checkbox${task.counselState === 1 ? ' checked:bg-gray-700' : ''} disabled:opacity-50`}
-                                                            disabled={true}
-                                                            defaultChecked={task.counselState === 1}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <div onClick={() => viewTask(task)}>
-                                                            <div className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${task.counselState}`}>
-                                                                {task.category}
-                                                            </div>
+                                        {filteredTasks.map((task: any) => (
+                                            <tr
+                                                className={`group cursor-pointer ${
+                                                    task.counselState === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
+                                                } ${task.counselState === 2 ? 'line-through' : ''}`}
+                                                key={task.counselId}
+                                            >
+                                                <td className="w-1">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`chk-${task.counselId}`}
+                                                        className={`form-checkbox${
+                                                            task.counselState === 1 ? ' checked:bg-gray-700' : ''
+                                                        } disabled:opacity-50`}
+                                                        disabled={true}
+                                                        defaultChecked={task.counselState === 1}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <div onClick={() => viewTask(task)}>
+                                                        <div
+                                                            className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${
+                                                                task.counselState
+                                                            }`}
+                                                        >
+                                                            {task.category}
                                                         </div>
-                                                    </td>
-                                                    <td className="w-1">
-                                                    {task.regDate && (
-                                                            <p className={`whitespace-nowrap text-white-dark font-medium`}>상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일</p>
+                                                    </div>
+                                                </td>
+                                                <td className="w-1">
+                                                    {task.schedule && (
+                                                        <p className="whitespace-nowrap text-white-dark font-medium">
+                                                            상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
+                                                        </p>
                                                     )}
-                                                    </td>
-                                                    <td className="w-1">
-                                                        <div className="flex items-center justify-between w-max ltr:ml-auto rtl:mr-auto">
-                                                            <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
-                                                                {task.path && (
-                                                                    <div>
-                                                                        <img src={`/assets/images/${task.path}`} className="h-8 w-8 rounded-full object-cover" alt="avatar" />
-                                                                    </div>
-                                                                )}
-                                                                {!task.path && task.teacherId ? (
-                                                                    <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
-                                                                        {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
-                                                                    </div>
-                                                                ) : (
-                                                                    ''
-                                                                )}
-                                                                {!task.path && !task.teacherId ? (
-                                                                    <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
-                                                                        <IconUser className="w-4.5 h-4.5" />
-                                                                    </div>
-                                                                ) : (
-                                                                    ''
-                                                                )}
-                                                            </div>
-                                                            <div className="dropdown">
-                                                                <Dropdown
-                                                                    offset={[0, 5]}
-                                                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                                    btnClassName="align-middle"
-                                                                    button={<IconHorizontalDots className="rotate-90 opacity-70" />}
-                                                                >
-                                                                    <ul className="whitespace-nowrap">
-                                                                        {selectedTab !== 'trash' && (
-                                                                            <>
-                                                                                <li>
-                                                                                    <button type="button" onClick={() => addEditTask(task.counselId)}>
-                                                                                        <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                                        수정
-                                                                                    </button>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <button type="button" onClick={() => deleteTask(task.counselId)}>
-                                                                                        <IconTrashLines className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                                        삭제
-                                                                                    </button>
-                                                                                </li>
-                                                                            </>
-                                                                        )}
-                                                                    </ul>
-                                                                </Dropdown>
-                                                            </div>
+                                                </td>
+                                                <td className="w-1">
+                                                    <div className="flex items-center justify-between w-max ltr:ml-auto rtl:mr-auto">
+                                                        <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
+                                                            {task.path ? (
+                                                                <div>
+                                                                    <img
+                                                                        src={`/assets/images/${task.path}`}
+                                                                        className="h-8 w-8 rounded-full object-cover"
+                                                                        alt="avatar"
+                                                                    />
+                                                                </div>
+                                                            ) : task.teacherId ? (
+                                                                <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
+                                                                    {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
+                                                                </div>
+                                                            ) : (
+                                                                <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
+                                                                    <IconUser className="w-4.5 h-4.5" />
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
+                                                        <div className="dropdown">
+                                                            <Dropdown
+                                                                offset={[0, 5]}
+                                                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                                                                btnClassName="align-middle"
+                                                                button={<IconHorizontalDots className="rotate-90 opacity-70" />}
+                                                            >
+                                                                <ul className="whitespace-nowrap">
+                                                                    {selectedTab !== 'trash' && (
+                                                                        <>
+                                                                            <li>
+                                                                                <button type="button" onClick={() => addEditTask(task)}>
+                                                                                    <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                                                    수정
+                                                                                </button>
+                                                                            </li>
+                                                                            <li>
+                                                                                <button type="button" onClick={() => deleteTask(task.counselId)}>
+                                                                                    <IconTrashLines className="ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                                                    삭제
+                                                                                </button>
+                                                                            </li>
+                                                                        </>
+                                                                    )}
+                                                                </ul>
+                                                            </Dropdown>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
                         ) : (
-                            <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">상담이 없습니다.</div>
+                            <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">
+                                상담이 없습니다.
+                            </div>
                         )}
                     </div>
                 </div>
@@ -341,16 +375,19 @@ const CounselParent = () => {
                                             <IconX />
                                         </button>
                                         <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                            {params.id ? '상담 수정' : '상담 신청'}
+                                            {params.counselId ? '상담 수정' : '상담 신청'}
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
-                                                <label htmlFor="title">제목</label>
-                                                <input id="title" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.title} onChange={(e) => changeValue(e)}/>
+                                                <label htmlFor="category">제목</label>
+                                                <input id="category" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.category} onChange={(e) => changeValue(e)}/>
                                             </div>
                                             <div className="mb-5">
-                                                <label htmlFor="assignee">대상</label>
+                                                <label htmlFor="assignee">상담 대상</label>
                                                 <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
+                                                <option >
+                                                            선생님을 선택하세요.
+                                                </option>
                                                 {teacherList.length > 0 ? (
                                                     teacherList.map((teacher) => (
                                                         <option key={teacher.userId} value={teacher.userId}>
@@ -368,10 +405,9 @@ const CounselParent = () => {
                                                     <DatePicker
                                                         selected={selectedDate}
                                                         onChange={(date : any) => setSelectedDate(date)}
-                                                        dateFormat="yyyy/MM/dd"
+                                                        dateFormat="yyyy-MM-dd"
                                                         placeholderText="날짜를 선택하세요"
-                                                        className="form-input"
-                                                    />
+                                                        className="form-input"/>
                                                 </div>
                                             </div>
                                             <div className="ltr:text-right rtl:text-left flex justify-end items-center mt-8">
@@ -379,7 +415,7 @@ const CounselParent = () => {
                                                     취소
                                                 </button>
                                                 <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
-                                                    {params.id ? '저장' : '저장'}
+                                                    {params.counselId ? '수정' : '저장'}
                                                 </button>
                                             </div>
                                         </div>
@@ -429,33 +465,33 @@ const CounselParent = () => {
                                         <div className="p-5">
                                             <div className="p-5">
                                                 <div className="mb-5">
-                                                    <label htmlFor="title">제목</label>
-                                                    <p id="title" className="form-input">{selectedTask.category}</p>
+                                                    <label htmlFor="category">제목</label>
+                                                    <p id="category" className="form-input">{selectedTask.category}</p>
                                                 </div>
                                                 <div className="mb-5">
-                                                    <label htmlFor="assignee">대상</label>
-                                                    <p id="title" className="form-input">{teacherName} 선생님</p>
+                                                    <label htmlFor="assignee">상담 대상</label>
+                                                    <p id="category" className="form-input">{teacherName} 선생님</p>
                                                 </div>
                                                 <div className="mb-5 flex justify-between gap-4">
                                                     <div className="flex-1">
                                                         <label htmlFor="tag">상담일자</label>
                                                         {selectedTask.schedule && (
-                                                            <p id="title" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
+                                                            <p id="category" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
                                                         )}
                                                     </div>
                                                 </div>
                                                 <div className="mb-5">
                                                     <label htmlFor="assigned">승인 여부</label>
                                                     {selectedTask.counselState == 0 ? ( 
-                                                        <p id="title" className="form-input">신청 중</p>
+                                                        <p id="category" className="form-input">신청 중</p>
                                                     ) : (<></>
                                                     )}
                                                     {selectedTask.counselState == 1 ? ( 
-                                                        <p id="title" className="form-input">승인</p>
+                                                        <p id="category" className="form-input">승인</p>
                                                     ) : (<></>
                                                     )}
                                                     {selectedTask.counselState == 2 ? ( 
-                                                        <p id="title" className="form-input">반려</p>
+                                                        <p id="category" className="form-input">반려</p>
                                                     ) : (<></>
                                                     )}
                                                 </div>

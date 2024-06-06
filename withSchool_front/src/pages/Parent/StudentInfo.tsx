@@ -93,14 +93,6 @@ const StudentInfo = () => {
     };
 
     const [scores, setScores] = useState<any>([]);
-
-    const generateKey = async (subjectId : string) => {
-        const studentId = localStorage.getItem("TargetStudent");
-        console.log("student : "+studentId+"subject : "+subjectId);
-        const res = await getStudentScoreParent(subjectId, studentId);
-        setScores(res);
-    }
-
      
     return(
         <div>
@@ -256,7 +248,7 @@ const StudentInfo = () => {
                                             <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
                                                 <h6 className="text-lg font-bold mb-5">{targetStudentInfo.name} 학생의 성적</h6>
                                                 <div className="flex flex-col ">
-                                                <div className="table-responsive mb-5">
+                                                {/* <div className="table-responsive mb-5">
                                                     <table className="table-striped">
                                                         <thead>
                                                             <tr>
@@ -284,7 +276,7 @@ const StudentInfo = () => {
                                                             )}
                                                         </tbody>
                                                     </table>
-                                                </div>
+                                                </div> */}
                                                 </div>
                                             </form>
                                         </div>
