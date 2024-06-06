@@ -134,12 +134,12 @@ export const register = async (
       return data;
     } else {
       const errorMessage = await response.text();
-      alert("회원가입에 실패했습니다: "+errorMessage);
       console.error('Register failed:', errorMessage);
       throw new Error(errorMessage);
     }
   } catch (errorss) {
     console.error('Register during login:', errorss);
+    return -1;
   }
 }
 

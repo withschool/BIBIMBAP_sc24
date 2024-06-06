@@ -227,7 +227,7 @@ const LoginBoxed = () => {
                                                                         </button>
                                                                     </div>
                                                                     <div className="p-3">
-                                                                        <form>
+                                                                        <div>
                                                                             <div className="relative mb-4">
                                                                             <input
                                                                                 className = 'w-full border rounded px-3 py-2'
@@ -249,7 +249,7 @@ const LoginBoxed = () => {
                                                                                 </ul>
                                                                             )}
                                                                             </div>
-                                                                        </form>
+                                                                        </div>
                                                                     </div>
                                                                 </Dialog.Panel>
                                                             </Transition.Child>
