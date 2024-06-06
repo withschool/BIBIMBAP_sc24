@@ -14,7 +14,9 @@ import com.withSchool.dto.user.SignUpDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.withSchool.JWT.JwtToken;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,9 +48,15 @@ public class BasicController {
         Map<String, Object> response = new HashMap<>();
 
         User user = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getUserCode());
-        if(user==null) {
+        if (user == null) {
             response.put("message", "해당하는 유저가 없습니다.");
             return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(response);
+        } else if (user.getId() != null) {
+            response.put("message", "해당하는 유저는 이미 회원가입 되었습니다.");
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                     .body(response);
         }
 
