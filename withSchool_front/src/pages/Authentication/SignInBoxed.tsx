@@ -184,6 +184,9 @@ const SignInBoxed = () => {
                 const userCode: string = localStorage.getItem('userCode') ?? '';
                 console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1)
                 const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1 , userCode);
+                if(data == -1){
+                    throw new Error('이미 등록된 전화번호입니다.');
+                }
             }
 
             // 학부모
@@ -191,6 +194,9 @@ const SignInBoxed = () => {
                 console.log(year, month, day);
                 console.log(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1)
                 const data = await register(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1 , "");
+                if(data == -1){
+                    throw new Error('이미 등록된 전화번호입니다.');
+                }
             }
 
             alert("회원가입이 완료되었습니다.");
@@ -421,7 +427,6 @@ const SignInBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
-                                {loginError && <div className="text-red-500">회원가입에 실패하였습니다.</div>}
                                 <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                                     회원가입
                                 </button>
