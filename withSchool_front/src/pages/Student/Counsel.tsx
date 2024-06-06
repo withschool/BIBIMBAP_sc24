@@ -36,7 +36,7 @@ const Counsel = () => {
     });
     const defaultParams = {
         id: null,
-        title: '',
+        category: '',
         teacher: 0,
         date: '',
     };
@@ -92,10 +92,12 @@ const Counsel = () => {
 
     const tryRegisterCounsel = () => {
         if(params.counselId){
-            editCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+            editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
         }
         else{
-            registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+            
+            console.log(selectedDate);
+            registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
         }
         setAddTaskModal(false);
         setTeacherId('');
@@ -132,19 +134,23 @@ const Counsel = () => {
 
     const viewTask = (item: any = null) => {
         setSelectedTask(item);
-        findTeacherName(item.answererId);
+        console.log(item.schedule);
         setTimeout(() => {
             setViewTaskModal(true);
         });
     };
 
-    const addEditTask = (task: any = null) => {
+    const addEditTask = (task: any | null) => {
         setIsShowTaskMenu(false);
         let json = JSON.parse(JSON.stringify(defaultParams));
         setParams(json);
         if (task) {
+            console.log(task);
             let json1 = JSON.parse(JSON.stringify(task));
             setParams(json1);
+            setTeacherId(task.answererId);
+            const date = new Date(task.schedule[0], task.schedule[1] - 1, task.schedule[2], task.schedule[3], task.schedule[4]);
+            setSelectedDate(date);
         }
         setAddTaskModal(true);
     };
@@ -191,7 +197,7 @@ const Counsel = () => {
                             </div>
                         </PerfectScrollbar>
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
-                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask()}>
+                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask(null)}>
                                 <IconPlus className="ltr:mr-2 rtl:ml-2 shrink-0" />
                                 상담 신청하기
                             </button>
@@ -351,8 +357,8 @@ const Counsel = () => {
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
-                                                <label htmlFor="title">제목</label>
-                                                <input id="title" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.title} onChange={(e) => changeValue(e)}/>
+                                                <label htmlFor="category">제목</label>
+                                                <input id="category" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.category} onChange={(e) => changeValue(e)}/>
                                             </div>
                                             <div className="mb-5">
                                                 <label htmlFor="assignee">상담 대상</label>
@@ -437,33 +443,33 @@ const Counsel = () => {
                                         <div className="p-5">
                                             <div className="p-5">
                                                 <div className="mb-5">
-                                                    <label htmlFor="title">제목</label>
-                                                    <p id="title" className="form-input">{selectedTask.category}</p>
+                                                    <label htmlFor="category">제목</label>
+                                                    <p id="category" className="form-input">{selectedTask.category}</p>
                                                 </div>
                                                 <div className="mb-5">
                                                     <label htmlFor="assignee">상담 대상</label>
-                                                    <p id="title" className="form-input">{teacherName} 선생님</p>
+                                                    <p id="category" className="form-input">{teacherName} 선생님</p>
                                                 </div>
                                                 <div className="mb-5 flex justify-between gap-4">
                                                     <div className="flex-1">
                                                         <label htmlFor="tag">상담일자</label>
                                                         {selectedTask.schedule && (
-                                                            <p id="title" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
+                                                            <p id="category" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
                                                         )}
                                                     </div>
                                                 </div>
                                                 <div className="mb-5">
                                                     <label htmlFor="assigned">승인 여부</label>
                                                     {selectedTask.counselState == 0 ? ( 
-                                                        <p id="title" className="form-input">신청 중</p>
+                                                        <p id="category" className="form-input">신청 중</p>
                                                     ) : (<></>
                                                     )}
                                                     {selectedTask.counselState == 1 ? ( 
-                                                        <p id="title" className="form-input">승인</p>
+                                                        <p id="category" className="form-input">승인</p>
                                                     ) : (<></>
                                                     )}
                                                     {selectedTask.counselState == 2 ? ( 
-                                                        <p id="title" className="form-input">반려</p>
+                                                        <p id="category" className="form-input">반려</p>
                                                     ) : (<></>
                                                     )}
                                                 </div>

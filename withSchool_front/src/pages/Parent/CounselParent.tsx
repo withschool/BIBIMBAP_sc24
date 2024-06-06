@@ -8,7 +8,7 @@ import Dropdown from '../../components/Dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getCounselInfo, getTeacherListParent, registerCounsel, deleteCounsel} from '../../service/counsel';
+import { getCounselInfo, getTeacherListParent, registerCounsel, deleteCounsel, editCounsel} from '../../service/counsel';
 import { getUserInfobyPK } from '../../service/auth';
 import IconClipboardText from '../../components/Icon/IconClipboardText';
 import IconListCheck from '../../components/Icon/IconListCheck';
@@ -27,6 +27,7 @@ import IconX from '../../components/Icon/IconX';
 import IconRestore from '../../components/Icon/IconRestore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 
 const CounselParent = () => {
     const dispatch = useDispatch();
@@ -90,10 +91,15 @@ const CounselParent = () => {
     }, []);
 
     const tryRegisterCounsel = () => {
-        console.log(params.title);
-        console.log(selectedDate);
-        console.log(teacherId);
-        registerCounsel(teacherId, params.title, selectedDate);
+        if(params.counselId){
+            editCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+        }
+        else{
+            registerCounsel(teacherId, params.title,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+        }
+        setAddTaskModal(false);
+        setTeacherId('');
+        setSelectedDate('');
     }
 
     const [searchTask, setSearchTask] = useState<any>('');
@@ -341,7 +347,7 @@ const CounselParent = () => {
                                             <IconX />
                                         </button>
                                         <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                            {params.id ? '상담 수정' : '상담 신청'}
+                                            {params.counselId ? '상담 수정' : '상담 신청'}
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
@@ -379,7 +385,7 @@ const CounselParent = () => {
                                                     취소
                                                 </button>
                                                 <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
-                                                    {params.id ? '저장' : '저장'}
+                                                    {params.counselId ? '저장' : '저장'}
                                                 </button>
                                             </div>
                                         </div>
