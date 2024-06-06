@@ -143,8 +143,18 @@ const CounselParent = () => {
         let json = JSON.parse(JSON.stringify(defaultParams));
         setParams(json);
         if (task) {
-            let json1 = JSON.parse(JSON.stringify(task));
-            setParams(json1);
+            if(!task.counselState){
+                console.log(task);
+                let json1 = JSON.parse(JSON.stringify(task));
+                setParams(json1);
+                setTeacherId(task.answererId);
+                const date = new Date(task.schedule[0], task.schedule[1] - 1, task.schedule[2], task.schedule[3], task.schedule[4]);
+                setSelectedDate(date);
+            }
+            else {
+                alert("이미 승인 또는 반려된 상담입니다.");
+                return;
+            }
         }
         setAddTaskModal(true);
     };
@@ -164,7 +174,7 @@ const CounselParent = () => {
                                 <div className="shrink-0">
                                     <IconClipboardText />
                                 </div>
-                                <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">학부모 상담</h3>
+                                <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">학생 상담</h3>
                             </div>
                         </div>
                         <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b] mb-5"></div>
@@ -191,7 +201,7 @@ const CounselParent = () => {
                             </div>
                         </PerfectScrollbar>
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
-                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask()}>
+                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask(null)}>
                                 <IconPlus className="ltr:mr-2 rtl:ml-2 shrink-0" />
                                 상담 신청하기
                             </button>
@@ -245,7 +255,7 @@ const CounselParent = () => {
                                                         </div>
                                                     </td>
                                                     <td className="w-1">
-                                                    {task.regDate && (
+                                                    {task.schedule && (
                                                             <p className={`whitespace-nowrap text-white-dark font-medium`}>상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일</p>
                                                     )}
                                                     </td>
@@ -283,7 +293,7 @@ const CounselParent = () => {
                                                                         {selectedTab !== 'trash' && (
                                                                             <>
                                                                                 <li>
-                                                                                    <button type="button" onClick={() => addEditTask(task.counselId)}>
+                                                                                    <button type="button" onClick={() => addEditTask(task)}>
                                                                                         <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
                                                                                         수정
                                                                                     </button>
@@ -351,12 +361,15 @@ const CounselParent = () => {
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
-                                                <label htmlFor="title">제목</label>
-                                                <input id="title" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.title} onChange={(e) => changeValue(e)}/>
+                                                <label htmlFor="category">제목</label>
+                                                <input id="category" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.category} onChange={(e) => changeValue(e)}/>
                                             </div>
                                             <div className="mb-5">
                                                 <label htmlFor="assignee">상담 대상</label>
                                                 <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
+                                                <option >
+                                                            선생님을 선택하세요.
+                                                </option>
                                                 {teacherList.length > 0 ? (
                                                     teacherList.map((teacher) => (
                                                         <option key={teacher.userId} value={teacher.userId}>
@@ -374,10 +387,9 @@ const CounselParent = () => {
                                                     <DatePicker
                                                         selected={selectedDate}
                                                         onChange={(date : any) => setSelectedDate(date)}
-                                                        dateFormat="yyyy/MM/dd"
+                                                        dateFormat="yyyy-MM-dd"
                                                         placeholderText="날짜를 선택하세요"
-                                                        className="form-input"
-                                                    />
+                                                        className="form-input"/>
                                                 </div>
                                             </div>
                                             <div className="ltr:text-right rtl:text-left flex justify-end items-center mt-8">
@@ -385,7 +397,7 @@ const CounselParent = () => {
                                                     취소
                                                 </button>
                                                 <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
-                                                    {params.counselId ? '저장' : '저장'}
+                                                    {params.counselId ? '수정' : '저장'}
                                                 </button>
                                             </div>
                                         </div>
@@ -435,33 +447,33 @@ const CounselParent = () => {
                                         <div className="p-5">
                                             <div className="p-5">
                                                 <div className="mb-5">
-                                                    <label htmlFor="title">제목</label>
-                                                    <p id="title" className="form-input">{selectedTask.category}</p>
+                                                    <label htmlFor="category">제목</label>
+                                                    <p id="category" className="form-input">{selectedTask.category}</p>
                                                 </div>
                                                 <div className="mb-5">
                                                     <label htmlFor="assignee">상담 대상</label>
-                                                    <p id="title" className="form-input">{teacherName} 선생님</p>
+                                                    <p id="category" className="form-input">{teacherName} 선생님</p>
                                                 </div>
                                                 <div className="mb-5 flex justify-between gap-4">
                                                     <div className="flex-1">
                                                         <label htmlFor="tag">상담일자</label>
                                                         {selectedTask.schedule && (
-                                                            <p id="title" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
+                                                            <p id="category" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
                                                         )}
                                                     </div>
                                                 </div>
                                                 <div className="mb-5">
                                                     <label htmlFor="assigned">승인 여부</label>
                                                     {selectedTask.counselState == 0 ? ( 
-                                                        <p id="title" className="form-input">신청 중</p>
+                                                        <p id="category" className="form-input">신청 중</p>
                                                     ) : (<></>
                                                     )}
                                                     {selectedTask.counselState == 1 ? ( 
-                                                        <p id="title" className="form-input">승인</p>
+                                                        <p id="category" className="form-input">승인</p>
                                                     ) : (<></>
                                                     )}
                                                     {selectedTask.counselState == 2 ? ( 
-                                                        <p id="title" className="form-input">반려</p>
+                                                        <p id="category" className="form-input">반려</p>
                                                     ) : (<></>
                                                     )}
                                                 </div>
