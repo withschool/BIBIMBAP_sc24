@@ -22,6 +22,9 @@ import DaumPost from './DaumPost';
 import DaumPostcode from 'react-daum-postcode';
 
 const SignInBoxed = () => {
+
+    
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -37,6 +40,16 @@ const SignInBoxed = () => {
     const [loginError, setLoginError] = useState('');
     const [result, setResult] = useState(true);
     const [daysInMonth, setDaysInMonth] = useState(31);
+
+    const onClickAddr = () => {
+        new window.daum.Postcode({
+          oncomplete: function (data: IAddr) {
+            (document.getElementById("addr") as HTMLInputElement).value =
+              data.address;
+            document.getElementById("addrDetail")?.focus();
+          },
+        }).open();
+      };
 
     let userInfoString = localStorage.getItem('certifyinfo')!;
     const userInfo = JSON.parse(userInfoString);
@@ -143,14 +156,19 @@ const SignInBoxed = () => {
 
     const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const birthDate = `${(year % 100).toString().padStart(2, '0')}${month}${day}`;
+        const birthDate = `${(year % 100).toString().padStart(2, '0')}${month.toString().padStart(2, '0')}${day.toString().padStart(2, '0')}`;
         const reqphoneNumber = changePhoneForm(phoneNumber);
+        const addrInput = document.getElementById("addr") as HTMLInputElement;
+        const addrDetailInput = document.getElementById("addrDetail") as HTMLInputElement;
+
+        const address = addrInput.value + " " + addrDetailInput.value
         try {
             // 무결성 검사
             if(
                 (!isStudent && (name === '')) ||
                 (sex === '') || 
-                (phoneNumber === '')
+                (phoneNumber === '') ||
+                (addrInput.value === '' || addrDetailInput.value === '')
                 ){
                     throw new Error('기입하지 않는 항목이 있습니다. 입력해 주세요.');
                 }
@@ -164,14 +182,15 @@ const SignInBoxed = () => {
             // 학생, 교사
             if(isStudent){
                 const userCode: string = localStorage.getItem('userCode') ?? '';
-                console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, "", userInfo.user.birthDate, -1)
-                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, "" , userInfo.user.birthDate, -1 , userCode);
+                console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1)
+                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1 , userCode);
             }
 
             // 학부모
             else{
-                console.log(id, email, password, name, sex==="male", phoneNumber, "", birthDate, 1)
-                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, "" , birthDate, 1 , "");
+                console.log(year, month, day);
+                console.log(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1)
+                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1 , "");
             }
 
             alert("회원가입이 완료되었습니다.");
@@ -203,25 +222,6 @@ const SignInBoxed = () => {
         };
         setDaysInMonth(calculateDaysInMonth(year, month));
     }, [year, month]);
-
-    const [address, setAddress] = useState('');
-    const [detailaddress, setDetailaddress] = useState('');
-    const [detail2address, setDetail2address] = useState('');
-    const [openPostcode, setOpenPostcode] = useState(false);
-
-    const clickButton =() =>{
-        setOpenPostcode(current => !current);
-    }
-
-    const selectAddress = (data : any) => {
-        console.log(`
-                주소: ${data.address},
-                우편번호: ${data.zonecode}
-            `)
-            setAddress(data.zonecode);
-            setDetailaddress(data.address);
-            setOpenPostcode(false);
-    }
 
     return (
         <div>
@@ -363,11 +363,24 @@ const SignInBoxed = () => {
                                 <div>
                                     <label htmlFor="Address">Address</label>
                                     <div className="relative text-white-dark">
-                                        <input type="text" id="sample4_roadAddress" className="form-input" placeholder="도로명주소"/>
-                                        <DaumPost/>
-                                        <input id="Email" type="email" placeholder="이메일을 입력해 주세요." className="form-input ps-10 placeholder:text-white-dark" value={email} onChange={handleEmail}/>
-                                        <script></script>
-                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                        <input
+                                            id="addr"
+                                            type="text"
+                                            className="form-input ps-10"
+                                            readOnly
+                                            placeholder='주소를 입력해주세요.'
+                                            onClick={onClickAddr}
+                                            />
+                                        <span className="absolute start-4 top-1/2 pb-10 -translate-y-1/2">
+                                            <IconLockDots fill={true} />
+                                        </span>
+                                        <input
+                                            id="addrDetail"
+                                            className="form-input ps-10"
+                                            type="text"
+                                            placeholder='상세 주소를 입력해주세요.'
+                                        />
+                                        <span className="absolute start-4 top-1/2 pt-9 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
                                     </div>
