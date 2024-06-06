@@ -15,6 +15,7 @@ public class ReqApplicationDefaultDTO {
     private String schoolPhoneNumber;
     private String schoolAdminName;
     private String schoolAdminEmail;
+    private int serviceType;
 
     public SchoolApplication toEntity(int state){
         return SchoolApplication.builder()
@@ -23,6 +24,8 @@ public class ReqApplicationDefaultDTO {
                 .schoolName(this.getSchoolName())
                 .schoolPhoneNumber(this.getSchoolPhoneNumber())
                 .state(state)
+                .serviceType(this.getServiceType())
                 .build();
     }
+
 }

@@ -43,6 +43,21 @@ public class SchoolApplication extends BaseEntity {
             """)
     private int state;
 
+    @Comment("""
+            서비스 타입
+            
+            0 ~ 2(월간)
+            0 - 소규모
+            1 - 중규모
+            2 - 대규모
+            
+            3 ~ 5(연간)
+            3 - 소규모
+            4 - 중규모
+            5 - 대규모
+            """)
+    private int serviceType;
+
     public ResApplicationDefaultDTO toResApplicationDefaultDTO(){
         return ResApplicationDefaultDTO.builder()
                 .schoolApplicationId(this.schoolApplicationId)
@@ -51,6 +66,7 @@ public class SchoolApplication extends BaseEntity {
                 .schoolAdminEmail(this.getSchoolAdminEmail())
                 .schoolPhoneNumber(this.getSchoolPhoneNumber())
                 .state(this.getState())
+                .serviceType(this.getServiceType())
                 .build();
     }
 
