@@ -40,6 +40,10 @@ public class CsvService {
     public void registerUser(CsvRequestDTO dto) throws RuntimeException{
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(dto.getFile().getInputStream(),"euc-kr"))) {
             List<String[]> lines = csvReader.readAll();
+
+            int inputUserCount = lines.size() - 1;
+            if(!userService.isEnoughUserRemain(inputUserCount)) throw new RuntimeException("too many user input");
+
             Long schoolId = userService.getCurrentUserSchoolId();
             lines.stream()
                     .skip(1)
