@@ -205,9 +205,7 @@ useEffect(() => {
                 
                 <div className="panel flex-1 overflow-auto h-full">
                     <div className="pb-5">
-                        <button type="button" className="xl:hidden hover:text-primary" onClick={() => setIsShowNoteMenu(!isShowNoteMenu)}>
-                            <IconMenu />
-                        </button>
+                        
                     </div>
                     {filterdNotesList.length ? (
                         <div className="sm:min-h-[300px] min-h-[400px]">

@@ -36,21 +36,23 @@ const StudentInfo = () => {
         fetchSubjectList();
     }, [targetStudent]);
 
-    useEffect(() => {
-        const fetchStudents = async () => {
-            try {
-                const data = await listingStudent();
-                setStudentList(data);
-                if (data.length > 0) {
-                    setTargetStudent(data[0].user.userId);
-                    localStorage.setItem('TargetStudent', data[0].user.userId);
-                }
-            } catch (error) {
-                console.error('Error fetching student list:', error);
+    const fetchStudents = async () => {
+        try {
+            const data = await listingStudent();
+            setStudentList(data);
+            if (data.length > 0) {
+                setTargetStudent(data[0].user.userId);
+                localStorage.setItem('TargetStudent', data[0].user.userId);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching student list:', error);
+        }
+    };
+
+    useEffect(() => {
         fetchStudents();
     }, []);
+    
     
     useEffect(() => {
         const fetchStudentData = async () => {
@@ -75,6 +77,7 @@ const StudentInfo = () => {
         const ismaped = await mappingStudent(userCode);
         if(ismaped) { 
             alert("학생 연결이 완료되었습니다.");
+            await fetchStudents();
             setModal21(false);
         }
         else alert("학생 연결에 실패하였습니다.");
