@@ -26,7 +26,7 @@ public class PaymetFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         User user = userService.getCurrentUser();
-        if(user.getAccountType() == 1) filterChain.doFilter(request, response);
+        if(user.getAccountType() == 1 || user.getAccountType() == 4) filterChain.doFilter(request, response);
         else{
             Long schoolId = user.getSchoolInformation().getSchoolId();
             SchoolInformation schoolInformation = schoolInformationService.dtoToEntity(schoolInformationService.findById(schoolId));
