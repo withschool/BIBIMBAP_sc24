@@ -215,6 +215,25 @@ const SignInBoxed = () => {
                                     </div>
                                 )}
                                 <label htmlFor="Birth">Birth</label>
+                                {isStudent ? (
+                                <div>
+                                    <div className="relative text-gray-500 bg-gray-300 rounded-md ps-10 p-2 flex items-center">
+                                        {((userInfo.user.birthDate) < 500000) ? (
+                                        <div>
+                                            {'20'+((userInfo.user.birthDate)/10000|0)+' 년 '+(((userInfo.user.birthDate)/100)%100|0)+' 월 '+((userInfo.user.birthDate)%100)+' 일'}
+                                        </div>
+                                        ) : (
+                                        <div>
+                                            {'19'+((userInfo.user.birthDate)/10000|0)+' 년 '+(((userInfo.user.birthDate)/100)%100|0)+' 월 '+((userInfo.user.birthDate)%100)+' 일'}
+                                        </div>
+                                        )
+                                        }
+                                        <span className="absolute start-3 mr-3 top-1/2 -translate-y-1/2">
+                                            <IconLaptop fill={true} />
+                                        </span>
+                                    </div>
+                                </div>
+                                ) : (
                                     <div className="flex relative text-white-dark">
                                         <select
                                             value={year}
@@ -244,6 +263,7 @@ const SignInBoxed = () => {
                                             ))}
                                         </select>
                                     </div>
+                                    )}
                                 <div>
                                     <label htmlFor="Sex">Sex</label>
                                     <div className="relative text-white-dark">
