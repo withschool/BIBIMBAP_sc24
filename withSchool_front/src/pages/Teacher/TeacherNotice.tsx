@@ -604,25 +604,48 @@ const TeacherNotice = () => {
                     {!selectedMail && !isEdit && (
                         <div className="flex flex-col h-full">
                             <div className="flex justify-between items-center flex-wrap-reverse gap-4 p-4">
-                                <div className="flex justify-between items-center sm:w-auto w-full">
-                                    <div className="flex items-center ltr:mr-4 rtl:ml-4">
-                                        <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
-                                            <IconMenu />
-                                        </button>
-                                        <div className="relative group">
-                                            <input
-                                                type="text"
-                                                className="form-input ltr:pr-8 rtl:pl-8 peer"
-                                                placeholder="공지 검색하기"
-                                                value={searchText}
-                                                onChange={(e) => setSearchText(e.target.value)}
-                                                onKeyUp={() => searchMails()}
-                                            />
-                                            <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
-                                                <IconSearch />
-                                            </div>
+                                <div className="flex items-center sm:w-auto w-full">
+                                    <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
+                                        <IconMenu />
+                                    </button>
+                                    <div className="relative group">
+                                        <input
+                                            type="text"
+                                            className="form-input ltr:pr-8 rtl:pl-8 peer"
+                                            placeholder="공지 검색하기"
+                                            value={searchText}
+                                            onChange={(e) => setSearchText(e.target.value)}
+                                            onKeyUp={() => searchMails()}
+                                        />
+                                        <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
+                                            <IconSearch />
                                         </div>
                                     </div>
+                                </div>
+                                <div className="flex items-center sm:w-auto w-full justify-end">
+                                    <div className="ltr:mr-3 rtl:ml-3">{pager.startIndex + 1 + '-' + (pager.endIndex + 1) + ' of ' + filteredMailList.length}</div>
+                                    <button
+                                        type="button"
+                                        disabled={pager.currentPage === 1}
+                                        className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 ltr:mr-3 rtl:ml-3 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            pager.currentPage--;
+                                            searchMails(false);
+                                        }}
+                                    >
+                                        <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={pager.currentPage === pager.totalPages}
+                                        className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            pager.currentPage++;
+                                            searchMails(false);
+                                        }}
+                                    >
+                                        <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                    </button>
                                 </div>
                             </div>
                             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
@@ -639,7 +662,7 @@ const TeacherNotice = () => {
                                         </tr>
                                     </thead>
                                         <tbody>
-                                            {mailList.map((mail: any, index: number) => {
+                                            {pagedMails.map((mail: any, index: number) => {
                                                 return (
                                                     <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
                                                         <td>
