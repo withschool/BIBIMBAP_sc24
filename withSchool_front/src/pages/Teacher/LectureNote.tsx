@@ -81,7 +81,7 @@ export const LectureNote = () => {
             showMessage('제목을 입력해 주세요.', 'error');
             return false;
         }
-        if (!params.selectedFiles) {
+        if (!selectedFiles) {
             showMessage('파일을 넣어 주세요.', 'error');
             return false;
         }
