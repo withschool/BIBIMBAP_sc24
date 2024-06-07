@@ -444,7 +444,7 @@ const TeacherNotice = () => {
                         formData.append("file", file);
                     });
                 }
-
+                setSelectedFiles(null);    
                 if(edit){
                     const response = await classNoticeEdit(formData, id);
                     obj.type = 'sent_notice';

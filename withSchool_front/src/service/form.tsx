@@ -77,6 +77,29 @@ export const classNoticeEdit = async (formData: FormData, noticeId: string): Pro
   }
 };
 
+export const subjectNoticeEdit = async (formData: FormData, noticeId: string): Promise<any> => {
+  try {
+    const response = await fetch(`${url}/subjects/notices/${noticeId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('공지 작성 완료:', data);
+      return data;
+    } else {
+      const errorMessage = await response.text();
+      console.error('공지 작성 실패:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  } catch (errorss) {
+    console.error('공지 실패했어요:', errorss);
+  }
+};
 
 export const adminNoticeDelete = async (noticeId: string): Promise<any> => {
   try {

@@ -446,7 +446,8 @@ const AdminNotice = () => {
                         formData.append("file", file);
                     });
                 }
-    
+                
+                setSelectedFiles(null);
                 if (edit) {
                     const response = await adminNoticeEdit(formData, id);
                     obj.type = 'sent_notice';

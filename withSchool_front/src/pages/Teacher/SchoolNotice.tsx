@@ -56,7 +56,7 @@ const SchoolNotice = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('adminNotice'));
+        dispatch(setPageTitle('학교 공지'));
     }, [dispatch]);
 
     const defaultParams = {
@@ -101,47 +101,47 @@ const SchoolNotice = () => {
         searchMails(false);
     };
 
-    useEffect(() => {
-        const fetchNotices = async () => {
-            try {
-                const childId = localStorage.getItem('schoolId');
-                const notices = await getSchoolNotices(Number(childId));
-                console.log(notices);
-                if (notices && Array.isArray(notices)) {
-                    const formattedNotices = notices.map((notice: any) => ({
-                        id: notice.noticeId,
-                        path: 'profile-15.jpeg',
-                        firstName: notice.user.name.split(' ')[0],
-                        lastName: notice.user.name.split(' ')[1] || '',
-                        email: 'test@test.com',
-                        date: notice.regDate, // Convert regDate to Date object
-                        time: '2:00 PM',
-                        title: notice.title,
-                        displayDescription: notice.title,
-                        type: 'inbox',
-                        isImportant: false,
-                        isStar: false,
-                        group: 'personal',
-                        isUnread: false,
-                        attachments: [
-                            {
-                                name: notice.fileURl,
-                                type: 'file',
-                            },
-                        ],
-                        description: notice.content,
-                    })).reverse(); // Reverse the order of notices
-                    setMailList(formattedNotices);
-                    setFilteredMailList(formattedNotices);
-                    setPagedMails(formattedNotices.slice(0, 10));
-                } else {
-                    console.error('No notices found or invalid data format');
-                }
-            } catch (error) {
-                console.error('Failed to fetch notices:', error);
+    const fetchNotices = async () => {
+        try {
+            const childId = localStorage.getItem('schoolId');
+            const notices = await getSchoolNotices(Number(childId));
+            console.log(notices);
+            if (notices && Array.isArray(notices)) {
+                const formattedNotices = notices.map((notice: any) => ({
+                    id: notice.noticeId,
+                    path: 'profile-15.jpeg',
+                    firstName: notice.user.name.split(' ')[0],
+                    lastName: notice.user.name.split(' ')[1] || '',
+                    email: 'test@test.com',
+                    date: notice.regDate, // Convert regDate to Date object
+                    time: '2:00 PM',
+                    title: notice.title,
+                    displayDescription: notice.title,
+                    type: 'inbox',
+                    isImportant: false,
+                    isStar: false,
+                    group: 'personal',
+                    isUnread: false,
+                    attachments: [
+                        {
+                            name: notice.fileURl,
+                            type: 'file',
+                        },
+                    ],
+                    description: notice.content,
+                })).reverse(); // Reverse the order of notices
+                setMailList(formattedNotices);
+                setFilteredMailList(formattedNotices);
+                setPagedMails(formattedNotices.slice(0, 10));
+            } else {
+                console.error('No notices found or invalid data format');
             }
-        };
+        } catch (error) {
+            console.error('Failed to fetch notices:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchNotices();
     }, []);
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
@@ -317,6 +317,7 @@ const SchoolNotice = () => {
 
     const openMail = (type: string, item: any) => {
         if (type === 'add') {
+            setEdit(false);
             setIsShowMailMenu(false);
             setParams(JSON.parse(JSON.stringify(defaultParams)));
         } else if (type === 'draft') {
@@ -374,10 +375,7 @@ const SchoolNotice = () => {
         setFilteredMailList([
             ...res.filter(
                 (d) =>
-                    (d.title && d.title.toLowerCase().includes(searchText)) ||
-                    (d.firstName && d.firstName.toLowerCase().includes(searchText)) ||
-                    (d.lastName && d.lastName.toLowerCase().includes(searchText)) ||
-                    (d.displayDescription && d.displayDescription.toLowerCase().includes(searchText))
+                    (d.title && d.title.toLowerCase().includes(searchText))
             ),
         ]);
 
@@ -404,13 +402,13 @@ const SchoolNotice = () => {
             showMessage('제목을 작성해 주세요.', 'error');
             return false;
         }
-
+    
         let maxId = 0;
         if (!params.id) {
             maxId = mailList.length ? mailList.reduce((max, character) => (character.id && character.id > max ? character.id : max), 0) : 0;
         }
         let cDt = new Date();
-
+    
         let obj: any = {
             id: maxId + 1,
             path: '',
@@ -429,46 +427,53 @@ const SchoolNotice = () => {
             attachments: null,
         };
         setIsLoading(true);
+        
         if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
-            setMailList((prevMailList) => [obj, ...prevMailList]);
-            searchMails();
+            setMailList((prevMailList) => {
+                const newMailList = [obj, ...prevMailList];
+                return newMailList;
+            });
+            searchMails(); // 검색 함수 호출
             showMessage('Mail has been saved successfully to draft.');
         } else if (type === 'send' || type === 'reply' || type === 'forward') {
             try {
                 const formData = new FormData();
                 formData.append("title", params.title);
                 formData.append("content", params.description);
-
+    
                 if (selectedFiles) {
                     Array.from(selectedFiles).forEach(file => {
                         formData.append("file", file);
                     });
                 }
-
-                if(edit){
+    
+                if (edit) {
                     const response = await adminNoticeEdit(formData, id);
                     obj.type = 'sent_notice';
-                    setMailList((prevMailList) => [obj, ...prevMailList]);
-                    searchMails();
+                    setMailList((prevMailList) => {
+                        const newMailList = [obj, ...prevMailList];
+                        return newMailList;
+                    });
                     setIsLoading(false);
                     showMessage('공지가 성공적으로 수정되었습니다.');
                     setEdit(false);
-                }
-                else{
+                    fetchNotices();
+                } else {
                     const response = await adminNotice(formData);
                     obj.type = 'sent_notice';
-                    setMailList((prevMailList) => [obj, ...prevMailList]);
-                    searchMails();
+                    setMailList((prevMailList) => {
+                        const newMailList = [obj, ...prevMailList];
+                        return newMailList;
+                    });
                     setIsLoading(false);
                     showMessage('공지가 성공적으로 작성되었습니다.');
-                    window.location.reload();
+                    fetchNotices();
                 }
-
             } catch (error) {
                 showMessage('공지 작성에 실패했습니다.', 'error');
             }
         }
-
+    
         setSelectedMail(null);
         setIsEdit(false);
     };
@@ -477,7 +482,8 @@ const SchoolNotice = () => {
         await adminNoticeDelete(id);
         showMessage('공지가 성공적으로 삭제되었습니다.');
         searchMails();
-        window.location.reload();
+        fetchNotices();
+        setSelectedMail(null);
     }
 
     const getFileSize = (file_type: any) => {
@@ -555,51 +561,72 @@ const SchoolNotice = () => {
     return (
         <div>
             <div className="flex gap-5 relative sm:h-[calc(100vh_-_150px)] h-full">
-                <div
-                    className={`overlay bg-black/60 z-[5] w-full h-full rounded-md absolute hidden ${isShowMailMenu ? '!block xl:!hidden' : ''}`}
-                    onClick={() => setIsShowMailMenu(!isShowMailMenu)}
-                ></div>
+               
 
                 <div className="panel p-0 flex-1 overflow-x-hidden h-full">
                     {!selectedMail && !isEdit && (
                         <div className="flex flex-col h-full">
                             <div className="flex justify-between items-center flex-wrap-reverse gap-4 p-4">
-                                <div className="flex justify-between items-center sm:w-auto w-full">
-                                    <div className="flex items-center ltr:mr-4 rtl:ml-4">
-                                        <div className="relative group">
-                                            <input
-                                                type="text"
-                                                className="form-input ltr:pr-8 rtl:pl-8 peer"
-                                                placeholder="공지 검색하기"
-                                                value={searchText}
-                                                onChange={(e) => setSearchText(e.target.value)}
-                                                onKeyUp={() => searchMails()}
-                                            />
-                                            <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
-                                                <IconSearch />
-                                            </div>
+                                <div className="flex items-center sm:w-auto w-full">
+                                   
+                                    <div className="relative group">
+                                        <input
+                                            type="text"
+                                            className="form-input ltr:pr-8 rtl:pl-8 peer"
+                                            placeholder="공지 검색하기"
+                                            value={searchText}
+                                            onChange={(e) => setSearchText(e.target.value)}
+                                            onKeyUp={() => searchMails()}
+                                        />
+                                        <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
+                                            <IconSearch />
                                         </div>
                                     </div>
+                                </div>
+                                <div className="flex items-center sm:w-auto w-full justify-end">
+                                    <div className="ltr:mr-3 rtl:ml-3">{pager.startIndex + 1 + '-' + (pager.endIndex + 1) + ' of ' + filteredMailList.length}</div>
+                                    <button
+                                        type="button"
+                                        disabled={pager.currentPage === 1}
+                                        className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 ltr:mr-3 rtl:ml-3 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            pager.currentPage--;
+                                            searchMails(false);
+                                        }}
+                                    >
+                                        <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={pager.currentPage === pager.totalPages}
+                                        className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            pager.currentPage++;
+                                            searchMails(false);
+                                        }}
+                                    >
+                                        <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                    </button>
                                 </div>
                             </div>
                             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                             {pagedMails.length ? (
                                 
                                 <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
-                                    <table className="table-hover w-full">
-                                        <thead>
-                                            <tr>
-                                                <th className="text-left px-4 py-2">작성자</th>
-                                                <th className="text-left px-4 py-2">제목</th>
-                                                <th className="text-center px-4 py-2">파일</th>
-                                                <th className="text-center px-4 py-2 pr-2">작성일시</th>
-                                            </tr>
-                                        </thead>
+                                    <table className="table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>작성자</th>
+                                            <th>제목</th>
+                                            <th className='text-center'>파일</th>
+                                            <th className='text-center'>작성일자</th>
+                                        </tr>
+                                    </thead>
                                         <tbody>
-                                            {mailList.map((mail: any, index: number) => {
+                                            {pagedMails.map((mail: any, index: number) => {
                                                 return (
                                                     <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
-                                                        <td className="px-4 py-2">
+                                                        <td>
                                                             <div className="flex items-center whitespace-nowrap">
                                                                 <div
                                                                     className={`dark:text-gray-300 whitespace-nowrap font-semibold ${!mail.isUnread ? 'text-gray-500 dark:text-gray-500 font-normal' : ''
@@ -609,15 +636,15 @@ const SchoolNotice = () => {
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2">
+                                                        <td>
                                                             <div className="font-medium text-white-dark overflow-hidden min-w-[300px] line-clamp-1">
                                                                 <span className={`${mail.isUnread ? 'text-gray-800 dark:text-gray-300 font-semibold' : ''}`}>
                                                                     <span>{mail.title}</span>
                                                                 </span>
                                                             </div>
                                                         </td>
-                                                        <td className="px-4 py-2 text-center">
-                                                            <div className="flex justify-center">
+                                                        <td>
+                                                            <div className="flex justify-content: flex-end">
                                                                 {fileExists[index] && (
                                                                     <div className="ltr:ml-4 rtl:mr-4">
                                                                         <IconPaperclip />
@@ -632,7 +659,6 @@ const SchoolNotice = () => {
                                         </tbody>
                                     </table>
                                 </div>
-
                             ) : (
                                 <div className="grid place-content-center min-h-[300px] font-semibold text-lg h-full">작성된 공지가 없습니다.</div>
                             )}
