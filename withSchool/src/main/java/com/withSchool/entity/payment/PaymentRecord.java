@@ -17,12 +17,13 @@ import java.time.LocalDateTime;
 @ToString
 public class PaymentRecord{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long paymentId;
+    private String paymentId;
 
     private LocalDateTime paymentDate;
 
     private double amount;
+
+    private boolean success;
 
     @ManyToOne
     @JoinColumn(name = "subscription_id")

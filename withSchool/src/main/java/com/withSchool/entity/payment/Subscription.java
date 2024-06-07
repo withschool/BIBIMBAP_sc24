@@ -4,7 +4,7 @@ import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -20,15 +20,15 @@ public class Subscription {
     @Enumerated(EnumType.STRING)
     private Plan plan;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String billingKey;
 
     @ManyToOne
     @JoinColumn(name = "school_id")
     private SchoolInformation schoolInformation;
 
-    public void changeEndDate(LocalDateTime endDate){
+    public void changeEndDate(LocalDate endDate){
         this.endDate = endDate;
     }
 }

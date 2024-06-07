@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,7 +59,7 @@ public class SchoolInformationService {
     }
 
     @Transactional
-    public Subscription subscribeSchool(Long schoolId, Plan plan, String billingKey, LocalDateTime endDate) {
+    public Subscription subscribeSchool(Long schoolId, Plan plan, String billingKey, LocalDate endDate) {
         Optional<SchoolInformation> schoolOpt = schoolInformationRepository.findById(schoolId);
         if (schoolOpt.isEmpty()) {
             throw new RuntimeException("해당하는 학교가 없습니다");
@@ -69,7 +69,7 @@ public class SchoolInformationService {
 
         Subscription subscription = Subscription.builder()
                 .plan(plan)
-                .startDate(LocalDateTime.now())
+                .startDate(LocalDate.now())
                 .endDate(endDate)
                 .billingKey(billingKey)
                 .schoolInformation(school)
@@ -79,7 +79,7 @@ public class SchoolInformationService {
     }
 
     @Transactional
-    public Subscription upgradeSubscription(Long subscriptionId, Plan newPlan,LocalDateTime endDate) {
+    public Subscription upgradeSubscription(Long subscriptionId, Plan newPlan,LocalDate endDate) {
         Optional<Subscription> subscriptionOpt = subscriptionRepository.findById(subscriptionId);
         if (subscriptionOpt.isEmpty()) {
             throw new RuntimeException("이용하시고 있는 플랜이 없습니다");
@@ -87,12 +87,12 @@ public class SchoolInformationService {
 
         Subscription subscription = subscriptionOpt.get();
         // 기존 플랜 종료
-        subscription.changeEndDate(LocalDateTime.now());
+        subscription.changeEndDate(LocalDate.now());
         subscriptionRepository.save(subscription);
         // 새로운 플랜 등록
         Subscription newSubscription = Subscription.builder()
                 .plan(newPlan)
-                .startDate(LocalDateTime.now())
+                .startDate(LocalDate.now())
                 .endDate(endDate)
                 .billingKey(subscription.getBillingKey())
                 .schoolInformation(subscription.getSchoolInformation())
