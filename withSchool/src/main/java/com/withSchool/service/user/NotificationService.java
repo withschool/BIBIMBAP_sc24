@@ -90,8 +90,15 @@ public class NotificationService {
         try {
             helper.setFrom(fromEmail);
             helper.setTo(reqApplicationDefaultDTO.getSchoolAdminEmail());
-            helper.setSubject("신청서 등록");
-            helper.setText("신청서가 등록되었습니다. 확인해주세요.");
+            helper.setSubject("학교랑 서비스 신청서 등록 완료");
+            helper.setText("학교랑 서비스 신청서가 등록되었습니다.\n" +
+                    "신청하신 내용은 아래와 같습니다.\n" +
+                    "이름 : " + reqApplicationDefaultDTO.getSchoolAdminName() + "\n" +
+                    "이메일: " + reqApplicationDefaultDTO.getSchoolAdminEmail() + "\n" +
+                    "학교 이름: " + reqApplicationDefaultDTO.getSchoolName() + "\n" +
+//                    "학교 코드: " + reqApplicationDefaultDTO.getSchoolCode() + "\n
+                    "전화번호: " + reqApplicationDefaultDTO.getSchoolPhoneNumber() + "\n" +
+                    "최초 신청 후 승인까지 1~2일 소요될 수 있습니다. 감사합니다.\n");
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

@@ -22,8 +22,9 @@ public class SchoolApplicationService {
 
     public ResApplicationDefaultDTO save(ReqApplicationDefaultDTO reqApplicationDefaultDTO) {
         SchoolApplication req = reqApplicationDefaultDTO.toEntity(0);
+        ResApplicationDefaultDTO res = schoolApplicationRepository.save(req).toResApplicationDefaultDTO();
         notificationService.sendApplicationMessage(reqApplicationDefaultDTO);
-        return schoolApplicationRepository.save(req).toResApplicationDefaultDTO();
+        return res;
     }
 
     public List<ResApplicationDefaultDTO> findAll() {
