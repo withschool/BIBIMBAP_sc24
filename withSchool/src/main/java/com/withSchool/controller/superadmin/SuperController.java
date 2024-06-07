@@ -30,7 +30,7 @@ public class SuperController {
 
     @PostMapping("/schools")
     @Operation(summary = "슈퍼 어드민의 학교 모델 등록")
-    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO) {
+    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO, @RequestBody String adminEmail) {
         SchoolInformation schoolInformation = schoolInformationService.save(schoolInformationService.dtoToEntity(schoolInformationDTO));
         if (schoolInformation == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -38,7 +38,7 @@ public class SuperController {
                     .body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
 
         try {
-            userService.registerAdmin(schoolInformationDTO);
+            userService.registerAdmin(schoolInformationDTO, adminEmail);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)

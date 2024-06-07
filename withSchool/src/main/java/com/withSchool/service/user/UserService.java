@@ -87,7 +87,7 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public void registerAdmin(SchoolInformationDTO dto) throws Exception{
+    public void registerAdmin(SchoolInformationDTO dto, String adminEmail) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();
@@ -96,6 +96,7 @@ public class UserService {
                     .password(passwordEncoder.encode("1234"))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
+                    .email(adminEmail)
                     .schoolInformation(schoolInformation)
                     .build();
             userRepository.save(admin);
@@ -292,7 +293,23 @@ public class UserService {
         return userRepository.findStudentByClassId(schoolId);
     }
 
+    public boolean isEnoughUserRemain(int inputSize) {
+        SchoolInformation currentUserSchool = getCurrentUserSchoolInformation(null);
+        List<User> specificSchoolUser = userRepository.findAllBySchoolInformation_SchoolIdAndAccountTypeNot(currentUserSchool.getSchoolId(), 4);
+
+        int userLimit = 0;
+        if(currentUserSchool.getServiceType() == 0) userLimit = 300;
+        else if(currentUserSchool.getServiceType() == 1) userLimit = 500;
+        else if(currentUserSchool.getServiceType() == 2) userLimit = 700;
+
+        int specificSchoolUserCount = specificSchoolUser.size();
+
+        return userLimit - specificSchoolUserCount >= inputSize;
+    }
+
     public void addOneUser(ReqUserRegisterDTO reqUserRegisterDTO) {
+        if(!this.isEnoughUserRemain(1)) throw new RuntimeException("too many user input");
+
         int accountType = reqUserRegisterDTO.getType().equals("학생") ? 0 : 2;
         String name = reqUserRegisterDTO.getName();
         String birthDate = reqUserRegisterDTO.getBirthDate();
