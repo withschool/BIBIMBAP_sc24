@@ -38,7 +38,6 @@ public class BasicController {
     private final NotificationService notificationService;
     private final SchoolApplicationService schoolApplicationService;
 
-
     @PostMapping("/pre-sign-up")
     @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")
     public ResponseEntity<Map<String, Object>> preRegisterUser(@RequestBody PreSignUpRequestDTO preSignUpRequestDTO) {

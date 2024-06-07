@@ -5,11 +5,18 @@ import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
+import com.withSchool.service.user.NotificationService;
+import com.withSchool.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +28,28 @@ public class SchoolInformationService {
 
     private final SchoolInformationRepository schoolInformationRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
+
+    public ResponseEntity<String> saveSchool(SchoolInformationDTO schoolInformationDTO, String adminEmail) {
+        SchoolInformation schoolInformation = this.save(this.dtoToEntity(schoolInformationDTO));
+        if (schoolInformation == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
+        }
+
+        try {
+            userService.registerAdmin(schoolInformationDTO, adminEmail);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                    .body("어드민 계정 생성중에 오류가 발생하였습니다");
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(schoolInformation.getSchulNm() + ", 학교어드민 계정이 생성되었습니다.");
+    }
 
     public List<SchoolInformationListDTO> findAll() {
         return schoolInformationRepository.findAll().stream().map(schoolInformation -> new SchoolInformationListDTO(

@@ -6,13 +6,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.HashMap;
+
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ import java.util.List;
 public class NotificationService {
 
     private final StudentParentService studentParentService;
+
 
     @Value("${coolsms-API-KEY}")
     String apiKey;
