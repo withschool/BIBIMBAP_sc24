@@ -20,7 +20,7 @@ const StudentInfo = () => {
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
-    const [targetStudent, setTargetStudent] = useState<any>('');
+    const [targetStudent, setTargetStudent] = useState<any>(localStorage.getItem("TargetStudent"));
     const [targetStudentInfo, setTargetStudentInfo] = useState<any>('');
     const [subjectList, setSubjectList] = useState<any[]>([]);
 
@@ -40,10 +40,6 @@ const StudentInfo = () => {
         try {
             const data = await listingStudent();
             setStudentList(data);
-            if (data.length > 0) {
-                setTargetStudent(data[0].user.userId);
-                localStorage.setItem('TargetStudent', data[0].user.userId);
-            }
         } catch (error) {
             console.error('Error fetching student list:', error);
         }
@@ -59,7 +55,6 @@ const StudentInfo = () => {
             try {
                 if (targetStudent) {
                     const data = await getStudentInfoById(targetStudent);
-                    localStorage.setItem('TargetStudent', targetStudent);
                     setTargetStudentInfo(data);
                 }
             } catch (error) {
@@ -153,7 +148,7 @@ const StudentInfo = () => {
                                                 before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
                                         >
                                             <IconPhone className="ltr:mr-2 rtl:ml-2" />
-                                            학생 선택
+                                            학생 목록
                                         </button>
                                     )}
                                 </Tab>
@@ -292,11 +287,10 @@ const StudentInfo = () => {
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>이름</th>
-                                                    <th>학교</th>
-                                                    <th>생년월일</th>
-                                                    <th>등록일</th>
-                                                    <th className="text-center">선택</th>
+                                                    <th className='w-1/4'>이름</th>
+                                                    <th className='w-1/4'>학교</th>
+                                                    <th className='w-1/4'>생년월일</th>
+                                                    <th className='w-1/4'>등록일</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -325,13 +319,6 @@ const StudentInfo = () => {
                                                                 )}
                                                             </td>
                                                             <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일</td>
-                                                            <td className="text-center">
-                                                                <Tippy >
-                                                                    <button type="button" onClick={() => handleChange(data.user.userId)}>
-                                                                        <IconAt className="m-auto" />
-                                                                    </button>
-                                                                </Tippy>
-                                                            </td>
                                                         </tr>
                                                     );
                                                 })}
