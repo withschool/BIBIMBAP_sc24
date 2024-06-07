@@ -56,7 +56,7 @@ const AdminNotice = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('adminNotice'));
+        dispatch(setPageTitle('학교 공지'));
     }, [dispatch]);
 
     const defaultParams = {
@@ -101,47 +101,47 @@ const AdminNotice = () => {
         searchMails(false);
     };
 
-    useEffect(() => {
-        const fetchNotices = async () => {
-            try {
-                const childId = localStorage.getItem('schoolId');
-                const notices = await getSchoolNotices(Number(childId));
-                console.log(notices);
-                if (notices && Array.isArray(notices)) {
-                    const formattedNotices = notices.map((notice: any) => ({
-                        id: notice.noticeId,
-                        path: 'profile-15.jpeg',
-                        firstName: notice.user.name.split(' ')[0],
-                        lastName: notice.user.name.split(' ')[1] || '',
-                        email: 'test@test.com',
-                        date: notice.regDate, // Convert regDate to Date object
-                        time: '2:00 PM',
-                        title: notice.title,
-                        displayDescription: notice.title,
-                        type: 'inbox',
-                        isImportant: false,
-                        isStar: false,
-                        group: 'personal',
-                        isUnread: false,
-                        attachments: [
-                            {
-                                name: notice.fileURl,
-                                type: 'file',
-                            },
-                        ],
-                        description: notice.content,
-                    })).reverse(); // Reverse the order of notices
-                    setMailList(formattedNotices);
-                    setFilteredMailList(formattedNotices);
-                    setPagedMails(formattedNotices.slice(0, 10));
-                } else {
-                    console.error('No notices found or invalid data format');
-                }
-            } catch (error) {
-                console.error('Failed to fetch notices:', error);
+    const fetchNotices = async () => {
+        try {
+            const childId = localStorage.getItem('schoolId');
+            const notices = await getSchoolNotices(Number(childId));
+            console.log(notices);
+            if (notices && Array.isArray(notices)) {
+                const formattedNotices = notices.map((notice: any) => ({
+                    id: notice.noticeId,
+                    path: 'profile-15.jpeg',
+                    firstName: notice.user.name.split(' ')[0],
+                    lastName: notice.user.name.split(' ')[1] || '',
+                    email: 'test@test.com',
+                    date: notice.regDate, // Convert regDate to Date object
+                    time: '2:00 PM',
+                    title: notice.title,
+                    displayDescription: notice.title,
+                    type: 'inbox',
+                    isImportant: false,
+                    isStar: false,
+                    group: 'personal',
+                    isUnread: false,
+                    attachments: [
+                        {
+                            name: notice.fileURl,
+                            type: 'file',
+                        },
+                    ],
+                    description: notice.content,
+                })).reverse(); // Reverse the order of notices
+                setMailList(formattedNotices);
+                setFilteredMailList(formattedNotices);
+                setPagedMails(formattedNotices.slice(0, 10));
+            } else {
+                console.error('No notices found or invalid data format');
             }
-        };
+        } catch (error) {
+            console.error('Failed to fetch notices:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchNotices();
     }, []);
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
@@ -317,6 +317,7 @@ const AdminNotice = () => {
 
     const openMail = (type: string, item: any) => {
         if (type === 'add') {
+            setEdit(false);
             setIsShowMailMenu(false);
             setParams(JSON.parse(JSON.stringify(defaultParams)));
         } else if (type === 'draft') {
@@ -404,13 +405,13 @@ const AdminNotice = () => {
             showMessage('제목을 작성해 주세요.', 'error');
             return false;
         }
-
+    
         let maxId = 0;
         if (!params.id) {
             maxId = mailList.length ? mailList.reduce((max, character) => (character.id && character.id > max ? character.id : max), 0) : 0;
         }
         let cDt = new Date();
-
+    
         let obj: any = {
             id: maxId + 1,
             path: '',
@@ -429,46 +430,53 @@ const AdminNotice = () => {
             attachments: null,
         };
         setIsLoading(true);
+        
         if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
-            setMailList((prevMailList) => [obj, ...prevMailList]);
-            searchMails();
+            setMailList((prevMailList) => {
+                const newMailList = [obj, ...prevMailList];
+                return newMailList;
+            });
+            searchMails(); // 검색 함수 호출
             showMessage('Mail has been saved successfully to draft.');
         } else if (type === 'send' || type === 'reply' || type === 'forward') {
             try {
                 const formData = new FormData();
                 formData.append("title", params.title);
                 formData.append("content", params.description);
-
+    
                 if (selectedFiles) {
                     Array.from(selectedFiles).forEach(file => {
                         formData.append("file", file);
                     });
                 }
-
-                if(edit){
+    
+                if (edit) {
                     const response = await adminNoticeEdit(formData, id);
                     obj.type = 'sent_notice';
-                    setMailList((prevMailList) => [obj, ...prevMailList]);
-                    searchMails();
+                    setMailList((prevMailList) => {
+                        const newMailList = [obj, ...prevMailList];
+                        return newMailList;
+                    });
                     setIsLoading(false);
                     showMessage('공지가 성공적으로 수정되었습니다.');
                     setEdit(false);
-                }
-                else{
+                    fetchNotices();
+                } else {
                     const response = await adminNotice(formData);
                     obj.type = 'sent_notice';
-                    setMailList((prevMailList) => [obj, ...prevMailList]);
-                    searchMails();
+                    setMailList((prevMailList) => {
+                        const newMailList = [obj, ...prevMailList];
+                        return newMailList;
+                    });
                     setIsLoading(false);
                     showMessage('공지가 성공적으로 작성되었습니다.');
-                    window.location.reload();
+                    fetchNotices();
                 }
-
             } catch (error) {
                 showMessage('공지 작성에 실패했습니다.', 'error');
             }
         }
-
+    
         setSelectedMail(null);
         setIsEdit(false);
     };
@@ -477,7 +485,8 @@ const AdminNotice = () => {
         await adminNoticeDelete(id);
         showMessage('공지가 성공적으로 삭제되었습니다.');
         searchMails();
-        window.location.reload();
+        fetchNotices();
+        setSelectedMail(null);
     }
 
     const getFileSize = (file_type: any) => {
@@ -662,7 +671,7 @@ const AdminNotice = () => {
                                                                 )}
                                                             </div>
                                                         </td>
-                                                        <td className=" whitespace-nowrap font-medium ltr:text-right rtl:text-left">{mail.date[0]}년 {mail.date[1]}월 {mail.date[2]}일 {mail.date[3]}:{mail.date[4]}</td>
+                                                        <td className=" whitespace-nowrap font-medium ltr:text-right rtl:text-left">{String(mail.date[0])}년 {String(mail.date[1]).padStart(2, '0')}월 {String(mail.date[2]).padStart(2, '0')}일 {String(mail.date[3]).padStart(2, '0')}:{String(mail.date[4]).padStart(2, '0')}</td>
                                                     </tr>
                                                 );
                                             })}
