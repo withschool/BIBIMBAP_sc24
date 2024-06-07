@@ -368,10 +368,6 @@ const AdminNotice = () => {
     };
 
     const saveNotice = async (type: any, id: any) => {
-        if (!params.to) {
-            showMessage('필요 내용을 작성해 주세요.', 'error');
-            return false;
-        }
         if (!params.title) {
             showMessage('제목을 작성해 주세요.', 'error');
             return false;
@@ -602,27 +598,20 @@ const AdminNotice = () => {
                                                             <div className="font-medium text-white-dark overflow-hidden min-w-[300px] line-clamp-1">
                                                                 <span className={`${mail.isUnread ? 'text-gray-800 dark:text-gray-300 font-semibold' : ''}`}>
                                                                     <span>{mail.title}</span> &minus;
-                                                                    <span> {mail.displayDescription}</span>
+                                                                    <span> {mail.content}</span>
                                                                 </span>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div className="flex items-center">
-                                                                <div
-                                                                    className={`w-2 h-2 rounded-full ${(mail.group === 'personal' && 'bg-primary') ||
-                                                                        (mail.group === 'work' && 'bg-warning') ||
-                                                                        (mail.group === 'social' && 'bg-success') ||
-                                                                        (mail.group === 'private' && 'bg-danger')
-                                                                        }`}
-                                                                ></div>
-                                                                {mail.attachments && (
+                                                            <div className="flex justify-content: flex-end">
+                                                                {mail.attachments != null  && (
                                                                     <div className="ltr:ml-4 rtl:mr-4">
                                                                         <IconPaperclip />
                                                                     </div>
                                                                 )}
                                                             </div>
                                                         </td>
-                                                        <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{mail.date[1]}월 {mail.date[2]}일 {mail.date[3]}:{mail.date[4]}</td>
+                                                        <td className=" whitespace-nowrap font-medium ltr:text-right rtl:text-left">{mail.date[0]}년 {mail.date[1]}월 {mail.date[2]}일 {mail.date[3]}:{mail.date[4]}</td>
                                                     </tr>
                                                 );
                                             })}
@@ -658,7 +647,7 @@ const AdminNotice = () => {
                                 <div className="flex flex-wrap">
                                     <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
                                         {selectedMail.path ? (
-                                            <img src={`/assets/images/${selectedMail.path}`} className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                                            <img src="https://w7.pngwing.com/pngs/710/71/png-transparent-profle-person-profile-user-circle-icons-icon-thumbnail.png" className="h-12 w-12 rounded-full object-cover" alt="avatar" />
                                         ) : (
                                             <div className="border border-gray-300 dark:border-gray-800 rounded-full p-3">
                                                 <IconUser className="w-5 h-5" />
@@ -669,58 +658,6 @@ const AdminNotice = () => {
                                         <div className="flex items-center">
                                             <div className="text-lg ltr:mr-4 rtl:ml-4 whitespace-nowrap">
                                                 {selectedMail.firstName ? selectedMail.firstName + ' ' + selectedMail.lastName : selectedMail.email}
-                                            </div>
-                                            {selectedMail.group && (
-                                                <div className="ltr:mr-4 rtl:ml-4">
-                                                    <Tippy content={selectedMail.group} className="capitalize">
-                                                        <div
-                                                            className={`w-2 h-2 rounded-full ${(selectedMail.group === 'personal' && 'bg-primary') ||
-                                                                (selectedMail.group === 'work' && 'bg-warning') ||
-                                                                (selectedMail.group === 'social' && 'bg-success') ||
-                                                                (selectedMail.group === 'private' && 'bg-danger')
-                                                                }`}
-                                                        ></div>
-                                                    </Tippy>
-                                                </div>
-                                            )}
-                                            <div className="text-white-dark whitespace-nowrap">1 days ago</div>
-                                        </div>
-                                        <div className="text-white-dark flex items-center">
-                                            <div className="ltr:mr-1 rtl:ml-1">{selectedMail.type === 'sent_notice' ? selectedMail.email : 'to me'}</div>
-                                            <div className="dropdown">
-                                                <Dropdown
-                                                    offset={[0, 5]}
-                                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                    btnClassName="hover:text-primary flex items-center"
-                                                    button={<IconCaretDown className="w-5 h-5" />}
-                                                >
-                                                    <ul className="sm:w-56">
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">From:</div>
-                                                                <div className="flex-1">{selectedMail.type === 'sent_notice' ? 'vristo@gmail.com' : selectedMail.email}</div>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">To:</div>
-                                                                <div className="flex-1">{selectedMail.type !== 'sent_notice' ? 'vristo@gmail.com' : selectedMail.email}</div>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">Date:</div>
-                                                                <div className="flex-1">{selectedMail.date + ', ' + selectedMail.time}</div>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">Subject:</div>
-                                                                <div className="flex-1">{selectedMail.title}</div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </Dropdown>
                                             </div>
                                         </div>
                                     </div>
@@ -849,9 +786,6 @@ const AdminNotice = () => {
                                 <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
                                     <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
                                         취소
-                                    </button>
-                                    <button type="button" className="btn btn-success ltr:mr-3 rtl:ml-3" onClick={() => saveNotice('save', null)}>
-                                        임시 저장
                                     </button>
                                     <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
                                         공지 작성

@@ -33,7 +33,6 @@ const tokenExpiry = localStorage.getItem('expDate');
     if (tokenExpiry) {
         const tokenExpiryInt = parseInt(tokenExpiry, 10);
         const currentTime = Date.now() / 1000;
-        console.log(tokenExpiry, currentTime);
         if (currentTime >= tokenExpiryInt ) {
         logout();
         }
