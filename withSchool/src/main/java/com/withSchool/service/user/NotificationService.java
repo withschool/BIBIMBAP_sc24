@@ -84,21 +84,25 @@ public class NotificationService {
         emailSender.send(message);
     }
 
-    public void sendApplicationMessage(ReqApplicationDefaultDTO reqApplicationDefaultDTO) {
+    public void sendApplicationMessage(ReqApplicationDefaultDTO reqApplicationDefaultDTO, int state) {
+        // state = 0 : 등록 / state = 1 : 반려
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
+            String title = state == 0 ? "등록 완료" : "반려 안내";
+            String subtitle = state == 0 ? "등록되었습니다." : "반려되었습니다.";
+            String notice = state == 0 ? "최초 신청 후 승인까지 1~2일 소요될 수 있습니다." : "신청하신 내용을 다시 확인해주세요.";
             helper.setFrom(fromEmail);
             helper.setTo(reqApplicationDefaultDTO.getSchoolAdminEmail());
-            helper.setSubject("학교랑 서비스 신청서 등록 완료");
-            helper.setText("학교랑 서비스 신청서가 등록되었습니다.\n" +
+            helper.setSubject("학교랑 서비스 신청서 " + title + "\n");
+            helper.setText("학교랑 서비스 신청서가 " + subtitle + "\n" +
                     "신청하신 내용은 아래와 같습니다.\n" +
                     "이름 : " + reqApplicationDefaultDTO.getSchoolAdminName() + "\n" +
                     "이메일: " + reqApplicationDefaultDTO.getSchoolAdminEmail() + "\n" +
                     "학교 이름: " + reqApplicationDefaultDTO.getSchoolName() + "\n" +
-//                    "학교 코드: " + reqApplicationDefaultDTO.getSchoolCode() + "\n
+                    "학교 코드: " + reqApplicationDefaultDTO.getSD_SCHUL_CODE() + "\n" +
                     "전화번호: " + reqApplicationDefaultDTO.getSchoolPhoneNumber() + "\n" +
-                    "최초 신청 후 승인까지 1~2일 소요될 수 있습니다. 감사합니다.\n");
+                    notice + "\n감사합니다.");
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

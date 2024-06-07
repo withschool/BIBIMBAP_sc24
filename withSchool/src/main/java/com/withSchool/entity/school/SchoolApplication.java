@@ -1,5 +1,6 @@
 package com.withSchool.entity.school;
 
+import com.withSchool.dto.school.ReqApplicationDefaultDTO;
 import com.withSchool.dto.school.ResApplicationDefaultDTO;
 import com.withSchool.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -59,6 +60,9 @@ public class SchoolApplication extends BaseEntity {
     @Column(columnDefinition = "int default 0")
     private int serviceType;
 
+    @Comment("학교 코드")
+    private String SD_SCHUL_CODE;
+
     public ResApplicationDefaultDTO toResApplicationDefaultDTO(){
         return ResApplicationDefaultDTO.builder()
                 .schoolApplicationId(this.schoolApplicationId)
@@ -68,7 +72,18 @@ public class SchoolApplication extends BaseEntity {
                 .schoolPhoneNumber(this.getSchoolPhoneNumber())
                 .state(this.getState())
                 .serviceType(this.getServiceType())
+                .SD_SCHUL_CODE(this.getSD_SCHUL_CODE())
                 .build();
     }
 
+    public ReqApplicationDefaultDTO toReqApplicationDefaultDTO(){
+        return ReqApplicationDefaultDTO.builder()
+                .schoolName(this.getSchoolName())
+                .schoolAdminName(this.getSchoolAdminName())
+                .schoolAdminEmail(this.getSchoolAdminEmail())
+                .schoolPhoneNumber(this.getSchoolPhoneNumber())
+                .serviceType(this.getServiceType())
+                .SD_SCHUL_CODE(this.getSD_SCHUL_CODE())
+                .build();
+    }
 }

@@ -23,7 +23,7 @@ public class SchoolApplicationService {
     public ResApplicationDefaultDTO save(ReqApplicationDefaultDTO reqApplicationDefaultDTO) {
         SchoolApplication req = reqApplicationDefaultDTO.toEntity(0);
         ResApplicationDefaultDTO res = schoolApplicationRepository.save(req).toResApplicationDefaultDTO();
-        notificationService.sendApplicationMessage(reqApplicationDefaultDTO);
+        notificationService.sendApplicationMessage(reqApplicationDefaultDTO,0);
         return res;
     }
 
@@ -52,6 +52,10 @@ public class SchoolApplicationService {
         SchoolApplication schoolApplication = res.get();
         if(state < 1 || state > 3 || state == schoolApplication.getState()) throw new RuntimeException("Check state");
 
+        if (state == 3) {// 반려
+            notificationService.sendApplicationMessage(schoolApplication.toReqApplicationDefaultDTO(),1);
+        }
+
         SchoolApplication newSchoolApplication = SchoolApplication.builder()
                 .schoolApplicationId(schoolApplication.getSchoolApplicationId())
                 .schoolName(schoolApplication.getSchoolName())
@@ -60,6 +64,7 @@ public class SchoolApplicationService {
                 .schoolAdminName(schoolApplication.getSchoolName())
                 .state(state)
                 .regDate(schoolApplication.getRegDate())
+                .SD_SCHUL_CODE(schoolApplication.getSD_SCHUL_CODE())
                 .build();
         SchoolApplication savedApplication = schoolApplicationRepository.save(newSchoolApplication);
 
