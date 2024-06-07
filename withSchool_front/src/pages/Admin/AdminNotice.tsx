@@ -31,6 +31,7 @@ import IconBook from '../../components/Icon/IconBook';
 import IconTrash from '../../components/Icon/IconTrash';
 import IconRestore from '../../components/Icon/IconRestore';
 import { adminNotice, getSchoolNotices } from '../../service/form';
+import { getSchoolNoticeDetail } from '../../service/school';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconSearch from '../../components/Icon/IconSearch';
 import IconSettings from '../../components/Icon/IconSettings';
@@ -238,13 +239,15 @@ const AdminNotice = () => {
         }
     };
 
-    const selectMail = (item: any) => {
+    const selectMail = async (item: any) => {
         if (item) {
             if (item.type !== 'draft') {
                 if (item && item.isUnread) {
                     item.isUnread = false;
                 }
-                setSelectedMail(item);
+                const detail = await getSchoolNoticeDetail(item.id);
+                console.log(detail);
+                setSelectedMail(detail);
             } else {
                 openMail('draft', item);
             }
@@ -262,6 +265,30 @@ const AdminNotice = () => {
             });
         }
     };
+
+    const [ishave, setIshave] = useState(false);
+
+    const [fileExists, setFileExists] = useState<(boolean | 0)[]>([]);
+
+    useEffect(() => {
+        const fetchFileExists = async () => {
+            const existsArray = await Promise.all(pagedMails.map((mail: any) => isHaveFile(mail.id)));
+            setFileExists(existsArray);
+        };
+
+        fetchFileExists();
+    }, [pagedMails]);
+
+    const isHaveFile = async (fileId : any) => {
+        try {
+            const detail = await getSchoolNoticeDetail(fileId);
+            const result = detail.originalName.length > 0
+            return result;
+        } catch (error) {
+            console.error("파일 확인 중 오류 발생:", error);
+            return 0;
+        }
+    }
 
     const setImportant = (mailId: number) => {
         if (mailId) {
@@ -301,7 +328,8 @@ const AdminNotice = () => {
                 ...data,
                 from: defaultParams.from,
                 to: data.email,
-                title: 'Re: ' + data.title,
+                title: data.title,
+                description : data.content,
                 displayDescription: 'Re: ' + data.title,
             });
         } else if (type === 'forward') {
@@ -366,7 +394,7 @@ const AdminNotice = () => {
         }
         clearSelection();
     };
-
+    
     const saveNotice = async (type: any, id: any) => {
         if (!params.title) {
             showMessage('제목을 작성해 주세요.', 'error');
@@ -574,14 +602,22 @@ const AdminNotice = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="ltr:mr-3 rtl:ml-3">{pager.startIndex + 1 + '-' + (pager.endIndex + 1) + ' of ' + filteredMailList.length}</div>
                             </div>
                             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                             {pagedMails.length ? (
+                                
                                 <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
                                     <table className="table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>작성자</th>
+                                            <th>제목</th>
+                                            <th className='text-center'>파일</th>
+                                            <th className='text-center'>작성일자</th>
+                                        </tr>
+                                    </thead>
                                         <tbody>
-                                            {pagedMails.map((mail: any) => {
+                                            {pagedMails.map((mail: any, index: number) => {
                                                 return (
                                                     <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
                                                         <td>
@@ -597,14 +633,13 @@ const AdminNotice = () => {
                                                         <td>
                                                             <div className="font-medium text-white-dark overflow-hidden min-w-[300px] line-clamp-1">
                                                                 <span className={`${mail.isUnread ? 'text-gray-800 dark:text-gray-300 font-semibold' : ''}`}>
-                                                                    <span>{mail.title}</span> &minus;
-                                                                    <span> {mail.content}</span>
+                                                                    <span>{mail.title}</span>
                                                                 </span>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div className="flex justify-content: flex-end">
-                                                                {mail.attachments != null  && (
+                                                                {fileExists[index] && (
                                                                     <div className="ltr:ml-4 rtl:mr-4">
                                                                         <IconPaperclip />
                                                                     </div>
@@ -632,14 +667,6 @@ const AdminNotice = () => {
                                         <IconArrowLeft className="w-5 h-5 rotate-180" />
                                     </button>
                                     <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedMail.title}</h4>
-                                    <div className="badge bg-info hover:top-0">{selectedMail.type}</div>
-                                </div>
-                                <div>
-                                    <Tippy content="Print">
-                                        <button type="button">
-                                            <IconPrinter />
-                                        </button>
-                                    </Tippy>
                                 </div>
                             </div>
                             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
@@ -647,54 +674,33 @@ const AdminNotice = () => {
                                 <div className="flex flex-wrap">
                                     <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
                                         {selectedMail.path ? (
-                                            <img src="https://w7.pngwing.com/pngs/710/71/png-transparent-profle-person-profile-user-circle-icons-icon-thumbnail.png" className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                                            <></>
                                         ) : (
-                                            <div className="border border-gray-300 dark:border-gray-800 rounded-full p-3">
-                                                <IconUser className="w-5 h-5" />
-                                            </div>
+                                            <img src="https://w7.pngwing.com/pngs/710/71/png-transparent-profle-person-profile-user-circle-icons-icon-thumbnail.png" className="h-12 w-12 rounded-full object-cover" alt="avatar" />
                                         )}
                                     </div>
                                     <div className="ltr:mr-2 rtl:ml-2 flex-1">
-                                        <div className="flex items-center">
+                                        <div className="flex flex-col">
                                             <div className="text-lg ltr:mr-4 rtl:ml-4 whitespace-nowrap">
-                                                {selectedMail.firstName ? selectedMail.firstName + ' ' + selectedMail.lastName : selectedMail.email}
+                                                {selectedMail.user.name}
+                                            </div>
+                                            <div>
+                                                <h1>{selectedMail.regDate[0]}년 {selectedMail.regDate[1]}월 {selectedMail.regDate[2]}일 {selectedMail.regDate[3]}시 {selectedMail.regDate[4]}분 {selectedMail.regDate[5]}초 작성됨</h1>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">
-                                            <Tippy content="Star">
-                                                <button
-                                                    type="button"
-                                                    className={`enabled:hover:text-warning disabled:opacity-60 ${selectedMail.isStar ? 'text-warning' : ''}`}
-                                                    onClick={() => setStar(selectedMail.id)}
-                                                    disabled={selectedTab === 'trash'}
-                                                >
-                                                    <IconStar className={selectedMail.isStar ? 'fill-warning' : ''} />
-                                                </button>
+                                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">                                     
+                                            <Tippy content="수정">
+                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1 mr-1" onClick={() => openMail('reply', selectedMail)}>
+                                                <IconPlus className="rtl:hidden" />
+                                            </button>
                                             </Tippy>
-                                            <Tippy content="Important">
-                                                <button
-                                                    type="button"
-                                                    className={`enabled:hover:text-primary disabled:opacity-60 ${selectedMail.isImportant ? 'text-primary' : ''}`}
-                                                    onClick={() => setImportant(selectedMail.id)}
-                                                    disabled={selectedTab === 'trash'}
-                                                >
-                                                    <IconBookmark bookmark={false} className={`w-4.5 h-4.5 rotate-90 ${selectedMail.isImportant && 'fill-primary'}`} />
-                                                </button>
-                                            </Tippy>
-                                            <Tippy content="Reply">
-                                                <button type="button" className="hover:text-info" onClick={() => openMail('reply', selectedMail)}>
-                                                    <IconArrowBackward className="rtl:hidden" />
-                                                    <IconArrowForward className="ltr:hidden" />
-                                                </button>
-                                            </Tippy>
-                                            <Tippy content="Forward">
-                                                <button type="button" className="hover:text-info" onClick={() => openMail('forward', selectedMail)}>
-                                                    <IconArrowBackward className="ltr:hidden" />
-                                                    <IconArrowForward className="rtl:hidden" />
-                                                </button>
+                                            <Tippy content="삭제">
+                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1" onClick={() => openMail('forward', selectedMail)}>
+                                                <IconTrash/>
+                                            </button>
                                             </Tippy>
                                         </div>
                                     </div>
@@ -702,19 +708,18 @@ const AdminNotice = () => {
 
                                 <div
                                     className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
-                                    dangerouslySetInnerHTML={{ __html: selectedMail.description }}
+                                    dangerouslySetInnerHTML={{ __html: selectedMail.content }}
                                 ></div>
-                                <p className="mt-4">작성자 : </p>
-                                <p>{selectedMail.firstName + ' ' + selectedMail.lastName}</p>
 
-                                {selectedMail.attachments && (
+                                {(selectedMail.filesURl != '' )&& (
                                     <div className="mt-8">
-                                        <div className="text-base mb-4">첨부파일 : </div>
                                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                        <div className="text-base mt-5 mb-4">첨부파일</div>
                                         <div className="flex items-center flex-wrap mt-6">
-                                            {selectedMail.attachments.map((attachment: any, i: number) => {
+                                            {selectedMail.filesURl.map((attachment: any, i: number) => {
                                                 return (
-                                                    <button
+                                                    <a
+                                                        href={attachment}
                                                         key={i}
                                                         type="button"
                                                         className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
@@ -725,14 +730,14 @@ const AdminNotice = () => {
                                                         {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
 
                                                         <div className="ltr:ml-3 rtl:mr-3">
-                                                            <p className="text-xs text-primary font-semibold">{attachment.originalName}</p>
+                                                            <p className="text-xs text-primary font-semibold">{selectedMail.originalName}</p>
                                                             <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
                                                         </div>
                                                         <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
                                                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
                                                             <IconDownload className="w-4.5 h-4.5" />
                                                         </div>
-                                                    </button>
+                                                    </a>
                                                 );
                                             })}
                                         </div>
