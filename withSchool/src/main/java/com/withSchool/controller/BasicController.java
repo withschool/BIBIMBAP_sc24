@@ -14,7 +14,6 @@ import com.withSchool.dto.user.SignUpDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -38,10 +37,6 @@ public class BasicController {
     private final JwtTokenProvider jwtTokenProvider;
     private final NotificationService notificationService;
     private final SchoolApplicationService schoolApplicationService;
-
-    @Value("${spring.mail.username}")
-    String fromEmail;
-
 
     @PostMapping("/pre-sign-up")
     @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")

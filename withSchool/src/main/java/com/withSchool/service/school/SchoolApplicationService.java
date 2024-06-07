@@ -54,7 +54,7 @@ public class SchoolApplicationService {
         if(res.isEmpty()) throw new RuntimeException("There is no appropriate application");
 
         SchoolApplication schoolApplication = res.get();
-        if(state < 0 || state > 3 || state == schoolApplication.getState()) throw new RuntimeException("Check state");
+        if(state < 1 || state > 3 || state == schoolApplication.getState()) throw new RuntimeException("Check state");
         emailService.sendApplicationMessage(schoolApplication.toReqApplicationDefaultDTO(), state);
 
         SchoolApplication newSchoolApplication = SchoolApplication.builder()

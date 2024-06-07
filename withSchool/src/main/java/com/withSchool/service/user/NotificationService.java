@@ -46,7 +46,7 @@ public class NotificationService {
                 sendSMS(parent, type, title, true);
             }
             catch (Exception e) {
-                NotificationService.log.error("학부모 정보를 찾을 수 없습니다. 학생: " + user.getName());
+                log.error("학부모 정보를 찾을 수 없습니다. 학생: " + user.getName());
             }
 
         }
