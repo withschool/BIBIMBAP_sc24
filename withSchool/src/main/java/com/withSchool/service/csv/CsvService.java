@@ -47,6 +47,7 @@ public class CsvService {
             Long schoolId = userService.getCurrentUserSchoolId();
             lines.stream()
                     .skip(1)
+                    .parallel()
                     .forEach(line -> {
                         try {
                             processLine(line, schoolId, dto.getId());
