@@ -141,8 +141,10 @@ public class SchoolInformation extends BaseEntity {
             3 - 소규모
             4 - 중규모
             5 - 대규모
+            
+            9 - 무료
             """)
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "int default 9")
     private int serviceType;
 
 }
