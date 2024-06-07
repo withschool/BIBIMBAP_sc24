@@ -1,6 +1,6 @@
 package com.withSchool.service;
 
-import com.withSchool.dto.user.UserDeleteRequestDTO;
+import com.withSchool.dto.user.ReqUserDeleteDTO;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.user.UserService;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +25,7 @@ public class UserServiceTest {
     @Rollback(value = false)
     public void delete() {
         List<Long> userId = Arrays.asList(78L, 79L, 80L, 81L, 82L, 83L, 84L);
-        UserDeleteRequestDTO dto = UserDeleteRequestDTO.builder()
+        ReqUserDeleteDTO dto = ReqUserDeleteDTO.builder()
                 .userId(userId)
                 .build();
         userService.delete(dto);

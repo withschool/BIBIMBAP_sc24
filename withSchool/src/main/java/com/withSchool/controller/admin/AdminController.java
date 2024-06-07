@@ -8,7 +8,7 @@ import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.user.ReqUserRegisterDTO;
 import com.withSchool.dto.user.ResUserUsercodeDTO;
-import com.withSchool.dto.user.UserDeleteRequestDTO;
+import com.withSchool.dto.user.ReqUserDeleteDTO;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.classes.ClassService;
@@ -168,7 +168,7 @@ public class AdminController {
     // 유저 리스트를 받아서 다 삭제
     @DeleteMapping("/users")
     @Operation(summary = "어드민의 복수 유저 정보 삭제", description = "유저의 PK 리스트를 받아서 유저 정보를 삭제할 수 있다.")
-    public ResponseEntity<String> deleteUsers(@RequestBody UserDeleteRequestDTO dto){
+    public ResponseEntity<String> deleteUsers(@RequestBody ReqUserDeleteDTO dto){
         userService.delete(dto);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
@@ -218,8 +218,6 @@ public class AdminController {
     public ResponseEntity<List<ResUserUsercodeDTO>> showAllUsersBySchool() {
         return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
-
-
 
     @GetMapping("/users/is-modififed")
     @Operation(summary = "어드민의 pw 변경 확인을 위한 API", description = "false이면 수정이 안 된 것, true이면 수정이 된 것")

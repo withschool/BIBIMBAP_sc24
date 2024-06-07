@@ -196,12 +196,19 @@ public class UserService {
         userRepository.save(response);
     }
 
-    public void delete(UserDeleteRequestDTO dto){
+    public void delete(ReqUserDeleteDTO dto){
         List<Long> userId = dto.getUserId();
-        userId.stream().forEach(u->{
-            studentSubjectRepository.deleteSsByUserId(u);
-            userRepository.deleteUserByUserId(u);
-        });
+        userId.stream()
+            .parallel()
+            .forEach(u -> {
+                User user = this.findByUserId(u);
+                User deletedUser = User.builder()
+                        .userId(u)
+                        .accountType(user.getAccountType())
+                        .sex(user.getSex())
+                        .build();
+                userRepository.save(deletedUser);
+            });
 
     }
 
