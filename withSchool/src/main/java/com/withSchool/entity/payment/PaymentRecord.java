@@ -1,12 +1,7 @@
 package com.withSchool.entity.payment;
 
-import com.withSchool.entity.base.BaseEntity;
-import com.withSchool.entity.school.SchoolInformation;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Comment;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +16,7 @@ public class PaymentRecord{
 
     private LocalDateTime paymentDate;
 
-    private double amount;
+    private int amount;
 
     private boolean success;
 

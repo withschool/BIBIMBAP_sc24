@@ -213,6 +213,7 @@ public class AdminController {
         return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
     @PostMapping("/schools/{schoolId}/subscriptions")
+    @Operation(summary = "학교 플랜을 등록")
     public ResponseEntity<Subscription> subscribeSchool(@PathVariable Long schoolId,
                                                         @RequestBody ReqSubscriptionDTO reqSubscriptionDTO) {
         Subscription subscription = schoolInformationService.subscribeSchool(schoolId, reqSubscriptionDTO.getPlan(), reqSubscriptionDTO.getBillingKey(), reqSubscriptionDTO.getEndDate());
@@ -220,6 +221,7 @@ public class AdminController {
     }
 
     @PutMapping("/schools/subscriptions/{subscriptionId}/upgrade")
+    @Operation(summary = "학교 플랜을 수정")
     public ResponseEntity<Subscription> upgradeSubscription(@PathVariable Long subscriptionId,
                                                             @RequestBody ReqUpgradePlanDTO reqUpgradePlanDTO) {
         Subscription subscription = schoolInformationService.upgradeSubscription(subscriptionId, reqUpgradePlanDTO.getNewPlan(),reqUpgradePlanDTO.getEndDate());

@@ -40,11 +40,11 @@ public class BillingService {
     @Value("${portone.api.secret}")
     private String portOneApiSecret;
 
-    private static final double BASIC_DAILY_RATE = 100000;
-    private static final double INTERMEDIATE_DAILY_RATE = 150000;
-    private static final double PREMIUM_DAILY_RATE = 200000;
+    private static final int BASIC_DAILY_RATE = 100000;
+    private static final int INTERMEDIATE_DAILY_RATE = 150000;
+    private static final int PREMIUM_DAILY_RATE = 200000;
 
-    @Scheduled(cron = "0 0 0 1 * ?") // 매월 1일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 1 * ?",zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
     @Transactional
     public void processMonthlyBilling() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
@@ -58,7 +58,7 @@ public class BillingService {
                 continue;
             }
 
-            double amount = calculateAmount(subscription);
+            int amount = calculateAmount(subscription);
             try {
                 processPayment(subscription, amount);
             } catch (Exception e) {
@@ -66,7 +66,7 @@ public class BillingService {
             }
         }
     }
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 * * ?",zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
     @Transactional
     public void retryFailedPayments() {
         LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
@@ -80,14 +80,14 @@ public class BillingService {
                 schoolInformation.setPaymentState(0);
                 schoolInformationRepository.save(schoolInformation);
             } else {
-                double amount = calculateAmount(subscription);
+                int amount = calculateAmount(subscription);
                 processPayment(subscription, amount);
                 paymentFailRepository.delete(fail); // 성공 시 실패 로그 삭제
             }
         }
     }
 
-    private double calculateAmount(Subscription subscription) {
+    private int calculateAmount(Subscription subscription) {
         LocalDate now = LocalDate.now();
         LocalDate startDate = subscription.getStartDate();
         LocalDate endDate = subscription.getEndDate() != null ? subscription.getEndDate() : now;
@@ -103,11 +103,11 @@ public class BillingService {
         // 실제 사용 일수를 계산
         long daysUsed = ChronoUnit.DAYS.between(billingStart, billingEnd.plusDays(1));
 
-        double dailyRate = getDailyRate(subscription.getPlan());
-        return dailyRate * daysUsed;
+        int dailyRate = getDailyRate(subscription.getPlan());
+        return dailyRate * (int)daysUsed;
     }
 
-    private double getDailyRate(Plan plan) {
+    private int getDailyRate(Plan plan) {
         switch (plan) {
             case BASIC:
                 return BASIC_DAILY_RATE;
@@ -116,16 +116,13 @@ public class BillingService {
             case PREMIUM:
                 return PREMIUM_DAILY_RATE;
             default:
-                return 0.0;
+                return 0;
         }
     }
-    private void processPayment(Subscription subscription, double amount) {
+    private void processPayment(Subscription subscription, int amount) {
 
         String paymentId = UUID.randomUUID().toString(); // 새로운 paymentId 생성
         String url = "https://api.portone.io/payments/" + paymentId + "/billing-key";
-        SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
-        String schoolName = schoolInformation.getSchulNm();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "PortOne " + portOneApiSecret);
@@ -134,12 +131,6 @@ public class BillingService {
         Map<String, Object> paymentDetails = new HashMap<>();
         paymentDetails.put("billingKey", subscription.getBillingKey());
         paymentDetails.put("orderName", "월간 이용권 정기결제");
-
-        Map<String, Object> customer = new HashMap<>();
-        customer.put("id", schoolInformation.getSchoolId());
-        customer.put("name", schoolName);
-
-        paymentDetails.put("customer", customer);
 
         Map<String, Object> amountDetails = new HashMap<>();
         amountDetails.put("total", amount);
@@ -153,9 +144,9 @@ public class BillingService {
 
         boolean success = response.getStatusCode().is2xxSuccessful();
 
-        // paymentId를 PaymentRecord의 기본 키로 설정하여 저장
+
         PaymentRecord paymentRecord = PaymentRecord.builder()
-                .paymentId(paymentId) // 여기에서 paymentId를 설정
+                .paymentId(paymentId)
                 .amount(amount)
                 .paymentDate(LocalDateTime.now())
                 .subscription(subscription)
@@ -165,15 +156,14 @@ public class BillingService {
         paymentRecordRepository.save(paymentRecord);
 
         if (!success) {
-            throw new RuntimeException("Failed to create billing key payment: " + response.getStatusCode());
+            throw new RuntimeException("결제 실패: " + response.getStatusCode());
         }
     }
     private void handlePaymentFailure(Subscription subscription, Exception e) {
 
-        // 결제 실패 로그를 데이터베이스에 저장
         PaymentFail paymentFail = PaymentFail.builder()
                 .failDate(LocalDate.now())
-                .failReason(e.getMessage())
+                .failReason(e.getMessage().substring(0,50))
                 .subscription(subscription)
                 .build();
 
