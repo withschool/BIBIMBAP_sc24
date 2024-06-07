@@ -96,7 +96,7 @@ public class User extends BaseEntity implements UserDetails {
     private SchoolInformation schoolInformation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "classs_id")
+    @JoinColumn(name = "class_id")
     @Comment("사용자가 속한 반")
     private ClassInformation classInformation;
 
