@@ -134,16 +134,6 @@ public class BasicController {
         return "Success";
     }
 
-    @PostMapping("/testEmail")
-    public void testEmail() {
-        MailDTO mailDTO = MailDTO.builder()
-                .address(fromEmail)
-                .title("test title")
-                .content("test content")
-                .build();
-        notificationService.sendSimpleMessage(mailDTO);
-    }
-
     @GetMapping("/connectionTest")
     public String ct() {
         return "connection test success";

@@ -41,6 +41,7 @@ public class SchoolApplication extends BaseEntity {
             0 - 신청
             1 - 처리 중
             2 - 처리 완료
+            3 - 반려
             """)
     private int state;
 

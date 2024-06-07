@@ -30,23 +30,8 @@ public class SuperController {
 
     @PostMapping("/schools")
     @Operation(summary = "슈퍼 어드민의 학교 모델 등록")
-    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO, @RequestBody String adminEmail) {
-        SchoolInformation schoolInformation = schoolInformationService.save(schoolInformationService.dtoToEntity(schoolInformationDTO));
-        if (schoolInformation == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                    .body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
-
-        try {
-            userService.registerAdmin(schoolInformationDTO, adminEmail);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                    .body("어드민 계정 생성중에 오류가 발생하였습니다");
-        }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                .body(schoolInformation.getSchulNm() + ", 학교어드민 계정이 생성되었습니다.");
+    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO, @RequestParam String adminEmail) {
+        return schoolInformationService.saveSchool(schoolInformationDTO, adminEmail);
     }
 
     @DeleteMapping("/schools/{schoolId}")

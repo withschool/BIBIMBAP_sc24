@@ -16,6 +16,7 @@ import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.subject.SubjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +50,10 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final SubjectRepository subjectRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
+    @Value("${raw-password}")
+    String rawPassword;
 
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
@@ -93,13 +98,14 @@ public class UserService {
             SchoolInformation schoolInformation = result.get();
             User admin = User.builder()
                     .id(schoolInformation.getSdSchulCode() + "_admin")
-                    .password(passwordEncoder.encode("1234"))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
+                    .password(passwordEncoder.encode(rawPassword))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
                     .email(adminEmail)
                     .schoolInformation(schoolInformation)
                     .build();
             userRepository.save(admin);
+            emailService.sendAdminMessage(schoolInformation.getSchulNm(), adminEmail, admin.getId(), rawPassword);
         }
     }
 
