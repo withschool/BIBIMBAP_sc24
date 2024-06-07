@@ -70,19 +70,27 @@ public class BillingService {
     @Transactional
     public void retryFailedPayments() {
         LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
+
         List<PaymentFail> paymentFailList = paymentFailRepository.findAll();
 
         for (PaymentFail fail : paymentFailList) {
             Subscription subscription = fail.getSubscription();
-            if (fail.getFailDate().isBefore(twoWeeksAgo)) {
+            if (fail.getFailDate().isBefore(twoWeeksAgo) || fail.getAttempts() >= 14) {
                 SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
                         .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
                 schoolInformation.setPaymentState(0);
                 schoolInformationRepository.save(schoolInformation);
+                paymentFailRepository.delete(fail);
             } else {
-                int amount = calculateAmount(subscription);
-                processPayment(subscription, amount);
-                paymentFailRepository.delete(fail); // 성공 시 실패 로그 삭제
+                try {
+                    int amount = calculateAmount(subscription);
+                    processPayment(subscription, amount);
+                    paymentFailRepository.delete(fail);
+                } catch (Exception e) {
+                    fail.setAttempts(fail.getAttempts() + 1);
+                    fail.setFailReason(e.getMessage());
+                    paymentFailRepository.save(fail);
+                }
             }
         }
     }
@@ -92,15 +100,15 @@ public class BillingService {
         LocalDate startDate = subscription.getStartDate();
         LocalDate endDate = subscription.getEndDate() != null ? subscription.getEndDate() : now;
 
-        // 해당 월의 첫 날과 마지막 날을 구함
+
         LocalDate firstDayOfMonth = now.withDayOfMonth(1);
         LocalDate lastDayOfMonth = now.withDayOfMonth(now.lengthOfMonth());
 
-        // 요금 계산 기간의 시작일과 종료일을 결정
+
         LocalDate billingStart = startDate.isBefore(firstDayOfMonth) ? firstDayOfMonth : startDate;
         LocalDate billingEnd = endDate.isAfter(lastDayOfMonth) ? lastDayOfMonth : endDate;
 
-        // 실제 사용 일수를 계산
+
         long daysUsed = ChronoUnit.DAYS.between(billingStart, billingEnd.plusDays(1));
 
         int dailyRate = getDailyRate(subscription.getPlan());
@@ -121,7 +129,7 @@ public class BillingService {
     }
     private void processPayment(Subscription subscription, int amount) {
 
-        String paymentId = UUID.randomUUID().toString(); // 새로운 paymentId 생성
+        String paymentId = UUID.randomUUID().toString();
         String url = "https://api.portone.io/payments/" + paymentId + "/billing-key";
 
         HttpHeaders headers = new HttpHeaders();
@@ -129,14 +137,24 @@ public class BillingService {
         headers.set("Content-Type", "application/json");
 
         Map<String, Object> paymentDetails = new HashMap<>();
-        paymentDetails.put("billingKey", subscription.getBillingKey());
-        paymentDetails.put("orderName", "월간 이용권 정기결제");
+        paymentDetails.put("billingKey", subscription.getBillingKey()+"1");
+        paymentDetails.put("orderName", "월간 이용권 정기결제 실패");
 
         Map<String, Object> amountDetails = new HashMap<>();
         amountDetails.put("total", amount);
 
         paymentDetails.put("amount", amountDetails);
         paymentDetails.put("currency", "KRW");
+
+        PaymentRecord paymentRecord = PaymentRecord.builder()
+                .paymentId(paymentId)
+                .amount(amount)
+                .paymentDate(LocalDateTime.now())
+                .subscription(subscription)
+                .success(false)
+                .build();
+
+        paymentRecordRepository.save(paymentRecord);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(paymentDetails, headers);
 
@@ -145,13 +163,7 @@ public class BillingService {
         boolean success = response.getStatusCode().is2xxSuccessful();
 
 
-        PaymentRecord paymentRecord = PaymentRecord.builder()
-                .paymentId(paymentId)
-                .amount(amount)
-                .paymentDate(LocalDateTime.now())
-                .subscription(subscription)
-                .success(success)
-                .build();
+        paymentRecord.setSuccess(success);
 
         paymentRecordRepository.save(paymentRecord);
 
@@ -163,7 +175,7 @@ public class BillingService {
 
         PaymentFail paymentFail = PaymentFail.builder()
                 .failDate(LocalDate.now())
-                .failReason(e.getMessage().substring(0,50))
+                .failReason(e.getMessage().substring(0,20))
                 .subscription(subscription)
                 .build();
 
