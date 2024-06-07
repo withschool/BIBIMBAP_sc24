@@ -30,7 +30,7 @@ import IconOpenBook from '../../components/Icon/IconOpenBook';
 import IconBook from '../../components/Icon/IconBook';
 import IconTrash from '../../components/Icon/IconTrash';
 import IconRestore from '../../components/Icon/IconRestore';
-import { adminNotice, getSchoolNotices } from '../../service/form';
+import { adminNotice, getSchoolNotices, adminNoticeEdit, adminNoticeDelete } from '../../service/form';
 import { getSchoolNoticeDetail } from '../../service/school';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconSearch from '../../components/Icon/IconSearch';
@@ -76,13 +76,13 @@ const AdminNotice = () => {
     const [pagedMails, setPagedMails] = useState<any[]>([]);
     const [selectedMail, setSelectedMail] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
+    const [edit, setEdit] = useState(false);
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchText, setSearchText] = useState('');
     const [isShowMailMenu, setIsShowMailMenu] = useState(false);
     const [ids, setIds] = useState<any>([]);
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-
 
     const [pager] = useState<any>({
         currentPage: 1,
@@ -328,10 +328,12 @@ const AdminNotice = () => {
                 ...data,
                 from: defaultParams.from,
                 to: data.email,
+                id: data.noticeId,
                 title: data.title,
                 description : data.content,
                 displayDescription: 'Re: ' + data.title,
             });
+            setEdit(true);
         } else if (type === 'forward') {
             let data = JSON.parse(JSON.stringify(item));
             setParams({
@@ -394,6 +396,8 @@ const AdminNotice = () => {
         }
         clearSelection();
     };
+
+    const [isLoading, setIsLoading] = useState(false);
     
     const saveNotice = async (type: any, id: any) => {
         if (!params.title) {
@@ -424,7 +428,7 @@ const AdminNotice = () => {
             description: params.description,
             attachments: null,
         };
-
+        setIsLoading(true);
         if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
             setMailList((prevMailList) => [obj, ...prevMailList]);
             searchMails();
@@ -441,20 +445,25 @@ const AdminNotice = () => {
                     });
                 }
 
-                const response = await adminNotice(formData);
-
-                if (response.ok) {
+                if(edit){
+                    const response = await adminNoticeEdit(formData, id);
+                    obj.type = 'sent_notice';
+                    setMailList((prevMailList) => [obj, ...prevMailList]);
                     searchMails();
-                    console.log("Notice successfully created");
-                } else {
-                    console.error("Failed to create notice");
+                    setIsLoading(false);
+                    showMessage('공지가 성공적으로 수정되었습니다.');
+                    setEdit(false);
+                }
+                else{
+                    const response = await adminNotice(formData);
+                    obj.type = 'sent_notice';
+                    setMailList((prevMailList) => [obj, ...prevMailList]);
+                    searchMails();
+                    setIsLoading(false);
+                    showMessage('공지가 성공적으로 작성되었습니다.');
+                    window.location.reload();
                 }
 
-                obj.type = 'sent_notice';
-                setMailList((prevMailList) => [obj, ...prevMailList]);
-                searchMails();
-                showMessage('공지가 성공적으로 작성되었습니다.');
-                window.location.reload();
             } catch (error) {
                 showMessage('공지 작성에 실패했습니다.', 'error');
             }
@@ -463,6 +472,13 @@ const AdminNotice = () => {
         setSelectedMail(null);
         setIsEdit(false);
     };
+
+    const deleteNotice = async (id: any) => {
+        await adminNoticeDelete(id);
+        showMessage('공지가 성공적으로 삭제되었습니다.');
+        searchMails();
+        window.location.reload();
+    }
 
     const getFileSize = (file_type: any) => {
         let type = 'file';
@@ -617,7 +633,7 @@ const AdminNotice = () => {
                                         </tr>
                                     </thead>
                                         <tbody>
-                                            {pagedMails.map((mail: any, index: number) => {
+                                            {mailList.map((mail: any, index: number) => {
                                                 return (
                                                     <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
                                                         <td>
@@ -698,7 +714,7 @@ const AdminNotice = () => {
                                             </button>
                                             </Tippy>
                                             <Tippy content="삭제">
-                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1" onClick={() => openMail('forward', selectedMail)}>
+                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1" onClick={() => deleteNotice(selectedMail.noticeId)}>
                                                 <IconTrash/>
                                             </button>
                                             </Tippy>
@@ -748,56 +764,65 @@ const AdminNotice = () => {
                     )}
 
                     {isEdit && (
-                        <div className="relative">
-                            <div className="py-4 px-6 flex items-center">
-                                <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
-                                    <IconMenu />
-                                </button>
-                                <h4 className="text-lg text-gray-600 dark:text-gray-400 font-medium">공지 작성하기</h4>
+                        isLoading ? (
+                            <div className="flex items-center justify-center w-full h-full">
+                                <div className="text-center">
+                                    <p className='mt-5'>Loading....</p>
+                                    <span className="animate-spin border-8 border-[#f1f2f3] border-l-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                </div>
                             </div>
-                            <div className="h-px bg-gradient-to-l from-indigo-900/20 via-black dark:via-white to-indigo-900/20 opacity-[0.1]"></div>
-                            <form className="p-6 grid gap-6">
-                                <div>
-                                    <input id="title" type="text" className="form-input" placeholder="제목" defaultValue={params.title} onChange={(e) => changeValue(e)} />
-                                </div>
-
-                                <div className="h-fit">
-                                    <ReactQuill
-                                        theme="snow"
-                                        value={params.description || ''}
-                                        defaultValue={params.description || ''}
-                                        onChange={(content, delta, source, editor) => {
-                                            params.description = content;
-                                            params.displayDescription = editor.getText();
-                                            setParams({
-                                                ...params,
-                                            });
-                                        }}
-                                        style={{ minHeight: '200px' }}
-                                    />
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="file"
-                                        className="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary"
-                                        multiple
-                                        accept="image/*,.zip,.pdf,.xls,.xlsx,.txt,.doc,.docx"
-                                        required
-                                        id="fileId"
-                                        onChange={(e) => setSelectedFiles(e.target.files)}
-                                    />
-                                </div>
-                                <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
-                                    <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
-                                        취소
+                        ) : (
+                            <div className="relative">
+                                <div className="py-4 px-6 flex items-center">
+                                    <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
+                                        <IconMenu />
                                     </button>
-                                    <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
-                                        공지 작성
-                                    </button>
+                                    <h4 className="text-lg text-gray-600 dark:text-gray-400 font-medium">{edit ? '공지 수정하기' : '공지 작성하기'}</h4>
                                 </div>
-                            </form>
-                        </div>
+                                <div className="h-px bg-gradient-to-l from-indigo-900/20 via-black dark:via-white to-indigo-900/20 opacity-[0.1]"></div>
+                                <form className="p-6 grid gap-6">
+                                    <div>
+                                        <input id="title" type="text" className="form-input" placeholder="제목" defaultValue={params.title} onChange={(e) => changeValue(e)} />
+                                    </div>
+
+                                    <div className="h-fit">
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={params.description || ''}
+                                            defaultValue={params.description || ''}
+                                            onChange={(content, delta, source, editor) => {
+                                                params.description = content;
+                                                params.displayDescription = editor.getText();
+                                                setParams({
+                                                    ...params,
+                                                });
+                                            }}
+                                            style={{ minHeight: '200px' }}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="file"
+                                            className="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary"
+                                            multiple
+                                            accept="image/*,.zip,.pdf,.xls,.xlsx,.txt,.doc,.docx"
+                                            required
+                                            id="fileId"
+                                            onChange={(e) => setSelectedFiles(e.target.files)}
+                                        />
+                                    </div>
+                                    <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
+                                        <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
+                                            취소
+                                        </button>
+                                        <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
+                                            {edit ? '공지 수정' : '공지 작성'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        )
                     )}
                 </div>
             </div>
