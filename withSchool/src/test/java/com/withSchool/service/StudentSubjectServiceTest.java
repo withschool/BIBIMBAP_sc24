@@ -32,7 +32,7 @@ public class StudentSubjectServiceTest {
     public void findOnesSugang() {
         User user = userService.findById("id0");
 
-        System.out.println(studentSubjectService.findOnesSugang(user));
+        System.out.println(studentSubjectService.findOnesSugang(1L));
     }
 
     @Test
