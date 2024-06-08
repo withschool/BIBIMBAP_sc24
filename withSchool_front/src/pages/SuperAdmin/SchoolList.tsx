@@ -49,6 +49,8 @@ export const formatDate = (dateString: string): string => {
 
 const SchoolList = () => {
     const dispatch = useDispatch();
+    const [email, setEmail] = useState(""); // Add state for email
+
 
     useEffect(() => {
         dispatch(setPageTitle("학교 목록"));
@@ -196,6 +198,7 @@ const SchoolList = () => {
 
     const handleRegisterSchool = async (school: any) => {
         const schoolData = {
+            adminEmail: email, // Use the email state
             ATPT_OFCDC_SC_CODE: school.ATPT_OFCDC_SC_CODE,
             ATPT_OFCDC_SC_NM: school.ATPT_OFCDC_SC_NM,
             SD_SCHUL_CODE: school.SD_SCHUL_CODE,
@@ -231,6 +234,7 @@ const SchoolList = () => {
         }
     };
 
+
     const handleDeleteSchool = async (schoolId: number) => {
         if (window.confirm("정말로 이 학교를 삭제하시겠습니까?")) {
             try {
@@ -253,7 +257,7 @@ const SchoolList = () => {
 
     return (
         <div>
-       
+
 
             <div className="panel mt-6">
                 <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
@@ -327,13 +331,24 @@ const SchoolList = () => {
                                                     <form>
                                                         <div className="relative mb-4">
                                                             <div className="mb-5 space-y-5">
-                                                                <form className="mx-auto w-full sm:w-1/2 mb-5">
-                                                                    <div className="relative">
+                                                                <form className="mx-auto w-full mb-5 flex items-center gap-4">
+
+                                                                    <div className="flex justify-center w-full">
+                                                                        <input
+                                                                            type="email"
+                                                                            placeholder="이메일 주소 입력"
+                                                                            className="form-input shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] bg-white rounded-full h-11 placeholder:tracking-wider ltr:pr-11 rtl:pl-11"
+                                                                            style={{ width: '50%' }}
+                                                                            value={email} // Bind the input value to the email state
+                                                                            onChange={(e) => setEmail(e.target.value)} // Update the email state on change
+                                                                        />
+                                                                    </div>
+                                                                    <div className="relative" style={{ width: '150%', marginLeft: 'auto' }}>
                                                                         <input
                                                                             type="text"
                                                                             value={allSearch}
                                                                             placeholder="학교 전체 검색"
-                                                                            className="form-input shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] bg-white rounded-full h-11 placeholder:tracking-wider ltr:pr-11 rtl:pl-11"
+                                                                            className="form-input shadow-[0_0_4px_2px_rgb(31_45_61_/_10%)] bg-white rounded-full h-11 placeholder:tracking-wider ltr:pr-11 rtl:pl-11 w-full"
                                                                             onChange={(e) => {
                                                                                 setAllSearch(e.target.value);
                                                                                 if (e.target.value.trim() === "") {
@@ -344,9 +359,7 @@ const SchoolList = () => {
                                                                         <button
                                                                             type="button"
                                                                             className="btn btn-primary absolute ltr:right-1 rtl:left-1 inset-y-0 m-auto rounded-full w-9 h-9 p-0 flex items-center justify-center"
-                                                                            onClick={() =>
-                                                                                getSchoolListFromNeis(allSearch)
-                                                                            }
+                                                                            onClick={() => getSchoolListFromNeis(allSearch)}
                                                                         >
                                                                             <IconSearch className="mx-auto" />
                                                                         </button>
@@ -377,6 +390,7 @@ const SchoolList = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
+
                                                         <button
                                                             className="btn btn-primary w-full"
                                                             onClick={handleCreateSchool}
@@ -387,22 +401,9 @@ const SchoolList = () => {
                                                 </div>
                                                 <div className="border-t border-[#ebe9f1] p-5 dark:border-white/10">
                                                     <div className="my-1 text-center text-xs text-white-dark dark:text-white-dark/70">
-                                                        OR
+
                                                     </div>
-                                                    <div className="mb-5 flex items-center justify-center gap-3">
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-outline-primary flex gap-1"
-                                                        >
-                                                            <span>학교 수정</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-outline-danger flex gap-1"
-                                                        >
-                                                            <span>학교 삭제</span>
-                                                        </button>
-                                                    </div>
+
                                                 </div>
                                             </Dialog.Panel>
                                         </Transition.Child>

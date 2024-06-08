@@ -93,11 +93,17 @@ const SchoolApply = () => {
             );
             setInitialRecords(updatedRecords);
             setRecordsData(updatedRecords.slice((page - 1) * pageSize, page * pageSize));
+
+            // Show alert when state is changed to "처리 완료" or "반려"
+            if (newState === 2) {
+                alert('처리 완료 상태로 변경되었습니다.');
+            } else if (newState === 3) {
+                alert('반려 상태로 변경되었습니다.');
+            }
         } catch (error) {
             console.error('Error updating school application state:', error);
         }
     };
-
     const handleDelete = async (schoolApplicationId: number) => {
         try {
             await deleteSchoolApplication(schoolApplicationId);
@@ -123,7 +129,7 @@ const SchoolApply = () => {
                         className="whitespace-nowrap table-hover"
                         records={recordsData}
                         columns={[
-                            { accessor: 'schoolName', title: '학교 이름', sortable: true },
+                            { accessor: 'schoolName', title: '신청 받은 학교', sortable: true },
                             { accessor: 'schoolPhoneNumber', title: '전화번호', sortable: true },
                             { accessor: 'schoolAdminName', title: '이름', sortable: true },
                             { accessor: 'schoolAdminEmail', title: '이메일', sortable: true },
@@ -136,6 +142,7 @@ const SchoolApply = () => {
                                         value={state}
                                         onChange={(e) => handleChangeState(schoolApplicationId, Number(e.target.value))}
                                         className={`badge bg-${getStatusColor(state)}`}
+                                        disabled={state !== 0}
                                     >
                                         <option value={1}>처리 중</option>
                                         <option value={2}>처리 완료</option>
