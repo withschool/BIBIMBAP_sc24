@@ -49,4 +49,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findStudentByClassId(Long classId);
 
     List<User> findByClassInformation_ClassIdAndAccountType(Long classId, int accountType);
+
+    @Query("SELECT count(*) FROM User u WHERE u.schoolInformation.schoolId = :schoolId")
+    int findUsersCountBySchoolId(Long schoolId);
 }

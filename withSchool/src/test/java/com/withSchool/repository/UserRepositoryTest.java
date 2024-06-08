@@ -106,4 +106,10 @@ public class UserRepositoryTest {
         Assertions.assertEquals(testUser.getUserCode(), user.getUserCode());
     }
 
+    @Test
+    public void testUsersCount(){
+        int result = userRepository.findUsersCountBySchoolId(1L);
+        System.out.println(result);
+    }
+
 }

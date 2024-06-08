@@ -3,18 +3,25 @@ package com.withSchool.controller.admin;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
 import com.withSchool.dto.mapping.UserClassDTO;
+import com.withSchool.dto.payment.ResPaymentRecordDTO;
+import com.withSchool.dto.payment.ResSubscriptionDTO;
 import com.withSchool.dto.school.ReqNoticeDTO;
+import com.withSchool.dto.payment.ReqSubscriptionDTO;
+import com.withSchool.dto.payment.ReqUpgradePlanDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.user.ReqUserRegisterDTO;
 import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.dto.user.ReqUserDeleteDTO;
 import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolNotice;
+import com.withSchool.service.billing.BillingService;
 import com.withSchool.service.classes.ClassService;
 import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.csv.CsvService;
+import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.subject.SubjectService;
 import com.withSchool.service.user.UserService;
 
@@ -30,10 +37,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +54,8 @@ public class AdminController {
     private final ClassService classService;
     private final CsvService csvService;
     private final SchoolNoticeService schoolNoticeService;
+    private final SchoolInformationService schoolInformationService;
+    private final BillingService billingService;
 
     @PostMapping("/subjects")
     @Operation(summary = "어드민의 과목 생성", description = "어드민은 과목을 생성할 수 있다.")
@@ -223,6 +229,26 @@ public class AdminController {
     @Operation(summary = "어드민의 pw 변경 확인을 위한 API", description = "false이면 수정이 안 된 것, true이면 수정이 된 것")
     public ResponseEntity<Boolean> checkModification(){
         return ResponseEntity.ok().body(userService.isModified());
+    }
+    @PostMapping("/schools/{schoolId}/subscriptions")
+    @Operation(summary = "빌링키를 등록하면서 학교 플랜을 등록")
+    public ResponseEntity<ResSubscriptionDTO> subscribeSchool(@PathVariable Long schoolId,
+                                                                   @RequestBody ReqSubscriptionDTO reqSubscriptionDTO) {
+        ResSubscriptionDTO resSubscriptionDTO = schoolInformationService.subscribeSchool(schoolId, reqSubscriptionDTO.getPlan(), reqSubscriptionDTO.getBillingKey(), reqSubscriptionDTO.getEndDate());
+        return ResponseEntity.ok(resSubscriptionDTO);
+    }
+
+    @PutMapping("/schools/subscriptions/{subscriptionId}/upgrade")
+    @Operation(summary = "빌링키가 등록되어 있는 경우 학교 플랜을 수정")
+    public ResponseEntity<ResSubscriptionDTO> upgradeSubscription(@PathVariable Long subscriptionId,
+                                                            @RequestBody ReqUpgradePlanDTO reqUpgradePlanDTO) {
+        ResSubscriptionDTO resSubscriptionDTO = schoolInformationService.upgradeSubscription(subscriptionId, reqUpgradePlanDTO.getNewPlan(),reqUpgradePlanDTO.getEndDate());
+        return ResponseEntity.ok(resSubscriptionDTO);
+    }
+    @GetMapping("/schools/{schoolId}")
+    @Operation(summary = "자신의 학교의 결제 내역을 확인할 수 있다")
+    public ResponseEntity<List<ResPaymentRecordDTO>> getPaymentRecord(@PathVariable Long schoolId){
+        return ResponseEntity.ok(billingService.getPaymentRecord(schoolId));
     }
 
 }

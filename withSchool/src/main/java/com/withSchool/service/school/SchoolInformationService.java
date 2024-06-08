@@ -1,8 +1,11 @@
 package com.withSchool.service.school;
 
+import com.withSchool.dto.payment.ResSubscriptionDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.school.SchoolInformationListDTO;
+import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.repository.payment.SubscriptionRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
 import com.withSchool.service.user.NotificationService;
@@ -16,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +31,7 @@ import java.util.stream.Collectors;
 public class SchoolInformationService {
 
     private final SchoolInformationRepository schoolInformationRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
     private final UserService userService;
 
@@ -60,6 +65,7 @@ public class SchoolInformationService {
                 schoolInformation.getJuOrgNm(),
                 schoolInformation.getSdSchulCode(),
                 schoolInformation.getPaymentState(),
+                schoolInformation.getServiceType(),
                 schoolInformation.getRegDate()
         )).collect(Collectors.toList());
     }
@@ -81,6 +87,76 @@ public class SchoolInformationService {
             return null;
         } else return schoolInformationRepository.save(schoolInformation);
     }
+
+    @Transactional
+    public ResSubscriptionDTO subscribeSchool(Long schoolId, int plan, String billingKey, LocalDate endDate) {
+        Optional<SchoolInformation> schoolOpt = schoolInformationRepository.findById(schoolId);
+        if (schoolOpt.isEmpty()) {
+            throw new RuntimeException("해당하는 학교가 없습니다");
+        }
+
+        SchoolInformation school = schoolOpt.get();
+
+        Subscription subscription = Subscription.builder()
+                .plan(plan)
+                .startDate(LocalDate.now())
+                .endDate(endDate)
+                .billingKey(billingKey)
+                .schoolInformation(school)
+                .build();
+        subscriptionRepository.save(subscription);
+
+        school.setServiceType(plan);
+        schoolInformationRepository.save(school);
+
+
+        return ResSubscriptionDTO.builder()
+                .subscriptionId(subscription.getSubscriptionId())
+                .plan(subscription.getPlan())
+                .startDate(subscription.getStartDate())
+                .endDate(subscription.getEndDate())
+                .build();
+    }
+
+    @Transactional
+    public ResSubscriptionDTO upgradeSubscription(Long subscriptionId,int newPlan,LocalDate endDate) {
+        Optional<Subscription> subscriptionOpt = subscriptionRepository.findById(subscriptionId);
+        if (subscriptionOpt.isEmpty()) {
+            throw new RuntimeException("이용하시고 있는 플랜이 없습니다");
+        }
+        Subscription subscription = subscriptionOpt.get();
+        SchoolInformation schoolInformation = subscription.getSchoolInformation();
+        int totalUsers = userRepository.findUsersCountBySchoolId(schoolInformation.getSchoolId());
+        int newPlanUsers = 300 + newPlan*200;
+
+        if(totalUsers > newPlanUsers){
+            throw new RuntimeException("현재 인원이 해당 플랜의 인원수를 초과합니다. 인원을 줄여주세요");
+        }
+
+        // 기존 플랜 종료
+        subscription.changeEndDate(LocalDate.now());
+        subscriptionRepository.save(subscription);
+        // 새로운 플랜 등록
+        Subscription newSubscription = Subscription.builder()
+                .plan(newPlan)
+                .startDate(LocalDate.now())
+                .endDate(endDate)
+                .billingKey(subscription.getBillingKey())
+                .schoolInformation(schoolInformation)
+                .build();
+        subscriptionRepository.save(newSubscription);
+
+        schoolInformation.setServiceType(newPlan);
+        schoolInformationRepository.save(schoolInformation);
+
+        return ResSubscriptionDTO.builder()
+                .subscriptionId(newSubscription.getSubscriptionId())
+                .plan(newSubscription.getPlan())
+                .startDate(newSubscription.getStartDate())
+                .endDate(newSubscription.getEndDate())
+                .build();
+    }
+
 
     public SchoolInformation dtoToEntity(SchoolInformationDTO dto) {
         return SchoolInformation.builder()
