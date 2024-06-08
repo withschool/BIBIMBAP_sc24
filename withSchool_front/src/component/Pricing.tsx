@@ -43,27 +43,27 @@ export default class Pricing extends Component<{}, PricingState> {
       monthlyPricingData: [
         {
           image: price1,
-          title: "기본형",
-          space: "100명",
+          title: "소규모",
+          space: "300명 이하",
           support: "미제공",
-          price: "2.0만원",
+          price: "300만원",
           isPopular: false,
         },
         {
           image: price2,
-          title: "고급형",
-          space: "300명",
+          title: "중규모",
+          space: "300명 ~ 700명",
           support: "미제공",
-          price: "2.2만원",
+          price: "450만원",
           isPopular: true,
           isPrimary: true,
         },
         {
           image: price3,
-          title: "맞춤형",
-          space: "무제한",
+          title: "대규모",
+          space: "700명 이상",
           support: "제공",
-          price: "2.4만원",
+          price: "700만원",
           isPopular: false,
         },
       ],
@@ -115,13 +115,13 @@ export default class Pricing extends Component<{}, PricingState> {
               <Col lg={7} className="text-center">
                 <h2 className="fw-bold">서비스 가격</h2>
                 <p className="text-muted">
-                  학교랑은 최적의 가격으로 학교내의 모든 온라인 체계를 지원합니다.
+                  학교랑은 학교 규모에 최적화된 가격으로 학교내의 모든 온라인 체계를 지원합니다.
                 </p>
               </Col>
             </Row>
             <Row>
               <Col lg={12}>
-                <div className="text-center mb-4 pricing-tab">
+                {/* <div className="text-center mb-4 pricing-tab">
                   <ul
                     className="nav nav-pills rounded-pill justify-content-center d-inline-block shadow-sm"
                     id="pricingpills-tab"
@@ -156,7 +156,7 @@ export default class Pricing extends Component<{}, PricingState> {
                       </NavLink>
                     </ReactstrapNavItem>
                   </ul>
-                </div>
+                </div> */}
                 <TabContent activeTab={this.state.activeTab}>
                   <TabPane className="fade show" tabId="1">
                     <Row>
@@ -180,7 +180,7 @@ export default class Pricing extends Component<{}, PricingState> {
                                 {monthly.title}
                               </h4>
                               <p className="text-muted">
-                                최대 사용자 수:{" "}
+                                최대 사용자 수 : {" "}
                                 <span className="fw-bold">{monthly.space}</span>
                               </p>
                               <p className="text-muted">
@@ -194,7 +194,7 @@ export default class Pricing extends Component<{}, PricingState> {
                                 24시간 온라인 지원 활성화
                               </p>
                               <p className="text-dark font-size-16 font-weight-semibold mb-4">
-                                {monthly.price} / 명 (사용자 수)
+                                {monthly.price} / 월간
                               </p>
                               {monthly.isPrimary ? (
                                 <ScrollLink to="contact" className="btn btn-primary">
@@ -211,7 +211,7 @@ export default class Pricing extends Component<{}, PricingState> {
                       ))}
                     </Row>
                   </TabPane>
-
+{/* 
                   <TabPane className="fade show" tabId="2">
                     <Row>
                       {this.state.yearlyPricingData.map((yearly, key) => (
@@ -264,7 +264,7 @@ export default class Pricing extends Component<{}, PricingState> {
                         </Col>
                       ))}
                     </Row>
-                  </TabPane>
+                  </TabPane> */}
                 </TabContent>
               </Col>
             </Row>

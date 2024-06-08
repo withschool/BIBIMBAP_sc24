@@ -1,5 +1,6 @@
 const url = 'http://223.130.134.181:8080';
 
+
 export const submitSchoolApplication = async (applicationData: any): Promise<any> => {
     try {
         const response = await fetch(`${url}/basic/schools/applications`, {

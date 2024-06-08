@@ -85,7 +85,7 @@ const routes = [
     //home
     {
         path: '/',
-        element: localStorage.getItem('token') ? <Index /> : <Navigate to="/landing" replace />,
+        element: localStorage.getItem('token') ? <Navigate to="/landing" replace /> : <Navigate to="/landing" replace />,
         // element: localStorage.getItem('token') ? <Index /> : <Index />,
     },
     {

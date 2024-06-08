@@ -24,7 +24,6 @@ export const getSchoolList = async (): Promise<any> => {
 }
 
 //215a0c0d1fd74b64946efdc0ef79bc04
-
 export const getSchoolListFromNeis = async (search: string): Promise<any> => {
     const proxyUrl = 'http://www.withschool.site:8080/';
     const apiUrl = `https://open.neis.go.kr/hub/schoolInfo?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&pIndex=1&pSize=100&SCHUL_NM=${search}`;
@@ -44,6 +43,7 @@ export const getSchoolListFromNeis = async (search: string): Promise<any> => {
                     schoolName: item.SCHUL_NM,
                     schoolPhoneNumber: item.ORG_TELNO,
                     schoolAddress: item.ORG_RDNMA,
+                    sd_SCHUL_CODE: item.SD_SCHUL_CODE, // Include sd_SCHUL_CODE
                     educationOffice: item.ATPT_OFCDC_SC_NM,
                     ...item
                 }));
@@ -178,23 +178,23 @@ export const getSchoolInfo = async (childId: string | null): Promise<any> => {
 };
 export const getClassNotices = async (childId: number): Promise<any> => {
     try {
-      const response = await fetch(`${url}/classes/notices?childId=${childId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        const response = await fetch(`${url}/classes/notices?childId=${childId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('공지 리스트 조회 완료:', data);
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('공지 리스트 조회 실패:', errorMessage);
+            throw new Error(errorMessage);
         }
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('공지 리스트 조회 완료:', data);
-        return data;
-      } else {
-        const errorMessage = await response.text();
-        console.error('공지 리스트 조회 실패:', errorMessage);
-        throw new Error(errorMessage);
-      }
     } catch (errorss) {
-      console.error('공지 리스트 조회 실패:', errorss);
+        console.error('공지 리스트 조회 실패:', errorss);
     }
-  };
+};
