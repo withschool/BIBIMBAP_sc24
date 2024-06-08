@@ -49,9 +49,9 @@ public class CommunityController {
     }
     @GetMapping("/{community-id}/post")
     @Operation(summary = "커뮤니티 게시글 목록 조회")
-    public ResponseEntity<List<ResCommunityPostDTO>> getPostList(@ModelAttribute PageRequestDTO dto,@PathVariable("community-id")Long id){
-        List<ResCommunityPostDTO> postList = communityService.getPostList(dto,id);
-        return ResponseEntity.ok(postList);
+    public ResponseEntity<ResCommunityPostListDTO> getPostList(@ModelAttribute PageRequestDTO dto,@PathVariable("community-id")Long id){
+        ResCommunityPostListDTO resCommunityPostListDTO = communityService.getPostList(dto,id);
+        return ResponseEntity.ok(resCommunityPostListDTO);
     }
     @GetMapping("/post/{post-id}")
     @Operation(summary = "커뮤니티 게시글 하나 조회")
@@ -62,9 +62,9 @@ public class CommunityController {
 
     @GetMapping("/post/search")
     @Operation(summary="키워드 검색을 통한 게시글 목록 조회")
-    public ResponseEntity<List<ResCommunityPostDTO>> getPostListBySearch(@ModelAttribute PageRequestDTO dto, @RequestParam String keyword){
-        List<ResCommunityPostDTO> postList = communityService.getPostListBySearch(dto, keyword);
-        return ResponseEntity.ok(postList);
+    public ResponseEntity<ResCommunityPostListDTO> getPostListBySearch(@ModelAttribute PageRequestDTO dto, @RequestParam String keyword){
+        ResCommunityPostListDTO resCommunityPostListDTO = communityService.getPostListBySearch(dto, keyword);
+        return ResponseEntity.ok(resCommunityPostListDTO);
     }
 
     @PatchMapping("/post/{post-id}/like")

@@ -105,7 +105,7 @@ public class CommunityService {
         communityPostRepository.delete(post);
     }
 
-    public List<ResCommunityPostDTO> getPostList(PageRequestDTO dto, Long id) {
+    public ResCommunityPostListDTO getPostList(PageRequestDTO dto, Long id) {
         Pageable pageable = dto.getPageable(Sort.by("postId").descending());
         Page<Post> posts = communityPostRepository.getList(id,pageable);
         List<ResCommunityPostDTO> dtoList = new ArrayList<>();
@@ -123,7 +123,10 @@ public class CommunityService {
                     .build();
             dtoList.add(resCommunityPostDTO);
         }
-        return dtoList;
+        return ResCommunityPostListDTO.builder()
+                .postList(dtoList)
+                .totalPosts(posts.getTotalElements())
+                .build();
     }
 
     public ResCommunityPostDTO getPost(Long postId) {
@@ -144,7 +147,7 @@ public class CommunityService {
                 .build();
     }
 
-    public List<ResCommunityPostDTO> getPostListBySearch(PageRequestDTO dto, String keyword) {
+    public ResCommunityPostListDTO getPostListBySearch(PageRequestDTO dto, String keyword) {
         Pageable pageable = dto.getPageable(Sort.by("postId").descending());
         Page<Post> posts = communityPostRepository.findByKeyword(keyword,pageable);
         List<ResCommunityPostDTO> dtoList = new ArrayList<>();
@@ -162,7 +165,10 @@ public class CommunityService {
                     .build();
             dtoList.add(resCommunityPostDTO);
         }
-        return dtoList;
+        return ResCommunityPostListDTO.builder()
+                .postList(dtoList)
+                .totalPosts(posts.getTotalElements())
+                .build();
     }
     @Transactional
     public void togglePostLike(Long postId){
