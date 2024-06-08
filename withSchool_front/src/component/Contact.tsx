@@ -1,21 +1,20 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-
-//import icon
 import FeatherIcon from "feather-icons-react";
-import { Col, Container, Form, Input, Label, Row } from "reactstrap";
-
-//import images
+import { Col, Container, Form, Input, Label, Row, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import contact from "../assets/images/contact.png";
-
 import { submitSchoolApplication } from '../service/apply';
-
+import { getSchoolListFromNeis } from '../service/school';
+import './Contact.css'; // Import the CSS file
 
 interface ContactState {
   schoolName: string;
   schoolPhoneNumber: string;
   schoolAdminName: string;
   schoolAdminEmail: string;
+  dropdownOpen: boolean;
+  filteredSchools: { schoolName: string, sd_SCHUL_CODE: string }[];
+  sd_SCHUL_CODE: string;
 }
 
 export default class Contact extends Component<{}, ContactState> {
@@ -25,30 +24,71 @@ export default class Contact extends Component<{}, ContactState> {
       schoolName: '',
       schoolPhoneNumber: '',
       schoolAdminName: '',
-      schoolAdminEmail: ''
+      schoolAdminEmail: '',
+      dropdownOpen: false,
+      filteredSchools: [],
+      sd_SCHUL_CODE: ''
     };
   }
 
-  handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    this.setState({ [e.target.name]: e.target.value } as Pick<ContactState, keyof ContactState>);
+
+  handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value } as unknown as Pick<ContactState, keyof ContactState>);
+
+    if (name === "schoolName") {
+      if (value) {
+        try {
+          const schools = await getSchoolListFromNeis(value);
+          const filteredSchools = schools.map((school: any) => ({
+            schoolName: `${school.schoolName} - ${school.schoolAddress}`,
+            sd_SCHUL_CODE: school.sd_SCHUL_CODE
+          }));
+          this.setState({ filteredSchools, dropdownOpen: true });
+        } catch (error) {
+          console.error('Error fetching school list:', error);
+        }
+      } else {
+        this.setState({ filteredSchools: [], dropdownOpen: false });
+      }
+    }
   };
 
+  handleSelectSchool = (school: { schoolName: string, sd_SCHUL_CODE: string }) => {
+    this.setState({ schoolName: school.schoolName, sd_SCHUL_CODE: school.sd_SCHUL_CODE, dropdownOpen: false });
+  };
   handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await submitSchoolApplication(this.state);
+      const applicationData = {
+        schoolName: this.state.schoolName,
+        schoolPhoneNumber: this.state.schoolPhoneNumber,
+        schoolAdminName: this.state.schoolAdminName,
+        schoolAdminEmail: this.state.schoolAdminEmail,
+        serviceType: 0, // Assuming serviceType is 0, adjust as needed
+        sd_SCHUL_CODE: this.state.sd_SCHUL_CODE
+      };
+      const response = await submitSchoolApplication(applicationData);
       console.log('Application submitted successfully:', response);
       alert('문의가 완료되었습니다.');
       this.setState({
         schoolName: '',
         schoolPhoneNumber: '',
         schoolAdminName: '',
-        schoolAdminEmail: ''
+        schoolAdminEmail: '',
+        sd_SCHUL_CODE: '',
+        filteredSchools: []
       });
     } catch (error) {
       console.error('Error submitting application:', error);
       alert('문의 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
+  };
+
+  toggleDropdown = () => {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
   };
 
   render() {
@@ -79,7 +119,12 @@ export default class Contact extends Component<{}, ContactState> {
                             className="form-control"
                             placeholder="성함을 입력해 주세요"
                             value={this.state.schoolAdminName}
-                            onChange={this.handleChange}
+                            onChange={(e) => {
+                              const regex = /^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z\s]*$/;
+                              if (regex.test(e.target.value)) {
+                                this.handleChange(e);
+                              }
+                            }}
                           />
                         </div>
                       </Col>
@@ -106,79 +151,73 @@ export default class Contact extends Component<{}, ContactState> {
                           </Label>
                           <Input
                             type="text"
-                            className="form-control"
+                            className="form-control mt-2"
                             id="schoolName"
                             name="schoolName"
-                            placeholder="학교 이름을 입력해 주세요"
+                            placeholder="학교 이름을 검색해 주세요."
                             value={this.state.schoolName}
                             onChange={this.handleChange}
                           />
+                          <div className="mb-2"></div>
+                          <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
+                            <DropdownToggle caret className="form-control">
+                              {this.state.schoolName || "학교를 검색하거나 선택해 주세요."}
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu-scrollable">
+                              {this.state.filteredSchools.map((school, index) => (
+                                <DropdownItem key={index} onClick={() => this.handleSelectSchool(school)}>
+                                  {school.schoolName}
+                                </DropdownItem>
+                              ))}
+                            </DropdownMenu>
+                          </Dropdown>
                         </div>
                         <div className="mb-4 pb-2">
                           <Label htmlFor="schoolPhoneNumber" className="text-muted form-label">
                             전화번호
                           </Label>
-                          <textarea
+                          <Input
                             name="schoolPhoneNumber"
                             id="schoolPhoneNumber"
+                            type="text"
                             className="form-control"
                             placeholder="전화번호를 입력해 주세요"
                             value={this.state.schoolPhoneNumber}
-                            onChange={this.handleChange}
-                          ></textarea>
+                            onChange={(e) => {
+                              let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+                              if (value.length > 10) {
+                                value = value.slice(0, 11); // 최대 11자리까지만 허용
+                              }
+                              if (value.length > 3 && value.length <= 7) {
+                                value = value.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+                              } else if (value.length > 7) {
+                                value = value.replace(/(\d{3})(\d{3,4})(\d{1,4})/, '$1-$2-$3');
+                              }
+                              this.setState({ schoolPhoneNumber: value });
+                            }}
+                          />
                         </div>
-                        <button type="submit" name="send" className="btn btn-primary">
-                          지금 바로 문의하기
-                        </button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col sm={12}>
+                        <div className="d-grid">
+                          <Input
+                            type="submit"
+                            id="submit"
+                            name="send"
+                            className="submitBnt btn btn-primary btn-block"
+                            value="문의하기"
+                          />
+                        </div>
                       </Col>
                     </Row>
                   </Form>
                 </div>
               </Col>
-              <Col lg={5} className="ms-lg-auto">
-                <div className="mt-5 mt-lg-0">
-                  <img src={contact} alt="" className="img-fluid d-block" />
-                  <p className="text-muted mt-5 mb-3">
-                    <i>
-                      <FeatherIcon icon="mail" className="me-2 text-muted icon icon-xs" />
-                    </i>{" "}
-                    withSchool.service@gmail.com
-                  </p>
-                  <p className="text-muted mb-3">
-                    <i>
-                      <FeatherIcon icon="phone" className="me-2 text-muted icon icon-xs" />
-                    </i>{" "}
-                    010-1234-5678
-                  </p>
-                  <p className="text-muted mb-3">
-                    <i>
-                      <FeatherIcon icon="map-pin" className="me-2 text-muted icon icon-xs" />
-                    </i>{" "}
-                    경기도 수원시 영통구 월드컵로 206
-                  </p>
-                  <ul className="list-inline pt-4">
-                    {/* <li className="list-inline-item me-3">
-                      <Link to="#" className="social-icon icon-mono avatar-xs rounded-circle">
-                        <i>
-                          <FeatherIcon icon="facebook" className="icon-xs" />
-                        </i>{" "}
-                      </Link>
-                    </li>
-                    <li className="list-inline-item me-3">
-                      <Link to="#" className="social-icon icon-mono avatar-xs rounded-circle">
-                        <i>
-                          <FeatherIcon icon="twitter" className="icon-xs" />
-                        </i>{" "}
-                      </Link>
-                    </li>
-                    <li className="list-inline-item me-3">
-                      <Link to="#" className="social-icon icon-mono avatar-xs rounded-circle">
-                        <i>
-                          <FeatherIcon icon="instagram" className="icon-xs" />
-                        </i>{" "}
-                      </Link>
-                    </li> */}
-                  </ul>
+              <Col lg={6}>
+                <div className="mt-4 mt-lg-0">
+                  <img src={contact} alt="" className="img-fluid" />
                 </div>
               </Col>
             </Row>
