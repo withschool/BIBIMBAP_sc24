@@ -127,7 +127,18 @@ public class SchoolInformationService {
         Subscription subscription = subscriptionOpt.get();
         SchoolInformation schoolInformation = subscription.getSchoolInformation();
         int totalUsers = userRepository.findUsersCountBySchoolId(schoolInformation.getSchoolId());
-        int newPlanUsers = 300 + newPlan*200;
+        int newPlanUsers;
+        switch (newPlan){
+            case 0:
+                newPlanUsers = 300;
+                break;
+            case 1:
+                newPlanUsers = 700;
+                break;
+            default:
+                newPlanUsers = 5000;
+                break;
+        }
 
         if(totalUsers > newPlanUsers){
             throw new RuntimeException("현재 인원이 해당 플랜의 인원수를 초과합니다. 인원을 줄여주세요");

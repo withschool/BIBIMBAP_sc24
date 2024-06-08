@@ -312,7 +312,20 @@ public class UserService {
         SchoolInformation currentUserSchool = getCurrentUserSchoolInformation(null);
         List<User> specificSchoolUser = userRepository.findAllBySchoolInformation_SchoolIdAndAccountTypeNotAndIdIsNotNull(currentUserSchool.getSchoolId(), 4);
 
-        int userLimit = 300 + currentUserSchool.getServiceType() * 200;
+
+        int userLimit;
+
+        switch (currentUserSchool.getServiceType()){
+            case 0:
+                userLimit = 300;
+                break;
+            case 1:
+                userLimit = 700;
+                break;
+            default:
+                userLimit = 5000;
+                break;
+        }
 
         int specificSchoolUserCount = specificSchoolUser.size();
 
