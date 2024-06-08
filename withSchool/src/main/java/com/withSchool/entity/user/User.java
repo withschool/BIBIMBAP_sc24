@@ -52,7 +52,7 @@ public class User extends BaseEntity implements UserDetails {
     @Comment("이름")
     private String name;
 
-    @Column(name = "sex", columnDefinition = "TINYINT(1)")
+    @Column(name = "sex", columnDefinition = "TINYINT(1) default 0")
     @Comment("""
             성별
                         
