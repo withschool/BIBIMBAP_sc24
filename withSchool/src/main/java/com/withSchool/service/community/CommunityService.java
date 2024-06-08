@@ -112,6 +112,7 @@ public class CommunityService {
         for(Post p : posts){
             int replyCount = communityReplyRepository.countReply(p.getPostId());
             ResCommunityPostDTO resCommunityPostDTO = ResCommunityPostDTO.builder()
+                    .userId(p.getUser().getUserId())
                     .postId(p.getPostId())
                     .title(p.getTitle())
                     .content(p.getContent())
@@ -132,6 +133,7 @@ public class CommunityService {
         int replyCount = communityReplyRepository.countReply(postId);
 
         return ResCommunityPostDTO.builder()
+                .userId(post.getUser().getUserId())
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -149,6 +151,7 @@ public class CommunityService {
         for(Post p : posts){
             int replyCount = communityReplyRepository.countReply(p.getPostId());
             ResCommunityPostDTO resCommunityPostDTO = ResCommunityPostDTO.builder()
+                    .userId(p.getUser().getUserId())
                     .postId(p.getPostId())
                     .title(p.getTitle())
                     .content(p.getContent())

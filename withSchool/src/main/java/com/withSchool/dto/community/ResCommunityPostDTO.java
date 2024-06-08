@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ResCommunityPostDTO {
 
+    private Long userId;
     private Long postId;
     private String title;
     private String content;
