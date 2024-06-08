@@ -34,6 +34,11 @@ import IconGithub from '../../components/Icon/IconGithub';
 
 import { getSchoolInfo } from '../../service/school';
 
+import { useSelector } from 'react-redux';
+import { setSchoolName } from '../../store/schoolSlice';
+import { IRootState } from '../../store';
+
+
 
 const ManageSchool = () => {
 
@@ -392,19 +397,21 @@ const ManageSchool = () => {
         }
     };
 
-    const [schoolName, setSchoolName] = useState('');
+
+    const schoolName = useSelector((state: IRootState) => state.school.schoolName);
+
 
     useEffect(() => {
         const fetchSchoolInfo = async () => {
             try {
                 const data = await getSchoolInfo('');
-                setSchoolName(data.SCHUL_NM);
+                dispatch(setSchoolName(data.SCHUL_NM));
             } catch (error) {
                 console.error('학교 이름 안나오는 중', error);
             }
         };
         fetchSchoolInfo();
-    }, []);
+    }, [dispatch]);
 
 
 
@@ -417,7 +424,6 @@ const ManageSchool = () => {
                             <div className="flex items-center flex-wrap">
 
                                 <h5 className="font-semibold text-lg dark:text-white-light">{schoolName}</h5>
-
 
                                 <button type="button" onClick={() => exportTable('csv')} className="btn btn-primary btn-sm m-1 ">
                                     <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />

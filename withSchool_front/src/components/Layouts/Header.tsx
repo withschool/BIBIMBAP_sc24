@@ -44,6 +44,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../Icon/IconX';
 
 
+
 const Header = () => {
 
     const [subjectList, setSubjectList] = useState([]);
@@ -272,8 +273,7 @@ const Header = () => {
 
     const userTypeInfo = getUserTypeInfo(accountTypes);
 
-    const selectedSchoolName = useSelector((state: IRootState) => state.school.selectedSchoolName);
-
+    const schoolName = useSelector((state: IRootState) => state.school.schoolName);
 
     return (
         <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
@@ -295,7 +295,7 @@ const Header = () => {
                         </button>
                     </div>
 
-                    <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">선택된 학교 [{selectedSchoolName || '학교를 선택하세요'}]</h3>
+                    <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">선택된 학교 [{schoolName || '학교를 선택하세요'}]</h3>
 
 
                     <div className="ltr:mr-2 rtl:ml-2 hidden sm:block">
