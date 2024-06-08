@@ -62,7 +62,7 @@ public class UserService {
 
     public List<ResUserUsercodeDTO> findAllBySchool_SchoolId() {
         Long schoolId = getCurrentUserSchoolId();
-        List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
+        List<User> res = userRepository.findAllBySchoolInformation_SchoolIdAndIdIsNotNull(schoolId);
 
         List<ResUserUsercodeDTO> dtos = new ArrayList<>();
         for (User u : res) {
@@ -289,7 +289,7 @@ public class UserService {
   
     public List<ResUserUsercodeDTO> findAllClassInformation_ClassId(){
         User user = getCurrentUser();
-        List<User> users = userRepository.findAllByClassInformation_ClassId(user.getClassInformation().getClassId());
+        List<User> users = userRepository.findAllByClassInformation_ClassIdAndIdIsNotNull(user.getClassInformation().getClassId());
 
         List<ResUserUsercodeDTO> dtos = new ArrayList<>();
 
@@ -310,7 +310,7 @@ public class UserService {
 
     public boolean isEnoughUserRemain(int inputSize) {
         SchoolInformation currentUserSchool = getCurrentUserSchoolInformation(null);
-        List<User> specificSchoolUser = userRepository.findAllBySchoolInformation_SchoolIdAndAccountTypeNot(currentUserSchool.getSchoolId(), 4);
+        List<User> specificSchoolUser = userRepository.findAllBySchoolInformation_SchoolIdAndAccountTypeNotAndIdIsNotNull(currentUserSchool.getSchoolId(), 4);
 
         int userLimit = 300 + currentUserSchool.getServiceType() * 200;
 

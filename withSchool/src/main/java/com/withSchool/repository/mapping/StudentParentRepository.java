@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface StudentParentRepository extends JpaRepository<StudentParent, Long> {
@@ -17,7 +16,7 @@ public interface StudentParentRepository extends JpaRepository<StudentParent, Lo
     @Query("SELECT sp.student.userId FROM StudentParent sp WHERE sp.parent.userId = :parentId")
     Long findStudentByParentId(Long parentId);
 
-    List<StudentParent> findStudentsByParent(User parent);
+    List<StudentParent> findByParentAndStudent_IdIsNotNull(User parent);
 
     StudentParent findByStudent(User student);
 

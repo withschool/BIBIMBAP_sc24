@@ -36,20 +36,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findBySchoolInformationSchoolIdAndNameAndUserCode(Long schoolId, String name, String userCode);
 
-    List<User> findAllBySchoolInformation_SchoolId(Long schoolId);
+    List<User> findAllBySchoolInformation_SchoolIdAndIdIsNotNull(Long schoolId);
 
-    List<User> findAllBySchoolInformation_SchoolIdAndAccountTypeNot(Long schoolId, int accountType);
+    List<User> findAllBySchoolInformation_SchoolIdAndAccountTypeNotAndIdIsNotNull(Long schoolId, int accountType);
 
-    List<User> findAllByClassInformation_ClassId(Long classId);
+    List<User> findAllByClassInformation_ClassIdAndIdIsNotNull(Long classId);
 
-    @Query("SELECT u FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.accountType = 0")
+    @Query("SELECT u FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.accountType = 0 AND u.id IS NOT NULL")
     List<User> findStudentBySchoolInformationSchoolId(Long schoolId);
 
-    @Query("SELECT u FROM User u WHERE u.classInformation.classId = :classId AND u.accountType = 0")
+    @Query("SELECT u FROM User u WHERE u.classInformation.classId = :classId AND u.accountType = 0 AND u.id IS NOT NULL")
     List<User> findStudentByClassId(Long classId);
 
-    List<User> findByClassInformation_ClassIdAndAccountType(Long classId, int accountType);
+    List<User> findByClassInformation_ClassIdAndAccountTypeAndIdIsNotNull(Long classId, int accountType);
 
-    @Query("SELECT count(*) FROM User u WHERE u.schoolInformation.schoolId = :schoolId")
+    @Query("SELECT count(*) FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.id IS NOT NULL")
     int findUsersCountBySchoolId(Long schoolId);
 }

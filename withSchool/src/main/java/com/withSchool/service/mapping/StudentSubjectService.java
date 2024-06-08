@@ -54,7 +54,11 @@ public class StudentSubjectService {
     }
 
     public List<User> findSugangStudent(Long subjectId) {
-        return studentSubjectRepository.findUsersBySubject(subjectRepository.findById(subjectId).get());
+        Optional<Subject> optionalSubject = subjectRepository.findById(subjectId);
+        if(optionalSubject.isEmpty()) throw new RuntimeException("no subject");
+
+        Subject subject = optionalSubject.get();
+        return studentSubjectRepository.findUsersBySubject(subject);
     }
 
     public void register(User user, Subject subject) {
@@ -118,7 +122,7 @@ public class StudentSubjectService {
 
     @PreAuthorize("hasRole('TEACHER')")
     public List<ResStudentSubjectDefaultDTO> findStudentsScore(Long subjectId) {
-        List<StudentSubject> studentSubjects = studentSubjectRepository.findBySubject_SubjectId(subjectId);
+        List<StudentSubject> studentSubjects = studentSubjectRepository.findBySubject_SubjectIdAndUser_IdIsNotNull(subjectId);
         List<ResStudentSubjectDefaultDTO> response = new ArrayList<>();
 
         for (StudentSubject s : studentSubjects) {

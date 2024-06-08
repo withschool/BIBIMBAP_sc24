@@ -15,10 +15,10 @@ import java.util.Optional;
 @Repository
 public interface StudentSubjectRepository extends JpaRepository<StudentSubject, Long> {
 
-    @Query("SELECT ss FROM StudentSubject ss WHERE ss.user = :student")
+    @Query("SELECT ss FROM StudentSubject ss WHERE ss.user = :student AND ss.user.id IS NOT NULL")
     List<StudentSubject> findByStudent(@Param("student") User student);
 
-    @Query("SELECT ss.user FROM StudentSubject ss WHERE ss.subject = :subject")
+    @Query("SELECT ss.user FROM StudentSubject ss WHERE ss.subject = :subject AND ss.user.id IS NOT NULL")
     List<User> findUsersBySubject(@Param("subject") Subject subject);
 
     @Query("SELECT ss.subject FROM StudentSubject ss WHERE ss.user = :user")
@@ -28,7 +28,7 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubject, 
     @Query("DELETE FROM StudentSubject ss WHERE ss.user.userId = :userId")
     void deleteSsByUserId(@Param("userId") Long userId);
 
-    List<StudentSubject> findBySubject_SubjectId(Long subjectId);
+    List<StudentSubject> findBySubject_SubjectIdAndUser_IdIsNotNull(Long subjectId);
 
     Optional<StudentSubject> findByUser_UserIdAndSubject_SubjectId(Long userId, Long subjectId);
 }

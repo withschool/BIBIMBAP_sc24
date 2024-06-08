@@ -28,7 +28,7 @@ public class StudentParentService {
 
     public List<ResStudentParentDefaultDTO> findChildrenByParent(){
         User parent = userService.getCurrentUser();
-        List<StudentParent> mapping = studentParentRepository.findStudentsByParent(parent);
+        List<StudentParent> mapping = studentParentRepository.findByParentAndStudent_IdIsNotNull(parent);
         List<ResStudentParentDefaultDTO> dtos = new ArrayList<>();
 
         for (StudentParent sp : mapping) {

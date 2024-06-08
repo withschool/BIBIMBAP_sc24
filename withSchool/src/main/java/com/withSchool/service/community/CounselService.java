@@ -159,7 +159,7 @@ public class CounselService {
 
         User user = (childId != null) ? userService.findByUserId(childId) : userService.getCurrentUser();
 
-        List<User> classTeachers = userRepository.findByClassInformation_ClassIdAndAccountType(user.getClassInformation().getClassId(), 2);
+        List<User> classTeachers = userRepository.findByClassInformation_ClassIdAndAccountTypeAndIdIsNotNull(user.getClassInformation().getClassId(), 2);
         if(classTeachers.isEmpty()) throw new RuntimeException("No Class Teacher");
 
         classTeachers.stream()
@@ -173,7 +173,7 @@ public class CounselService {
         List<StudentSubject> sugangs = studentSubjectRepository.findByStudent(user);
         for (StudentSubject s : sugangs) {
             Long subjectId = s.getSubject().getSubjectId();
-            List<TeacherSubject> teacherSubjects = teacherSubjectRepository.findBySubject_SubjectId(subjectId);
+            List<TeacherSubject> teacherSubjects = teacherSubjectRepository.findBySubject_SubjectIdAndTeacher_IdIsNotNull(subjectId);
             teacherSubjects.stream()
                     .map(TeacherSubject::getTeacher)
                     .map(User::toResUserDefaultDTO)
