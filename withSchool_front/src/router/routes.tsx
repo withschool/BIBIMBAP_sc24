@@ -119,6 +119,10 @@ const routes = [
         element: <SchoolList />,
     },
 
+    {
+        path: '/admin/invoice/preview',
+        element: <InvoicePreview />,
+    },
     //teacher  
     {
         path: '/teacher/class/notice',
