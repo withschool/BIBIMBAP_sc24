@@ -151,7 +151,7 @@ const SignInBoxed = () => {
     const changePhoneForm = (Phone: string) => {
         const numberPattern = /\d+/g;
         const numbersArray = Phone.match(numberPattern);
-        const returnPhone = numbersArray ? numbersArray.join('') : '';
+        const returnPhone = numbersArray ? numbersArray.join('').slice(0, 11) : '';
         console.log(returnPhone);
         return returnPhone;
     }
@@ -195,6 +195,9 @@ const SignInBoxed = () => {
                 const userCode : any = localStorage.getItem('userCode');
                 console.log(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1)
                 const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1 , userCode);
+                if(data == -1){
+                    throw new Error('이미 등록된 전화번호입니다.');
+                }
             }
 
             // 학부모
@@ -202,6 +205,9 @@ const SignInBoxed = () => {
                 console.log(year, month, day);
                 console.log(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1)
                 const data = await register(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1 , "")
+                if(data == -1){
+                    throw new Error('이미 등록된 전화번호입니다.');
+                }
             }
 
             alert("회원가입이 완료되었습니다.");
