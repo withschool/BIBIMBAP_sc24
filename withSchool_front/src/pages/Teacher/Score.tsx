@@ -93,8 +93,13 @@ useEffect(() => {
             score: parseInt(tempMidScores[parseInt(key)])
         }));
         console.log(transformedObject);
-        enrollScore("mid", transformedObject);
-        alert("성적이 등록되었습니다");
+        try{
+            enrollScore("mid", transformedObject);
+            alert("성적이 등록되었습니다");
+        }
+        catch(error){
+            alert("유효하지 않은 입력값입니다.");
+        }
     }
 
     const handleFinalSubmit = () => {
@@ -303,7 +308,7 @@ useEffect(() => {
                                                 </td>
                                                 <td className="w-1/3 text-center">
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         className="w-10"
                                                         value={tempMidScores[data.studentSubjectId] || ''}
                                                         onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)}
@@ -341,7 +346,7 @@ useEffect(() => {
                                                 </td>
                                                 <td className="w-1/3 text-center">
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         className="w-10"
                                                         value={tempFinalScores[data.studentSubjectId] || ''}
                                                         onChange={(e) => handleFinalScoreChange(data.studentSubjectId, e.target.value)}
@@ -380,7 +385,7 @@ useEffect(() => {
                                                         </td>
                                                         <td className="w-1/3 text-center">
                                                             <input
-                                                                type="text"
+                                                                type="number"
                                                                 className="w-10"
                                                                 value={tempActivityScores[data.studentSubjectId] || ''}
                                                                 onChange={(e) => handleActivityScoreChange(data.studentSubjectId, e.target.value)}
