@@ -150,7 +150,7 @@ const AccountSetting = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="sex">성별</label>
-                                        <div id="sex" className="form-input  text-gray-500 bg-gray-300">{userinfo.sex ? "남자" : "여자"}</div>
+                                        <div id="sex" className="form-input  text-gray-500 bg-gray-300">{userinfo.sex ? "여자" : "남자"}</div>
                                     </div>
                                     <div>
                                         <label htmlFor="address">주소</label>

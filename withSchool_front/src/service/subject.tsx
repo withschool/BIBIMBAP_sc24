@@ -103,6 +103,54 @@ export const getSubjectList = async (): Promise<any> => {
     }
 }
 
+export const getSugangList = async (): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/sugangs`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log(`서버 데이타 ${JSON.stringify(data)}`);
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch school notice:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching school notice:', error);
+        throw error;
+    }
+}
+
+export const getSugangListStudent = async (childId : string): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/sugangs?childId=${childId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log(`서버 데이타 ${JSON.stringify(data)}`);
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to fetch school notice:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error fetching school notice:', error);
+        throw error;
+    }
+}
+
 export const deleteSubject = async (subjectId: number): Promise<any> => {
     try {
         const token = localStorage.getItem('token');

@@ -30,7 +30,8 @@ import IconOpenBook from '../../components/Icon/IconOpenBook';
 import IconBook from '../../components/Icon/IconBook';
 import IconTrash from '../../components/Icon/IconTrash';
 import IconRestore from '../../components/Icon/IconRestore';
-import { adminNotice, getSchoolNotices } from '../../service/form';
+import { adminNotice, getSchoolNotices, adminNoticeEdit, adminNoticeDelete } from '../../service/form';
+import { getSchoolNoticeDetail } from '../../service/school';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconSearch from '../../components/Icon/IconSearch';
 import IconSettings from '../../components/Icon/IconSettings';
@@ -55,88 +56,8 @@ const AdminNotice = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('adminNotice'));
+        dispatch(setPageTitle('학교 공지'));
     }, [dispatch]);
-
-
-    // const [mailList, setMailList] = useState([
-    //     {
-    //         id: 1,
-    //         path: 'profile-15.jpeg',
-    //         firstName: '김',
-    //         lastName: '창수',
-    //         email: 'laurieFox@mail.com',
-    //         date: new Date(),
-    //         time: '2:00 PM',
-    //         title: '학교 운동회 안내',
-    //         displayDescription: '다가오는 학교 운동회 일정 안내입니다.', s
-    //         type: 'inbox',
-    //         isImportant: false,
-    //         isStar: true,
-    //         group: 'social',
-    //         isUnread: false,
-    //         attachments: [
-    //             {
-    //                 name: '운동회 일정표.txt',
-    //                 size: '450KB',
-    //                 type: 'file',
-    //             },
-    //             {
-    //                 name: '운동회 규칙.pdf',
-    //                 size: '2.1MB',
-    //                 type: 'file',
-    //             },
-    //         ],
-    //         description: `
-    //                           <p class="mail-content">안녕하세요, 학부모님들께 알려드립니다. 오는 5월 15일 금요일에 학교 운동회가 개최됩니다. 자세한 일정과 규칙은 첨부된 파일을 확인해 주시기 바랍니다. 많은 참여 부탁드립니다.</p>
-    //                           <div class="gallery text-center">
-    //                               <img alt="image-gallery" src="${'/assets/images/sports_day1.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
-    //                               <img alt="image-gallery" src="${'/assets/images/sports_day2.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
-    //                               <img alt="image-gallery" src="${'/assets/images/sports_day3.jpeg'}" class="mb-4 mt-4" style="width: 250px; height: 180px;" />
-    //                           </div>
-    //                           <p>참가를 원하시는 학부모님께서는 미리 신청서를 제출해 주시기 바랍니다. 감사합니다.</p>
-    //                           `,
-    //     },
-    //     {
-    //         id: 2,
-    //         path: 'profile-14.jpeg',
-    //         firstName: '동현',
-    //         lastName: '민',
-    //         email: 'kingAndy@mail.com',
-    //         date: new Date(),
-    //         time: '6:28 PM',
-    //         title: '학부모 상담 주간 안내',
-    //         displayDescription: '학부모 상담 주간 일정 안내입니다.',
-    //         type: 'inbox',
-    //         isImportant: false,
-    //         isStar: false,
-    //         group: '',
-    //         isUnread: false,
-    //         description: `
-    //                           <p class="mail-content">안녕하세요, 다음 주는 학부모 상담 주간입니다. 자녀의 학습 진도 및 행동 발달에 대해 논의할 수 있는 좋은 기회입니다. 상담을 원하시는 학부모님께서는 미리 예약해 주시기 바랍니다.</p>
-    //                           <p>상담은 오전 9시부터 오후 4시까지 가능합니다. 감사합니다.</p>
-    //                           `,
-    //     },
-
-    //     {
-    //         noticeId: 0,
-    //         title: "테스트 제목",
-    //         content: "테스트 내용",
-    //         user: {
-    //             userId: 0,
-    //             userName: "유저 이름",
-    //             name: "네임"
-    //         },
-    //         regDate: "2024-05-22T20:39:37.407Z",
-    //         filesURl: [
-    //             "링크"
-    //         ],
-    //         originalName: [
-    //             "string"
-    //         ]
-    //     },
-
-    // ]);
 
     const defaultParams = {
         id: null,
@@ -155,13 +76,13 @@ const AdminNotice = () => {
     const [pagedMails, setPagedMails] = useState<any[]>([]);
     const [selectedMail, setSelectedMail] = useState<any>(null);
     const [isEdit, setIsEdit] = useState(false);
+    const [edit, setEdit] = useState(false);
     const [selectedTab, setSelectedTab] = useState('inbox');
     const [searchText, setSearchText] = useState('');
     const [isShowMailMenu, setIsShowMailMenu] = useState(false);
     const [ids, setIds] = useState<any>([]);
     const [params, setParams] = useState<any>(JSON.parse(JSON.stringify(defaultParams)));
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-
 
     const [pager] = useState<any>({
         currentPage: 1,
@@ -180,47 +101,47 @@ const AdminNotice = () => {
         searchMails(false);
     };
 
-    useEffect(() => {
-        const fetchNotices = async () => {
-            try {
-                const childId = localStorage.getItem('schoolId');
-                const notices = await getSchoolNotices(Number(childId));
-                console.log(notices);
-                if (notices && Array.isArray(notices)) {
-                    const formattedNotices = notices.map((notice: any) => ({
-                        id: notice.noticeId,
-                        path: 'profile-15.jpeg',
-                        firstName: notice.user.name.split(' ')[0],
-                        lastName: notice.user.name.split(' ')[1] || '',
-                        email: 'test@test.com',
-                        date: notice.regDate, // Convert regDate to Date object
-                        time: '2:00 PM',
-                        title: notice.title,
-                        displayDescription: notice.title,
-                        type: 'inbox',
-                        isImportant: false,
-                        isStar: false,
-                        group: 'personal',
-                        isUnread: false,
-                        attachments: [
-                            {
-                                name: notice.fileURl,
-                                type: 'file',
-                            },
-                        ],
-                        description: notice.content,
-                    })).reverse(); // Reverse the order of notices
-                    setMailList(formattedNotices);
-                    setFilteredMailList(formattedNotices);
-                    setPagedMails(formattedNotices.slice(0, 10));
-                } else {
-                    console.error('No notices found or invalid data format');
-                }
-            } catch (error) {
-                console.error('Failed to fetch notices:', error);
+    const fetchNotices = async () => {
+        try {
+            const childId = localStorage.getItem('schoolId');
+            const notices = await getSchoolNotices(Number(childId));
+            console.log(notices);
+            if (notices && Array.isArray(notices)) {
+                const formattedNotices = notices.map((notice: any) => ({
+                    id: notice.noticeId,
+                    path: 'profile-15.jpeg',
+                    firstName: notice.user.name.split(' ')[0],
+                    lastName: notice.user.name.split(' ')[1] || '',
+                    email: 'test@test.com',
+                    date: notice.regDate, // Convert regDate to Date object
+                    time: '2:00 PM',
+                    title: notice.title,
+                    displayDescription: notice.title,
+                    type: 'inbox',
+                    isImportant: false,
+                    isStar: false,
+                    group: 'personal',
+                    isUnread: false,
+                    attachments: [
+                        {
+                            name: notice.fileURl,
+                            type: 'file',
+                        },
+                    ],
+                    description: notice.content,
+                })).reverse(); // Reverse the order of notices
+                setMailList(formattedNotices);
+                setFilteredMailList(formattedNotices);
+                setPagedMails(formattedNotices.slice(0, 10));
+            } else {
+                console.error('No notices found or invalid data format');
             }
-        };
+        } catch (error) {
+            console.error('Failed to fetch notices:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchNotices();
     }, []);
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
@@ -318,13 +239,15 @@ const AdminNotice = () => {
         }
     };
 
-    const selectMail = (item: any) => {
+    const selectMail = async (item: any) => {
         if (item) {
             if (item.type !== 'draft') {
                 if (item && item.isUnread) {
                     item.isUnread = false;
                 }
-                setSelectedMail(item);
+                const detail = await getSchoolNoticeDetail(item.id);
+                console.log(detail);
+                setSelectedMail(detail);
             } else {
                 openMail('draft', item);
             }
@@ -342,6 +265,30 @@ const AdminNotice = () => {
             });
         }
     };
+
+    const [ishave, setIshave] = useState(false);
+
+    const [fileExists, setFileExists] = useState<(boolean | 0)[]>([]);
+
+    useEffect(() => {
+        const fetchFileExists = async () => {
+            const existsArray = await Promise.all(pagedMails.map((mail: any) => isHaveFile(mail.id)));
+            setFileExists(existsArray);
+        };
+
+        fetchFileExists();
+    }, [pagedMails]);
+
+    const isHaveFile = async (fileId : any) => {
+        try {
+            const detail = await getSchoolNoticeDetail(fileId);
+            const result = detail.originalName.length > 0
+            return result;
+        } catch (error) {
+            console.error("파일 확인 중 오류 발생:", error);
+            return 0;
+        }
+    }
 
     const setImportant = (mailId: number) => {
         if (mailId) {
@@ -370,6 +317,7 @@ const AdminNotice = () => {
 
     const openMail = (type: string, item: any) => {
         if (type === 'add') {
+            setEdit(false);
             setIsShowMailMenu(false);
             setParams(JSON.parse(JSON.stringify(defaultParams)));
         } else if (type === 'draft') {
@@ -381,9 +329,12 @@ const AdminNotice = () => {
                 ...data,
                 from: defaultParams.from,
                 to: data.email,
-                title: 'Re: ' + data.title,
+                id: data.noticeId,
+                title: data.title,
+                description : data.content,
                 displayDescription: 'Re: ' + data.title,
             });
+            setEdit(true);
         } else if (type === 'forward') {
             let data = JSON.parse(JSON.stringify(item));
             setParams({
@@ -424,10 +375,7 @@ const AdminNotice = () => {
         setFilteredMailList([
             ...res.filter(
                 (d) =>
-                    (d.title && d.title.toLowerCase().includes(searchText)) ||
-                    (d.firstName && d.firstName.toLowerCase().includes(searchText)) ||
-                    (d.lastName && d.lastName.toLowerCase().includes(searchText)) ||
-                    (d.displayDescription && d.displayDescription.toLowerCase().includes(searchText))
+                    (d.title && d.title.toLowerCase().includes(searchText))
             ),
         ]);
 
@@ -447,22 +395,20 @@ const AdminNotice = () => {
         clearSelection();
     };
 
+    const [isLoading, setIsLoading] = useState(false);
+    
     const saveNotice = async (type: any, id: any) => {
-        if (!params.to) {
-            showMessage('필요 내용을 작성해 주세요.', 'error');
-            return false;
-        }
         if (!params.title) {
             showMessage('제목을 작성해 주세요.', 'error');
             return false;
         }
-
+    
         let maxId = 0;
         if (!params.id) {
             maxId = mailList.length ? mailList.reduce((max, character) => (character.id && character.id > max ? character.id : max), 0) : 0;
         }
         let cDt = new Date();
-
+    
         let obj: any = {
             id: maxId + 1,
             path: '',
@@ -480,45 +426,66 @@ const AdminNotice = () => {
             description: params.description,
             attachments: null,
         };
-
+        setIsLoading(true);
+        
         if (type === 'save' || type === 'save_reply' || type === 'save_forward') {
-            setMailList((prevMailList) => [obj, ...prevMailList]);
-            searchMails();
+            setMailList((prevMailList) => {
+                const newMailList = [obj, ...prevMailList];
+                return newMailList;
+            });
+            searchMails(); // 검색 함수 호출
             showMessage('Mail has been saved successfully to draft.');
         } else if (type === 'send' || type === 'reply' || type === 'forward') {
             try {
                 const formData = new FormData();
                 formData.append("title", params.title);
                 formData.append("content", params.description);
-
+    
                 if (selectedFiles) {
                     Array.from(selectedFiles).forEach(file => {
                         formData.append("file", file);
                     });
                 }
-
-                const response = await adminNotice(formData);
-
-                if (response.ok) {
-                    searchMails();
-                    console.log("Notice successfully created");
+                
+                setSelectedFiles(null);
+                if (edit) {
+                    const response = await adminNoticeEdit(formData, id);
+                    obj.type = 'sent_notice';
+                    setMailList((prevMailList) => {
+                        const newMailList = [obj, ...prevMailList];
+                        return newMailList;
+                    });
+                    setIsLoading(false);
+                    showMessage('공지가 성공적으로 수정되었습니다.');
+                    setEdit(false);
+                    fetchNotices();
                 } else {
-                    console.error("Failed to create notice");
+                    const response = await adminNotice(formData);
+                    obj.type = 'sent_notice';
+                    setMailList((prevMailList) => {
+                        const newMailList = [obj, ...prevMailList];
+                        return newMailList;
+                    });
+                    setIsLoading(false);
+                    showMessage('공지가 성공적으로 작성되었습니다.');
+                    fetchNotices();
                 }
-
-                obj.type = 'sent_notice';
-                setMailList((prevMailList) => [obj, ...prevMailList]);
-                searchMails();
-                showMessage('공지가 성공적으로 작성되었습니다.');
-                window.location.reload();
             } catch (error) {
                 showMessage('공지 작성에 실패했습니다.', 'error');
             }
         }
-
+    
         setSelectedMail(null);
         setIsEdit(false);
     };
+
+    const deleteNotice = async (id: any) => {
+        await adminNoticeDelete(id);
+        showMessage('공지가 성공적으로 삭제되었습니다.');
+        searchMails();
+        fetchNotices();
+        setSelectedMail(null);
+    }
 
     const getFileSize = (file_type: any) => {
         let type = 'file';
@@ -628,119 +595,9 @@ const AdminNotice = () => {
                                         {mailList && mailList.filter((d) => d.type === 'inbox').length}
                                     </div>
                                 </button>
-
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'star' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('star');
-                                        tabChanged('star');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconStar className="shrink-0" />
-                                        <div className="ltr:ml-3 rtl:mr-3">중요 공지</div>
-                                    </div>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'sent_notice' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('sent_notice');
-                                        tabChanged('sent_notice');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconSend className="shrink-0" />
-
-                                        <div className="ltr:ml-3 rtl:mr-3">보낸 공지</div>
-                                    </div>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'draft' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('draft');
-                                        tabChanged('draft');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconFile className="w-4.5 h-4.5" />
-                                        <div className="ltr:ml-3 rtl:mr-3">임시 저장</div>
-                                    </div>
-                                    <div className="bg-primary-light dark:bg-[#060818] rounded-md py-0.5 px-2 font-semibold whitespace-nowrap">
-                                        {mailList && mailList.filter((d) => d.type === 'draft').length}
-                                    </div>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'trash' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('trash');
-                                        tabChanged('trash');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconTrashLines className="shrink-0" />
-                                        <div className="ltr:ml-3 rtl:mr-3">휴지통</div>
-                                    </div>
-                                </button>
-
-                                <Disclosure as="div">
-                                    {({ open }) => (
-                                        <>
-                                            <Disclosure.Button className="w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10">
-                                                <IconCaretDown className={`w-5 h-5 shrink-0 ${open && 'rotate-180'}`} />
-
-                                                <div className="ltr:ml-3 rtl:mr-3">{open ? '숨기기' : '더보기'}</div>
-                                            </Disclosure.Button>
-
-                                            <Disclosure.Panel as="ul" unmount={false} className="mt-1 space-y-1">
-                                                <li>
-                                                    <button
-                                                        type="button"
-                                                        className={`w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'archive' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                                            }`}
-                                                        onClick={() => {
-                                                            setSelectedTab('archive');
-                                                            tabChanged('archive');
-                                                        }}
-                                                    >
-                                                        <IconArchive className="shrink-0" />
-                                                        <div className="ltr:ml-3 rtl:mr-3">저장됨</div>
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button
-                                                        type="button"
-                                                        className={`w-full flex items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'important' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                                            }`}
-                                                        onClick={() => {
-                                                            setSelectedTab('important');
-                                                            tabChanged('important');
-                                                        }}
-                                                    >
-                                                        <IconBookmark className="shrink-0" />
-                                                        <div className="ltr:ml-3 rtl:mr-3">라벨</div>
-                                                    </button>
-                                                </li>
-                                            </Disclosure.Panel>
-                                        </>
-                                    )}
-                                </Disclosure>
-
                                 <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                             </div>
                         </PerfectScrollbar>
-
-
                     </div>
                 </div>
 
@@ -748,330 +605,69 @@ const AdminNotice = () => {
                     {!selectedMail && !isEdit && (
                         <div className="flex flex-col h-full">
                             <div className="flex justify-between items-center flex-wrap-reverse gap-4 p-4">
-                                <div className="flex items-center w-full sm:w-auto">
-                                    <div className="ltr:mr-4 rtl:ml-4">
+                                <div className="flex items-center sm:w-auto w-full">
+                                    <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
+                                        <IconMenu />
+                                    </button>
+                                    <div className="relative group">
                                         <input
-                                            type="checkbox"
-                                            className="form-checkbox"
-                                            checked={checkAllCheckbox()}
-                                            value={ids}
-                                            onChange={() => {
-                                                if (ids.length === filteredMailList.length) {
-                                                    setIds([]);
-                                                } else {
-                                                    let checkedIds = filteredMailList.map((d: any) => {
-                                                        return d.id;
-                                                    });
-                                                    setIds([...checkedIds]);
-                                                }
-                                            }}
-                                            onClick={(event) => event.stopPropagation()}
+                                            type="text"
+                                            className="form-input ltr:pr-8 rtl:pl-8 peer"
+                                            placeholder="공지 검색하기"
+                                            value={searchText}
+                                            onChange={(e) => setSearchText(e.target.value)}
+                                            onKeyUp={() => searchMails()}
                                         />
+                                        <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
+                                            <IconSearch />
+                                        </div>
                                     </div>
-
-                                    <div className="ltr:mr-4 rtl:ml-4">
-                                        <Tippy content="새로 고침">
-                                            <button type="button" className="hover:text-primary flex items-center" onClick={() => refreshMails()}>
-                                                <IconRefresh />
-                                            </button>
-                                        </Tippy>
-                                    </div>
-
-                                    {selectedTab !== 'trash' && (
-                                        <ul className="flex grow items-center sm:flex-none gap-4 ltr:sm:mr-4 rtl:sm:ml-4">
-                                            <li>
-                                                <div>
-                                                    <Tippy content="저장하기">
-                                                        <button type="button" className="hover:text-primary flex items-center" onClick={setArchive}>
-                                                            <IconArchive />
-                                                        </button>
-                                                    </Tippy>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div>
-                                                    <Tippy content="Spam">
-                                                        <button type="button" className="hover:text-primary flex items-center" onClick={setSpam}>
-                                                            <IconInfoHexagon />
-                                                        </button>
-                                                    </Tippy>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div className="dropdown">
-                                                    <Dropdown
-                                                        offset={[0, 1]}
-                                                        placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                        btnClassName="hover:text-primary flex items-center"
-                                                        button={
-                                                            <Tippy content="Group">
-                                                                <span>
-                                                                    <IconWheel />
-                                                                </span>
-                                                            </Tippy>
-                                                        }
-                                                    >
-                                                        <ul className="text-sm font-medium">
-                                                            <li>
-                                                                <button type="button" onClick={() => setGroup('personal')}>
-                                                                    <div className="w-2 h-2 rounded-full bg-primary ltr:mr-3 rtl:ml-3 shrink-0"></div>
-                                                                    Personal
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" onClick={() => setGroup('work')}>
-                                                                    <div className="w-2 h-2 rounded-full bg-warning ltr:mr-3 rtl:ml-3 shrink-0"></div>
-                                                                    Work
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" onClick={() => setGroup('social')}>
-                                                                    <div className="w-2 h-2 rounded-full bg-success ltr:mr-3 rtl:ml-3 shrink-0"></div>
-                                                                    Social
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" onClick={() => setGroup('private')}>
-                                                                    <div className="w-2 h-2 rounded-full bg-danger ltr:mr-3 rtl:ml-3 shrink-0"></div>
-                                                                    Private
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </Dropdown>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div className="dropdown">
-                                                    <Dropdown
-                                                        offset={[0, 1]}
-                                                        placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                        btnClassName="hover:text-primary flex items-center"
-                                                        button={<IconHorizontalDots className="rotate-90 opacity-70" />}
-                                                    >
-                                                        <ul className="whitespace-nowrap">
-                                                            <li>
-                                                                <button type="button" onClick={() => setAction('read')}>
-                                                                    <IconOpenBook className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    공지 읽음 처리
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" onClick={() => setAction('unread')}>
-                                                                    <IconBook className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    공지 안읽음 처리
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" onClick={() => setAction('trash')}>
-                                                                    <IconTrashLines className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    휴지통
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </Dropdown>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    )}
-
-                                    {selectedTab === 'trash' && (
-                                        <ul className="flex flex-1 items-center sm:flex-none gap-4 ltr:sm:mr-3 rtl:sm:ml-4">
-                                            <li>
-                                                <div>
-                                                    <Tippy content="공지 삭제">
-                                                        <button type="button" className="block hover:text-primary" onClick={() => setAction('delete')}>
-                                                            <IconTrash />
-                                                        </button>
-                                                    </Tippy>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div>
-                                                    <Tippy content="되돌리기">
-                                                        <button type="button" className="block hover:text-primary" onClick={() => setAction('restore')}>
-                                                            <IconRestore />
-                                                        </button>
-                                                    </Tippy>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    )}
                                 </div>
-
-                                <div className="flex justify-between items-center sm:w-auto w-full">
-                                    <div className="flex items-center ltr:mr-4 rtl:ml-4">
-                                        <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
-                                            <IconMenu />
-                                        </button>
-                                        <div className="relative group">
-                                            <input
-                                                type="text"
-                                                className="form-input ltr:pr-8 rtl:pl-8 peer"
-                                                placeholder="공지 검색하기"
-                                                value={searchText}
-                                                onChange={(e) => setSearchText(e.target.value)}
-                                                onKeyUp={() => searchMails()}
-                                            />
-                                            <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
-                                                <IconSearch />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="ltr:mr-4 rtl:ml-4">
-                                            <Tippy content="Settings">
-                                                <button type="button" className="hover:text-primary">
-                                                    <IconSettings />
-                                                </button>
-                                            </Tippy>
-                                        </div>
-                                        <div>
-                                            <Tippy content="Help">
-                                                <button type="button" className="hover:text-primary">
-                                                    <IconHelpCircle className="w-6 h-6" />
-                                                </button>
-                                            </Tippy>
-                                        </div>
-                                    </div>
+                                <div className="flex items-center sm:w-auto w-full justify-end">
+                                    <div className="ltr:mr-3 rtl:ml-3">{pager.startIndex + 1 + '-' + (pager.endIndex + 1) + ' of ' + filteredMailList.length}</div>
+                                    <button
+                                        type="button"
+                                        disabled={pager.currentPage === 1}
+                                        className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 ltr:mr-3 rtl:ml-3 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            pager.currentPage--;
+                                            searchMails(false);
+                                        }}
+                                    >
+                                        <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={pager.currentPage === pager.totalPages}
+                                        className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 disabled:opacity-60 disabled:cursor-not-allowed"
+                                        onClick={() => {
+                                            pager.currentPage++;
+                                            searchMails(false);
+                                        }}
+                                    >
+                                        <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
+                                    </button>
                                 </div>
                             </div>
-
                             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-
-                            <div className="flex flex-wrap flex-col md:flex-row xl:w-auto justify-between items-center px-4 pb-4">
-                                <div className="w-full sm:w-auto grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                                    <button
-                                        type="button"
-                                        className={`btn btn-outline-primary flex ${selectedTab === 'personal' ? 'text-white bg-primary' : ''}`}
-                                        onClick={() => {
-                                            setSelectedTab('personal');
-                                            tabChanged('personal');
-                                        }}
-                                    >
-                                        <IconUser className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
-                                        전체
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className={`btn btn-outline-warning flex ${selectedTab === 'work' ? 'text-white bg-warning' : ''}`}
-                                        onClick={() => {
-                                            setSelectedTab('work');
-                                            tabChanged('work');
-                                        }}
-                                    >
-                                        <IconMessage2 className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
-                                        과목
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className={`btn btn-outline-success flex ${selectedTab === 'social' ? 'text-white bg-success' : ''}`}
-                                        onClick={() => {
-                                            setSelectedTab('social');
-                                            tabChanged('social');
-                                        }}
-                                    >
-                                        <IconUsers className="ltr:mr-2 rtl:ml-2" />
-                                        담당 학급
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className={`btn btn-outline-danger flex ${selectedTab === 'private' ? 'text-white bg-danger' : ''}`}
-                                        onClick={() => {
-                                            setSelectedTab('private');
-                                            tabChanged('private');
-                                        }}
-                                    >
-                                        <IconTag className="ltr:mr-2 rtl:ml-2" />
-                                        중요
-                                    </button>
-                                </div>
-
-                                <div className="mt-4 md:flex-auto flex-1">
-                                    <div className="flex items-center md:justify-end justify-center">
-                                        <div className="ltr:mr-3 rtl:ml-3">{pager.startIndex + 1 + '-' + (pager.endIndex + 1) + ' of ' + filteredMailList.length}</div>
-                                        <button
-                                            type="button"
-                                            disabled={pager.currentPage === 1}
-                                            className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 ltr:mr-3 rtl:ml-3 disabled:opacity-60 disabled:cursor-not-allowed"
-                                            onClick={() => {
-                                                pager.currentPage--;
-                                                searchMails(false);
-                                            }}
-                                        >
-                                            <IconCaretDown className="w-5 h-5 rtl:-rotate-90 rotate-90" />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            disabled={pager.currentPage === pager.totalPages}
-                                            className="bg-[#f4f4f4] rounded-md p-1 enabled:hover:bg-primary-light dark:bg-white-dark/20 enabled:dark:hover:bg-white-dark/30 disabled:opacity-60 disabled:cursor-not-allowed"
-                                            onClick={() => {
-                                                pager.currentPage++;
-                                                searchMails(false);
-                                            }}
-                                        >
-                                            <IconCaretDown className="w-5 h-5 rtl:rotate-90 -rotate-90" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-
                             {pagedMails.length ? (
+                                
                                 <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
                                     <table className="table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>작성자</th>
+                                            <th>제목</th>
+                                            <th className='text-center'>파일</th>
+                                            <th className='text-center'>작성일자</th>
+                                        </tr>
+                                    </thead>
                                         <tbody>
-                                            {pagedMails.map((mail: any) => {
+                                            {pagedMails.map((mail: any, index: number) => {
                                                 return (
                                                     <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
                                                         <td>
                                                             <div className="flex items-center whitespace-nowrap">
-                                                                <div className="ltr:mr-3 rtl:ml-3">
-                                                                    {ids.includes(mail.id)}
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        id={`chk-${mail.id}`}
-                                                                        value={mail.id}
-                                                                        checked={ids.length ? ids.includes(mail.id) : false}
-                                                                        onChange={() => handleCheckboxChange(mail.id)}
-                                                                        onClick={(event) => event.stopPropagation()}
-                                                                        className="form-checkbox"
-                                                                    />
-                                                                </div>
-                                                                <div className="ltr:mr-3 rtl:ml-3">
-                                                                    <Tippy content="Star">
-                                                                        <button
-                                                                            type="button"
-                                                                            className={`enabled:hover:text-warning disabled:opacity-60 flex items-center ${mail.isStar ? 'text-warning' : ''}`}
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                setStar(mail.id);
-                                                                            }}
-                                                                            disabled={selectedTab === 'trash'}
-                                                                        >
-                                                                            <IconStar className={mail.isStar ? 'fill-warning' : ''} />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                                <div className="ltr:mr-3 rtl:ml-3">
-                                                                    <Tippy content="Important">
-                                                                        <button
-                                                                            type="button"
-                                                                            className={`enabled:hover:text-primary disabled:opacity-60 rotate-90 flex items-center ${mail.isImportant ? 'text-primary' : ''
-                                                                                }`}
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                setImportant(mail.id);
-                                                                            }}
-                                                                            disabled={selectedTab === 'trash'}
-                                                                        >
-                                                                            <IconBookmark bookmark={false} className={`w-4.5 h-4.5 ${mail.isImportant && 'fill-primary'}`} />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
                                                                 <div
                                                                     className={`dark:text-gray-300 whitespace-nowrap font-semibold ${!mail.isUnread ? 'text-gray-500 dark:text-gray-500 font-normal' : ''
                                                                         }`}
@@ -1083,28 +679,20 @@ const AdminNotice = () => {
                                                         <td>
                                                             <div className="font-medium text-white-dark overflow-hidden min-w-[300px] line-clamp-1">
                                                                 <span className={`${mail.isUnread ? 'text-gray-800 dark:text-gray-300 font-semibold' : ''}`}>
-                                                                    <span>{mail.title}</span> &minus;
-                                                                    <span> {mail.displayDescription}</span>
+                                                                    <span>{mail.title}</span>
                                                                 </span>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div className="flex items-center">
-                                                                <div
-                                                                    className={`w-2 h-2 rounded-full ${(mail.group === 'personal' && 'bg-primary') ||
-                                                                        (mail.group === 'work' && 'bg-warning') ||
-                                                                        (mail.group === 'social' && 'bg-success') ||
-                                                                        (mail.group === 'private' && 'bg-danger')
-                                                                        }`}
-                                                                ></div>
-                                                                {mail.attachments && (
+                                                            <div className="flex justify-content: flex-end">
+                                                                {fileExists[index] && (
                                                                     <div className="ltr:ml-4 rtl:mr-4">
                                                                         <IconPaperclip />
                                                                     </div>
                                                                 )}
                                                             </div>
                                                         </td>
-                                                        <td className="whitespace-nowrap font-medium ltr:text-right rtl:text-left">{mail.date[1]}월 {mail.date[2]}일 {mail.date[3]}:{mail.date[4]}</td>
+                                                        <td className=" whitespace-nowrap font-medium ltr:text-right rtl:text-left">{String(mail.date[0])}년 {String(mail.date[1]).padStart(2, '0')}월 {String(mail.date[2]).padStart(2, '0')}일 {String(mail.date[3]).padStart(2, '0')}:{String(mail.date[4]).padStart(2, '0')}</td>
                                                     </tr>
                                                 );
                                             })}
@@ -1125,14 +713,6 @@ const AdminNotice = () => {
                                         <IconArrowLeft className="w-5 h-5 rotate-180" />
                                     </button>
                                     <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedMail.title}</h4>
-                                    <div className="badge bg-info hover:top-0">{selectedMail.type}</div>
-                                </div>
-                                <div>
-                                    <Tippy content="Print">
-                                        <button type="button">
-                                            <IconPrinter />
-                                        </button>
-                                    </Tippy>
                                 </div>
                             </div>
                             <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
@@ -1140,106 +720,33 @@ const AdminNotice = () => {
                                 <div className="flex flex-wrap">
                                     <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
                                         {selectedMail.path ? (
-                                            <img src={`/assets/images/${selectedMail.path}`} className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                                            <></>
                                         ) : (
-                                            <div className="border border-gray-300 dark:border-gray-800 rounded-full p-3">
-                                                <IconUser className="w-5 h-5" />
-                                            </div>
+                                            <img src="https://w7.pngwing.com/pngs/710/71/png-transparent-profle-person-profile-user-circle-icons-icon-thumbnail.png" className="h-12 w-12 rounded-full object-cover" alt="avatar" />
                                         )}
                                     </div>
                                     <div className="ltr:mr-2 rtl:ml-2 flex-1">
-                                        <div className="flex items-center">
+                                        <div className="flex flex-col">
                                             <div className="text-lg ltr:mr-4 rtl:ml-4 whitespace-nowrap">
-                                                {selectedMail.firstName ? selectedMail.firstName + ' ' + selectedMail.lastName : selectedMail.email}
+                                                {selectedMail.user.name}
                                             </div>
-                                            {selectedMail.group && (
-                                                <div className="ltr:mr-4 rtl:ml-4">
-                                                    <Tippy content={selectedMail.group} className="capitalize">
-                                                        <div
-                                                            className={`w-2 h-2 rounded-full ${(selectedMail.group === 'personal' && 'bg-primary') ||
-                                                                (selectedMail.group === 'work' && 'bg-warning') ||
-                                                                (selectedMail.group === 'social' && 'bg-success') ||
-                                                                (selectedMail.group === 'private' && 'bg-danger')
-                                                                }`}
-                                                        ></div>
-                                                    </Tippy>
-                                                </div>
-                                            )}
-                                            <div className="text-white-dark whitespace-nowrap">1 days ago</div>
-                                        </div>
-                                        <div className="text-white-dark flex items-center">
-                                            <div className="ltr:mr-1 rtl:ml-1">{selectedMail.type === 'sent_notice' ? selectedMail.email : 'to me'}</div>
-                                            <div className="dropdown">
-                                                <Dropdown
-                                                    offset={[0, 5]}
-                                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                    btnClassName="hover:text-primary flex items-center"
-                                                    button={<IconCaretDown className="w-5 h-5" />}
-                                                >
-                                                    <ul className="sm:w-56">
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">From:</div>
-                                                                <div className="flex-1">{selectedMail.type === 'sent_notice' ? 'vristo@gmail.com' : selectedMail.email}</div>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">To:</div>
-                                                                <div className="flex-1">{selectedMail.type !== 'sent_notice' ? 'vristo@gmail.com' : selectedMail.email}</div>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">Date:</div>
-                                                                <div className="flex-1">{selectedMail.date + ', ' + selectedMail.time}</div>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <div className="flex items-center px-4 py-2">
-                                                                <div className="text-white-dark ltr:mr-2 rtl:ml-2 w-1/4">Subject:</div>
-                                                                <div className="flex-1">{selectedMail.title}</div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </Dropdown>
+                                            <div>
+                                                <h1>{selectedMail.regDate[0]}년 {selectedMail.regDate[1]}월 {selectedMail.regDate[2]}일 {selectedMail.regDate[3]}시 {selectedMail.regDate[4]}분 {selectedMail.regDate[5]}초 작성됨</h1>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div>
-                                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">
-                                            <Tippy content="Star">
-                                                <button
-                                                    type="button"
-                                                    className={`enabled:hover:text-warning disabled:opacity-60 ${selectedMail.isStar ? 'text-warning' : ''}`}
-                                                    onClick={() => setStar(selectedMail.id)}
-                                                    disabled={selectedTab === 'trash'}
-                                                >
-                                                    <IconStar className={selectedMail.isStar ? 'fill-warning' : ''} />
-                                                </button>
+                                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">                                     
+                                            <Tippy content="수정">
+                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1 mr-1" onClick={() => openMail('reply', selectedMail)}>
+                                                <IconPlus className="rtl:hidden" />
+                                            </button>
                                             </Tippy>
-                                            <Tippy content="Important">
-                                                <button
-                                                    type="button"
-                                                    className={`enabled:hover:text-primary disabled:opacity-60 ${selectedMail.isImportant ? 'text-primary' : ''}`}
-                                                    onClick={() => setImportant(selectedMail.id)}
-                                                    disabled={selectedTab === 'trash'}
-                                                >
-                                                    <IconBookmark bookmark={false} className={`w-4.5 h-4.5 rotate-90 ${selectedMail.isImportant && 'fill-primary'}`} />
-                                                </button>
-                                            </Tippy>
-                                            <Tippy content="Reply">
-                                                <button type="button" className="hover:text-info" onClick={() => openMail('reply', selectedMail)}>
-                                                    <IconArrowBackward className="rtl:hidden" />
-                                                    <IconArrowForward className="ltr:hidden" />
-                                                </button>
-                                            </Tippy>
-                                            <Tippy content="Forward">
-                                                <button type="button" className="hover:text-info" onClick={() => openMail('forward', selectedMail)}>
-                                                    <IconArrowBackward className="ltr:hidden" />
-                                                    <IconArrowForward className="rtl:hidden" />
-                                                </button>
+                                            <Tippy content="삭제">
+                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1" onClick={() => deleteNotice(selectedMail.noticeId)}>
+                                                <IconTrash/>
+                                            </button>
                                             </Tippy>
                                         </div>
                                     </div>
@@ -1247,19 +754,18 @@ const AdminNotice = () => {
 
                                 <div
                                     className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
-                                    dangerouslySetInnerHTML={{ __html: selectedMail.description }}
+                                    dangerouslySetInnerHTML={{ __html: selectedMail.content }}
                                 ></div>
-                                <p className="mt-4">작성자 : </p>
-                                <p>{selectedMail.firstName + ' ' + selectedMail.lastName}</p>
 
-                                {selectedMail.attachments && (
+                                {(selectedMail.filesURl != '' )&& (
                                     <div className="mt-8">
-                                        <div className="text-base mb-4">첨부파일 : </div>
                                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                        <div className="text-base mt-5 mb-4">첨부파일</div>
                                         <div className="flex items-center flex-wrap mt-6">
-                                            {selectedMail.attachments.map((attachment: any, i: number) => {
+                                            {selectedMail.filesURl.map((attachment: any, i: number) => {
                                                 return (
-                                                    <button
+                                                    <a
+                                                        href={attachment}
                                                         key={i}
                                                         type="button"
                                                         className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
@@ -1270,14 +776,14 @@ const AdminNotice = () => {
                                                         {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
 
                                                         <div className="ltr:ml-3 rtl:mr-3">
-                                                            <p className="text-xs text-primary font-semibold">{attachment.originalName}</p>
+                                                            <p className="text-xs text-primary font-semibold">{selectedMail.originalName}</p>
                                                             <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
                                                         </div>
                                                         <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
                                                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
                                                             <IconDownload className="w-4.5 h-4.5" />
                                                         </div>
-                                                    </button>
+                                                    </a>
                                                 );
                                             })}
                                         </div>
@@ -1288,76 +794,65 @@ const AdminNotice = () => {
                     )}
 
                     {isEdit && (
-                        <div className="relative">
-                            <div className="py-4 px-6 flex items-center">
-                                <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
-                                    <IconMenu />
-                                </button>
-                                <h4 className="text-lg text-gray-600 dark:text-gray-400 font-medium">공지 작성하기</h4>
+                        isLoading ? (
+                            <div className="flex items-center justify-center w-full h-full">
+                                <div className="text-center">
+                                    <p className='mt-5'>Loading....</p>
+                                    <span className="animate-spin border-8 border-[#f1f2f3] border-l-primary rounded-full w-14 h-14 inline-block align-middle m-auto mb-10"></span>
+                                </div>
                             </div>
-                            <div className="h-px bg-gradient-to-l from-indigo-900/20 via-black dark:via-white to-indigo-900/20 opacity-[0.1]"></div>
-                            <form className="p-6 grid gap-6">
-                                <div>
-                                    <input
-                                        id="to"
-                                        type="text"
-                                        className="form-input"
-                                        placeholder="공지 대상"
-                                        defaultValue={params.to}
-                                        onChange={(e) => {
-                                            changeValue(e);
-                                        }}
-                                    />
-                                </div>
-
-                                <div>
-                                    <input id="cc" type="text" className="form-input" placeholder="카테고리" defaultValue={params.cc} onChange={(e) => changeValue(e)} />
-                                </div>
-
-                                <div>
-                                    <input id="title" type="text" className="form-input" placeholder="제목" defaultValue={params.title} onChange={(e) => changeValue(e)} />
-                                </div>
-
-                                <div className="h-fit">
-                                    <ReactQuill
-                                        theme="snow"
-                                        value={params.description || ''}
-                                        defaultValue={params.description || ''}
-                                        onChange={(content, delta, source, editor) => {
-                                            params.description = content;
-                                            params.displayDescription = editor.getText();
-                                            setParams({
-                                                ...params,
-                                            });
-                                        }}
-                                        style={{ minHeight: '200px' }}
-                                    />
-                                </div>
-
-                                <div>
-                                    <input
-                                        type="file"
-                                        className="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary"
-                                        multiple
-                                        accept="image/*,.zip,.pdf,.xls,.xlsx,.txt,.doc,.docx"
-                                        required
-                                        id="fileId"
-                                        onChange={(e) => setSelectedFiles(e.target.files)}
-                                    />
-                                </div>
-                                <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
-                                    <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
-                                        취소
+                        ) : (
+                            <div className="relative">
+                                <div className="py-4 px-6 flex items-center">
+                                    <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
+                                        <IconMenu />
                                     </button>
-                                    <button type="button" className="btn btn-success ltr:mr-3 rtl:ml-3" onClick={() => saveNotice('save', null)}>
-                                        임시 저장
-                                    </button>
-                                    <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
-                                        공지 작성
-                                    </button>
+                                    <h4 className="text-lg text-gray-600 dark:text-gray-400 font-medium">{edit ? '공지 수정하기' : '공지 작성하기'}</h4>
                                 </div>
-                            </form>
-                        </div>
+                                <div className="h-px bg-gradient-to-l from-indigo-900/20 via-black dark:via-white to-indigo-900/20 opacity-[0.1]"></div>
+                                <form className="p-6 grid gap-6">
+                                    <div>
+                                        <input id="title" type="text" className="form-input" placeholder="제목" defaultValue={params.title} onChange={(e) => changeValue(e)} />
+                                    </div>
+
+                                    <div className="h-fit">
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={params.description || ''}
+                                            defaultValue={params.description || ''}
+                                            onChange={(content, delta, source, editor) => {
+                                                params.description = content;
+                                                params.displayDescription = editor.getText();
+                                                setParams({
+                                                    ...params,
+                                                });
+                                            }}
+                                            style={{ minHeight: '200px' }}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <input
+                                            type="file"
+                                            className="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary"
+                                            multiple
+                                            accept="image/*,.zip,.pdf,.xls,.xlsx,.txt,.doc,.docx"
+                                            required
+                                            id="fileId"
+                                            onChange={(e) => setSelectedFiles(e.target.files)}
+                                        />
+                                    </div>
+                                    <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
+                                        <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
+                                            취소
+                                        </button>
+                                        <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
+                                            {edit ? '공지 수정' : '공지 작성'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        )
                     )}
                 </div>
             </div>

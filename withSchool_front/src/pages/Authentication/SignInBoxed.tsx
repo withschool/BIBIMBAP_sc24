@@ -155,7 +155,7 @@ const SignInBoxed = () => {
     }
     
     function validatePassword(password: string): boolean {
-        const regex = /^(?:(?=.*?[a-zA-Z])(?=.*?\d)(?=.*?[^\w\s]).{10,}|(?=.*?[a-zA-Z])(?=.*?\d)(?=.*?[^\w\s]).{8,})$/;
+        const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
         return regex.test(password);
     }
 
@@ -184,15 +184,15 @@ const SignInBoxed = () => {
             else if(password.length < 8 || password != checkPassword){
                 throw new Error('비밀번호가 8자리 미만이거나 일치하지 않습니다.');
             }
-            else if(validatePassword(password)){
+            else if(!validatePassword(password)){
                 throw new Error('비밀번호는 영문, 숫자, 특수문자를 모두 포함하여야 합니다.')
             }
-
+ 
             // 학생, 교사
             if(isStudent){
-                const userCode: string = localStorage.getItem('userCode') ?? '';
+                const userCode : any = localStorage.getItem('userCode');
                 console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1)
-                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1 , userCode);
+                const data = await register(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1 , userCode);
                 if(data == -1){
                     throw new Error('이미 등록된 전화번호입니다.');
                 }
@@ -202,7 +202,7 @@ const SignInBoxed = () => {
             else{
                 console.log(year, month, day);
                 console.log(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1)
-                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1 , "");
+                const data = await register(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1 , "");
                 if(data == -1){
                     throw new Error('이미 등록된 전화번호입니다.');
                 }

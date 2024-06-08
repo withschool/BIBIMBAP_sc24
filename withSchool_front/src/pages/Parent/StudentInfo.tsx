@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import Tippy from '@tippyjs/react';
 import { mappingStudent, listingStudent, getStudentInfoById } from '../../service/parent';
-import { getSubjectsParent, getStudentScoreParent } from '../../service/subject';
+import { getSubjectsParent, getStudentScoreParent, getSugangListStudent } from '../../service/subject';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -20,9 +20,10 @@ const StudentInfo = () => {
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
-    const [targetStudent, setTargetStudent] = useState<any>('');
+    const [targetStudent, setTargetStudent] = useState<any>(localStorage.getItem("TargetStudent"));
     const [targetStudentInfo, setTargetStudentInfo] = useState<any>('');
     const [subjectList, setSubjectList] = useState<any[]>([]);
+    const [subjectScoreList, setSubjectScoreList] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchSubjectList = async () => {
@@ -40,10 +41,6 @@ const StudentInfo = () => {
         try {
             const data = await listingStudent();
             setStudentList(data);
-            if (data.length > 0) {
-                setTargetStudent(data[0].user.userId);
-                localStorage.setItem('TargetStudent', data[0].user.userId);
-            }
         } catch (error) {
             console.error('Error fetching student list:', error);
         }
@@ -59,7 +56,6 @@ const StudentInfo = () => {
             try {
                 if (targetStudent) {
                     const data = await getStudentInfoById(targetStudent);
-                    localStorage.setItem('TargetStudent', targetStudent);
                     setTargetStudentInfo(data);
                 }
             } catch (error) {
@@ -89,13 +85,20 @@ const StudentInfo = () => {
         alert("전환 되었습니다.")
     }
 
-    const fetchScores = async (subjectId:string, childId:string) => {
-        const response = await fetch(`/sugangs/${subjectId}/scores?childId=${childId}`);
-        const data = await response.json();
-        return data;
+    const fetchSubject = async (studentId: string) => {
+        try { 
+            const data = await getSugangListStudent(studentId);
+            console.log(data);
+            setSubjectScoreList(data);
+        } catch (error) {
+            console.log(studentId);
+            console.error('Error fetching student list:', error);
+        }
     };
 
-    const [scores, setScores] = useState<any>([]);
+    useEffect(() => {
+        fetchSubject(targetStudent);
+    }, []);
      
     return(
         <div>
@@ -153,7 +156,7 @@ const StudentInfo = () => {
                                                 before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
                                         >
                                             <IconPhone className="ltr:mr-2 rtl:ml-2" />
-                                            학생 선택
+                                            학생 목록
                                         </button>
                                     )}
                                 </Tab>
@@ -251,35 +254,38 @@ const StudentInfo = () => {
                                             <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
                                                 <h6 className="text-lg font-bold mb-5">{targetStudentInfo.name} 학생의 성적</h6>
                                                 <div className="flex flex-col ">
-                                                {/* <div className="table-responsive mb-5">
-                                                    <table className="table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>과목명</th>
-                                                                <th>중간고사</th>
-                                                                <th>기말고사</th>
-                                                                <th>수행평가</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {subjectList.length > 0 ? (
-                                                                subjectList.map((data) => {
-                                                                    const key = generateKey(data.subjectId); // generateKey 함수를 호출하여 각 행의 키를 생성
-                                                                    return (
-                                                                        <tr key={data.subjectId}>
-                                                                            <td>{data.subjectName}</td>
-                                                                            <td>{scores.midtermScore || 'Loading...'}</td>
-                                                                            <td>{scores.finalScore || 'Loading...'}</td>
-                                                                            <td>{scores.activityScore || 'Loading...'}</td>
-                                                                        </tr>
-                                                                    );
-                                                                })
+                                                <div className="table-responsive mb-3">
+                                                        <table className="table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>과목명</th>
+                                                                    <th>중간고사</th>
+                                                                    <th>기말고사</th>
+                                                                    <th>수행평가</th>
+                                                                    <th>총점</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {subjectScoreList.length > 0 ? (
+                                                                subjectScoreList.map((data: any) => (
+                                                                    <tr key={data.subjectId}>
+                                                                        <td>
+                                                                            <div className="whitespace-nowrap">{data.subject}</div>
+                                                                        </td>
+                                                                        <td>{data.midtermScore}점</td>
+                                                                        <td>{data.finalScore}점</td>
+                                                                        <td>{data.activityScore}점</td>
+                                                                        <td>{parseInt(data.midtermScore) + parseInt(data.finalScore) + parseInt(data.activityScore)}점</td>
+                                                                    </tr>
+                                                                ))
                                                             ) : (
-                                                                <p className='pl-5 pt-5 text-bold'>수강중인 과목이 없습니다.</p>
+                                                                <tr>
+                                                                    <td colSpan={5} className="text-center">학생을 선택해주세요</td>
+                                                                </tr>
                                                             )}
-                                                        </tbody>
-                                                    </table>
-                                                </div> */}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </form>
                                         </div>
@@ -292,11 +298,10 @@ const StudentInfo = () => {
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>이름</th>
-                                                    <th>학교</th>
-                                                    <th>생년월일</th>
-                                                    <th>등록일</th>
-                                                    <th className="text-center">선택</th>
+                                                    <th className='w-1/4'>이름</th>
+                                                    <th className='w-1/4'>학교</th>
+                                                    <th className='w-1/4'>생년월일</th>
+                                                    <th className='w-1/4'>등록일</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -325,13 +330,6 @@ const StudentInfo = () => {
                                                                 )}
                                                             </td>
                                                             <td>{data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일</td>
-                                                            <td className="text-center">
-                                                                <Tippy >
-                                                                    <button type="button" onClick={() => handleChange(data.user.userId)}>
-                                                                        <IconAt className="m-auto" />
-                                                                    </button>
-                                                                </Tippy>
-                                                            </td>
                                                         </tr>
                                                     );
                                                 })}

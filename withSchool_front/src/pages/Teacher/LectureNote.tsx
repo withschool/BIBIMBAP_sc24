@@ -81,6 +81,10 @@ export const LectureNote = () => {
             showMessage('제목을 입력해 주세요.', 'error');
             return false;
         }
+        if (!selectedFiles) {
+            showMessage('파일을 넣어 주세요.', 'error');
+            return false;
+        }
         setIsLoading(true);
         try {
             if (params.subjectLectureNoteId) {
@@ -370,7 +374,7 @@ export const LectureNote = () => {
                                                                                 {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
 
                                                                                 <div className="ltr:ml-3 rtl:mr-3">
-                                                                                    <p className="text-xs text-primary font-semibold">{note.originalName}</p>
+                                                                                <p className="text-xs text-primary font-semibold truncate max-w-24">{note.originalName}</p>
                                                                                     <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
                                                                                 </div>
                                                                                 <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>

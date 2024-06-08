@@ -8,6 +8,7 @@ import { getSchoolNotice, getSchoolNoticeDetail, getSchoolInfo } from '../../ser
 import { getClassInfo } from '../../service/class';
 import { getSubjectList } from '../../service/subject';
 import { getUserInfobyId } from '../../service/auth';
+import { getSugangListStudent } from '../../service/subject';
 import IconCode from '../../components/Icon/IconCode';
 import IconHome from '../../components/Icon/IconHome';
 import IconUser from '../../components/Icon/IconUser';
@@ -40,11 +41,12 @@ interface UserInfoType {
     userId: string;
 }
 
-const ClassInfo = () => {
+const ScoreClass = () => {
 
     const [modal21, setModal21] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [studentList, setStudentList] = useState([]);
+    const [targetStudent, setTargetStudent]  = useState('');
     const [noticeList, setNoticeList] = useState([]);
     const [targetStudentInfo, setTargetStudentInfo] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -95,6 +97,8 @@ const ClassInfo = () => {
         fetchNoticeData();
     }, []);
 
+    const [subjectList, setSubjectList] = useState([]);
+
     useEffect(() => {
         const fetchClassData = async () => {
             try {
@@ -108,6 +112,26 @@ const ClassInfo = () => {
         fetchClassData();
     }, []);
 
+    const fetchSubject = async (studentId: string) => {
+        try { 
+            const data = await getSugangListStudent(studentId);
+            console.log(data);
+            setSubjectList(data);
+        } catch (error) {
+            console.log(studentId);
+            console.error('Error fetching student list:', error);
+        }
+    };
+    
+    const handleChangeStudent = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setTargetStudent(event.target.value);
+    };
+    
+    useEffect(() => {
+        if (targetStudent) {
+            fetchSubject(targetStudent);
+        }
+    }, [targetStudent]);
   
      
     return (
@@ -122,13 +146,13 @@ const ClassInfo = () => {
                     <span>반 관리</span>
                 </li>
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>기본 정보</span>
+                    <span>성적 조회</span>
                 </li>
             </ul>
             <div className="active pt-5">
                 <div>
                     <form className="border border-[#ebedf2] dark:border-[#191e3a] rounded-md p-4 mb-5 bg-white dark:bg-black">
-                        <h6 className="text-lg font-bold mb-5">학급 기본정보</h6>
+                        <h6 className="text-lg font-bold mb-5">학급 성적 조회</h6>
                         <div className="flex flex-col sm:flex-row">
                             <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
@@ -140,40 +164,49 @@ const ClassInfo = () => {
                                     <div className="form-input">{classInfo.class.inClass}</div>
                                 </div>
                                 <div>
-                                    <label htmlFor="id">담임</label>
-                                    <div className="form-input">{userInfo.name}</div>
-                                </div>
-                                <div>
-                                    <label htmlFor="phone">담임 연락처</label>
-                                    <div className="form-input" >{userInfo.phoneNumber}</div>
-                                </div>
-                                <div>
-                                    <label htmlFor="email">학생 목록</label>
+                                    <label htmlFor="email">학생 성적</label>
+                                    <div className='w-1/2'>
+                                        <select className="form-select flex text-white-dark mb-3" value={targetStudent} onChange={e => handleChangeStudent(e)}>
+                                            <option disabled value="">학생 선택</option>
+                                            {classInfo.users
+                                                .filter((data: any) => data.userId !== userInfo.userId)
+                                                .map((data: any) => (
+                                                    <option key={data.userId} value={data.userId}>
+                                                        {`${data.name} (${data.userName})`}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
                                     <div className="form-input" >
-                                    <div className="table-responsive mb-5">
+                                    <div className="table-responsive mb-3">
                                         <table className="table-hover">
                                             <thead>
-                                                <tr className="!bg-transparent dark:!bg-transparent">
-                                                    <th>유저 ID</th>
-                                                    <th>ID</th>
-                                                    <th>이름</th>
-                                                    <th className="text-center"></th>
+                                                <tr>
+                                                    <th>과목명</th>
+                                                    <th>중간고사</th>
+                                                    <th>기말고사</th>
+                                                    <th>수행평가</th>
+                                                    <th>총점</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            {classInfo.users
-                                                .filter((data: any) => data.userId !== userInfo.userId)
-                                                .map((data) => {
-                                                return (
-                                                    <tr key={data.userId}>
-                                                        <td>{data.userId}</td>
+                                            {subjectList.length > 0 ? (
+                                                subjectList.map((data: any) => (
+                                                    <tr key={data.subjectId}>
                                                         <td>
-                                                            <div className="whitespace-nowrap">{data.userName}</div>
+                                                            <div className="whitespace-nowrap">{data.subject}</div>
                                                         </td>
-                                                        <td>{data.name}</td>
+                                                        <td>{data.midtermScore}점</td>
+                                                        <td>{data.finalScore}점</td>
+                                                        <td>{data.activityScore}점</td>
+                                                        <td>{parseInt(data.midtermScore) + parseInt(data.finalScore) + parseInt(data.activityScore)}점</td>
                                                     </tr>
-                                                );
-                                            })}
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={5} className="text-center">학생을 선택해주세요</td>
+                                                </tr>
+                                            )}
                                             </tbody>
                                         </table>
                                     </div>
@@ -189,4 +222,4 @@ const ClassInfo = () => {
 
 }
 
-export default ClassInfo;
+export default ScoreClass;

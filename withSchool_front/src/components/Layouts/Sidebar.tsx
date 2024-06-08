@@ -212,15 +212,15 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/student/scrumboard">{t('칼반 보드')}</NavLink>
                                                     </li>
-                                                    {/* <li>
-                                                        <NavLink to="/student/question">{t('Q&A')}</NavLink>
-                                                    </li> */}
-                                                    {/* <li>
-                                                        <NavLink to="/student/score">{t('성적')}</NavLink>
-                                                    </li> */}
                                                     <li>
-                                                        <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
+                                                        <NavLink to="/student/question">{t('Q & A')}</NavLink>
                                                     </li>
+                                                    <li>
+                                                        <NavLink to="/student/grade">{t('성적')}</NavLink>
+                                                    </li>
+                                                    {/* <li>
+                                                        <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
+                                                    </li> */}
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
@@ -229,7 +229,16 @@ const Sidebar = () => {
                                             <NavLink to="/student/counsel" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('선생님과 상담')}</span>
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('상담')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
+
+                                        <li className="nav-item">
+                                            <NavLink to="/student/community" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('커뮤니티')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>
@@ -284,9 +293,9 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/teacher/class/infomation">{t('기본 정보')}</NavLink>
                                                     </li>
-                                                    {/* <li>
+                                                    <li>
                                                         <NavLink to="/teacher/class/watchgrade">{t('성적 조회')}</NavLink>
-                                                    </li> */}
+                                                    </li>
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
@@ -316,15 +325,15 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/teacher/subject/homework">{t('과제')}</NavLink>
                                                     </li>
-                                                    {/* <li>
-                                                        <NavLink to="/teacher/subject/grade">{t('성적 관리')}</NavLink>
-                                                    </li> */}
-                                                    {/* <li>
-                                                        <NavLink to="/teacher/subject/qna">{t('Q & A')}</NavLink>
-                                                    </li> */}
                                                     <li>
-                                                        <NavLink to="/teacher/subject/choose">{t('과목 목록')}</NavLink>
+                                                        <NavLink to="/teacher/subject/grade">{t('성적 관리')}</NavLink>
                                                     </li>
+                                                    <li>
+                                                        <NavLink to="/teacher/subject/qna">{t('Q & A')}</NavLink>
+                                                    </li>
+                                                    {/* <li>
+                                                        <NavLink to="/teacher/subject/choose">{t('과목 목록')}</NavLink>
+                                                    </li> */}
                                                 </ul>
                                             </AnimateHeight>
                                         </li>

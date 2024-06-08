@@ -154,6 +154,7 @@ const SchoolInfo = () => {
                                     <button
                                         className={`${selected ? 'bg-warning text-white !outline-none' : ''}
                                             before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
+                                        onClick={() => setSelectedNotice([])}
                                     >
                                         <IconHome className="ltr:mr-2 rtl:ml-2" />
                                         학교 공지사항
@@ -165,6 +166,7 @@ const SchoolInfo = () => {
                                     <button
                                         className={`${selected ? 'bg-warning text-white !outline-none' : ''}
                                             before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
+                                        onClick={() => setSelectedNotice([])}
                                     >
                                         <IconUser className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
                                         반 공지사항
@@ -176,6 +178,7 @@ const SchoolInfo = () => {
                                     <button
                                         className={`${selected ? 'bg-warning text-white !outline-none' : ''}
                                             before:inline-block' -mb-[1px] flex items-center rounded p-3.5 py-2 hover:bg-warning hover:text-white`}
+                                        onClick={() => setSelectedNotice([])}
                                     >
                                         <IconHome className="ltr:mr-2 rtl:ml-2" />
                                         기본정보
@@ -207,7 +210,7 @@ const SchoolInfo = () => {
                                                             </td>
                                                             <td>{data.user.name}</td>
                                                             <td className="text-center">
-                                                                {data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일 {data.regDate[3]}:{String(data.regDate[4]).padStart(2, '0')}
+                                                                {data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일 {String(data.regDate[3]).padStart(2, '0')}:{String(data.regDate[4]).padStart(2, '0')}
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -215,72 +218,74 @@ const SchoolInfo = () => {
                                             </table>)}
                                             {(selectedNotice != '') && (
                                                 <div>
-                                                    <div className="flex items-center justify-between flex-wrap p-4">
-                                                        <div className="flex items-center">
-                                                            <button type="button" className="ltr:mr-2 rtl:ml-2 hover:text-primary" onClick={() => setSelectedNotice('')}>
-                                                                <IconArrowLeft className="w-5 h-5 rotate-180" />
-                                                            </button>
-                                                            <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedNotice.title}</h4>
-                                                            <div className="badge bg-info hover:top-0">{selectedNotice.type}</div>
-                                                        </div>
-                                                        <div>
-                                                            <Tippy content="Print">
-                                                                <button type="button">
-                                                                    <IconPrinter />
-                                                                </button>
-                                                            </Tippy>
-                                                        </div>
+                                                <div className="flex items-center justify-between flex-wrap p-4">
+                                                    <div className="flex items-center">
+                                                        <button type="button" className="ltr:mr-2 rtl:ml-2 hover:text-primary" onClick={() => setSelectedNotice([])}>
+                                                            <IconArrowLeft className="w-5 h-5 rotate-180" />
+                                                        </button>
+                                                        <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedNotice.title}</h4>
                                                     </div>
-                                                    <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                    <div className="p-4 relative">
+                                                </div>
+                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                <div className="p-4 relative">
                                                     <div className="flex flex-wrap">
+                                                        <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
+                                                            {selectedNotice.path ? (
+                                                                <></>
+                                                            ) : (
+                                                                <img src="https://w7.pngwing.com/pngs/710/71/png-transparent-profle-person-profile-user-circle-icons-icon-thumbnail.png" className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                                                            )}
+                                                        </div>
                                                         <div className="ltr:mr-2 rtl:ml-2 flex-1">
-                                                            <div className="flex items-center justify-end">
-                                                                <div className="text-sm ltr:mr-2 rtl:ml-4 whitespace-nowrap">
-                                                                    작성자: {selectedNotice.user.name}
+                                                            <div className="flex flex-col">
+                                                                <div className="text-lg ltr:mr-4 rtl:ml-4 whitespace-nowrap">
+                                                                    {selectedNotice.user.name}
+                                                                </div>
+                                                                <div>
+                                                                    <h1>{selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 {selectedNotice.regDate[5]}초 작성됨</h1>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="text-2xl mb-4" dangerouslySetInnerHTML={{ __html: selectedNotice.content }}></div>
-                                                    <p>{selectedNotice.user.name}님이 공지함</p>
-                                                    <p>
-                                                        {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
-                                                    </p>
-                                                        {(selectedNotice.filesURl.length >0) && (
-                                                            <div className="mt-8">
-                                                                <br/>
-                                                                <div className="text-base mb-4">Attachments</div>
-                                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                                <div className="flex items-center flex-wrap mt-6">
-                                                                    {selectedNotice.filesURl.map((attachment: any, i: number) => {
-                                                                        return (
-                                                                            <a 
-                                                                                href={attachment}
-                                                                                key={i}
-                                                                                type="button"
-                                                                                className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
-                                                                            >
-                                                                                {attachment.type === 'image' && <IconGallery />}
-                                                                                {attachment.type === 'folder' && <IconFolder />}
-                                                                                {attachment.type === 'zip' && <IconZipFile />}
-                                                                                {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
-
-                                                                                <div className="ltr:ml-3 rtl:mr-3">
-                                                                                    <p className="text-xs text-primary font-semibold">{selectedNotice.originalName}</p>
-                                                                                    <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
-                                                                                </div>
-                                                                                <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
-                                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
-                                                                                    <IconDownload className="w-4.5 h-4.5" />
-                                                                                </div>
-                                                                            </a>
-                                                                        );
-                                                                    })}
-                                                                </div>
+                    
+                                                    <div
+                                                        className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
+                                                        dangerouslySetInnerHTML={{ __html: selectedNotice.content }}
+                                                    ></div>
+                    
+                                                    {(selectedNotice.filesURl != '' )&& (
+                                                        <div className="mt-8">
+                                                            <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                            <div className="text-base mt-5 mb-4">첨부파일</div>
+                                                            <div className="flex items-center flex-wrap mt-6">
+                                                                {selectedNotice.filesURl.map((attachment: any, i: number) => {
+                                                                    return (
+                                                                        <a
+                                                                            href={attachment}
+                                                                            key={i}
+                                                                            type="button"
+                                                                            className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                        >
+                                                                            {attachment.type === 'image' && <IconGallery />}
+                                                                            {attachment.type === 'folder' && <IconFolder />}
+                                                                            {attachment.type === 'zip' && <IconZipFile />}
+                                                                            {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+                    
+                                                                            <div className="ltr:ml-3 rtl:mr-3">
+                                                                                <p className="text-xs text-primary font-semibold">{selectedNotice.originalName}</p>
+                                                                                <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                            </div>
+                                                                            <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                                <IconDownload className="w-4.5 h-4.5" />
+                                                                            </div>
+                                                                        </a>
+                                                                    );
+                                                                })}
                                                             </div>
-                                                        )}
-                                                    </div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                             )}
                                         </div>
@@ -310,7 +315,7 @@ const SchoolInfo = () => {
                                                             </td>
                                                             <td>{data.user.name}</td>
                                                             <td className="text-center">
-                                                                {data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일 {data.regDate[3]}:{String(data.regDate[4]).padStart(2, '0')}
+                                                                {data.regDate[0]}년 {data.regDate[1]}월 {data.regDate[2]}일 {String(data.regDate[3]).padStart(2, '0')}:{String(data.regDate[4]).padStart(2, '0')}
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -318,72 +323,74 @@ const SchoolInfo = () => {
                                             </table>)}
                                             {(selectedNotice != '') && (
                                                 <div>
-                                                    <div className="flex items-center justify-between flex-wrap p-4">
-                                                        <div className="flex items-center">
-                                                            <button type="button" className="ltr:mr-2 rtl:ml-2 hover:text-primary" onClick={() => setSelectedNotice('')}>
-                                                                <IconArrowLeft className="w-5 h-5 rotate-180" />
-                                                            </button>
-                                                            <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedNotice.title}</h4>
-                                                            <div className="badge bg-info hover:top-0">{selectedNotice.type}</div>
-                                                        </div>
-                                                        <div>
-                                                            <Tippy content="Print">
-                                                                <button type="button">
-                                                                    <IconPrinter />
-                                                                </button>
-                                                            </Tippy>
-                                                        </div>
+                                                <div className="flex items-center justify-between flex-wrap p-4">
+                                                    <div className="flex items-center">
+                                                        <button type="button" className="ltr:mr-2 rtl:ml-2 hover:text-primary" onClick={() => setSelectedNotice([])}>
+                                                            <IconArrowLeft className="w-5 h-5 rotate-180" />
+                                                        </button>
+                                                        <h4 className="text-base md:text-lg font-medium ltr:mr-2 rtl:ml-2">{selectedNotice.title}</h4>
                                                     </div>
-                                                    <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                    <div className="p-4 relative">
+                                                </div>
+                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                <div className="p-4 relative">
                                                     <div className="flex flex-wrap">
+                                                        <div className="flex-shrink-0 ltr:mr-2 rtl:ml-2">
+                                                            {selectedNotice.path ? (
+                                                                <></>
+                                                            ) : (
+                                                                <img src="https://w7.pngwing.com/pngs/710/71/png-transparent-profle-person-profile-user-circle-icons-icon-thumbnail.png" className="h-12 w-12 rounded-full object-cover" alt="avatar" />
+                                                            )}
+                                                        </div>
                                                         <div className="ltr:mr-2 rtl:ml-2 flex-1">
-                                                            <div className="flex items-center justify-end">
-                                                                <div className="text-sm ltr:mr-2 rtl:ml-4 whitespace-nowrap">
-                                                                    작성자: {selectedNotice.user.name}
+                                                            <div className="flex flex-col">
+                                                                <div className="text-lg ltr:mr-4 rtl:ml-4 whitespace-nowrap">
+                                                                    {selectedNotice.user.name}
+                                                                </div>
+                                                                <div>
+                                                                    <h1>{selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 {selectedNotice.regDate[5]}초 작성됨</h1>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="text-2xl mb-4" dangerouslySetInnerHTML={{ __html: selectedNotice.content }}></div>
-                                                    <p>{selectedNotice.user.name}님이 공지함</p>
-                                                    <p>
-                                                        {selectedNotice.regDate[0]}년 {selectedNotice.regDate[1]}월 {selectedNotice.regDate[2]}일 {selectedNotice.regDate[3]}시 {selectedNotice.regDate[4]}분 게시됨
-                                                    </p>
-                                                        {(selectedNotice.filesURl.length >0) && (
-                                                            <div className="mt-8">
-                                                                <br/>
-                                                                <div className="text-base mb-4">Attachments</div>
-                                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                                <div className="flex items-center flex-wrap mt-6">
-                                                                    {selectedNotice.filesURl.map((attachment: any, i: number) => {
-                                                                        return (
-                                                                            <a 
-                                                                                href={attachment}
-                                                                                key={i}
-                                                                                type="button"
-                                                                                className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
-                                                                            >
-                                                                                {attachment.type === 'image' && <IconGallery />}
-                                                                                {attachment.type === 'folder' && <IconFolder />}
-                                                                                {attachment.type === 'zip' && <IconZipFile />}
-                                                                                {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
-
-                                                                                <div className="ltr:ml-3 rtl:mr-3">
-                                                                                    <p className="text-xs text-primary font-semibold">{selectedNotice.originalName}</p>
-                                                                                    <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
-                                                                                </div>
-                                                                                <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
-                                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
-                                                                                    <IconDownload className="w-4.5 h-4.5" />
-                                                                                </div>
-                                                                            </a>
-                                                                        );
-                                                                    })}
-                                                                </div>
+                    
+                                                    <div
+                                                        className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
+                                                        dangerouslySetInnerHTML={{ __html: selectedNotice.content }}
+                                                    ></div>
+                    
+                                                    {(selectedNotice.filesURl != '' )&& (
+                                                        <div className="mt-8">
+                                                            <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                            <div className="text-base mt-5 mb-4">첨부파일</div>
+                                                            <div className="flex items-center flex-wrap mt-6">
+                                                                {selectedNotice.filesURl.map((attachment: any, i: number) => {
+                                                                    return (
+                                                                        <a
+                                                                            href={attachment}
+                                                                            key={i}
+                                                                            type="button"
+                                                                            className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                        >
+                                                                            {attachment.type === 'image' && <IconGallery />}
+                                                                            {attachment.type === 'folder' && <IconFolder />}
+                                                                            {attachment.type === 'zip' && <IconZipFile />}
+                                                                            {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+                    
+                                                                            <div className="ltr:ml-3 rtl:mr-3">
+                                                                                <p className="text-xs text-primary font-semibold">{selectedNotice.originalName}</p>
+                                                                                <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                            </div>
+                                                                            <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                                <IconDownload className="w-4.5 h-4.5" />
+                                                                            </div>
+                                                                        </a>
+                                                                    );
+                                                                })}
                                                             </div>
-                                                        )}
-                                                    </div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                             )}
                                         </div>

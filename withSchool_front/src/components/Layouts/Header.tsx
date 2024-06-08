@@ -35,8 +35,74 @@ import IconMenuMore from '../Icon/Menu/IconMenuMore';
 
 import { getUserInfobyId } from '../../service/auth';
 
+import { getSubjectList } from '../../service/subject';
+import { listingStudent } from '../../service/parent';
 
 const Header = () => {
+    
+    const [subjectList, setSubjectList] = useState([]);
+    const [selectedSubject, setSelectedSubject] = useState('');
+
+    useEffect(() => {
+        const fetchSubject = async () => {
+            try {
+                const data = await getSubjectList();
+                setSubjectList(data);
+                if (data && !selectedSubject) {
+                    const firstSubjectId = data[0]?.subjectId || '';
+                    setSelectedSubject(firstSubjectId);
+                    localStorage.setItem('targetSubject', firstSubjectId);
+                }
+            } catch (error) {
+                console.error('Error fetching subject list:', error);
+            }
+        };
+
+        const accountType = localStorage.getItem('accountType');
+        if (accountType === "ROLE_STUDENT" || accountType === "ROLE_TEACHER") {
+            fetchSubject();
+        }
+    }, [selectedSubject]);
+
+    const handleSubjectChange = (subjectId : string) => {
+        localStorage.setItem("targetSubject", subjectId);
+        setSelectedSubject(subjectId);
+        alert("과목이 변경되었습니다.");
+        window.location.reload()
+    }
+
+    const [studentList, setStudentList] = useState([]);
+    const [targetStudent, setTargetStudent] = useState<any>('');
+
+    const fetchStudents = async () => {
+        try {
+            const data = await listingStudent();
+            setStudentList(data);
+            if (data.length > 0 && !localStorage.getItem('TargetStudent')) {
+                localStorage.setItem('TargetStudent', data[0].user.userId);
+                setTargetStudent(data[0].user.userId);
+            }
+            console.log(data);
+        } catch (error) {
+            console.error('Error fetching student list:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (localStorage.getItem('accountType') === 'ROLE_PARENT') {
+            const storedStudentId = localStorage.getItem('TargetStudent') || '';
+            fetchStudents();
+            setTargetStudent(storedStudentId);
+        }
+    }, []);
+
+    const handleStudentChange = (studentId : string) => {
+        localStorage.setItem("TargetStudent", studentId);
+        setTargetStudent(studentId);
+        alert("학생이 변경되었습니다.");
+        window.location.reload()
+    }
+
     const location = useLocation();
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -450,6 +516,30 @@ const Header = () => {
                                 </ul>
                             </Dropdown>
                         </div> */}
+                        {localStorage.getItem("accountType") == 'ROLE_PARENT' && (
+                         <div className='w-1/5'>
+                            <select className="form-select flex text-white-dark" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
+                                <option disabled value="">학생 선택</option>
+                                {studentList.map((data: any) => (
+                                    <option key={data.user.userId} value={data.user.userId}>
+                                        {`${data.user.name} (${data.user.schoolName})`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        )}
+                        {((localStorage.getItem("accountType") == 'ROLE_TEACHER') || (localStorage.getItem("accountType") == 'ROLE_STUDENT'))  && (
+                        <div className='w-1/5'>
+                            <select className="form-select flex text-white-dark" value={selectedSubject} onChange={(e) => handleSubjectChange(e.target.value)}>
+                                <option disabled value="">과목 선택</option>
+                                {subjectList.map((data: any) => (
+                                    <option key={data.subjectId} value={data.subjectId}>
+                                        {`${data.subjectName} - ${data.grade}학년 ${data.semester}학기`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        )}
                         <div className="dropdown shrink-0 flex">
                             <Dropdown
                                 offset={[0, 8]}
