@@ -36,15 +36,15 @@ public class SchoolInformationService {
     private final UserService userService;
 
     public ResponseEntity<String> saveSchool(ReqSchoolInformationSaveDTO reqSchoolInformationSaveDTO) {
-        SchoolInformation schoolInformation = this.save(this.dtoToEntity(reqSchoolInformationSaveDTO.getSchoolInformationDTO()));
+        SchoolInformation schoolInformation = this.save(reqSchoolInformationSaveDTO.getSchoolInformationNoPaymentStateDTO().toEntity());
         if (schoolInformation == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                    .body(reqSchoolInformationSaveDTO.getSchoolInformationDTO().getSCHUL_NM() + "의 생성에 실패하였습니다.");
+                    .body(reqSchoolInformationSaveDTO.getSchoolInformationNoPaymentStateDTO().getSCHUL_NM() + "의 생성에 실패하였습니다.");
         }
 
         try {
-            userService.registerAdmin(reqSchoolInformationSaveDTO.getSchoolInformationDTO(), reqSchoolInformationSaveDTO.getAdminEmail());
+            userService.registerAdmin(reqSchoolInformationSaveDTO.getSchoolInformationNoPaymentStateDTO(), reqSchoolInformationSaveDTO.getAdminEmail());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)

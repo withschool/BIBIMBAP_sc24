@@ -1,7 +1,7 @@
 package com.withSchool.service.user;
 
 import com.withSchool.dto.mapping.UserClassDTO;
-import com.withSchool.dto.school.SchoolInformationDTO;
+import com.withSchool.dto.school.SchoolInformationNoPaymentStateDTO;
 import com.withSchool.dto.user.*;
 import com.withSchool.entity.classes.ClassInformation;
 import com.withSchool.entity.mapping.StudentSubject;
@@ -92,7 +92,7 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public void registerAdmin(SchoolInformationDTO dto, String adminEmail) throws Exception{
+    public void registerAdmin(SchoolInformationNoPaymentStateDTO dto, String adminEmail) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();

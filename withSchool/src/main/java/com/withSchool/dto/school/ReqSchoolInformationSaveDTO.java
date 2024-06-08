@@ -10,6 +10,6 @@ import lombok.ToString;
 @Data
 @ToString
 public class ReqSchoolInformationSaveDTO {
-    private SchoolInformationDTO schoolInformationDTO;
+    private SchoolInformationNoPaymentStateDTO schoolInformationNoPaymentStateDTO;
     private String adminEmail;
 }
