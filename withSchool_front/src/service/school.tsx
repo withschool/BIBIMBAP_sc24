@@ -107,7 +107,6 @@ export const getSchoolNoticeDetail = async (noticeId: number): Promise<any> => {
         throw error;
     }
 }
-
 export const registerSchool = async (schoolData: any): Promise<any> => {
     console.log(schoolData);
     try {
@@ -117,7 +116,36 @@ export const registerSchool = async (schoolData: any): Promise<any> => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify(schoolData)
+            body: JSON.stringify({
+                schoolInformationNoPaymentStateDTO: {
+                    ATPT_OFCDC_SC_CODE: schoolData.ATPT_OFCDC_SC_CODE,
+                    ATPT_OFCDC_SC_NM: schoolData.ATPT_OFCDC_SC_NM,
+                    SD_SCHUL_CODE: schoolData.SD_SCHUL_CODE,
+                    SCHUL_NM: schoolData.SCHUL_NM,
+                    ENG_SCHUL_NM: schoolData.ENG_SCHUL_NM,
+                    SCHUL_KND_SC_NM: schoolData.SCHUL_KND_SC_NM,
+                    LCTN_SC_NM: schoolData.LCTN_SC_NM,
+                    JU_ORG_NM: schoolData.JU_ORG_NM,
+                    FOND_SC_NM: schoolData.FOND_SC_NM,
+                    ORG_RDNZC: schoolData.ORG_RDNZC,
+                    ORG_RDNMA: schoolData.ORG_RDNMA,
+                    ORG_RDNDA: schoolData.ORG_RDNDA,
+                    ORG_TELNO: schoolData.ORG_TELNO,
+                    HMPG_ADRES: schoolData.HMPG_ADRES,
+                    COEDU_SC_NM: schoolData.COEDU_SC_NM,
+                    ORG_FAXNO: schoolData.ORG_FAXNO,
+                    HS_SC_NM: schoolData.HS_SC_NM,
+                    INDST_SPECL_CCCCL_EXST_YN: schoolData.INDST_SPECL_CCCCL_EXST_YN,
+                    HS_GNRL_BUSNS_SC_NM: schoolData.HS_GNRL_BUSNS_SC_NM,
+                    SPCLY_PURPS_HS_ORD_NM: schoolData.SPCLY_PURPS_HS_ORD_NM,
+                    ENE_BFE_SEHF_SC_NM: schoolData.ENE_BFE_SEHF_SC_NM,
+                    DGHT_SC_NM: schoolData.DGHT_SC_NM,
+                    FOND_YMD: schoolData.FOND_YMD,
+                    FOAS_MEMRD: schoolData.FOAS_MEMRD,
+                    LOAD_DTM: schoolData.LOAD_DTM,
+                },
+                adminEmail: schoolData.adminEmail
+            })
         });
         if (response.ok) {
             const data = await response.json();
@@ -131,7 +159,7 @@ export const registerSchool = async (schoolData: any): Promise<any> => {
         console.error('Error registering school:', error);
         throw error;
     }
-}
+};
 
 export const deleteSchool = async (schoolId: number): Promise<any> => {
     try {
