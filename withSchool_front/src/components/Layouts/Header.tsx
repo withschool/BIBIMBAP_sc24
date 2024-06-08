@@ -45,22 +45,24 @@ const Header = () => {
 
     useEffect(() => {
         const fetchSubject = async () => {
-
-            const storedSubject = localStorage.getItem('targetSubject') || '';
-            setSelectedSubject(storedSubject);
-            try { 
+            try {
                 const data = await getSubjectList();
                 setSubjectList(data);
-                if(data) {
-                    localStorage.setItem('targetSubject', data[0].subjectId);
+                if (data && !selectedSubject) {
+                    const firstSubjectId = data[0]?.subjectId || '';
+                    setSelectedSubject(firstSubjectId);
+                    localStorage.setItem('targetSubject', firstSubjectId);
                 }
             } catch (error) {
-                console.error('Error fetching student list:', error);
+                console.error('Error fetching subject list:', error);
             }
         };
-        if((localStorage.getItem('accountType') == "ROLE_STUDENT")||(localStorage.getItem('accountType') == "ROLE_TEACHER"))
+
+        const accountType = localStorage.getItem('accountType');
+        if (accountType === "ROLE_STUDENT" || accountType === "ROLE_TEACHER") {
             fetchSubject();
-    }, []);
+        }
+    }, [selectedSubject]);
 
     const handleSubjectChange = (subjectId : string) => {
         localStorage.setItem("targetSubject", subjectId);
@@ -76,8 +78,9 @@ const Header = () => {
         try {
             const data = await listingStudent();
             setStudentList(data);
-            if(data) {
+            if (data.length > 0 && !localStorage.getItem('TargetStudent')) {
                 localStorage.setItem('TargetStudent', data[0].user.userId);
+                setTargetStudent(data[0].user.userId);
             }
             console.log(data);
         } catch (error) {
@@ -87,11 +90,9 @@ const Header = () => {
 
     useEffect(() => {
         if (localStorage.getItem('accountType') === 'ROLE_PARENT') {
+            const storedStudentId = localStorage.getItem('TargetStudent') || '';
             fetchStudents();
-            const storedStudentId = localStorage.getItem('TargetStudent');
-            if (storedStudentId) {
-                setTargetStudent(storedStudentId);
-            }
+            setTargetStudent(storedStudentId);
         }
     }, []);
 
@@ -518,7 +519,7 @@ const Header = () => {
                         {localStorage.getItem("accountType") == 'ROLE_PARENT' && (
                          <div className='w-1/5'>
                             <select className="form-select flex text-white-dark" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
-                                <option value="">학생 선택</option>
+                                <option disabled value="">학생 선택</option>
                                 {studentList.map((data: any) => (
                                     <option key={data.user.userId} value={data.user.userId}>
                                         {`${data.user.name} (${data.user.schoolName})`}

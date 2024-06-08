@@ -37,6 +37,7 @@ interface ClassInfoType {
 interface UserInfoType {
     name: string;
     phoneNumber: string;
+    userId: string;
 }
 
 const ClassInfo = () => {
@@ -54,7 +55,7 @@ const ClassInfo = () => {
         users: []
     });
 
-    const [userInfo, setUserInfo] = useState<UserInfoType>({ name: '', phoneNumber: '' });
+    const [userInfo, setUserInfo] = useState<UserInfoType>({ name: '', phoneNumber: '', userId: ''});
 
     useEffect(() => {
         const getUserInfo = async () => {
@@ -160,7 +161,9 @@ const ClassInfo = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            {classInfo.users.map((data) => {
+                                            {classInfo.users
+                                                .filter((data: any) => data.userId !== userInfo.userId)
+                                                .map((data) => {
                                                 return (
                                                     <tr key={data.userId}>
                                                         <td>{data.userId}</td>

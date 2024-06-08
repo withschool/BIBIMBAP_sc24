@@ -229,7 +229,16 @@ const Sidebar = () => {
                                             <NavLink to="/student/counsel" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
-                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('선생님과 상담')}</span>
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('상담')}</span>
+                                                </div>
+                                            </NavLink>
+                                        </li>
+
+                                        <li className="nav-item">
+                                            <NavLink to="/student/community" className="group">
+                                                <div className="flex items-center">
+                                                    <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                                    <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('커뮤니티')}</span>
                                                 </div>
                                             </NavLink>
                                         </li>

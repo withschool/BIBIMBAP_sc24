@@ -35,7 +35,7 @@ const CounselTeacherList = lazy(() => import('../pages/Teacher/CounselTeacherLis
 const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
 const Homework = lazy(() => import('../pages/Teacher/Homework'));
 const Score = lazy(() => import('../pages/Teacher/Score'));
-const ScoreClass = lazy(() => import('../pages/Teacher/ScoreClass'))
+const ScoreClass = lazy(() => import('../pages/Teacher/ScoreClass'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
