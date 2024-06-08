@@ -39,7 +39,6 @@ const SchoolApply = () => {
     });
 
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {

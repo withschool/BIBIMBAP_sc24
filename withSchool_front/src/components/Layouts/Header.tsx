@@ -43,8 +43,9 @@ import { listingStudent } from '../../service/parent';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../Icon/IconX';
 
+
 const Header = () => {
-    
+
     const [subjectList, setSubjectList] = useState([]);
     const [selectedSubject, setSelectedSubject] = useState('');
     const [modal21, setModal21] = useState(false);
@@ -54,9 +55,9 @@ const Header = () => {
         setUserCode(event.target.value);
     }
 
-    const getmappingStudent = async (userCode : string) => {
+    const getmappingStudent = async (userCode: string) => {
         const ismaped = await mappingStudent(userCode);
-        if(ismaped) { 
+        if (ismaped) {
             alert("학생 연결이 완료되었습니다.");
             await fetchStudents();
             setModal21(false);
@@ -69,9 +70,9 @@ const Header = () => {
             try {
                 const data = await getSubjectList();
                 setSubjectList(data);
-    
+
                 const storedSubject = localStorage.getItem('targetSubject');
-    
+
                 if (data) {
                     if (storedSubject) {
                         setSelectedSubject(storedSubject);
@@ -85,14 +86,14 @@ const Header = () => {
                 console.error('Error fetching subject list:', error);
             }
         };
-    
+
         const accountType = localStorage.getItem('accountType');
         if (accountType === "ROLE_STUDENT" || accountType === "ROLE_TEACHER") {
             fetchSubject();
         }
     }, []);
 
-    const handleSubjectChange = (subjectId : string) => {
+    const handleSubjectChange = (subjectId: string) => {
         localStorage.setItem("targetSubject", subjectId);
         setSelectedSubject(subjectId);
         alert("과목이 변경되었습니다.");
@@ -124,7 +125,7 @@ const Header = () => {
         }
     }, []);
 
-    const handleStudentChange = (studentId : string) => {
+    const handleStudentChange = (studentId: string) => {
         localStorage.setItem("TargetStudent", studentId);
         setTargetStudent(studentId);
         alert("학생이 변경되었습니다.");
@@ -271,6 +272,9 @@ const Header = () => {
 
     const userTypeInfo = getUserTypeInfo(accountTypes);
 
+    const selectedSchoolName = useSelector((state: IRootState) => state.school.selectedSchoolName);
+
+
     return (
         <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
             <div className="shadow-sm">
@@ -290,6 +294,9 @@ const Header = () => {
                             <IconMenu className="w-5 h-5" />
                         </button>
                     </div>
+
+                    <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">선택된 학교 [{selectedSchoolName || '학교를 선택하세요'}]</h3>
+
 
                     <div className="ltr:mr-2 rtl:ml-2 hidden sm:block">
                         {/* <ul className="flex items-center space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
@@ -545,88 +552,88 @@ const Header = () => {
                             </Dropdown>
                         </div> */}
                         {localStorage.getItem("accountType") == 'ROLE_PARENT' && (
-                         <div className="flex items-center space-x-3">
-                            <select className="form-select flex-grow text-white-dark w-40" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
-                                <option disabled value="">학생 선택</option>
-                                {studentList.map((data: any) => (
-                                    <option key={data.user.userId} value={data.user.userId}>
-                                        {`${data.user.name} (${data.user.schoolName})`}
-                                    </option>
-                                ))}
-                            </select>
-                            <button type="button" onClick={() => setModal21(true)} className="btn btn-primary w-1/2 text-xs px-2 py-2">
-                                추가
-                            </button>
-                            <Transition appear show={modal21} as={Fragment}>
-                                <Dialog
-                                    as="div"
-                                    open={modal21}
-                                    onClose={() => {
-                                        setModal21(false);
-                                    }}
-                                >
-                                    <Transition.Child
-                                        as={Fragment}
-                                        enter="ease-out duration-300"
-                                        enterFrom="opacity-0"
-                                        enterTo="opacity-100"
-                                        leave="ease-in duration-200"
-                                        leaveFrom="opacity-100"
-                                        leaveTo="opacity-0"
+                            <div className="flex items-center space-x-3">
+                                <select className="form-select flex-grow text-white-dark w-40" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
+                                    <option disabled value="">학생 선택</option>
+                                    {studentList.map((data: any) => (
+                                        <option key={data.user.userId} value={data.user.userId}>
+                                            {`${data.user.name} (${data.user.schoolName})`}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button type="button" onClick={() => setModal21(true)} className="btn btn-primary w-1/2 text-xs px-2 py-2">
+                                    추가
+                                </button>
+                                <Transition appear show={modal21} as={Fragment}>
+                                    <Dialog
+                                        as="div"
+                                        open={modal21}
+                                        onClose={() => {
+                                            setModal21(false);
+                                        }}
                                     >
-                                        <div className="fixed inset-0" />
-                                    </Transition.Child>
-                                    <div id="register_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
-                                        <div className="flex min-h-screen items-start justify-center px-4">
-                                            <Transition.Child
-                                                as={Fragment}
-                                                enter="ease-out duration-300"
-                                                enterFrom="opacity-0 scale-95"
-                                                enterTo="opacity-100 scale-100"
-                                                leave="ease-in duration-200"
-                                                leaveFrom="opacity-100 scale-100"
-                                                leaveTo="opacity-0 scale-95"
-                                            >
-                                                <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
-                                                    <div className="flex items-center justify-between pl-5 pt-5 text-lg font-semibold dark:text-white">
-                                                        <h5>학생 추가하기</h5>
-                                                        <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
-                                                            <IconX className="pr-5 w-10 h-10" />
-                                                        </button>
-                                                    </div>
-                                                    <div className="p-5">
-                                                        <form>
-                                                            <div className="relative mb-4">
-                                                                <h2 className='pb-4'>연결하고자 하는 유저코드를 입력해 주세요.</h2>
-                                                                <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
-                                                                    <IconUser className="w-5 h-5 mt-10"/>
-                                                                </span>
-                                                                <input type="text" placeholder="유저코드" className="form-input ltr:pl-10 rtl:pr-10" id="userCode" value ={userCode} onChange={handleUserCode}/>
-                                                            </div>
-                                                            <button type="button" onClick={() => getmappingStudent(userCode)} className="btn btn-primary w-full">
-                                                                추가하기
+                                        <Transition.Child
+                                            as={Fragment}
+                                            enter="ease-out duration-300"
+                                            enterFrom="opacity-0"
+                                            enterTo="opacity-100"
+                                            leave="ease-in duration-200"
+                                            leaveFrom="opacity-100"
+                                            leaveTo="opacity-0"
+                                        >
+                                            <div className="fixed inset-0" />
+                                        </Transition.Child>
+                                        <div id="register_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                            <div className="flex min-h-screen items-start justify-center px-4">
+                                                <Transition.Child
+                                                    as={Fragment}
+                                                    enter="ease-out duration-300"
+                                                    enterFrom="opacity-0 scale-95"
+                                                    enterTo="opacity-100 scale-100"
+                                                    leave="ease-in duration-200"
+                                                    leaveFrom="opacity-100 scale-100"
+                                                    leaveTo="opacity-0 scale-95"
+                                                >
+                                                    <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
+                                                        <div className="flex items-center justify-between pl-5 pt-5 text-lg font-semibold dark:text-white">
+                                                            <h5>학생 추가하기</h5>
+                                                            <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
+                                                                <IconX className="pr-5 w-10 h-10" />
                                                             </button>
-                                                        </form>
-                                                    </div>
-                                                </Dialog.Panel>
-                                            </Transition.Child>
+                                                        </div>
+                                                        <div className="p-5">
+                                                            <form>
+                                                                <div className="relative mb-4">
+                                                                    <h2 className='pb-4'>연결하고자 하는 유저코드를 입력해 주세요.</h2>
+                                                                    <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                        <IconUser className="w-5 h-5 mt-10" />
+                                                                    </span>
+                                                                    <input type="text" placeholder="유저코드" className="form-input ltr:pl-10 rtl:pr-10" id="userCode" value={userCode} onChange={handleUserCode} />
+                                                                </div>
+                                                                <button type="button" onClick={() => getmappingStudent(userCode)} className="btn btn-primary w-full">
+                                                                    추가하기
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </Dialog.Panel>
+                                                </Transition.Child>
+                                            </div>
                                         </div>
-                                    </div>
-                                </Dialog>
-                            </Transition>
-                        </div>
+                                    </Dialog>
+                                </Transition>
+                            </div>
                         )}
-                        {((localStorage.getItem("accountType") == 'ROLE_TEACHER') || (localStorage.getItem("accountType") == 'ROLE_STUDENT'))  && (
-                        <div className='w-1/5'>
-                            <select className="form-select flex text-white-dark" value={selectedSubject} onChange={(e) => handleSubjectChange(e.target.value)}>
-                                <option disabled value="">과목 선택</option>
-                                {subjectList.map((data: any) => (
-                                    <option key={data.subjectId} value={data.subjectId}>
-                                        {`${data.subjectName} - ${data.grade}학년 ${data.semester}학기`}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        {((localStorage.getItem("accountType") == 'ROLE_TEACHER') || (localStorage.getItem("accountType") == 'ROLE_STUDENT')) && (
+                            <div className='w-1/5'>
+                                <select className="form-select flex text-white-dark" value={selectedSubject} onChange={(e) => handleSubjectChange(e.target.value)}>
+                                    <option disabled value="">과목 선택</option>
+                                    {subjectList.map((data: any) => (
+                                        <option key={data.subjectId} value={data.subjectId}>
+                                            {`${data.subjectName} - ${data.grade}학년 ${data.semester}학기`}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         )}
                         <div className="dropdown shrink-0 flex">
                             <Dropdown
