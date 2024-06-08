@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDeleteRequestDTO {
+public class ReqUserDeleteDTO {
     private List<Long> userId;
 }

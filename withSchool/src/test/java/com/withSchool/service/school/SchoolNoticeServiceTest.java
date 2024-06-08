@@ -3,7 +3,6 @@ package com.withSchool.service.school;
 import com.withSchool.dto.file.FileDTO;
 import com.withSchool.dto.school.ReqNoticeDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
-import com.withSchool.dto.user.ResUserDefaultDTO;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.entity.school.SchoolNoticeFile;
@@ -11,6 +10,7 @@ import com.withSchool.entity.user.User;
 import com.withSchool.repository.file.SchoolNoticeFileRepository;
 import com.withSchool.repository.school.SchoolNoticeRepository;
 import com.withSchool.service.file.FileService;
+import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,6 +54,9 @@ public class SchoolNoticeServiceTest {
     @Mock
     private SecurityContext securityContext;
 
+    @Mock
+    private NotificationService notificationService;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -72,6 +75,9 @@ public class SchoolNoticeServiceTest {
         User admin = new User();
         admin.setId("admin");
         admin.setName("Admin Name");
+        admin.setPassword("pas");
+        admin.setSchoolInformation(new SchoolInformation());
+        admin.getSchoolInformation().setSchoolId(1L);
 
         SchoolNotice savedNotice = SchoolNotice.builder()
                 .schoolNoticeId(1L)
@@ -84,7 +90,9 @@ public class SchoolNoticeServiceTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("admin");
         when(userService.findById("admin")).thenReturn(admin);
+        when(userService.getCurrentUser()).thenReturn(admin);
         when(schoolNoticeRepository.save(any(SchoolNotice.class))).thenReturn(savedNotice);
+        doNothing().when(notificationService).sendSMSGroup(anyList(), anyString(), anyString(), anyBoolean());
 
         // when
         ResNoticeDTO result = schoolNoticeService.save(reqNoticeDTO);

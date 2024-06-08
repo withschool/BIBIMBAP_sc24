@@ -110,4 +110,5 @@ public class SchoolInformationDTO {
     @SerializedName("LOAD_DTM")
     private String LOAD_DTM;
 
+    private int paymentState;
 }

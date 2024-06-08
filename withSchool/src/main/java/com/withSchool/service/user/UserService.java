@@ -4,13 +4,19 @@ import com.withSchool.dto.mapping.UserClassDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.user.*;
 import com.withSchool.entity.classes.ClassInformation;
+import com.withSchool.entity.mapping.StudentSubject;
+import com.withSchool.entity.mapping.TeacherSubject;
 import com.withSchool.entity.school.SchoolInformation;
+import com.withSchool.entity.subject.Subject;
 import com.withSchool.entity.user.User;
 import com.withSchool.repository.classes.ClassRepository;
 import com.withSchool.repository.mapping.StudentSubjectRepository;
+import com.withSchool.repository.mapping.TeacherSubjectRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
+import com.withSchool.repository.subject.SubjectRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,12 +45,15 @@ public class UserService {
     private final ClassRepository classRepository;
     private final SchoolInformationRepository schoolInformationRepository;
     private final StudentSubjectRepository studentSubjectRepository;
+    private final TeacherSubjectRepository teacherSubjectRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final SubjectRepository subjectRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Value("${raw-password}")
+    String rawPassword;
 
     public User findById(String id) {
         Optional<User> user = userRepository.findById(id);
@@ -83,18 +92,20 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public void registerAdmin(SchoolInformationDTO dto) throws Exception{
+    public void registerAdmin(SchoolInformationDTO dto, String adminEmail) throws Exception{
         Optional<SchoolInformation> result = schoolInformationRepository.findByAtptOfcdcScCodeAndSdSchulCode(dto.getATPT_OFCDC_SC_CODE(),dto.getSD_SCHUL_CODE());
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();
             User admin = User.builder()
                     .id(schoolInformation.getSdSchulCode() + "_admin")
-                    .password(passwordEncoder.encode("1234"))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
+                    .password(passwordEncoder.encode(rawPassword))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
+                    .email(adminEmail)
                     .schoolInformation(schoolInformation)
                     .build();
             userRepository.save(admin);
+            emailService.sendAdminMessage(schoolInformation.getSchulNm(), adminEmail, admin.getId(), rawPassword);
         }
     }
 
@@ -185,12 +196,21 @@ public class UserService {
         userRepository.save(response);
     }
 
-    public void delete(UserDeleteRequestDTO dto){
+    public void delete(ReqUserDeleteDTO dto){
         List<Long> userId = dto.getUserId();
-        userId.stream().forEach(u->{
-            studentSubjectRepository.deleteSsByUserId(u);
-            userRepository.deleteUserByUserId(u);
-        });
+        userId.stream()
+            .parallel()
+            .forEach(u -> {
+                User user = this.findByUserId(u);
+                User deletedUser = User.builder()
+                        .userId(u)
+                        .name("(알수없음)")
+                        .accountType(user.getAccountType())
+                        .sex(user.getSex())
+                        .build();
+
+                userRepository.save(deletedUser);
+            });
 
     }
 
@@ -286,5 +306,88 @@ public class UserService {
 
     public List<User> findStudentByClassId(Long schoolId){
         return userRepository.findStudentByClassId(schoolId);
+    }
+
+    public boolean isEnoughUserRemain(int inputSize) {
+        SchoolInformation currentUserSchool = getCurrentUserSchoolInformation(null);
+        List<User> specificSchoolUser = userRepository.findAllBySchoolInformation_SchoolIdAndAccountTypeNot(currentUserSchool.getSchoolId(), 4);
+
+        int userLimit = 300 + currentUserSchool.getServiceType() * 200;
+
+        int specificSchoolUserCount = specificSchoolUser.size();
+
+        return userLimit - specificSchoolUserCount >= inputSize;
+    }
+
+    public void addOneUser(ReqUserRegisterDTO reqUserRegisterDTO) {
+        if(!this.isEnoughUserRemain(1)) throw new RuntimeException("too many user input");
+
+        int accountType = reqUserRegisterDTO.getType().equals("학생") ? 0 : 2;
+        String name = reqUserRegisterDTO.getName();
+        String birthDate = reqUserRegisterDTO.getBirthDate();
+
+        Long schoolId = getCurrentUserSchoolId();
+        SchoolInformation schoolInformation = getCurrentUserSchoolInformation(null);
+        int grade = reqUserRegisterDTO.getGrade();
+        int classNumber = reqUserRegisterDTO.getClassNumber();
+        int semester = reqUserRegisterDTO.getSemester();
+        int year = reqUserRegisterDTO.getYear();
+
+        Optional<ClassInformation> optionalClassInformation = classRepository.findByGradeAndInClassAndYearAndSchoolInformation_SchoolId(grade, classNumber, year, schoolId);
+        if(optionalClassInformation.isEmpty()) throw new RuntimeException("Check Class");
+        ClassInformation classInformation = optionalClassInformation.get();
+
+        String[] subjects = reqUserRegisterDTO.getSubjects();
+
+        User user = User.builder()
+                .name(name)
+                .schoolInformation(schoolInformation)
+                .classInformation(classInformation)
+                .accountType(accountType)
+                .birthDate(birthDate)
+                .userCode(RandomStringUtils.randomAlphanumeric(8))
+                .build();
+
+        userRepository.save(user);
+
+        for (String subjectName : subjects) {
+            Optional<Subject> optionalSubject = subjectRepository.findBySubjectNameAndGradeAndYearAndSemester(subjectName, Integer.toString(grade), Integer.toString(year),Integer.toString(semester), schoolId);
+            if(optionalSubject.isEmpty()) throw new RuntimeException("No subject with " + subjectName);
+            Subject subject = optionalSubject.get();
+
+            if(accountType == 0){
+                StudentSubject studentSubject = StudentSubject.builder()
+                        .subject(subject)
+                        .user(user)
+                        .build();
+
+                studentSubjectRepository.save(studentSubject);
+            }
+            else{
+                TeacherSubject teacherSubject = TeacherSubject.builder()
+                        .teacher(user)
+                        .subject(subject)
+                        .build();
+
+                teacherSubjectRepository.save(teacherSubject).toResTeacherSubjectDefaultDTO();
+            }
+        }
+    }
+
+    public Boolean isModified() {
+        User user = getCurrentUser();
+        return user.getModDate() != null;
+    }
+
+    public void changeSuperSchool(Long schoolId) {
+        User user = getCurrentUser();
+
+        Optional<SchoolInformation> optionalSchoolInformation = schoolInformationRepository.findById(schoolId);
+        if(optionalSchoolInformation.isEmpty()) throw new RuntimeException("No School");
+        SchoolInformation schoolInformation = optionalSchoolInformation.get();
+
+        user.setSchoolInformation(schoolInformation);
+
+        userRepository.save(user);
     }
 }

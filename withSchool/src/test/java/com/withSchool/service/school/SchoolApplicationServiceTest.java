@@ -69,8 +69,8 @@ public class SchoolApplicationServiceTest {
     public void testFindAll() {
         // given
         List<SchoolApplication> applications = new ArrayList<>();
-        applications.add(new SchoolApplication(1L,"School A", "123-456-7890","admin A","adminA@example.com", 0));
-        applications.add(new SchoolApplication(2L, "School B", "987-654-3210", "admin B", "adminB@example.com", 0));
+        applications.add(new SchoolApplication(1L,"School A", "123-456-7890","admin A","adminA@example.com", 0, 0,"7126231"));
+        applications.add(new SchoolApplication(2L, "School B", "987-654-3210", "admin B", "adminB@example.com", 0, 0,"7126231"));
 
         when(schoolApplicationRepository.findAll()).thenReturn(applications);
 
@@ -90,7 +90,7 @@ public class SchoolApplicationServiceTest {
     public void testFindById() {
         // given
         Long applicationId = 1L;
-        SchoolApplication application = new SchoolApplication(applicationId, "Test School", "123-456-7890","admin A", "adminA@example.com", 0);
+        SchoolApplication application = new SchoolApplication(applicationId, "Test School", "123-456-7890","admin A", "adminA@example.com", 0, 0,"7126231");
 
         when(schoolApplicationRepository.findById(applicationId)).thenReturn(Optional.of(application));
 
@@ -110,7 +110,7 @@ public class SchoolApplicationServiceTest {
         // given
         Long applicationId = 1L;
         int newState = 1;
-        SchoolApplication application = new SchoolApplication(applicationId, "Test School", "123-456-7890","admin A", "adminA@example.com", 0);
+        SchoolApplication application = new SchoolApplication(applicationId, "Test School", "123-456-7890","admin A", "adminA@example.com", 0, 0, "7126231");
 
         SchoolApplication savedApplication = SchoolApplication.builder()
                 .schoolApplicationId(1L)

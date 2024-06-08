@@ -126,7 +126,7 @@ public class SchoolInformation extends BaseEntity {
             결제 상태
             0 - 결제 안됨
             1 - 결제 됨""")
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "int default 1")
     private int paymentState;
 
     @Comment("""

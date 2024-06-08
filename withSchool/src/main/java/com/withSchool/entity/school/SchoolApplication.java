@@ -1,5 +1,6 @@
 package com.withSchool.entity.school;
 
+import com.withSchool.dto.school.ReqApplicationDefaultDTO;
 import com.withSchool.dto.school.ResApplicationDefaultDTO;
 import com.withSchool.entity.base.BaseEntity;
 import jakarta.persistence.*;
@@ -40,8 +41,28 @@ public class SchoolApplication extends BaseEntity {
             0 - 신청
             1 - 처리 중
             2 - 처리 완료
+            3 - 반려
             """)
     private int state;
+
+    @Comment("""
+            서비스 타입
+                        
+            0 ~ 2(월간)
+            0 - 소규모(300명)
+            1 - 중규모(500명)
+            2 - 대규모(700명)
+                        
+            3 ~ 5(연간)
+            3 - 소규모
+            4 - 중규모
+            5 - 대규모
+            """)
+    @Column(columnDefinition = "int default 0")
+    private int serviceType;
+
+    @Comment("학교 코드")
+    private String SD_SCHUL_CODE;
 
     public ResApplicationDefaultDTO toResApplicationDefaultDTO(){
         return ResApplicationDefaultDTO.builder()
@@ -51,7 +72,19 @@ public class SchoolApplication extends BaseEntity {
                 .schoolAdminEmail(this.getSchoolAdminEmail())
                 .schoolPhoneNumber(this.getSchoolPhoneNumber())
                 .state(this.getState())
+                .serviceType(this.getServiceType())
+                .SD_SCHUL_CODE(this.getSD_SCHUL_CODE())
                 .build();
     }
 
+    public ReqApplicationDefaultDTO toReqApplicationDefaultDTO(){
+        return ReqApplicationDefaultDTO.builder()
+                .schoolName(this.getSchoolName())
+                .schoolAdminName(this.getSchoolAdminName())
+                .schoolAdminEmail(this.getSchoolAdminEmail())
+                .schoolPhoneNumber(this.getSchoolPhoneNumber())
+                .serviceType(this.getServiceType())
+                .SD_SCHUL_CODE(this.getSD_SCHUL_CODE())
+                .build();
+    }
 }

@@ -38,15 +38,18 @@ public class BasicController {
     private final NotificationService notificationService;
     private final SchoolApplicationService schoolApplicationService;
 
-
     @PostMapping("/pre-sign-up")
     @Operation(summary = "회원가입 전 유저 코드로 유저 정보 불러오기")
     public ResponseEntity<Map<String, Object>> preRegisterUser(@RequestBody PreSignUpRequestDTO preSignUpRequestDTO) {
         Map<String, Object> response = new HashMap<>();
 
         User user = userService.findBySchoolInformationSchoolIdAndNameAndUserCode(preSignUpRequestDTO.getSchoolId(), preSignUpRequestDTO.getUserName(), preSignUpRequestDTO.getUserCode());
-        if(user==null) {
+        if (user == null) {
             response.put("message", "해당하는 유저가 없습니다.");
+            return ResponseEntity.ok()
+                    .body(response);
+        } else if (user.getId() != null) {
+            response.put("message", "해당하는 유저는 이미 회원가입 되었습니다.");
             return ResponseEntity.ok()
                     .body(response);
         }
