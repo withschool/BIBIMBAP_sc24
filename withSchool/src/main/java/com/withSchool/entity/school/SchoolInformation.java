@@ -141,4 +141,7 @@ public class SchoolInformation extends BaseEntity {
     @Column(columnDefinition = "int default 9")
     private int serviceType;
 
+    @Comment("카드결제정보")
+    private String billingKey;
+
 }

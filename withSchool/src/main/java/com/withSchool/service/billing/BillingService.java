@@ -9,6 +9,7 @@ import com.withSchool.repository.payment.PaymentFailRepository;
 import com.withSchool.repository.payment.PaymentRecordRepository;
 import com.withSchool.repository.payment.SubscriptionRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
+import com.withSchool.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -32,6 +33,7 @@ public class BillingService {
     private final SchoolInformationRepository schoolInformationRepository;
     private final PaymentRecordRepository paymentRecordRepository;
     private final PaymentFailRepository paymentFailRepository;
+    private final UserRepository userRepository;  // 추가
     private final RestTemplate restTemplate;
 
     @Value("${portone.api.secret}")
@@ -41,29 +43,32 @@ public class BillingService {
     private static final int INTERMEDIATE_DAILY_RATE = 150000;
     private static final int PREMIUM_DAILY_RATE = 200000;
 
-    @Scheduled(cron = "0 0 0 1 * ?",zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 1 * ?", zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
     @Transactional
     public void processMonthlyBilling() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
 
         for (Subscription subscription : subscriptions) {
-            try {
-                if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(LocalDate.now())) {
-                    SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                            .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
-                    schoolInformation.setPaymentState(0);
-                    schoolInformationRepository.save(schoolInformation);
-                    continue;
-                }
 
-                int amount = calculateAmount(subscription);
+            if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(LocalDate.now())) {
+                SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
+                        .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
+                schoolInformation.setPaymentState(0);
+                schoolInformationRepository.save(schoolInformation);
+                continue;
+            }
+
+            int amount = calculateAmount(subscription);
+
+            try {
                 processPayment(subscription, amount);
             } catch (Exception e) {
                 handlePaymentFailure(subscription, e);
             }
         }
     }
-    @Scheduled(cron = "0 0 0 * * ?",zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
+
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
     @Transactional
     public void retryFailedPayments() {
         LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
@@ -74,7 +79,7 @@ public class BillingService {
             Subscription subscription = fail.getSubscription();
             if (fail.getFailDate().isBefore(twoWeeksAgo) || fail.getAttempts() >= 14) {
                 SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                        .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
+                        .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
                 schoolInformation.setPaymentState(0);
                 schoolInformationRepository.save(schoolInformation);
                 paymentFailRepository.delete(fail);
@@ -93,17 +98,19 @@ public class BillingService {
     }
 
     private int calculateAmount(Subscription subscription) {
-        LocalDate now = LocalDate.now();
+
+        LocalDate now = LocalDate.now().withDayOfMonth(1);
+
+        LocalDate firstDayOfPreviousMonth = now.minusMonths(1).withDayOfMonth(1);
+        LocalDate lastDayOfPreviousMonth = now.minusDays(1);
+
         LocalDate startDate = subscription.getStartDate();
-        LocalDate endDate = subscription.getEndDate() != null ? subscription.getEndDate() : now;
+        LocalDate endDate = subscription.getEndDate() != null ? subscription.getEndDate() : LocalDate.now();
 
 
-        LocalDate firstDayOfMonth = now.withDayOfMonth(1);
-        LocalDate lastDayOfMonth = now.withDayOfMonth(now.lengthOfMonth());
+        LocalDate billingStart = startDate.isBefore(firstDayOfPreviousMonth) ? firstDayOfPreviousMonth : startDate;
 
-
-        LocalDate billingStart = startDate.isBefore(firstDayOfMonth) ? firstDayOfMonth : startDate;
-        LocalDate billingEnd = endDate.isAfter(lastDayOfMonth) ? lastDayOfMonth : endDate;
+        LocalDate billingEnd = endDate.isAfter(lastDayOfPreviousMonth) ? lastDayOfPreviousMonth : endDate;
 
 
         long daysUsed = ChronoUnit.DAYS.between(billingStart, billingEnd.plusDays(1));
@@ -111,6 +118,7 @@ public class BillingService {
         int dailyRate = getDailyRate(subscription.getPlan());
         return dailyRate * (int)daysUsed;
     }
+
 
     private int getDailyRate(int plan) {
         switch (plan) {
@@ -121,9 +129,10 @@ public class BillingService {
             case 2:
                 return PREMIUM_DAILY_RATE;
             default:
-                return 9;
+                throw new IllegalArgumentException("Invalid plan: " + plan);
         }
     }
+
     private void processPayment(Subscription subscription, int amount) {
 
         String paymentId = UUID.randomUUID().toString();
@@ -134,8 +143,8 @@ public class BillingService {
         headers.set("Content-Type", "application/json");
 
         Map<String, Object> paymentDetails = new HashMap<>();
-        paymentDetails.put("billingKey", subscription.getBillingKey()+"1");
-        paymentDetails.put("orderName", "월간 이용권 정기결제 실패");
+        paymentDetails.put("billingKey", subscription.getBillingKey());
+        paymentDetails.put("orderName", "월간 이용권 정기결제");
 
         Map<String, Object> amountDetails = new HashMap<>();
         amountDetails.put("total", amount);
@@ -159,20 +168,19 @@ public class BillingService {
 
         boolean success = response.getStatusCode().is2xxSuccessful();
 
-
         paymentRecord.setSuccess(success);
-
         paymentRecordRepository.save(paymentRecord);
 
         if (!success) {
             throw new RuntimeException("결제 실패: " + response.getStatusCode());
         }
     }
+
     private void handlePaymentFailure(Subscription subscription, Exception e) {
 
         PaymentFail paymentFail = PaymentFail.builder()
                 .failDate(LocalDate.now())
-                .failReason(e.getMessage().substring(0,20))
+                .failReason(e.getMessage().substring(0, 20))
                 .subscription(subscription)
                 .build();
 
@@ -181,14 +189,15 @@ public class BillingService {
         // 관리자 또는 사용자에게 알림 전송 (이메일, SMS 등)
 
     }
+
     @Transactional
-    @Scheduled(cron = "0 0 1 * * ?",zone = "Asia/Seoul")
-    public void stopFreeVersion(){
+    @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Seoul")
+    public void stopFreeVersion() {
         LocalDate now = LocalDate.now();
-        LocalDate twoWeeksAge = now.minusWeeks(2);
+        LocalDate twoWeeksAgo = now.minusWeeks(2);
         List<SchoolInformation> schoolInformationList = schoolInformationRepository.findAll();
-        for(SchoolInformation s : schoolInformationList){
-            if(s.getServiceType() == 9 && s.getRegDate().toLocalDate().isBefore(twoWeeksAge)){
+        for (SchoolInformation s : schoolInformationList) {
+            if (s.getServiceType() == 9 && s.getRegDate().toLocalDate().isBefore(twoWeeksAgo)) {
                 s.setPaymentState(0);
                 schoolInformationRepository.save(s);
             }
@@ -199,7 +208,7 @@ public class BillingService {
         List<ResPaymentRecordDTO> resPaymentRecordDTOList = new ArrayList<>();
 
         List<PaymentRecord> paymentRecordList = paymentRecordRepository.findAllBySchoolId(schoolId);
-        for(PaymentRecord p : paymentRecordList){
+        for (PaymentRecord p : paymentRecordList) {
             ResPaymentRecordDTO resPaymentRecordDTO = ResPaymentRecordDTO.builder()
                     .paymentId(p.getPaymentId())
                     .plan(p.getPlan())

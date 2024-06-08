@@ -15,5 +15,4 @@ public class ResSubscriptionDTO {
     private Long subscriptionId;
     private int plan;
     private LocalDate startDate;
-    private LocalDate endDate;
 }
