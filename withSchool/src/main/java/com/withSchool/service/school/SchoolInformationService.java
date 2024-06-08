@@ -217,6 +217,7 @@ public class SchoolInformationService {
                 .FOAS_MEMRD(entity.getFoasMemrd())
                 .LOAD_DTM(entity.getLoadDtm())
                 .paymentState(entity.getPaymentState())
+                .serviceType(entity.getServiceType())
                 .build();
     }
 

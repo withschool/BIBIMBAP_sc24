@@ -111,4 +111,6 @@ public class SchoolInformationDTO {
     private String LOAD_DTM;
 
     private int paymentState;
+
+    private int serviceType;
 }
