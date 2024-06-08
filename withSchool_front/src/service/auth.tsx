@@ -127,6 +127,7 @@ export const register = async (
       },
       body: JSON.stringify(body),
     });
+    console.log(JSON.stringify(body));
 
     if (response.ok) {
       const data = await response.json();
