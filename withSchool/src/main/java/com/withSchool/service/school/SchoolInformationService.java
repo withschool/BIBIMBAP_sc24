@@ -1,6 +1,7 @@
 package com.withSchool.service.school;
 
 import com.withSchool.dto.payment.ResSubscriptionDTO;
+import com.withSchool.dto.school.ReqSchoolInformationSaveDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.school.SchoolInformationListDTO;
 import com.withSchool.entity.payment.Subscription;
@@ -8,7 +9,6 @@ import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.repository.payment.SubscriptionRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
-import com.withSchool.service.user.NotificationService;
 import com.withSchool.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +35,16 @@ public class SchoolInformationService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public ResponseEntity<String> saveSchool(SchoolInformationDTO schoolInformationDTO, String adminEmail) {
-        SchoolInformation schoolInformation = this.save(this.dtoToEntity(schoolInformationDTO));
+    public ResponseEntity<String> saveSchool(ReqSchoolInformationSaveDTO reqSchoolInformationSaveDTO) {
+        SchoolInformation schoolInformation = this.save(this.dtoToEntity(reqSchoolInformationSaveDTO.getSchoolInformationDTO()));
         if (schoolInformation == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-                    .body(schoolInformationDTO.getSCHUL_NM() + "의 생성에 실패하였습니다.");
+                    .body(reqSchoolInformationSaveDTO.getSchoolInformationDTO().getSCHUL_NM() + "의 생성에 실패하였습니다.");
         }
 
         try {
-            userService.registerAdmin(schoolInformationDTO, adminEmail);
+            userService.registerAdmin(reqSchoolInformationSaveDTO.getSchoolInformationDTO(), reqSchoolInformationSaveDTO.getAdminEmail());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
