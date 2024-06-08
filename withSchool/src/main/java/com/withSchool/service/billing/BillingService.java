@@ -1,5 +1,6 @@
 package com.withSchool.service.billing;
 
+import com.withSchool.dto.payment.ResPaymentRecordDTO;
 import com.withSchool.entity.payment.PaymentFail;
 import com.withSchool.entity.payment.PaymentRecord;
 import com.withSchool.entity.payment.Subscription;
@@ -22,10 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -195,5 +193,23 @@ public class BillingService {
                 schoolInformationRepository.save(s);
             }
         }
+    }
+
+    public List<ResPaymentRecordDTO> getPaymentRecord(Long schoolId) {
+        List<ResPaymentRecordDTO> resPaymentRecordDTOList = new ArrayList<>();
+
+        List<PaymentRecord> paymentRecordList = paymentRecordRepository.findAllBySchoolId(schoolId);
+        for(PaymentRecord p : paymentRecordList){
+            ResPaymentRecordDTO resPaymentRecordDTO = ResPaymentRecordDTO.builder()
+                    .paymentId(p.getPaymentId())
+                    .plan(p.getPlan())
+                    .amount(p.getAmount())
+                    .paymentDate(p.getPaymentDate())
+                    .success(p.isSuccess())
+                    .build();
+            resPaymentRecordDTOList.add(resPaymentRecordDTO);
+        }
+
+        return resPaymentRecordDTOList;
     }
 }

@@ -14,13 +14,9 @@ import java.time.LocalDateTime;
 public class PaymentRecord{
     @Id
     private String paymentId;
-
     private LocalDateTime paymentDate;
-
     private int amount;
-
     private boolean success;
-
     private int plan;
 
     @ManyToOne

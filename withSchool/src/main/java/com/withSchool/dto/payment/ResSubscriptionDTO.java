@@ -1,4 +1,4 @@
-package com.withSchool.dto.school;
+package com.withSchool.dto.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReqUpgradePlanDTO {
-    private int newPlan;
+public class ResSubscriptionDTO {
+    private Long subscriptionId;
+    private int plan;
+    private LocalDate startDate;
     private LocalDate endDate;
 }

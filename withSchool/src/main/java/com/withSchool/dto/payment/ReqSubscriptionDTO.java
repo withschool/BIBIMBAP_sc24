@@ -1,4 +1,4 @@
-package com.withSchool.dto.school;
+package com.withSchool.dto.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
