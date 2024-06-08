@@ -257,6 +257,7 @@ public class SchoolInformationService {
 
         return ResCurrentPlanDTO.builder()
                 .plan(currentSubscription != null ? currentSubscription.getPlan() : 9)
+                .userCount(userCount)
                 .nextBillingDate(nextBillingDate)
                 .build();
     }
