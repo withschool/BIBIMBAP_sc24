@@ -85,26 +85,25 @@ public class StudentSubjectService {
                 case "mid" -> {
                     activityScore = studentSubject.getActivityScore();
                     finalScore = studentSubject.getFinalScore();
-                    totalScore = studentSubject.getTotalScore();
 
                     midtermScore = u.getScore();
                 }
                 case "final" -> {
                     activityScore = studentSubject.getActivityScore();
                     midtermScore = studentSubject.getMidtermScore();
-                    totalScore = studentSubject.getTotalScore();
 
                     finalScore = u.getScore();
                 }
                 case "activity" -> {
                     midtermScore = studentSubject.getMidtermScore();
                     finalScore = studentSubject.getFinalScore();
-                    totalScore = studentSubject.getTotalScore();
 
                     activityScore = u.getScore();
                 }
                 default -> throw new RuntimeException("Unavailable type");
             }
+
+            totalScore = midtermScore + finalScore + activityScore;
 
             StudentSubject result = StudentSubject.builder()
                     .studentSubjectId(studentSubject.getStudentSubjectId())
