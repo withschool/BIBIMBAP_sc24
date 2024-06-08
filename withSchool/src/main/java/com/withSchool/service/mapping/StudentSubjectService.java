@@ -27,8 +27,12 @@ public class StudentSubjectService {
     private final SubjectRepository subjectRepository;
     private final UserService userService;
 
-    public List<StudentSubjectDTO> findOnesSugang(User user) {
-        List<StudentSubject> studentSubjects = studentSubjectRepository.findByStudent(user);
+    public List<StudentSubjectDTO> findOnesSugang(Long childId) {
+        User user = userService.getCurrentUser();
+
+        User input = user.getAccountType() == 1 ? userService.findByUserId(childId) : user;
+
+        List<StudentSubject> studentSubjects = studentSubjectRepository.findByStudent(input);
         List<StudentSubjectDTO> studentSubjectDTOS = new ArrayList<>();
 
         for (StudentSubject ss : studentSubjects) {

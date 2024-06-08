@@ -3,15 +3,12 @@ package com.withSchool.controller.user;
 import com.withSchool.dto.mapping.ReqStudentSubjectScoreDTO;
 import com.withSchool.dto.mapping.ResStudentSubjectDefaultDTO;
 import com.withSchool.dto.mapping.StudentSubjectDTO;
-import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentSubjectService;
 import com.withSchool.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,13 +31,9 @@ public class SugangController {
 
     @GetMapping
     @Operation(summary = "학생 본인의 수강 리스트 확인")
-    public ResponseEntity<List<StudentSubjectDTO>> findOnesSugang() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findById(authentication.getName());
-        if (user == null) throw new RuntimeException("로그인을 해주세요.");
-
+    public ResponseEntity<List<StudentSubjectDTO>> findOnesSugang(@RequestParam(required = false) Long childId) {
         return ResponseEntity.ok()
-                .body(studentSubjectService.findOnesSugang(user));
+                .body(studentSubjectService.findOnesSugang(childId));
     }
 
     @GetMapping("/{subjectId}")
