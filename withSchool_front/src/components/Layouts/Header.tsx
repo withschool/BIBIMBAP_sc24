@@ -48,21 +48,28 @@ const Header = () => {
             try {
                 const data = await getSubjectList();
                 setSubjectList(data);
-                if (data && !selectedSubject) {
-                    const firstSubjectId = data[0]?.subjectId || '';
-                    setSelectedSubject(firstSubjectId);
-                    localStorage.setItem('targetSubject', firstSubjectId);
+    
+                const storedSubject = localStorage.getItem('targetSubject');
+    
+                if (data) {
+                    if (storedSubject) {
+                        setSelectedSubject(storedSubject);
+                    } else {
+                        const firstSubjectId = data[0]?.subjectId || '';
+                        setSelectedSubject(firstSubjectId);
+                        localStorage.setItem('targetSubject', firstSubjectId);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching subject list:', error);
             }
         };
-
+    
         const accountType = localStorage.getItem('accountType');
         if (accountType === "ROLE_STUDENT" || accountType === "ROLE_TEACHER") {
             fetchSubject();
         }
-    }, [selectedSubject]);
+    }, []);
 
     const handleSubjectChange = (subjectId : string) => {
         localStorage.setItem("targetSubject", subjectId);

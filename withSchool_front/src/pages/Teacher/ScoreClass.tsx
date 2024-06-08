@@ -199,7 +199,7 @@ const ScoreClass = () => {
                                                         <td>{data.midtermScore}점</td>
                                                         <td>{data.finalScore}점</td>
                                                         <td>{data.activityScore}점</td>
-                                                        <td>{parseInt(data.midtermScore) + parseInt(data.finalScore) + parseInt(data.activityScore)}점</td>
+                                                        <td>{data.totalScore}점</td>
                                                     </tr>
                                                 ))
                                             ) : (
