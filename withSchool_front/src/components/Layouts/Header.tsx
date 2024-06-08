@@ -294,9 +294,9 @@ const Header = () => {
                             <IconMenu className="w-5 h-5" />
                         </button>
                     </div>
-
-                    <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">선택된 학교 [{schoolName || '학교를 선택하세요'}]</h3>
-
+                    {accountTypes === "ROLE_ADMIN" && (
+                        <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">선택된 학교 [{schoolName || ''}]</h3>
+                    )}
 
                     <div className="ltr:mr-2 rtl:ml-2 hidden sm:block">
                         {/* <ul className="flex items-center space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">

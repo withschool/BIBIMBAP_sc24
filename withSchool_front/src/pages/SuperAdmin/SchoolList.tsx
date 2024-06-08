@@ -26,9 +26,6 @@ import IconHorizontalDots from "../../components/Icon/IconHorizontalDots";
 import IconSearch from "../../components/Icon/IconSearch";
 import Tippy from "@tippyjs/react";
 
-import { setSelectedSchoolName } from "../../store/schoolSlice"; // 새로 추가된 액션
-
-
 interface School {
     schoolId: number;
     schoolName: string;
@@ -55,10 +52,6 @@ export const formatDate = (dateString: string): string => {
 const SchoolList = () => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState(""); // Add state for email
-
-    const handleSchoolClick = (schoolName: string) => {
-        dispatch(setSelectedSchoolName(schoolName));
-    };
 
 
     useEffect(() => {
@@ -499,7 +492,7 @@ const SchoolList = () => {
                         paginationText={({ from, to, totalRecords }) =>
                             `${totalRecords}개의 항목 중 ${from}에서 ${to}까지 표시`
                         }
-                        onRowClick={(school) => handleSchoolClick(school.schoolName)} // 학교 클릭 시 호출
+                        // onRowClick={(school) => } // 학교 클릭 시 호출
                     />
                 </div>
             </div>
