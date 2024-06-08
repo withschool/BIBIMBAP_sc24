@@ -10,6 +10,9 @@ import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { getCounselInfo, getTeacherListStudent, registerCounsel, deleteCounsel, editCounsel} from '../../service/counsel';
 import { getListCommunity, makeListCommunity } from '../../service/community';
+import { viewPostListCommunity, viewPostCommunity, makePostCommunity, editPostCommunity, deletePostCommunity } from '../../service/community';
+import { likePostCommunity, likeReplyCommunity } from '../../service/community';
+import { viewReplyCommunity, makeReplyCommunity, editReplyCommunity, deleteReplyCommunity } from '../../service/community';
 import { getUserInfobyPK } from '../../service/auth';
 import IconClipboardText from '../../components/Icon/IconClipboardText';
 import IconListCheck from '../../components/Icon/IconListCheck';
@@ -25,10 +28,13 @@ import IconUser from '../../components/Icon/IconUser';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconX from '../../components/Icon/IconX';
+import IconHeart from '../../components/Icon/IconHeart';
+import IconChatDot from '../../components/Icon/IconChatDot';
 import IconRestore from '../../components/Icon/IconRestore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
+import { getUserInfobyId } from '../../service/auth';
 
 const Community = () => {
     const dispatch = useDispatch();
@@ -48,7 +54,6 @@ const Community = () => {
         try {
             const community = await getListCommunity("1", "10");
             setCommunityList(community);
-            console.log(community);
         } catch (error) {
             console.error("Failed to fetch community:", error);
         }
@@ -58,15 +63,30 @@ const Community = () => {
         fetchCommunityList();
     }, []);
 
+    const [userId, setUserId] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const userinfo = await getUserInfobyId(localStorage.getItem("id"));
+            setUserId(userinfo.userId);
+        };
+        fetchData();
+    }, []);
+
     const [communityName, setCommunityName] = useState('');
     const [communityCategory, setCommunityCategory] = useState('');
 
     const tryMakeCommunity = async () => {
+        if(communityCategory && communityName){
         await makeListCommunity(communityCategory, communityName);
         setCommunityName('');
         setCommunityCategory('');
         setAddCommunityModal(false);
         fetchCommunityList();
+        }
+        else{
+            alert("게시판 이름 및 카테고리를 입력해주세요.");
+        }
     }
     
     const handleNameChange = (e : React.ChangeEvent<HTMLInputElement>) => {
@@ -77,22 +97,78 @@ const Community = () => {
         setCommunityCategory(e.target.value);
     };
 
+    const handleLikeComment = async (replyId: string) => {
+       await likeReplyCommunity(replyId);
+        fetchCommentList();
+    }
 
-    const fetchPostList = async () => {
+    
+    const [post, setPost] = useState<any>([]);
+
+    const fetchPost = async (postId : string) => {
         try {
-            const community = await getListCommunity("1", "10");
-            setCommunityList(community);
-            console.log(community);
+            console.log(selectedTab);
+            const posts = await viewPostCommunity(postId);
+            setPost(posts);
         } catch (error) {
-            console.error("Failed to fetch community:", error);
+            console.error("Failed to fetch post list:", error);
+            return;
         }
     };
 
+    const handleLikeTask = async (postId:string ) => {
+        await likePostCommunity(postId);
+        fetchPost(postId);
+    }
+    
+    const handleDeleteComment = async (replyId: string) => {
+        await deleteReplyCommunity(replyId);
+        fetchCommentList();
+    }
 
+    const [postList, setPostList] = useState([]);
 
+    const fetchPostList = async () => {
+        try {
+            console.log(selectedTab);
+            const posts = await viewPostListCommunity(selectedTab, "1", "10");
+            setPostList(posts.postList);
+        } catch (error) {
+            console.error("Failed to fetch post list:", error);
+        }
+    };
 
-
+    const [selectedTask, setSelectedTask] = useState<any>(defaultParams);
     const [selectedTab, setSelectedTab] = useState(''); // 게시판 Id
+
+    useEffect(() => {
+        fetchPostList();
+    }, [selectedTab]);
+
+    useEffect(() => {
+        fetchCommentList();
+    }, [post]);
+
+    const [newComment, setNewComment] = useState('');
+    const [comments, setComments] = useState([]);
+
+    const fetchCommentList = async () => {
+        try {
+            const comments = await viewReplyCommunity(post.postId);
+            setComments(comments);
+            console.log(comments);
+        } catch (error) {
+            console.error("Failed to fetch post list:", error);
+        }
+    };
+
+    const handleAddComment = async () => {
+        const res = await makeReplyCommunity(post.postId, newComment);
+        setNewComment('');
+        fetchCommentList();
+        fetchPostList();
+    }
+
     const [isShowTaskMenu, setIsShowTaskMenu] = useState(false);
     const [addTaskModal, setAddTaskModal] = useState(false);
     const [viewTaskModal, setViewTaskModal] = useState(false);
@@ -143,21 +219,23 @@ const Community = () => {
     }, []);
 
     const tryRegisterCounsel = async () => {
-        if(selectedDate < new Date()){
-            alert("내일 이후부터 상담 신청이 가능합니다.");
-            return;
-        }
         try {
-            if(params.counselId){
-                await editCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00", params.counselId);
+            if(params.postId){
+                await editPostCommunity(params.postId, selectedTab, params.category, params.description);
+                alert("수정되었습니다.");
             }
             else{
-                await registerCounsel(teacherId, params.category,format(selectedDate, "yyyy-MM-dd")+"T00:00:00");
+                console.log(params.category, params.description);
+                if(params.category == undefined || params.description == undefined){
+                    alert("제목 또는 내용을 입력해주세요.");
+                    return;
+                }
+                await makePostCommunity(selectedTab, params.category, params.description);
+                alert("작성되었습니다.");
             }
             setAddTaskModal(false);
-            setTeacherId('');
-            setSelectedDate('');
-            await fetchCounsels();
+            setParams('');
+            await fetchPostList();
         } catch (error) {
             console.error("Failed to register or edit counsel:", error);
         }
@@ -165,7 +243,6 @@ const Community = () => {
     
 
     const [searchTask, setSearchTask] = useState<any>('');
-    const [selectedTask, setSelectedTask] = useState<any>(defaultParams);
 
     const filteredTasks = allTasks.filter((task : any) => {
         const categoryMatch = task.category.toLowerCase().includes(searchTask.toLowerCase());
@@ -191,11 +268,11 @@ const Community = () => {
         setIsShowTaskMenu(false);
     };
 
-    const deleteTask = async (counselId : number) => {
+    const deleteTask = async (postId : string) => {
         try{
-            deleteCounsel(counselId);
+            deletePostCommunity(postId);
             alert("삭제 완료!");
-            await fetchCounsels();
+            await fetchPostList();
         }
         catch {
             console.error("Failed to delete counsel");
@@ -203,32 +280,28 @@ const Community = () => {
     }
 
     const viewTask = async (item: any = null) => {
-        setSelectedTask(item);
+        setPost(item);
         findTeacherName(item.answererId);
         console.log(item.schedule);
         setTimeout(() => {
             setViewTaskModal(true);
         });
-        await fetchCounsels();
+        await fetchPostList();
     };
 
     const addEditTask = async (task: any | null) => {
         setIsShowTaskMenu(false);
         let json = JSON.parse(JSON.stringify(defaultParams));
-        setParams(json);
         if (task) {
-            if(!task.counselState){
-                console.log(task);
-                let json1 = JSON.parse(JSON.stringify(task));
-                setParams(json1);
-                setTeacherId(task.answererId);
-                const date = new Date(task.schedule[0], task.schedule[1] - 1, task.schedule[2], task.schedule[3], task.schedule[4]);
-                setSelectedDate(date);
-            }
-            else {
-                alert("이미 승인 또는 반려된 상담입니다.");
-                return;
-            }
+            console.log(task);
+            let json1 = JSON.parse(JSON.stringify(task));
+            json1.category = json1.title;
+            json1.description = json1.content;
+            delete json1.title;
+            delete json1.content;
+            console.log(json1);
+            console.log(json1);
+            setParams(json1);
         }
         setAddTaskModal(true);
     };
@@ -255,14 +328,13 @@ const Community = () => {
                         <PerfectScrollbar className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
                             <div className="space-y-4">
                                 <div>게시판 목록</div>
-                                {communityList ? (
+                                {communityList.length > 0 ? (
                                     <div className="flex flex-col">
-                                        {communityList.slice().reverse().map((community: any) => (
+                                        {communityList.slice().reverse().map((community: any, index: number) => (
                                             <button
                                                 key={community.communityId}
                                                 type="button"
-                                                className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${selectedTab === community.communityId ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                                    }`}
+                                                className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${selectedTab === community.communityId || (index === 0 && !selectedTab) ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''}`}
                                                 onClick={() => {
                                                     tabChanged();
                                                     setSelectedTab(community.communityId);
@@ -276,7 +348,7 @@ const Community = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div>개설된 게시판이 없습니다.</div>
+                                    <div className="text-xs">개설된 게시판이 없습니다.</div>
                                 )}
                                 <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
                             </div>
@@ -290,7 +362,7 @@ const Community = () => {
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
                             <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask(null)}>
                                 <IconPlus className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                상담 신청하기
+                                글 작성하기
                             </button>
                         </div>
                     </div>
@@ -307,7 +379,7 @@ const Community = () => {
                                     <input
                                         type="text"
                                         className="form-input peer ltr:!pr-10 rtl:!pl-10"
-                                        placeholder="상담 검색"
+                                        placeholder="게시글 검색"
                                         value={searchTask}
                                         onChange={(e) => setSearchTask(e.target.value)}
                                     />
@@ -318,73 +390,41 @@ const Community = () => {
                             </div>
                         </div>
 
-                        {filteredTasks.length ? (
+                        {postList.length ? (
                             <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
                                 <table className="table-hover">
                                     <tbody>
-                                        {filteredTasks.map((task: any) => (
+                                        {postList.map((task: any) => (
                                             <tr
                                                 className={`group cursor-pointer ${
                                                     task.counselState === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
                                                 } `}
-                                                key={task.counselId}
+                                                key={task.postId}
                                             >
-                                                <td className="w-1">
-                                                <input
-                                                   type="checkbox"
-                                                   id={`chk-${task.counselId}`}
-                                                   className={`form-checkbox ${
-                                                        task.counselState === 1 ? 'checked:bg-blue-700' : (task.counselState === 2 ? 'checked:bg-red-700' : '')
-                                                    }`}
-                                                   defaultChecked={task.counselState !== 0}
-                                                   disabled={true}
-                                                />
-                                                </td>
-                                                <td>
-                                                    <div onClick={() => viewTask(task)}>
+                                                <td style={{ alignItems: "center", width: "50%" }}>
+                                                    <div onClick={() => viewTask(task)} style={{ marginLeft: "1.5rem" }}>
                                                         <div
-                                                            className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${
-                                                                task.counselState
-                                                            }`}
+                                                            className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${task.counselState}`}
                                                         >
-                                                            {task.category}
+                                                            {task.title}
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="w-full">
-                                                    {task.schedule && (
-                                                        <p className="whitespace-nowrap text-white-dark font-medium">
-                                                            상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
-                                                        </p>
-                                                    )}
-                                                </td>
-                                                <td className="w-full">
-                                                    <div className="flex items-center justify-between w-full">
-                                                        <div className="flex items-center">
-                                                            <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
-                                                                {task.path ? (
-                                                                    <div>
-                                                                        <img
-                                                                            src={`/assets/images/${task.path}`}
-                                                                            className="h-8 w-8 rounded-full object-cover"
-                                                                            alt="avatar"
-                                                                        />
-                                                                    </div>
-                                                                ) : task.teacherId ? (
-                                                                    <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
-                                                                        {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
-                                                                    </div>
-                                                                ) : (
-                                                                    <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
-                                                                        <IconUser className="w-4.5 h-4.5" />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <td className="mt-2" style={{ display: "flex", alignItems: "center", }}>
+                                                    <IconHeart/>
+                                                    <p style={{ marginLeft: "0.5rem", marginRight: "1rem" }}>{task.likeCount}</p>
+                                                    <IconChatDot/>
+                                                    <p style={{ marginLeft: "0.5rem" }}>{task.replyCount}</p>
                                                 </td>
                                                 <td>
                                                     <div className="flex justify-end space-x-2">
+                                                        <div className="pr-3" style={{ display: "flex", alignItems: "center" }}>
+                                                            {task.regDate && (
+                                                                <p className="whitespace-nowrap text-white-dark font-medium">
+                                                                    {task.regDate[0]}년 {task.regDate[1]}월 {task.regDate[2]}일
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => addEditTask(task)}
@@ -395,7 +435,7 @@ const Community = () => {
                                                         </button>
                                                         <button
                                                             type="button"
-                                                            onClick={() => deleteTask(task.counselId)}
+                                                            onClick={() => deleteTask(task.postId)}
                                                             className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-red-600 text-red-600 rounded hover:bg-red-100"
                                                         >
                                                             <IconTrashLines className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
@@ -410,7 +450,7 @@ const Community = () => {
                             </div>
                         ) : (
                             <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">
-                                상담이 없습니다.
+                                게시글이 없습니다.
                             </div>
                         )}
                     </div>
@@ -450,39 +490,29 @@ const Community = () => {
                                             <IconX />
                                         </button>
                                         <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                            {params.counselId ? '상담 수정' : '상담 신청'}
+                                            {params.postId ? '게시글 수정' : '게시글 작성'}
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
                                                 <label htmlFor="category">제목</label>
-                                                <input id="category" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.category} onChange={(e) => changeValue(e)}/>
+                                                <input id="category" type="text" placeholder="게시글 제목을 입력해 주세요." className="form-input" value={params.category} onChange={(e) => changeValue(e)}/>
                                             </div>
                                             <div className="mb-5">
-                                                <label htmlFor="assignee">상담 대상</label>
-                                                <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
-                                                <option >
-                                                            선생님을 선택하세요.
-                                                </option>
-                                                {teacherList.length > 0 ? (
-                                                    teacherList.map((teacher) => (
-                                                        <option key={teacher.userId} value={teacher.userId}>
-                                                            {teacher.name}
-                                                        </option>
-                                                    ))
-                                                ) : (
-                                                <option>상담 가능한 선생님이 없습니다.</option>
-                                                )}
-                                                </select>
-                                            </div>
-                                            <div className="mb-5 flex justify-between gap-4">
-                                                <div className="flex-1">
-                                                    <label htmlFor="tag">상담일자</label>
-                                                    <DatePicker
-                                                        selected={selectedDate}
-                                                        onChange={(date : any) => setSelectedDate(date)}
-                                                        dateFormat="yyyy-MM-dd"
-                                                        placeholderText="날짜를 선택하세요"
-                                                        className="form-input"/>
+                                                <label htmlFor="assignee">내용</label>
+                                                <div className="h-fit">
+                                                    <ReactQuill
+                                                        theme="snow"
+                                                        value={params.description || ''}
+                                                        defaultValue={params.description || ''}
+                                                        onChange={(content, delta, source, editor) => {
+                                                            params.description = content;
+                                                            params.displayDescription = editor.getText();
+                                                            setParams({
+                                                                ...params,
+                                                            });
+                                                        }}
+                                                        style={{ minHeight: '200px' }}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="ltr:text-right rtl:text-left flex justify-end items-center mt-8">
@@ -490,7 +520,118 @@ const Community = () => {
                                                     취소
                                                 </button>
                                                 <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
-                                                    {params.counselId ? '수정' : '저장'}
+                                                    {params.postId ? '수정' : '저장'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition>
+
+                <Transition appear show={viewTaskModal} as={Fragment}>
+                    <Dialog static as="div" open={viewTaskModal} onClose={() => setViewTaskModal(false)} className="relative z-[51]">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 bg-[black]/60" />
+                        </Transition.Child>
+
+                        <div className="fixed inset-0 overflow-y-auto">
+                            <div className="flex min-h-full items-center justify-center px-4 py-8">
+                                
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 scale-95"
+                                    enterTo="opacity-100 scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 scale-100"
+                                    leaveTo="opacity-0 scale-95"
+                                >
+                                    <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
+                                        <button
+                                            type="button"
+                                            onClick={() => setViewTaskModal(false)}
+                                            className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
+                                        >
+                                            <IconX />
+                                        </button>
+                                        <div className="flex items-center flex-wrap gap-2 text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">   
+                                            <div>게시물 조회</div>
+                                        </div>
+                                        <div className="p-5">
+                                        <div className="p-5">
+                                        <div className="mb-5 flex justify-between items-center">
+                                            <div>
+                                                <label htmlFor="category">제목</label>
+                                                <p id="category" className="form-input">{post.title}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-bold text-base pb-2">작성자 익명</div>
+                                                {post.regDate && (
+                                                    <div className="text-sm text-gray-500">
+                                                        {post.regDate[0]}년 {post.regDate[1]}월 {post.regDate[2]}일
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-5">
+                                            <label htmlFor="category">내용</label>
+                                            <p id="category" className="form-input" dangerouslySetInnerHTML={{ __html: post.content }} />
+                                        </div>
+
+                                        <div className="mb-5 flex items-center space-x-2">
+                                            <button className="flex items-center" onClick={() => handleLikeTask(post.postId)}>
+                                                ♥
+                                                <span className="ml-2">{post.likeCount}</span>
+                                            </button>
+                                        </div>
+
+                                        <div className="h-px w-full border-b border-gray-300 mb-5"></div>
+
+                                        <div className="mb-5">
+                                            <h3 className="text-lg font-semibold">댓글</h3>
+                                            {comments.length > 0 && (
+                                                <div className="mb-5">
+                                                    {comments.map((comment: any, index: number) => (
+                                                        <div key={index} className="mt-2 mb-4 border border-gray-300 p-3 rounded-lg">
+                                                            <div className="flex justify-between">
+                                                                <div>
+                                                                    <div className="text-gray-700">익명</div>
+                                                                    <div className="text-sm text-gray-500"></div>
+                                                                    <p className="mt-1" dangerouslySetInnerHTML={{ __html: comment.content }}/>
+                                                                </div>
+                                                                <div>
+                                                                    <button onClick={() => handleLikeComment(comment.replyId)} className="mr-2">♥ {comment.like}</button>
+                                                                    {comment.userId == userId && (
+                                                                        <button onClick={() => handleDeleteComment(comment.replyId)} className="text-red-500">삭제</button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <label htmlFor="new-comment" className="block mb-2">댓글 작성</label>
+                                            <ReactQuill value={newComment} onChange={setNewComment} className="bg-white" style={{ height: '100px' }} />
+                                            <button onClick={handleAddComment} className="mt-14 btn btn-primary">댓글 달기</button>
+                                        </div>
+                                    </div>
+                                            <div className="flex justify-end items-center mt-8">
+                                                <button type="button" className="btn btn-outline-danger" onClick={() => setViewTaskModal(false)}>
+                                                    Close
                                                 </button>
                                             </div>
                                         </div>
@@ -535,7 +676,7 @@ const Community = () => {
                                             <IconX />
                                         </button>
                                         <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                            {params.counselId ? '상담 수정' : '게시판 생성'}
+                                            {params.postId ? '상담 수정' : '게시판 생성'}
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
@@ -551,91 +692,7 @@ const Community = () => {
                                                     취소
                                                 </button>
                                                 <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryMakeCommunity()}>
-                                                    {params.counselId ? '수정' : '생성'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </Dialog.Panel>
-                                </Transition.Child>
-                            </div>
-                        </div>
-                    </Dialog>
-                </Transition>
-
-                <Transition appear show={viewTaskModal} as={Fragment}>
-                    <Dialog as="div" open={viewTaskModal} onClose={() => setViewTaskModal(false)} className="relative z-[51]">
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 bg-[black]/60" />
-                        </Transition.Child>
-
-                        <div className="fixed inset-0 overflow-y-auto">
-                            <div className="flex min-h-full items-center justify-center px-4 py-8">
-                                <Transition.Child
-                                    as={Fragment}
-                                    enter="ease-out duration-300"
-                                    enterFrom="opacity-0 scale-95"
-                                    enterTo="opacity-100 scale-100"
-                                    leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 scale-100"
-                                    leaveTo="opacity-0 scale-95"
-                                >
-                                    <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
-                                        <button
-                                            type="button"
-                                            onClick={() => setViewTaskModal(false)}
-                                            className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
-                                        >
-                                            <IconX />
-                                        </button>
-                                        <div className="flex items-center flex-wrap gap-2 text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">   
-                                            <div>상담 세부 내용</div>
-                                        </div>
-                                        <div className="p-5">
-                                            <div className="p-5">
-                                                <div className="mb-5">
-                                                    <label htmlFor="category">제목</label>
-                                                    <p id="category" className="form-input">{selectedTask.category}</p>
-                                                </div>
-                                                <div className="mb-5">
-                                                    <label htmlFor="assignee">상담 대상</label>
-                                                    <p id="category" className="form-input">{teacherName} 선생님</p>
-                                                </div>
-                                                <div className="mb-5 flex justify-between gap-4">
-                                                    <div className="flex-1">
-                                                        <label htmlFor="tag">상담일자</label>
-                                                        {selectedTask.schedule && (
-                                                            <p id="category" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="mb-5">
-                                                    <label htmlFor="assigned">승인 여부</label>
-                                                    {selectedTask.counselState == 0 ? ( 
-                                                        <p id="category" className="form-input">신청 중</p>
-                                                    ) : (<></>
-                                                    )}
-                                                    {selectedTask.counselState == 1 ? ( 
-                                                        <p id="category" className="form-input">승인</p>
-                                                    ) : (<></>
-                                                    )}
-                                                    {selectedTask.counselState == 2 ? ( 
-                                                        <p id="category" className="form-input">반려</p>
-                                                    ) : (<></>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="text-base prose" dangerouslySetInnerHTML={{ __html: selectedTask.description }}></div>
-                                            <div className="flex justify-end items-center mt-8">
-                                                <button type="button" className="btn btn-outline-danger" onClick={() => setViewTaskModal(false)}>
-                                                    Close
+                                                    {params.postId ? '수정' : '생성'}
                                                 </button>
                                             </div>
                                         </div>

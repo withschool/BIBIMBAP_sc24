@@ -75,7 +75,7 @@ export const viewPostListCommunity = async (communityId: string, page: string, s
 
 export const makePostCommunity = async (communityId: string, title: string, content: string): Promise<any> => {
     try {
-        const response = await fetch(`${url}/community`, {
+        const response = await fetch(`${url}/community/post`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ export const makePostCommunity = async (communityId: string, title: string, cont
             })
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -134,7 +134,7 @@ export const deletePostCommunity = async (postId : string): Promise<any> => {
             }
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -162,7 +162,7 @@ export const editPostCommunity = async (postId : string, communityId: string, ti
             })
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -177,7 +177,7 @@ export const editPostCommunity = async (postId : string, communityId: string, ti
 
 export const likePostCommunity = async (postId : string): Promise<any> => {
     try {
-        const response = await fetch(`${url}/community/${postId}/like`, {
+        const response = await fetch(`${url}/community/post/${postId}/like`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ export const likePostCommunity = async (postId : string): Promise<any> => {
             }
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -234,7 +234,7 @@ export const makeReplyCommunity = async (postId : string, content: string): Prom
             })
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -257,7 +257,7 @@ export const deleteReplyCommunity = async (replyId : string): Promise<any> => {
             }
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -283,7 +283,7 @@ export const editReplyCommunity = async (postId : string, content: string): Prom
             })
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -309,7 +309,7 @@ export const editReplyLikeCommunity = async (replyId : string, content: string):
             })
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -332,7 +332,7 @@ export const likeReplyCommunity = async (replyId : string): Promise<any> => {
             }
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
