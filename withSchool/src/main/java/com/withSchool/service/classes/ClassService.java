@@ -83,14 +83,15 @@ public class ClassService {
     public ClassInformation classBuilder(ClassDTO classDTO) {
         SchoolInformation schoolInformation = schoolInformationRepository.findById(classDTO.getSchoolId())
                 .orElseThrow(() -> new RuntimeException("School not found with id: " + classDTO.getSchoolId()));
+        ClassInformation classInformation = new ClassInformation();
 
-        return ClassInformation.builder()
-                .classId(classDTO.getClassId())
+        classInformation = ClassInformation.builder()
                 .year(classDTO.getYear())
                 .grade(classDTO.getGrade())
                 .inClass(classDTO.getInClass())
                 .schoolInformation(schoolInformation)
                 .build();
+        return classInformation;
     }
 }
 

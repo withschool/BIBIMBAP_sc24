@@ -11,8 +11,6 @@ import lombok.*;
 
 public class ClassDTO {
 
-    private Long classId;
-
     private int year;
 
     private int grade;
