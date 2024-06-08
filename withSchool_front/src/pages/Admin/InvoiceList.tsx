@@ -9,6 +9,11 @@ import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconPlus from '../../components/Icon/IconPlus';
 import IconEdit from '../../components/Icon/IconEdit';
 import IconEye from '../../components/Icon/IconEye';
+import IconFile from '../../components/Icon/IconFile';
+import * as PortOne from "@portone/browser-sdk/v2";
+import { issueBillingKey } from '../../service/pay';
+
+
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
@@ -109,13 +114,29 @@ const InvoiceList = () => {
         setPage(1);
     }, [sortStatus]);
 
+    //결제 관련 코드
+
+    const handlePaymentTest = async () => {
+        try {
+            const result = await issueBillingKey();
+            console.log('Billing key issued successfully:', result);
+        } catch (error) {
+            console.error('Payment test failed:', error);
+        }
+    };
+
     return (
         <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
             <div className="invoice-table">
                 <div className="mb-4.5 px-5 flex md:items-center md:flex-row flex-col gap-5">
 
+                    <button type="button" className="btn btn-primary btn-sm m-1" onClick={handlePaymentTest}>
+                        <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
+                        결제 테스트
+                    </button>
                     <div className="ltr:ml-auto rtl:mr-auto">
                         <input type="text" className="form-input w-auto" placeholder="검색" value={search} onChange={(e) => setSearch(e.target.value)} />
+
                     </div>
                 </div>
 
