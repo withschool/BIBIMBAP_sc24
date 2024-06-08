@@ -135,7 +135,7 @@ public class SchoolInformation extends BaseEntity {
             0 - 소규모(300명)
             1 - 중규모(500명)
             2 - 대규모(700명)
-                      
+            
             9 - 무료
             """)
     @Column(columnDefinition = "int default 9")

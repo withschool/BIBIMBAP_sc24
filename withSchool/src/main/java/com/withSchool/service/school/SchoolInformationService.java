@@ -36,7 +36,7 @@ public class SchoolInformationService {
     private final UserService userService;
 
     public ResponseEntity<String> saveSchool(ReqSchoolInformationSaveDTO reqSchoolInformationSaveDTO) {
-        SchoolInformation schoolInformation = this.save(reqSchoolInformationSaveDTO.getSchoolInformationNoPaymentStateDTO().toEntity());
+        SchoolInformation schoolInformation = this.save(reqSchoolInformationSaveDTO.getSchoolInformationNoPaymentStateDTO().toSaveEntity());
         if (schoolInformation == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)

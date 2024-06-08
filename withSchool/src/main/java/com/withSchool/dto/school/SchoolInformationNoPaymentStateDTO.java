@@ -111,6 +111,38 @@ public class SchoolInformationNoPaymentStateDTO {
     @SerializedName("LOAD_DTM")
     private String LOAD_DTM;
 
+    public SchoolInformation toSaveEntity(){
+        return SchoolInformation.builder()
+                .atptOfcdcScCode(this.getATPT_OFCDC_SC_CODE())
+                .atptOfcdcScNm(this.getATPT_OFCDC_SC_NM())
+                .sdSchulCode(this.getSD_SCHUL_CODE())
+                .schulNm(this.getSCHUL_NM())
+                .engSchulNm(this.getENG_SCHUL_NM())
+                .schulKndScNm(this.getSCHUL_KND_SC_NM())
+                .lctnScNm(this.getLCTN_SC_NM())
+                .juOrgNm(this.getJU_ORG_NM())
+                .fondScNm(this.getFOND_SC_NM())
+                .orgRdnzc(this.getORG_RDNZC())
+                .orgRdnma(this.getORG_RDNMA())
+                .orgRdnda(this.getORG_RDNDA())
+                .orgTelno(this.getORG_TELNO())
+                .hmpgAdres(this.getHMPG_ADRES())
+                .coeduScNm(this.getCOEDU_SC_NM())
+                .orgFaxno(this.getORG_FAXNO())
+                .hsScNm(this.getHS_SC_NM())
+                .indstSpeclCccclExstYn(this.getINDST_SPECL_CCCCL_EXST_YN())
+                .hsGnrlBusnsScNm(this.getHS_GNRL_BUSNS_SC_NM())
+                .spclyPurpsHsOrdNm(this.getSPCLY_PURPS_HS_ORD_NM())
+                .eneBfeSehfScNm(this.getENE_BFE_SEHF_SC_NM())
+                .dghtScNm(this.getDGHT_SC_NM())
+                .fondYmd(this.getFOND_YMD())
+                .foasMemrd(this.getFOAS_MEMRD())
+                .loadDtm(this.getLOAD_DTM())
+                .paymentState(1)
+                .serviceType(9)
+                .build();
+    }
+
     public SchoolInformation toEntity(){
         return SchoolInformation.builder()
                 .atptOfcdcScCode(this.getATPT_OFCDC_SC_CODE())
