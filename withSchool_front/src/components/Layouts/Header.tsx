@@ -545,8 +545,8 @@ const Header = () => {
                             </Dropdown>
                         </div> */}
                         {localStorage.getItem("accountType") == 'ROLE_PARENT' && (
-                         <div className="flex items-center space-x-4">
-                            <select className="form-select flex-grow text-white-dark" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
+                         <div className="flex items-center space-x-3">
+                            <select className="form-select flex-grow text-white-dark w-40" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
                                 <option disabled value="">학생 선택</option>
                                 {studentList.map((data: any) => (
                                     <option key={data.user.userId} value={data.user.userId}>
@@ -554,7 +554,7 @@ const Header = () => {
                                     </option>
                                 ))}
                             </select>
-                            <button type="button" onClick={() => setModal21(true)} className="btn btn-primary flex-shrink-0 w-1/3 text-sm">
+                            <button type="button" onClick={() => setModal21(true)} className="btn btn-primary w-1/2 text-xs px-2 py-2">
                                 추가
                             </button>
                             <Transition appear show={modal21} as={Fragment}>
