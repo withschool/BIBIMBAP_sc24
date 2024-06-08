@@ -132,10 +132,10 @@ public class UserService {
 
         // 중복된 아이디 체크
         if (userRepository.existsById(id)) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다.");
+            throw new IllegalArgumentException("Check Id");
         }
         else if(!signUpDTO.getPhoneNumber().isEmpty() && userRepository.existsByPhoneNumber(phoneNumber)){
-            throw new RuntimeException("해당 전화번호로 이미 회원가입이 되었습니다.");
+            throw new RuntimeException("Check phone");
         }
 
         int accountType = signUpDTO.getAccountType();
@@ -159,14 +159,14 @@ public class UserService {
         else{
             Optional<User> optionalUser = userRepository.findByUserCode(signUpDTO.getUserCode());
             if(optionalUser.isEmpty()){
-                throw new RuntimeException("해당 유저코드를 가진 유저가 없습니다.");
+                throw new RuntimeException("check user code");
             }
 
             User user = optionalUser.get();
             if(user.getId() != null){
-                throw new RuntimeException("이미 회원가입이 된 계정입니다.");
+                throw new RuntimeException("this id is existed.");
             } else if (!name.equals(user.getName())) {
-                throw new RuntimeException("잘못된 이름이 입력되었습니다.");
+                throw new RuntimeException("check name");
             }
 
             SchoolInformation schoolInformation = user.getSchoolInformation();
