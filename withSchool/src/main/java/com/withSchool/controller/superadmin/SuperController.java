@@ -2,7 +2,6 @@ package com.withSchool.controller.superadmin;
 
 import com.withSchool.dto.school.ResApplicationDefaultDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
-import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.service.school.SchoolApplicationService;
 import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.user.UserService;
@@ -30,7 +29,7 @@ public class SuperController {
 
     @PostMapping("/schools")
     @Operation(summary = "슈퍼 어드민의 학교 모델 등록")
-    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO, @RequestParam String adminEmail) {
+    public ResponseEntity<String> saveSchool(@RequestBody SchoolInformationDTO schoolInformationDTO, @RequestBody  String adminEmail) {
         return schoolInformationService.saveSchool(schoolInformationDTO, adminEmail);
     }
 
