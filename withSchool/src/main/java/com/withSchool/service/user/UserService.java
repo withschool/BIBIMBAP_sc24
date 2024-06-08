@@ -204,9 +204,11 @@ public class UserService {
                 User user = this.findByUserId(u);
                 User deletedUser = User.builder()
                         .userId(u)
+                        .name("(알수없음)")
                         .accountType(user.getAccountType())
                         .sex(user.getSex())
                         .build();
+
                 userRepository.save(deletedUser);
             });
 
