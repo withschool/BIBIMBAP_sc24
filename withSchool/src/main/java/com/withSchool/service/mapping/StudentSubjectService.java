@@ -30,7 +30,7 @@ public class StudentSubjectService {
     public List<StudentSubjectDTO> findOnesSugang(Long childId) {
         User user = userService.getCurrentUser();
 
-        User input = user.getAccountType() == 1 ? userService.findByUserId(childId) : user;
+        User input = user.getAccountType() == 1 || user.getAccountType() == 2 ? userService.findByUserId(childId) : user;
 
         List<StudentSubject> studentSubjects = studentSubjectRepository.findByStudent(input);
         List<StudentSubjectDTO> studentSubjectDTOS = new ArrayList<>();
