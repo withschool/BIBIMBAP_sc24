@@ -265,8 +265,23 @@ const ManageSchool = () => {
                 // Optionally, you can refresh the user list after upload
                 const data = await getSchoolUsers();
                 setInitialRecords(sortBy(data, 'userName'));
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error uploading file:', error);
+                let errorMessage = '파일 업로드 중 오류가 발생했습니다.';
+                if (error.message.includes('too many user input')) {
+                    errorMessage = '플랜 한도를 초과한 유저 수 입니다.';
+                } else if (error.message.includes('CSV file got error when reading')) {
+                    errorMessage = 'CSV 파일을 읽는 중 오류가 발생했습니다.';
+                } else if (error.message.includes('not defined usertype')) {
+                    errorMessage = '정의되지 않은 사용자 유형입니다.';
+                } else if (error.message.includes("can't find school information")) {
+                    errorMessage = '학교 정보를 찾을 수 없습니다.';
+                } else if (error.message.includes("can't find class information")) {
+                    errorMessage = '반 정보를 찾을 수 없습니다.';
+                } else if (error.message.includes("can't find subjectInfo")) {
+                    errorMessage = '과목 정보를 찾을 수 없습니다.';
+                }
+                alert(errorMessage);
             }
         }
     };
