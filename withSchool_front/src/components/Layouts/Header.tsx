@@ -45,20 +45,21 @@ const Header = () => {
 
     useEffect(() => {
         const fetchSubject = async () => {
+
+            const storedSubject = localStorage.getItem('targetSubject') || '';
+            setSelectedSubject(storedSubject);
             try { 
                 const data = await getSubjectList();
                 setSubjectList(data);
-                if (!localStorage.getItem('targetSubject') && data.length > 0) {
+                if(data) {
                     localStorage.setItem('targetSubject', data[0].subjectId);
-                    setSelectedSubject(data[0].subjectId);
                 }
             } catch (error) {
-                console.error('Error fetching subject list:', error);
+                console.error('Error fetching student list:', error);
             }
         };
-        if ((localStorage.getItem('accountType') === 'ROLE_STUDENT') || (localStorage.getItem('accountType') === 'ROLE_TEACHER')) {
+        if((localStorage.getItem('accountType') == "ROLE_STUDENT")||(localStorage.getItem('accountType') == "ROLE_TEACHER"))
             fetchSubject();
-        }
     }, []);
 
     const handleSubjectChange = (subjectId : string) => {
@@ -75,9 +76,8 @@ const Header = () => {
         try {
             const data = await listingStudent();
             setStudentList(data);
-            if (data.length > 0 && !localStorage.getItem('TargetStudent')) {
+            if(data) {
                 localStorage.setItem('TargetStudent', data[0].user.userId);
-                setTargetStudent(data[0].user.userId);
             }
             console.log(data);
         } catch (error) {

@@ -212,15 +212,15 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/student/scrumboard">{t('칼반 보드')}</NavLink>
                                                     </li>
-                                                    {/* <li>
-                                                        <NavLink to="/student/question">{t('Q&A')}</NavLink>
-                                                    </li> */}
-                                                    {/* <li>
-                                                        <NavLink to="/student/score">{t('성적')}</NavLink>
-                                                    </li> */}
                                                     <li>
-                                                        <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
+                                                        <NavLink to="/student/question">{t('Q & A')}</NavLink>
                                                     </li>
+                                                    <li>
+                                                        <NavLink to="/student/grade">{t('성적')}</NavLink>
+                                                    </li>
+                                                    {/* <li>
+                                                        <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
+                                                    </li> */}
                                                 </ul>
                                             </AnimateHeight>
                                         </li>
@@ -322,9 +322,9 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/teacher/subject/qna">{t('Q & A')}</NavLink>
                                                     </li>
-                                                    <li>
+                                                    {/* <li>
                                                         <NavLink to="/teacher/subject/choose">{t('과목 목록')}</NavLink>
-                                                    </li>
+                                                    </li> */}
                                                 </ul>
                                             </AnimateHeight>
                                         </li>

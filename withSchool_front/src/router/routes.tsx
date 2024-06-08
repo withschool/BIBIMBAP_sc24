@@ -54,6 +54,7 @@ const StudentQuestion = lazy(() => import('../pages/Student/StudentQuestion'));
 const Assignment = lazy(() => import('../pages/Student/Assignment'));
 const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
 const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
+const CheckGrade = lazy(() => import('../pages/Student/CheckGrade'));
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -239,6 +240,11 @@ const routes = [
     {
         path: '/student/subject/choose',
         element: <ChooseSubjectStudent />,
+    },
+
+    {
+        path: '/student/grade',
+        element: <CheckGrade />,
     },
 
     {

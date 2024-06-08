@@ -25,6 +25,7 @@ import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
+import { C } from '@fullcalendar/core/internal-common';
 
 const Score = () => {
     const dispatch = useDispatch();
@@ -40,10 +41,6 @@ const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
 useEffect(() => {
     const fetchLectureNote = async () => {
-        if(localStorage.getItem("targetSubject") == null){
-            alert("과목을 선택해 주세요.");
-            navigate('/teacher/subject/choose');
-        }
         try {
             const studentList = await getStudentList(localStorage.getItem("targetSubject"));
             setStudentList(studentList);
@@ -52,7 +49,6 @@ useEffect(() => {
         }
     };
     fetchLectureNote();
-    
 }, []);
 
     const defaultParams = { subjectLectureNoteId: null, title: '', description: '', tag: '', name: '', thumb: '' };
@@ -66,9 +62,13 @@ useEffect(() => {
     const [deletedNote, setDeletedNote] = useState<any>(null);
     const [prevTempScores, setPrevTempScores] = useState('');
     
+    type TempScores = {
+        [key: string]: string;
+      };
 
-    const [tempScores, setTempScores] = useState([]);
-
+    const [tempMidScores, setTempMidScores] = useState<TempScores>({});
+    const [tempFinalScores, setTempFinalScores] = useState<TempScores>({});
+    const [tempActivityScores, setTempActivityScores] = useState<TempScores>({});
 
     const searchNotes = () => {
         if (selectedTab !== 'fav') {
@@ -87,68 +87,94 @@ useEffect(() => {
     };
   
     const handleMidSubmit = () => {
-        console.log(tempScores);
-        const transformedObject = Object.keys(tempScores).map(key => ({
+        console.log(tempMidScores);
+        const transformedObject = Object.keys(tempMidScores).map(key => ({
             studentSubjectId: parseInt(key),
-            score: parseInt(tempScores[key])
+            score: parseInt(tempMidScores[parseInt(key)])
         }));
         console.log(transformedObject);
         enrollScore("mid", transformedObject);
-        alert("등록되었습니다");
+        alert("성적이 등록되었습니다");
     }
 
     const handleFinalSubmit = () => {
-        console.log(tempScores);
-        const transformedObject = Object.keys(tempScores).map(key => ({
+        console.log(tempFinalScores);
+        const transformedObject = Object.keys(tempFinalScores).map(key => ({
             studentSubjectId: parseInt(key),
-            score: parseInt(tempScores[key])
+            score: parseInt(tempFinalScores[parseInt(key)])
         }));
         console.log(transformedObject);
         enrollScore("final", transformedObject);
-        alert("등록되었습니다");
+        alert("성적이 등록되었습니다");
     }
 
     const handleActivitySubmit = () => {
-        console.log(tempScores);
-        const transformedObject = Object.keys(tempScores).map(key => ({
+        console.log(tempActivityScores);
+        const transformedObject = Object.keys(tempActivityScores).map(key => ({
             studentSubjectId: parseInt(key),
-            score: parseInt(tempScores[key])
+            score: parseInt(tempActivityScores[parseInt(key)])
         }));
         console.log(transformedObject);
         enrollScore("activity", transformedObject);
-        alert("등록되었습니다");
+        alert("성적이 등록되었습니다");
     }
 
     interface Student {
         userId: number;
         userName: string;
         midtermScore: string;
+        finalScore: string;
+        activityScore: string;
+    }
+
+    const fetchMidScore = () => {
+        const initialTempScores: { [key: string]: string } = {};
+        studentList.forEach((student : any) => {
+            initialTempScores[student.studentSubjectId] = student.midtermScore;
+        });
+        setTempMidScores(initialTempScores);
+    }
+
+    const fetchFinalScore = () => {
+        const initialTempScores: { [key: string]: string } = {};
+        studentList.forEach((student : any) => {
+            initialTempScores[student.studentSubjectId] = student.finalScore;
+        });
+        setTempFinalScores(initialTempScores);
+    }
+
+    const fetchActivityScore = () => {
+        const initialTempScores: { [key: string]: string } = {};
+        studentList.forEach((student : any) => {
+            initialTempScores[student.studentSubjectId] = student.activityScore;
+        });
+        setTempActivityScores(initialTempScores);
     }
 
     useEffect(() => {
-        const initialTempScores = [];
-        studentList.forEach((student) => {
-            initialTempScores[student.studentSubjectId] = student.midtermScore;
-        });
-        setTempScores(initialTempScores);
-    }, []);
+        if (studentList.length > 0) {
+            fetchMidScore();
+            fetchFinalScore();
+            fetchActivityScore();
+        }
+    }, [studentList]);
 
-    const handleMidScoreChange = (studentSubjectId, newScore) => {
-        setTempScores((prevTempScores) => ({
+    const handleMidScoreChange = (studentSubjectId : any, newScore : any) => {
+        setTempMidScores((prevTempScores : any) => ({
             ...prevTempScores,
             [studentSubjectId]: newScore
         }));
     };
 
-    const handleFinalScoreChange = (studentSubjectId, newScore) => {
-        setTempScores((prevTempScores) => ({
+    const handleFinalScoreChange = (studentSubjectId : any, newScore : any) => {
+        setTempFinalScores((prevTempScores : any) => ({
             ...prevTempScores,
             [studentSubjectId]: newScore
         }));
     };
 
-    const handleActivityScoreChange = (studentSubjectId, newScore) => {
-        setTempScores((prevTempScores) => ({
+    const handleActivityScoreChange = (studentSubjectId : any, newScore: any) => {
+        setTempActivityScores((prevTempScores: any) => ({
             ...prevTempScores,
             [studentSubjectId]: newScore
         }));
@@ -171,7 +197,6 @@ useEffect(() => {
 
     useEffect(() => {
         searchNotes();
-        /* eslint-disable react-hooks/exhaustive-deps */
     }, [selectedTab, studentList]);
 
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
@@ -257,54 +282,17 @@ useEffect(() => {
                     </div>
                     {filterdNotesList.length && selectedTab == "mid" ? (
                             <div className="table-responsive mb-5">
-                                <table className="table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th className="w-1/3">ID</th>
-                                            <th className="w-1/3">이름</th>
-                                            <th className="w-1/3 text-center">중간고사 성적</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {studentList.map((data) => {
-                                            return (
-                                                <tr key={data.studentSubjectId}>
-                                                    <td className="w-1/3">
-                                                        <div className="whitespace-nowrap">{data.userId}</div>
-                                                    </td>
-                                                    <td className="w-1/3">
-                                                        <div className="whitespace-nowrap">{data.userName}</div>
-                                                    </td>
-                                                    <td className="w-1/3 text-center">
-                                                        <input
-                                                            type="text"
-                                                            className="w-10"
-                                                            value={tempScores[data.studentSubjectId] || ''}
-                                                            onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
-                                <button className="mt-5 flex-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleMidSubmit}>제출</button>
-                            </div>
-                    
-                    ) : (
-                        <div>
-                        {filterdNotesList.length && selectedTab == "final" ? (
-                            <div className="table-responsive mb-5">
+                            <p className='text-lg font-semibold ltr:ml-3 rtl:mr-3 pb-5'>중간고사 성적입력</p>
                             <table className="table-striped">
                                 <thead>
                                     <tr>
                                         <th className="w-1/3">ID</th>
                                         <th className="w-1/3">이름</th>
-                                        <th className="w-1/3 text-center">기말고사 성적</th>
+                                        <th className="w-1/3 text-center">중간고사 성적</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {studentList.map((data) => {
+                                    {studentList.map((data : any) => {
                                         return (
                                             <tr key={data.studentSubjectId}>
                                                 <td className="w-1/3">
@@ -317,7 +305,45 @@ useEffect(() => {
                                                     <input
                                                         type="text"
                                                         className="w-10"
-                                                        value={tempScores[data.studentSubjectId] || ''}
+                                                        value={tempMidScores[data.studentSubjectId] || ''}
+                                                        onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                            <button className="mt-5 float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleMidSubmit}>제출</button>
+                        </div>
+                    ) : (
+                        <div>
+                        {filterdNotesList.length && selectedTab == "final" ? (
+                            <div className="table-responsive mb-5">
+                            <p className='text-lg font-semibold ltr:ml-3 rtl:mr-3 pb-5'>기말고사 성적입력</p>
+                            <table className="table-striped">
+                                <thead>
+                                    <tr>
+                                        <th className="w-1/3">ID</th>
+                                        <th className="w-1/3">이름</th>
+                                        <th className="w-1/3 text-center">기말고사 성적</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {studentList.map((data : any) => {
+                                        return (
+                                            <tr key={data.studentSubjectId}>
+                                                <td className="w-1/3">
+                                                    <div className="whitespace-nowrap">{data.userId}</div>
+                                                </td>
+                                                <td className="w-1/3">
+                                                    <div className="whitespace-nowrap">{data.userName}</div>
+                                                </td>
+                                                <td className="w-1/3 text-center">
+                                                    <input
+                                                        type="text"
+                                                        className="w-10"
+                                                        value={tempFinalScores[data.studentSubjectId] || ''}
                                                         onChange={(e) => handleFinalScoreChange(data.studentSubjectId, e.target.value)}
                                                     />
                                                 </td>
@@ -326,13 +352,14 @@ useEffect(() => {
                                     })}
                                 </tbody>
                             </table>
-                            <button className="mt-5 flex-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleFinalSubmit}>제출</button>
+                            <button className="mt-5 float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleFinalSubmit}>제출</button>
                         </div>
                         
                         ) : (
                             <div>
                                 {filterdNotesList.length && selectedTab == "activity" ? (
                                     <div className="table-responsive mb-5">
+                                    <p className='text-lg font-semibold ltr:ml-3 rtl:mr-3 pb-5'>수행평가 성적입력</p>
                                     <table className="table-striped">
                                         <thead>
                                             <tr>
@@ -342,7 +369,7 @@ useEffect(() => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {studentList.map((data) => {
+                                            {studentList.map((data : any) => {
                                                 return (
                                                     <tr key={data.studentSubjectId}>
                                                         <td className="w-1/3">
@@ -355,7 +382,7 @@ useEffect(() => {
                                                             <input
                                                                 type="text"
                                                                 className="w-10"
-                                                                value={tempScores[data.studentSubjectId] || ''}
+                                                                value={tempActivityScores[data.studentSubjectId] || ''}
                                                                 onChange={(e) => handleActivityScoreChange(data.studentSubjectId, e.target.value)}
                                                             />
                                                         </td>
@@ -364,7 +391,7 @@ useEffect(() => {
                                             })}
                                         </tbody>
                                     </table>
-                                    <button className="mt-5 flex-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleActivitySubmit}>제출</button>
+                                    <button className="mt-5 float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleActivitySubmit}>제출</button>
                                 </div>
                                 
                                 ) : (
@@ -374,112 +401,6 @@ useEffect(() => {
                         )}
                         </div>
                     )}
-                
-
-                    <Transition appear show={isDeleteNoteModal} as={Fragment}>
-                        <Dialog as="div" open={isDeleteNoteModal} onClose={() => setIsDeleteNoteModal(false)} className="relative z-[51]">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <div className="fixed inset-0 bg-[black]/60" />
-                            </Transition.Child>
-                        </Dialog>
-                    </Transition>
-
-                    <Transition appear show={isViewNoteModal} as={Fragment}>
-                        <Dialog as="div" open={isViewNoteModal} onClose={() => setIsViewNoteModal(false)} className="relative z-[51]">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="ease-out duration-300"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="ease-in duration-200"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <div className="fixed inset-0 bg-[black]/60" />
-                            </Transition.Child>
-
-                            <div className="fixed inset-0 overflow-y-auto">
-                                <div className="flex min-h-full items-center justify-center px-4 py-8">
-                                    <Transition.Child
-                                        as={Fragment}
-                                        enter="ease-out duration-300"
-                                        enterFrom="opacity-0 scale-95"
-                                        enterTo="opacity-100 scale-100"
-                                        leave="ease-in duration-200"
-                                        leaveFrom="opacity-100 scale-100"
-                                        leaveTo="opacity-0 scale-95"
-                                    >
-                                        <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsViewNoteModal(false)}
-                                                className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
-                                            >
-                                                <IconX />
-                                            </button>
-                                            <div className="flex items-center flex-wrap gap-2 text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                                <div className="ltr:mr-3 rtl:ml-3">{params.title}</div>
-                                                {params.fileURl && (
-                                                    <div className="mt-8">
-                                                        <br/>
-                                                        <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                        <div className="flex items-center flex-wrap mt-6">
-                                                            {params.filesURl.map((attachment: any, i: number) => {
-                                                                return (
-                                                                    <a 
-                                                                        href={attachment}
-                                                                        key={i}
-                                                                        type="button"
-                                                                        className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
-                                                                    >
-                                                                        {attachment.type === 'image' && <IconGallery />}
-                                                                        {attachment.type === 'folder' && <IconFolder />}
-                                                                        {attachment.type === 'zip' && <IconZipFile />}
-                                                                        {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
-
-                                                                        <div className="ltr:ml-3 rtl:mr-3">
-                                                                            <p className="text-xs text-primary font-semibold">{params.originalName}</p>
-                                                                            <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
-                                                                        </div>
-                                                                        <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
-                                                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
-                                                                            <IconDownload className="w-4.5 h-4.5" />
-                                                                        </div>
-                                                                    </a>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {params.isFav && (
-                                                    <button type="button" className="text-warning">
-                                                        <IconStar className="fill-warning" />
-                                                    </button>
-                                                )}
-                                            </div>
-                                            <div className="p-5">
-                                                <div className="text-base">{params.description}</div>
-
-                                                <div className="ltr:text-right rtl:text-left mt-8">
-                                                    <button type="button" className="btn btn-outline-danger" onClick={() => setIsViewNoteModal(false)}>
-                                                        Close
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </Dialog.Panel>
-                                    </Transition.Child>
-                                </div>
-                            </div>
-                        </Dialog>
-                    </Transition>
                 </div>
             </div>
         </div>
