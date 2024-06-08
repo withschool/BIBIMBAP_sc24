@@ -14,7 +14,6 @@ import com.withSchool.dto.user.ReqUserRegisterDTO;
 import com.withSchool.dto.user.ResUserUsercodeDTO;
 import com.withSchool.dto.user.ReqUserDeleteDTO;
 import com.withSchool.entity.classes.ClassInformation;
-import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolNotice;
 import com.withSchool.service.billing.BillingService;
 import com.withSchool.service.classes.ClassService;
@@ -171,6 +170,12 @@ public class AdminController {
         return ResponseEntity.ok("User registered successfully.");
     }
 
+    @GetMapping("/users")
+    @Operation(summary = "로그인한 유저가 속한 학교의 모든 유저 리스트업")
+    public ResponseEntity<List<ResUserUsercodeDTO>> showAllUsersBySchool() {
+        return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
+    }
+
     // 유저 리스트를 받아서 다 삭제
     @DeleteMapping("/users")
     @Operation(summary = "어드민의 복수 유저 정보 삭제", description = "유저의 PK 리스트를 받아서 유저 정보를 삭제할 수 있다.")
@@ -218,11 +223,6 @@ public class AdminController {
 
         return ResponseEntity.ok()
                 .body(response);
-    }
-    @GetMapping("/users")
-    @Operation(summary = "로그인한 유저가 속한 학교의 모든 유저 리스트업")
-    public ResponseEntity<List<ResUserUsercodeDTO>> showAllUsersBySchool() {
-        return ResponseEntity.ok().body(userService.findAllBySchool_SchoolId());
     }
 
     @GetMapping("/users/is-modififed")

@@ -62,7 +62,7 @@ public class UserService {
 
     public List<ResUserUsercodeDTO> findAllBySchool_SchoolId() {
         Long schoolId = getCurrentUserSchoolId();
-        List<User> res = userRepository.findAllBySchoolInformation_SchoolIdAndIdIsNotNull(schoolId);
+        List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
 
         List<ResUserUsercodeDTO> dtos = new ArrayList<>();
         for (User u : res) {
