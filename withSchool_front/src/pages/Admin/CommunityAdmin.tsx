@@ -36,7 +36,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 import { getUserInfobyId } from '../../service/auth';
 
-const Community = () => {
+const CommunityAdmin = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('커뮤니티'));
@@ -752,4 +752,4 @@ const Community = () => {
     );
 };
 
-export default Community;
+export default CommunityAdmin;
