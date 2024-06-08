@@ -127,10 +127,9 @@ export const register = async (
       },
       body: JSON.stringify(body),
     });
-    console.log(JSON.stringify(body));
 
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.text();
       console.log('Register successful:', data);
       return data;
     } else {
