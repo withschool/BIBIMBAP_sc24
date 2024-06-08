@@ -7,6 +7,7 @@ import IconDownload from '../../components/Icon/IconDownload';
 import IconEye from '../../components/Icon/IconEye';
 import IconSend from '../../components/Icon/IconSend';
 import IconSave from '../../components/Icon/IconSave';
+import * as PortOne from "@portone/browser-sdk/v2";
 
 const InvoiceAdd = () => {
     const dispatch = useDispatch();
@@ -63,6 +64,22 @@ const InvoiceAdd = () => {
         }
         setItems([...list]);
     };
+
+
+    // //결제 관련 로직
+
+    // const response = await PortOne.requestPayment({
+    //     // Store ID 설정
+    //     storeId: "store-b2c528ec-59c4-420b-8e47-5aac076f4573",
+    //     // 채널 키 설정
+    //     channelKey: "channel-key-893597d6-e62d-410f-83f9-119f530b4b11",
+    //     paymentId: `payment-${crypto.randomUUID()}`,
+    //     orderName: "나이키 와플 트레이너 2 SD",
+    //     totalAmount: 1000,
+    //     currency: "CURRENCY_KRW",
+    //     payMethod: "CARD",
+    //   });
+      
 
     return (
         <div className="flex xl:flex-row flex-col gap-2.5">
