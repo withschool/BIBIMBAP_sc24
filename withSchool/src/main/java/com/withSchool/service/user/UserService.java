@@ -105,7 +105,10 @@ public class UserService {
                     .schoolInformation(schoolInformation)
                     .build();
             userRepository.save(admin);
-            emailService.sendAdminMessage(schoolInformation.getSchulNm(), adminEmail, admin.getId(), rawPassword);
+
+            if(adminEmail != null){
+                emailService.sendAdminMessage(schoolInformation.getSchulNm(), adminEmail, admin.getId(), rawPassword);
+            }
         }
     }
 
