@@ -2,7 +2,6 @@ package com.withSchool.service.school;
 
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.school.SchoolInformationListDTO;
-import com.withSchool.entity.payment.Plan;
 import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.repository.payment.SubscriptionRepository;
@@ -59,7 +58,7 @@ public class SchoolInformationService {
     }
 
     @Transactional
-    public Subscription subscribeSchool(Long schoolId, Plan plan, String billingKey, LocalDate endDate) {
+    public Subscription subscribeSchool(Long schoolId, int plan, String billingKey, LocalDate endDate) {
         Optional<SchoolInformation> schoolOpt = schoolInformationRepository.findById(schoolId);
         if (schoolOpt.isEmpty()) {
             throw new RuntimeException("해당하는 학교가 없습니다");
@@ -79,7 +78,7 @@ public class SchoolInformationService {
     }
 
     @Transactional
-    public Subscription upgradeSubscription(Long subscriptionId, Plan newPlan,LocalDate endDate) {
+    public Subscription upgradeSubscription(Long subscriptionId,int newPlan,LocalDate endDate) {
         Optional<Subscription> subscriptionOpt = subscriptionRepository.findById(subscriptionId);
         if (subscriptionOpt.isEmpty()) {
             throw new RuntimeException("이용하시고 있는 플랜이 없습니다");

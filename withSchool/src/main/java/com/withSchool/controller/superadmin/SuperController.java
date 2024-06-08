@@ -101,4 +101,8 @@ public class SuperController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("삭제 성공");
     }
+
+    @GetMapping("/schools/subscriptions")
+    @Operation(summary = "슈어는 사용중인 학교 플랜 목록을 가져올 수 있다")
+    public ResponseEntity<List<>>
 }

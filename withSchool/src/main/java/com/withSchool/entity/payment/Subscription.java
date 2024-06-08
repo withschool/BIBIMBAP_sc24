@@ -17,8 +17,7 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long subscriptionId;
 
-    @Enumerated(EnumType.STRING)
-    private Plan plan;
+    private int plan;
 
     private LocalDate startDate;
     private LocalDate endDate;

@@ -2,7 +2,6 @@ package com.withSchool.service.billing;
 
 import com.withSchool.entity.payment.PaymentFail;
 import com.withSchool.entity.payment.PaymentRecord;
-import com.withSchool.entity.payment.Plan;
 import com.withSchool.entity.payment.Subscription;
 import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.repository.payment.PaymentFailRepository;
@@ -115,16 +114,16 @@ public class BillingService {
         return dailyRate * (int)daysUsed;
     }
 
-    private int getDailyRate(Plan plan) {
+    private int getDailyRate(int plan) {
         switch (plan) {
-            case BASIC:
+            case 0:
                 return BASIC_DAILY_RATE;
-            case INTERMEDIATE:
+            case 1:
                 return INTERMEDIATE_DAILY_RATE;
-            case PREMIUM:
+            case 2:
                 return PREMIUM_DAILY_RATE;
             default:
-                return 0;
+                return 9;
         }
     }
     private void processPayment(Subscription subscription, int amount) {
@@ -183,5 +182,18 @@ public class BillingService {
 
         // 관리자 또는 사용자에게 알림 전송 (이메일, SMS 등)
 
+    }
+    @Transactional
+    @Scheduled(cron = "0 0 1 * * ?",zone = "Asia/Seoul")
+    public void stopFreeVersion(){
+        LocalDate now = LocalDate.now();
+        LocalDate twoWeeksAge = now.minusWeeks(2);
+        List<SchoolInformation> schoolInformationList = schoolInformationRepository.findAll();
+        for(SchoolInformation s : schoolInformationList){
+            if(s.getServiceType() == 9 && s.getRegDate().toLocalDate().isBefore(twoWeeksAge)){
+                s.setPaymentState(0);
+                schoolInformationRepository.save(s);
+            }
+        }
     }
 }

@@ -21,6 +21,8 @@ public class PaymentRecord{
 
     private boolean success;
 
+    private int plan;
+
     @ManyToOne
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
