@@ -47,16 +47,16 @@ public class BillingService {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
 
         for (Subscription subscription : subscriptions) {
-            if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(LocalDate.now())) {
-                SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                        .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
-                schoolInformation.setPaymentState(0);
-                schoolInformationRepository.save(schoolInformation);
-                continue;
-            }
-
-            int amount = calculateAmount(subscription);
             try {
+                if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(LocalDate.now())) {
+                    SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
+                            .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
+                    schoolInformation.setPaymentState(0);
+                    schoolInformationRepository.save(schoolInformation);
+                    continue;
+                }
+
+                int amount = calculateAmount(subscription);
                 processPayment(subscription, amount);
             } catch (Exception e) {
                 handlePaymentFailure(subscription, e);
