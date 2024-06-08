@@ -48,12 +48,18 @@ const Community = () => {
         date: '',
     };
 
+    const [page, setPage] = useState('1');
+    const [maxPage, setMaxPage] = useState('');
+
     const [communityList, setCommunityList] = useState([]);
 
     const fetchCommunityList = async () => {
         try {
             const community = await getListCommunity("1", "10");
             setCommunityList(community);
+            if (community.length > 0) {
+                setSelectedTab(community[(community.length)-1].communityId);
+            }
         } catch (error) {
             console.error("Failed to fetch community:", error);
         }
@@ -119,6 +125,7 @@ const Community = () => {
     const handleLikeTask = async (postId:string ) => {
         await likePostCommunity(postId);
         fetchPost(postId);
+        fetchPostList();
     }
     
     const handleDeleteComment = async (replyId: string) => {
@@ -130,9 +137,16 @@ const Community = () => {
 
     const fetchPostList = async () => {
         try {
-            console.log(selectedTab);
-            const posts = await viewPostListCommunity(selectedTab, "1", "10");
+            console.log("현재"+page);
+            const posts = await viewPostListCommunity(selectedTab, page, "10");
+            console.log(posts);
             setPostList(posts.postList);
+            let postnum = 0;
+            if(posts.totalPosts % 10 == 0)
+                postnum = posts.totalPosts / 10
+            else
+                postnum = posts.totalPosts / 10 + 1
+            setMaxPage(Math.floor(postnum).toString());
         } catch (error) {
             console.error("Failed to fetch post list:", error);
         }
@@ -161,6 +175,10 @@ const Community = () => {
             console.error("Failed to fetch post list:", error);
         }
     };
+
+    useEffect(() => {
+        fetchPostList();
+    }, [page]);
 
     const handleAddComment = async () => {
         const res = await makeReplyCommunity(post.postId, newComment);
@@ -265,6 +283,8 @@ const Community = () => {
 
 
     const tabChanged = () => {
+        setMaxPage("1");
+        setPage("1");
         setIsShowTaskMenu(false);
     };
 
@@ -335,7 +355,7 @@ const Community = () => {
                                                 key={community.communityId}
                                                 type="button"
                                                 className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${selectedTab === community.communityId || (index === 0 && !selectedTab) ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''}`}
-                                                onClick={() => {
+                                                onClick={async () => {
                                                     tabChanged();
                                                     setSelectedTab(community.communityId);
                                                 }}
@@ -425,22 +445,26 @@ const Community = () => {
                                                                 </p>
                                                             )}
                                                         </div>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => addEditTask(task)}
-                                                            className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-blue-600 text-blue-600 rounded hover:bg-blue-100"
-                                                        >
-                                                            <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                            <span className="!no-underline">수정</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => deleteTask(task.postId)}
-                                                            className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-red-600 text-red-600 rounded hover:bg-red-100"
-                                                        >
-                                                            <IconTrashLines className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                            <span className="!no-underline">삭제</span>
-                                                        </button>
+                                                        {userId == task.userId && (
+                                                            <>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => addEditTask(task)}
+                                                                    className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-blue-600 text-blue-600 rounded hover:bg-blue-100"
+                                                                >
+                                                                    <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                                    <span className="!no-underline">수정</span>
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => deleteTask(task.postId)}
+                                                                    className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-red-600 text-red-600 rounded hover:bg-red-100"
+                                                                >
+                                                                    <IconTrashLines className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                                    <span className="!no-underline">삭제</span>
+                                                                </button>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -453,6 +477,33 @@ const Community = () => {
                                 게시글이 없습니다.
                             </div>
                         )}
+                         <div className="flex justify-center items-center p-4 bg-gray-100 rounded-lg">
+                            <button 
+                                className={`px-4 py-2 bg-blue-500 text-white rounded-lg ${parseInt(page) <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+                                disabled={parseInt(page) <= 1} 
+                                onClick={() => {
+                                    if (parseInt(page) > 1) {
+                                        const newPage = (parseInt(page) - 1).toString();
+                                        console.log(newPage);
+                                        setPage(newPage);
+                                    }
+                                }}>
+                                이전
+                            </button>
+                            <div className="mx-4 text-lg font-semibold">{page}/{maxPage}</div>
+                            <button 
+                                className={`px-4 py-2 bg-blue-500 text-white rounded-lg ${parseInt(page) >= parseInt(maxPage) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`} 
+                                disabled={parseInt(page) >= parseInt(maxPage)} 
+                                onClick={() => {
+                                    if (parseInt(page) < parseInt(maxPage)) {
+                                        const newPage = (parseInt(page) + 1).toString();
+                                        console.log(newPage);
+                                        setPage(newPage);
+                                    }
+                                }}>
+                                다음
+                            </button>
+                        </div>
                     </div>
                 </div>
 
