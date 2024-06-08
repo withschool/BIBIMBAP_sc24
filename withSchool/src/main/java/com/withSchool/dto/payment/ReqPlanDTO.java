@@ -5,14 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReqSubscriptionDTO {
+public class ReqPlanDTO {
     private int plan;
-    private String billingKey;
-    private LocalDate endDate;
 }

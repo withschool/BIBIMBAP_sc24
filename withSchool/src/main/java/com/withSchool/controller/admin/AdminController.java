@@ -3,11 +3,8 @@ package com.withSchool.controller.admin;
 import com.withSchool.dto.classes.ClassDTO;
 import com.withSchool.dto.csv.CsvRequestDTO;
 import com.withSchool.dto.mapping.UserClassDTO;
-import com.withSchool.dto.payment.ResPaymentRecordDTO;
-import com.withSchool.dto.payment.ResSubscriptionDTO;
+import com.withSchool.dto.payment.*;
 import com.withSchool.dto.school.ReqNoticeDTO;
-import com.withSchool.dto.payment.ReqSubscriptionDTO;
-import com.withSchool.dto.payment.ReqUpgradePlanDTO;
 import com.withSchool.dto.school.ResNoticeDTO;
 import com.withSchool.dto.subject.ReqSubjectDefaultDTO;
 import com.withSchool.dto.user.ReqUserRegisterDTO;
@@ -230,25 +227,47 @@ public class AdminController {
     public ResponseEntity<Boolean> checkModification(){
         return ResponseEntity.ok().body(userService.isModified());
     }
+    @PostMapping("/schools/{schoolId}/billingKey")
+    @Operation(summary = "빌링키를 등록")
+    public ResponseEntity<Void> registerBillingKey(@PathVariable Long schoolId,
+                                                                   @RequestBody ReqBillingKeyDTO billingKeyDTO) {
+        schoolInformationService.saveBillingKey(schoolId, billingKeyDTO.getBillingKey());
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/schools/{schoolId}/billingKey")
+    @Operation(summary="빌링키가 있는지 확인.존재:1, 없음:0")
+    public ResponseEntity<Boolean> checkBillingKey(@PathVariable Long schoolId){
+        return ResponseEntity.ok().body(schoolInformationService.checkBillingKey(schoolId));
+    }
     @PostMapping("/schools/{schoolId}/subscriptions")
-    @Operation(summary = "빌링키를 등록하면서 학교 플랜을 등록")
-    public ResponseEntity<ResSubscriptionDTO> subscribeSchool(@PathVariable Long schoolId,
-                                                                   @RequestBody ReqSubscriptionDTO reqSubscriptionDTO) {
-        ResSubscriptionDTO resSubscriptionDTO = schoolInformationService.subscribeSchool(schoolId, reqSubscriptionDTO.getPlan(), reqSubscriptionDTO.getBillingKey(), reqSubscriptionDTO.getEndDate());
-        return ResponseEntity.ok(resSubscriptionDTO);
+    @Operation(summary = "체험판에서 첫 플랜 등록")
+    public ResponseEntity<Void> registerFirstPlan(@PathVariable Long schoolId, @RequestBody ReqPlanDTO reqPlanDTO){
+        schoolInformationService.saveFirstPlan(schoolId,reqPlanDTO);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/schools/subscriptions/{subscriptionId}/upgrade")
-    @Operation(summary = "빌링키가 등록되어 있는 경우 학교 플랜을 수정")
-    public ResponseEntity<ResSubscriptionDTO> upgradeSubscription(@PathVariable Long subscriptionId,
-                                                            @RequestBody ReqUpgradePlanDTO reqUpgradePlanDTO) {
-        ResSubscriptionDTO resSubscriptionDTO = schoolInformationService.upgradeSubscription(subscriptionId, reqUpgradePlanDTO.getNewPlan(),reqUpgradePlanDTO.getEndDate());
-        return ResponseEntity.ok(resSubscriptionDTO);
+    @PutMapping("/schools/{schoolId}/subscriptions/change")
+    @Operation(summary = "기존의 플랜을 종료하고 새로운 플랜을 등록")
+    public ResponseEntity<Void> changePlan(@PathVariable Long schoolId, @RequestBody ReqPlanDTO reqPlanDTO) {
+        schoolInformationService.changePlan(schoolId, reqPlanDTO);
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/schools/{schoolId}/currentPlan")
+    @Operation(summary = "현재 사용 중인 플랜, 학교 인원 수, 다음 결제일(체험판이면 없음)을 가져오기")
+    public ResponseEntity<ResCurrentPlanDTO> getCurrentPlan(@PathVariable Long schoolId) {
+        ResCurrentPlanDTO currentPlan = schoolInformationService.getCurrentPlan(schoolId);
+        return ResponseEntity.ok(currentPlan);
     }
     @GetMapping("/schools/{schoolId}")
     @Operation(summary = "자신의 학교의 결제 내역을 확인할 수 있다")
     public ResponseEntity<List<ResPaymentRecordDTO>> getPaymentRecord(@PathVariable Long schoolId){
         return ResponseEntity.ok(billingService.getPaymentRecord(schoolId));
+    }
+    @PostMapping("/schools/{schoolId}/cancelSubscription")
+    @Operation(summary = "구독 해지")
+    public ResponseEntity<Void> cancelSubscription(@PathVariable Long schoolId) {
+        schoolInformationService.cancelSubscription(schoolId);
+        return ResponseEntity.ok().build();
     }
 
 }

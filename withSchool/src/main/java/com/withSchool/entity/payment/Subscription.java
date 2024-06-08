@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,7 +27,4 @@ public class Subscription {
     @JoinColumn(name = "school_id")
     private SchoolInformation schoolInformation;
 
-    public void changeEndDate(LocalDate endDate){
-        this.endDate = endDate;
-    }
 }

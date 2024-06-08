@@ -1,5 +1,7 @@
 package com.withSchool.service.school;
 
+import com.withSchool.dto.payment.ReqPlanDTO;
+import com.withSchool.dto.payment.ResCurrentPlanDTO;
 import com.withSchool.dto.payment.ResSubscriptionDTO;
 import com.withSchool.dto.school.ReqSchoolInformationSaveDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.nio.charset.StandardCharsets;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,48 +90,40 @@ public class SchoolInformationService {
             return null;
         } else return schoolInformationRepository.save(schoolInformation);
     }
-
-    @Transactional
-    public ResSubscriptionDTO subscribeSchool(Long schoolId, int plan, String billingKey, LocalDate endDate) {
-        Optional<SchoolInformation> schoolOpt = schoolInformationRepository.findById(schoolId);
-        if (schoolOpt.isEmpty()) {
-            throw new RuntimeException("해당하는 학교가 없습니다");
+    public void saveBillingKey(Long schoolId,String billingKey) {
+        SchoolInformation school = schoolInformationRepository.findById(schoolId)
+                .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
+       school.setBillingKey(billingKey);
+       schoolInformationRepository.save(school);
+    }
+    public Boolean checkBillingKey(Long schoolId) {
+        SchoolInformation school = schoolInformationRepository.findById(schoolId)
+                .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
+        if(school.getBillingKey() == null){
+            return false;
         }
-
-        SchoolInformation school = schoolOpt.get();
-
+        else{
+            return true;
+        }
+    }
+    public void saveFirstPlan(Long schoolId, ReqPlanDTO reqPlanDTO) {
+        SchoolInformation schoolInformation = schoolInformationRepository.findById(schoolId)
+                .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
         Subscription subscription = Subscription.builder()
-                .plan(plan)
-                .startDate(LocalDate.now())
-                .endDate(endDate)
-                .billingKey(billingKey)
-                .schoolInformation(school)
+                .plan(reqPlanDTO.getPlan())
+                .startDate(LocalDate.now().plusWeeks(2))
+                .billingKey(schoolInformation.getBillingKey())
+                .schoolInformation(schoolInformation)
                 .build();
         subscriptionRepository.save(subscription);
-
-        school.setServiceType(plan);
-        schoolInformationRepository.save(school);
-
-
-        return ResSubscriptionDTO.builder()
-                .subscriptionId(subscription.getSubscriptionId())
-                .plan(subscription.getPlan())
-                .startDate(subscription.getStartDate())
-                .endDate(subscription.getEndDate())
-                .build();
     }
+    public void changePlan(Long schoolId, ReqPlanDTO reqPlanDTO) {
+        SchoolInformation schoolInformation = schoolInformationRepository.findById(schoolId)
+                .orElseThrow(() -> new RuntimeException("해당하는 학교가 존재하지 않습니다"));
 
-    @Transactional
-    public ResSubscriptionDTO upgradeSubscription(Long subscriptionId,int newPlan,LocalDate endDate) {
-        Optional<Subscription> subscriptionOpt = subscriptionRepository.findById(subscriptionId);
-        if (subscriptionOpt.isEmpty()) {
-            throw new RuntimeException("이용하시고 있는 플랜이 없습니다");
-        }
-        Subscription subscription = subscriptionOpt.get();
-        SchoolInformation schoolInformation = subscription.getSchoolInformation();
         int totalUsers = userRepository.findUsersCountBySchoolId(schoolInformation.getSchoolId());
         int newPlanUsers;
-        switch (newPlan){
+        switch (reqPlanDTO.getPlan()){
             case 0:
                 newPlanUsers = 300;
                 break;
@@ -144,31 +139,25 @@ public class SchoolInformationService {
             throw new RuntimeException("현재 인원이 해당 플랜의 인원수를 초과합니다. 인원을 줄여주세요");
         }
 
-        // 기존 플랜 종료
-        subscription.changeEndDate(LocalDate.now());
-        subscriptionRepository.save(subscription);
-        // 새로운 플랜 등록
+        LocalDate now = LocalDate.now();
+
+        // 현재 활성화된 구독 찾기
+        Subscription currentSubscription = subscriptionRepository.findBySchoolInformationAndEndDateIsNull(schoolInformation)
+                .orElseThrow(() -> new RuntimeException("현재 활성화된 구독이 없습니다"));
+
+        // 기존 구독 종료 날짜 설정
+        currentSubscription.setEndDate(now);
+        subscriptionRepository.save(currentSubscription);
+
+        // 새로운 구독 생성
         Subscription newSubscription = Subscription.builder()
-                .plan(newPlan)
-                .startDate(LocalDate.now())
-                .endDate(endDate)
-                .billingKey(subscription.getBillingKey())
+                .plan(reqPlanDTO.getPlan())
+                .startDate(now)
+                .billingKey(schoolInformation.getBillingKey())
                 .schoolInformation(schoolInformation)
                 .build();
         subscriptionRepository.save(newSubscription);
-
-        schoolInformation.setServiceType(newPlan);
-        schoolInformationRepository.save(schoolInformation);
-
-        return ResSubscriptionDTO.builder()
-                .subscriptionId(newSubscription.getSubscriptionId())
-                .plan(newSubscription.getPlan())
-                .startDate(newSubscription.getStartDate())
-                .endDate(newSubscription.getEndDate())
-                .build();
     }
-
-
     public SchoolInformation dtoToEntity(SchoolInformationDTO dto) {
         return SchoolInformation.builder()
                 .atptOfcdcScCode(dto.getATPT_OFCDC_SC_CODE())
@@ -235,5 +224,51 @@ public class SchoolInformationService {
     public void delete(Long id) {
         userRepository.deleteAllUsersBySchoolId(id);
         schoolInformationRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void cancelSubscription(Long schoolId) {
+        SchoolInformation schoolInformation = schoolInformationRepository.findById(schoolId)
+                .orElseThrow(() -> new RuntimeException("해당하는 학교가 존재하지 않습니다"));
+
+        Subscription currentSubscription = subscriptionRepository.findBySchoolInformationAndEndDateIsNull(schoolInformation)
+                .orElseThrow(() -> new RuntimeException("현재 활성화된 구독이 없습니다"));
+
+        LocalDate now = LocalDate.now();
+        currentSubscription.setEndDate(now);
+        subscriptionRepository.save(currentSubscription);
+
+        schoolInformation.setPaymentState(0);
+        schoolInformationRepository.save(schoolInformation);
+    }
+    public ResCurrentPlanDTO getCurrentPlan(Long schoolId) {
+        SchoolInformation school = schoolInformationRepository.findById(schoolId)
+                .orElseThrow(() -> new RuntimeException("해당하는 학교가 존재하지 않습니다"));
+
+        int userCount = userRepository.findUsersCountBySchoolId(schoolId);
+
+        Subscription currentSubscription = subscriptionRepository.findBySchoolInformationAndEndDateIsNull(school)
+                .orElse(null);
+
+        LocalDate nextBillingDate = null;
+        if (currentSubscription != null) {
+            nextBillingDate = calculateNextBillingDate(currentSubscription.getStartDate());
+        }
+
+        return ResCurrentPlanDTO.builder()
+                .plan(currentSubscription != null ? currentSubscription.getPlan() : 9)
+                .nextBillingDate(nextBillingDate)
+                .build();
+    }
+
+    private LocalDate calculateNextBillingDate(LocalDate startDate) {
+        LocalDate now = LocalDate.now();
+        LocalDate nextBillingDate = startDate;
+
+        while (!nextBillingDate.isAfter(now)) {
+            nextBillingDate = nextBillingDate.plusMonths(1);
+        }
+
+        return nextBillingDate;
     }
 }
