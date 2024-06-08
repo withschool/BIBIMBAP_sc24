@@ -151,7 +151,9 @@ const SignInBoxed = () => {
     const changePhoneForm = (Phone: string) => {
         const numberPattern = /\d+/g;
         const numbersArray = Phone.match(numberPattern);
-        return numbersArray ? numbersArray.join('') : '';
+        const returnPhone = numbersArray ? numbersArray.join('') : '';
+        console.log(returnPhone);
+        return returnPhone;
     }
     
     function validatePassword(password: string): boolean {
@@ -191,21 +193,15 @@ const SignInBoxed = () => {
             // 학생, 교사
             if(isStudent){
                 const userCode : any = localStorage.getItem('userCode');
-                console.log(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1)
-                const data = await register(id, email, password, userInfo.user.userName, sex==="male", phoneNumber, address , userInfo.user.birthDate, -1 , userCode);
-                if(data == -1){
-                    throw new Error('이미 등록된 전화번호입니다.');
-                }
+                console.log(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1)
+                const data = await register(id, email, password, userInfo.user.userName, sex==="male", reqphoneNumber, address , userInfo.user.birthDate, -1 , userCode);
             }
 
             // 학부모
             else{
                 console.log(year, month, day);
-                console.log(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1)
-                const data = await register(id, email, password, name, sex==="male", phoneNumber, address , birthDate, 1 , "");
-                if(data == -1){
-                    throw new Error('이미 등록된 전화번호입니다.');
-                }
+                console.log(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1)
+                const data = await register(id, email, password, name, sex==="male", reqphoneNumber, address , birthDate, 1 , "")
             }
 
             alert("회원가입이 완료되었습니다.");
