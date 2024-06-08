@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { IRootState } from '../../store';
@@ -33,15 +33,36 @@ import IconMenuForms from '../Icon/Menu/IconMenuForms';
 import IconMenuPages from '../Icon/Menu/IconMenuPages';
 import IconMenuMore from '../Icon/Menu/IconMenuMore';
 
+import { mappingStudent } from '../../service/parent';
+
 import { getUserInfobyId } from '../../service/auth';
 
 import { getSubjectList } from '../../service/subject';
 import { listingStudent } from '../../service/parent';
 
+import { Dialog, Transition } from '@headlessui/react';
+import IconX from '../Icon/IconX';
+
 const Header = () => {
     
     const [subjectList, setSubjectList] = useState([]);
     const [selectedSubject, setSelectedSubject] = useState('');
+    const [modal21, setModal21] = useState(false);
+    const [userCode, setUserCode] = useState('');
+
+    const handleUserCode = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUserCode(event.target.value);
+    }
+
+    const getmappingStudent = async (userCode : string) => {
+        const ismaped = await mappingStudent(userCode);
+        if(ismaped) { 
+            alert("학생 연결이 완료되었습니다.");
+            await fetchStudents();
+            setModal21(false);
+        }
+        else alert("학생 연결에 실패하였습니다.");
+    }
 
     useEffect(() => {
         const fetchSubject = async () => {
@@ -524,8 +545,8 @@ const Header = () => {
                             </Dropdown>
                         </div> */}
                         {localStorage.getItem("accountType") == 'ROLE_PARENT' && (
-                         <div className='w-1/5'>
-                            <select className="form-select flex text-white-dark" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
+                         <div className="flex items-center space-x-4">
+                            <select className="form-select flex-grow text-white-dark" value={targetStudent} onChange={(e) => handleStudentChange(e.target.value)}>
                                 <option disabled value="">학생 선택</option>
                                 {studentList.map((data: any) => (
                                     <option key={data.user.userId} value={data.user.userId}>
@@ -533,6 +554,66 @@ const Header = () => {
                                     </option>
                                 ))}
                             </select>
+                            <button type="button" onClick={() => setModal21(true)} className="btn btn-primary flex-shrink-0 w-1/3 text-sm">
+                                추가
+                            </button>
+                            <Transition appear show={modal21} as={Fragment}>
+                                <Dialog
+                                    as="div"
+                                    open={modal21}
+                                    onClose={() => {
+                                        setModal21(false);
+                                    }}
+                                >
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <div className="fixed inset-0" />
+                                    </Transition.Child>
+                                    <div id="register_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                        <div className="flex min-h-screen items-start justify-center px-4">
+                                            <Transition.Child
+                                                as={Fragment}
+                                                enter="ease-out duration-300"
+                                                enterFrom="opacity-0 scale-95"
+                                                enterTo="opacity-100 scale-100"
+                                                leave="ease-in duration-200"
+                                                leaveFrom="opacity-100 scale-100"
+                                                leaveTo="opacity-0 scale-95"
+                                            >
+                                                <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
+                                                    <div className="flex items-center justify-between pl-5 pt-5 text-lg font-semibold dark:text-white">
+                                                        <h5>학생 추가하기</h5>
+                                                        <button type="button" onClick={() => setModal21(false)} className="text-white-dark hover:text-dark">
+                                                            <IconX className="pr-5 w-10 h-10" />
+                                                        </button>
+                                                    </div>
+                                                    <div className="p-5">
+                                                        <form>
+                                                            <div className="relative mb-4">
+                                                                <h2 className='pb-4'>연결하고자 하는 유저코드를 입력해 주세요.</h2>
+                                                                <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                                    <IconUser className="w-5 h-5 mt-10"/>
+                                                                </span>
+                                                                <input type="text" placeholder="유저코드" className="form-input ltr:pl-10 rtl:pr-10" id="userCode" value ={userCode} onChange={handleUserCode}/>
+                                                            </div>
+                                                            <button type="button" onClick={() => getmappingStudent(userCode)} className="btn btn-primary w-full">
+                                                                추가하기
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </Dialog.Panel>
+                                            </Transition.Child>
+                                        </div>
+                                    </div>
+                                </Dialog>
+                            </Transition>
                         </div>
                         )}
                         {((localStorage.getItem("accountType") == 'ROLE_TEACHER') || (localStorage.getItem("accountType") == 'ROLE_STUDENT'))  && (
