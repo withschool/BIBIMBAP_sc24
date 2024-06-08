@@ -307,12 +307,18 @@ useEffect(() => {
                                                     <div className="whitespace-nowrap">{data.userName}</div>
                                                 </td>
                                                 <td className="w-1/3 text-center">
-                                                    <input
-                                                        type="number"
-                                                        className="w-10"
-                                                        value={tempMidScores[data.studentSubjectId] || ''}
-                                                        onChange={(e) => handleMidScoreChange(data.studentSubjectId, e.target.value)}
-                                                    />
+                                                <input
+                                                    type="text"
+                                                    className="w-10"
+                                                    value={tempFinalScores[data.studentSubjectId] || ''}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        const intValue = parseInt(value);
+                                                        if (!isNaN(intValue)) {
+                                                            handleFinalScoreChange(data.studentSubjectId, intValue);
+                                                        }
+                                                    }}
+                                                />
                                                 </td>
                                             </tr>
                                         );
@@ -346,10 +352,16 @@ useEffect(() => {
                                                 </td>
                                                 <td className="w-1/3 text-center">
                                                     <input
-                                                        type="number"
+                                                        type="text"
                                                         className="w-10"
                                                         value={tempFinalScores[data.studentSubjectId] || ''}
-                                                        onChange={(e) => handleFinalScoreChange(data.studentSubjectId, e.target.value)}
+                                                        onChange={(e) => {
+                                                            const value = e.target.value;
+                                                            const intValue = parseInt(value);
+                                                            if (!isNaN(intValue)) {
+                                                                handleFinalScoreChange(data.studentSubjectId, intValue);
+                                                            }
+                                                        }}
                                                     />
                                                 </td>
                                             </tr>
@@ -385,10 +397,16 @@ useEffect(() => {
                                                         </td>
                                                         <td className="w-1/3 text-center">
                                                             <input
-                                                                type="number"
+                                                                type="text"
                                                                 className="w-10"
-                                                                value={tempActivityScores[data.studentSubjectId] || ''}
-                                                                onChange={(e) => handleActivityScoreChange(data.studentSubjectId, e.target.value)}
+                                                                value={tempFinalScores[data.studentSubjectId] || ''}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value;
+                                                                    const intValue = parseInt(value);
+                                                                    if (!isNaN(intValue)) {
+                                                                        handleFinalScoreChange(data.studentSubjectId, intValue);
+                                                                    }
+                                                                }}
                                                             />
                                                         </td>
                                                     </tr>
