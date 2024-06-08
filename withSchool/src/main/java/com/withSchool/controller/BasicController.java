@@ -77,7 +77,7 @@ public class BasicController {
                     .body(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("User.java registered successfully.");
+                .body("User registered successfully.");
     }
 
     @PostMapping("/sign-in")
