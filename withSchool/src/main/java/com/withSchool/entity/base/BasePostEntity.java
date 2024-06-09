@@ -21,6 +21,5 @@ public class BasePostEntity extends BaseEntity {
 
     @Column(name = "content", columnDefinition = "TEXT")
     @Comment("본문")
-  
     protected String content;
 }
