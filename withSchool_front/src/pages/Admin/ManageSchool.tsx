@@ -416,8 +416,7 @@ const ManageSchool = () => {
     };
 
 
-    const schoolName = useSelector((state: IRootState) => state.school.schoolName);
-
+    //SCHUL_KND_SC_NM
 
     useEffect(() => {
         const fetchSchoolInfo = async () => {
@@ -425,6 +424,13 @@ const ManageSchool = () => {
                 const data = await getSchoolInfo('');
                 dispatch(setSchoolName(data.SCHUL_NM));
                 setServiceType(data.serviceType);
+
+                // Set the number of grades based on school type
+                if (data.SCHUL_KND_SC_NM === '초등학교') {
+                    setNumGrades(6);
+                } else {
+                    setNumGrades(3); // Default to 3 grades for other school types
+                }
             } catch (error) {
                 console.error('학교 이름 안나오는 중', error);
             }
@@ -459,6 +465,8 @@ const ManageSchool = () => {
                 return '';
         }
     };
+
+    const [numGrades, setNumGrades] = useState(3); // Default to 3 grades
 
     return (
         <div>
@@ -608,7 +616,7 @@ const ManageSchool = () => {
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
-                                {[1, 2, 3].map((grade) => (
+                                {Array.from({ length: numGrades }, (_, i) => i + 1).map((grade) => (
                                     <div key={grade} className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
                                         <button
                                             type="button"
@@ -640,7 +648,6 @@ const ManageSchool = () => {
                                                         ) : (
                                                             <li>반 정보가 없습니다.</li>
                                                         )}
-
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
@@ -727,7 +734,7 @@ const ManageSchool = () => {
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
-                                {[1, 2, 3].map((grade) => (
+                                {Array.from({ length: numGrades }, (_, i) => i + 1).map((grade) => (
                                     <div key={grade} className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
                                         <button
                                             type="button"
