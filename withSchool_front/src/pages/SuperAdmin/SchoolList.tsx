@@ -34,9 +34,7 @@ interface School {
     schoolAddress: string;
     sdSchulCode: string;
     regDate: string;
-    // endDate: string;
-    paymentState: number;
-    serviceType: number;
+    paymentStatus: string;
 }
 
 export const formatDate = (dateString: string): string => {
@@ -82,9 +80,7 @@ const SchoolList = () => {
                 const formattedData = data.map((item: School) => ({
                     ...item,
                     regDate: formatDate(item.regDate),
-                    // endDate: formatDate(item.endDate),
-                    paymentState: item.paymentState,
-                    serviceType: item.serviceType,
+                    paymentStatus: item.paymentStatus || "정상",
                 }));
 
                 const sortedData = sortBy(formattedData, "schoolId").map(
@@ -134,10 +130,9 @@ const SchoolList = () => {
                     item.regDate.toString().toLowerCase().includes(search.toLowerCase())) ||
                 (item.sdSchulCode &&
                     item.sdSchulCode.toString().toLowerCase().includes(search.toLowerCase())) ||
-                (item.paymentState !== undefined &&
-                    item.paymentState.toString().toLowerCase().includes(search.toLowerCase())) ||
-                (item.serviceType !== undefined &&
-                    item.serviceType.toString().toLowerCase().includes(search.toLowerCase()))
+                (item.paymentStatus &&
+                    item.paymentStatus.toString().toLowerCase().includes(search.toLowerCase()))
+
             );
         });
         setRecordsData(
@@ -145,39 +140,11 @@ const SchoolList = () => {
         );
     }, [search, initialRecords, page, pageSize]);
 
-
-
     useEffect(() => {
         const data = sortBy(initialRecords, sortStatus.columnAccessor);
         setInitialRecords(sortStatus.direction === "desc" ? data.reverse() : data);
         setPage(1);
     }, [sortStatus]);
-
-    // const handleTogglePaymentState = async (school: School) => {
-    //     const updatedSchool = { ...school, paymentState: school.paymentState === 0 ? 1 : 0 };
-    //     // Call API to update the payment state here
-    //     // await updateSchoolPaymentState(updatedSchool);
-    //     setInitialRecords((prevRecords) =>
-    //         prevRecords.map((item) =>
-    //             item.schoolId === school.schoolId ? updatedSchool : item
-    //         )
-    //     );
-    // };
-
-    const renderServiceType = (serviceType: number) => {
-        switch (serviceType) {
-            case 0:
-                return "소규모";
-            case 1:
-                return "중규모";
-            case 2:
-                return "대규모";
-            case 9:
-                return "체험판";
-            default:
-                return "알 수 없음";
-        }
-    };
 
     //search
 
@@ -417,6 +384,7 @@ const SchoolList = () => {
                                                                             <div>{item.educationOffice}</div>
                                                                             <div>{item.schoolAddress}</div>
                                                                             <div>{item.schoolPhoneNumber}</div>
+                                                                            <div>{item.paymentStatus}</div>
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -448,36 +416,64 @@ const SchoolList = () => {
                 <div className="datatables">
                     <DataTable
                         highlightOnHover
-                        className={`${isRtl ? "whitespace-nowrap table-hover" : "whitespace-nowrap table-hover"}`}
+                        className={`${isRtl
+                            ? "whitespace-nowrap table-hover"
+                            : "whitespace-nowrap table-hover"
+                            }`}
                         records={recordsData}
                         columns={[
-                            { accessor: "schoolName", title: "학교 이름", sortable: true },
-                            { accessor: "schoolPhoneNumber", title: "전화 번호", sortable: true },
-                            { accessor: "schoolAddress", title: "학교 주소", sortable: true },
-                            { accessor: "regDate", title: "생성일", sortable: true },
-                            { accessor: "endDate", title: "사용 기한", sortable: true },
-                            { accessor: "sdSchulCode", title: "학교 코드", sortable: true },
                             {
-                                accessor: "serviceType",
-                                title: "사용 중인 플랜",
+                                accessor: "creationOrder",
+                                title: "학교 리스트",
                                 sortable: true,
-                                render: ({ serviceType }) => renderServiceType(serviceType),
+                            },
+                            //{ accessor: 'schoolId', title: '학교 ID', sortable: true },
+                            { accessor: "schoolName", title: "학교 이름", sortable: true },
+                            {
+                                accessor: "schoolPhoneNumber",
+                                title: "전화 번호",
+                                sortable: true,
                             },
                             {
-                                accessor: "paymentState",
-                                title: "서비스 상태",
+                                accessor: "educationOffice",
+                                title: "담당 교육청",
                                 sortable: true,
-                                render: (school) => {
-                                    const status = school.paymentState === 1 ? { tooltip: '정상', color: 'success' } : { tooltip: '중지', color: 'danger' };
-                                    return (
-                                        <span
-                                            className={`badge badge-outline-${status.color}`}
-                                            style={{ cursor: 'pointer' }}
-                                        >
-                                            {status.tooltip}
-                                        </span>
-                                    );
+                            },
+                            { accessor: "schoolAddress", title: "학교 주소", sortable: true },
+                            { accessor: "regDate", title: "생성일", sortable: true },
+                            { accessor: "sdSchulCode", title: "학교 코드", sortable: true },
+
+
+                            {
+                                accessor: "paymentStatus",
+                                title: "결제 상태",
+                                sortable: true,
+                                render: ({ paymentStatus }) => {
+                                    const status = paymentStatus === "정상" ? { tooltip: '정상', color: 'success' } : { tooltip: '결제 지연', color: 'danger' };
+                                    return <span className={`badge badge-outline-${status.color}`}>{status.tooltip}</span>;
                                 },
+                            },
+
+
+                            {
+                                accessor: "deleteSchool",
+                                title: "삭제하기",
+                                titleClassName: "!text-center",
+                                render: (record) => (
+                                    <div className="flex items-center w-max mx-auto">
+                                        <Tippy content="Delete">
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    await handleDeleteSchool(record.schoolId);
+                                                    window.location.reload();
+                                                }}
+                                            >
+                                                <IconXCircle />
+                                            </button>
+                                        </Tippy>
+                                    </div>
+                                ),
                             },
                         ]}
                         totalRecords={initialRecords.length}
@@ -492,7 +488,6 @@ const SchoolList = () => {
                         paginationText={({ from, to, totalRecords }) =>
                             `${totalRecords}개의 항목 중 ${from}에서 ${to}까지 표시`
                         }
-                        // onRowClick={(school) => } // 학교 클릭 시 호출
                     />
                 </div>
             </div>
