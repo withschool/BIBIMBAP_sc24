@@ -131,19 +131,24 @@ const InvoiceList = () => {
 
             const schoolInfo = await getSchoolInfo(schoolId);
             const isTrial = schoolInfo.serviceType == 9;
+            console.log(`먼 타입 = ${schoolInfo.serviceType}`);
+            if (schoolInfo.serviceType != plan) {
+                if (isTrial) {
+                    const hasBillingKey = await checkBillingKey(Number(schoolId));
+                    if (!hasBillingKey) {
+                        alert('카드 등록을 먼저 진행해주세요.');
+                        return;
+                    }
+                    await registerFirstPlan(Number(schoolId), plan);
+                    alert('첫 플랜 등록이 성공하였습니다.');
 
-            if (isTrial) {
-                const hasBillingKey = await checkBillingKey(Number(schoolId));
-                if (!hasBillingKey) {
-                    alert('카드 등록을 먼저 진행해주세요.');
-                    return;
+                } else {
+                    await changePlan(Number(schoolId), plan);
+                    alert('플랜 변경이 성공하였습니다.');
                 }
-                await registerFirstPlan(Number(schoolId), plan);
-                alert('첫 플랜 등록이 성공하였습니다.');
-
-            } else {
-                await changePlan(Number(schoolId), plan);
-                alert('플랜 변경이 성공하였습니다.');
+            }
+            else {
+                alert('같은 플랜을 선택하셨습니다. 다른 플랜을 입력해 주세요.');
 
             }
 
