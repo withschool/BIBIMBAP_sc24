@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ResHomeworkSubmitDTO {
     private Long id; // 과제의 id
+    private String studentName;
     private String content;
     private List<String> filesURl;
     private List<String> originalName;

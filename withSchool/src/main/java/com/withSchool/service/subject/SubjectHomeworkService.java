@@ -238,6 +238,7 @@ public class SubjectHomeworkService {
             }
             ResHomeworkSubmitDTO resHomeworkSubmitDTO = ResHomeworkSubmitDTO.builder()
                     .id(s.getSubjectHomeworkSubmitId())
+                    .studentName(s.getUser().getName())
                     .content(s.getSubjectSubmitContent())
                     .originalName(originalName)
                     .filesURl(filesUrl)
@@ -263,6 +264,7 @@ public class SubjectHomeworkService {
 
             return ResHomeworkSubmitDTO.builder()
                     .id(subjectHomeworkSubmit.get().getSubjectHomeworkSubmitId())
+                    .studentName(subjectHomeworkSubmit.get().getUser().getName())
                     .content(subjectHomeworkSubmit.get().getSubjectSubmitContent())
                     .filesURl(filesUrl)
                     .originalName(originalName)
