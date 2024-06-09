@@ -2,7 +2,7 @@ package com.withSchool.service.school;
 
 import com.withSchool.dto.payment.ReqPlanDTO;
 import com.withSchool.dto.payment.ResCurrentPlanDTO;
-import com.withSchool.dto.payment.ResSubscriptionDTO;
+import com.withSchool.dto.school.ReqSchoolInformationChangePaymentStateDTO;
 import com.withSchool.dto.school.ReqSchoolInformationSaveDTO;
 import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.dto.school.SchoolInformationListDTO;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.nio.charset.StandardCharsets;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -93,8 +92,8 @@ public class SchoolInformationService {
     public void saveBillingKey(Long schoolId,String billingKey) {
         SchoolInformation school = schoolInformationRepository.findById(schoolId)
                 .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
-       school.setBillingKey(billingKey);
-       schoolInformationRepository.save(school);
+        school.setBillingKey(billingKey);
+        schoolInformationRepository.save(school);
     }
     public Boolean checkBillingKey(Long schoolId) {
         SchoolInformation school = schoolInformationRepository.findById(schoolId)
@@ -272,5 +271,21 @@ public class SchoolInformationService {
         }
 
         return nextBillingDate;
+    }
+
+    public SchoolInformationDTO changePaymentState(ReqSchoolInformationChangePaymentStateDTO reqSchoolInformationChangePaymentStateDTO) {
+        Long schoolId = reqSchoolInformationChangePaymentStateDTO.getSchoolId();
+        int paymentState = reqSchoolInformationChangePaymentStateDTO.getPaymentState();
+
+        Optional<SchoolInformation> optionalSchoolInformation = schoolInformationRepository.findById(schoolId);
+        if (optionalSchoolInformation.isEmpty()) {
+            throw new RuntimeException("No School");
+        }
+
+        SchoolInformation schoolInformation = optionalSchoolInformation.get();
+        schoolInformation.setPaymentState(paymentState);
+
+        SchoolInformation savedSchool = schoolInformationRepository.save(schoolInformation);
+        return entityToDTO(savedSchool);
     }
 }

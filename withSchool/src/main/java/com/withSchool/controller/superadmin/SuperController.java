@@ -1,7 +1,9 @@
 package com.withSchool.controller.superadmin;
 
+import com.withSchool.dto.school.ReqSchoolInformationChangePaymentStateDTO;
 import com.withSchool.dto.school.ReqSchoolInformationSaveDTO;
 import com.withSchool.dto.school.ResApplicationDefaultDTO;
+import com.withSchool.dto.school.SchoolInformationDTO;
 import com.withSchool.service.school.SchoolApplicationService;
 import com.withSchool.service.school.SchoolInformationService;
 import com.withSchool.service.user.UserService;
@@ -90,5 +92,12 @@ public class SuperController {
     public ResponseEntity<String> changeSuperSchool(@RequestParam Long schoolId){
         userService.changeSuperSchool(schoolId);
         return ResponseEntity.ok().body("change success");
+    }
+
+    @PatchMapping("/schools/payment-state")
+    @Operation(summary = "슈퍼 어드민이 강제로 학교 모델의 결제 상태 변경")
+    public ResponseEntity<SchoolInformationDTO> changeSchoolPaymentState(ReqSchoolInformationChangePaymentStateDTO reqSchoolInformationChangePaymentStateDTO) {
+        SchoolInformationDTO dto = schoolInformationService.changePaymentState(reqSchoolInformationChangePaymentStateDTO);
+        return ResponseEntity.ok().body(dto);
     }
 }
