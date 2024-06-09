@@ -10,6 +10,7 @@ import com.withSchool.repository.payment.PaymentRecordRepository;
 import com.withSchool.repository.payment.SubscriptionRepository;
 import com.withSchool.repository.school.SchoolInformationRepository;
 import com.withSchool.repository.user.UserRepository;
+import com.withSchool.service.user.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -42,6 +43,8 @@ public class BillingService {
     private static final int BASIC_DAILY_RATE = 100000;
     private static final int INTERMEDIATE_DAILY_RATE = 150000;
     private static final int PREMIUM_DAILY_RATE = 200000;
+
+    private final NotificationService notificationService;
 
     @Scheduled(cron = "0 0 0 1 * ?", zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
     @Transactional
@@ -187,7 +190,7 @@ public class BillingService {
         paymentFailRepository.save(paymentFail);
 
         // 관리자 또는 사용자에게 알림 전송 (이메일, SMS 등)
-
+        notificationService.sendPaymentFailure(paymentFail);
     }
 
     @Transactional

@@ -430,4 +430,8 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    public User getAdmin(Long schoolId){
+        return userRepository.getAdmin(schoolId);
+    }
 }
