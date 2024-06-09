@@ -74,7 +74,7 @@ public class NotificationService {
         params.put("to", admin.getPhoneNumber());
         params.put("from", apiPhone);
         params.put("type", "SMS");
-        params.put("text", "안녕하세요 " + admin.getName() + "님.\n" + schoolInformation.getSchulNm() + "의 결제에 실패했습니다. \n" +
+        params.put("text", schoolInformation.getSchulNm() + "의 결제에 실패했습니다. \n" +
                 "학교 관리자 페이지에서 확인해주세요.");
         try {
             message.send(params);
