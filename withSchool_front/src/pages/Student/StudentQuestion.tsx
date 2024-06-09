@@ -8,7 +8,8 @@ import Dropdown from '../../components/Dropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { getCounselInfo, getTeacherListStudent, registerCounsel, deleteCounsel} from '../../service/counsel';
+import { getCounselInfo, getTeacherListStudent, registerCounsel, deleteCounsel, editCounsel} from '../../service/counsel';
+import { getQnaList, getQna, makeQna, editQna, deleteQna } from '../../service/qna';
 import { getUserInfobyPK } from '../../service/auth';
 import IconClipboardText from '../../components/Icon/IconClipboardText';
 import IconListCheck from '../../components/Icon/IconListCheck';
@@ -27,21 +28,20 @@ import IconX from '../../components/Icon/IconX';
 import IconRestore from '../../components/Icon/IconRestore';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { createQuestion } from '../../service/question';
-
+import { format } from 'date-fns';
 
 const StudentQuestion = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(setPageTitle('학생 상담'));
+        dispatch(setPageTitle('학생 질문'));
     });
     const defaultParams = {
         id: null,
-        title: '',
+        category: '',
         teacher: 0,
         date: '',
     };
-
+    const subjectId = localStorage.getItem("targetSubject");
     const [selectedTab, setSelectedTab] = useState('');
     const [isShowTaskMenu, setIsShowTaskMenu] = useState(false);
     const [addTaskModal, setAddTaskModal] = useState(false);
@@ -50,18 +50,19 @@ const StudentQuestion = () => {
 
     const [allTasks, setAllTasks] = useState([]);
 
-    useEffect(() => {
-        const fetchCounsels = async () => {
-            try {
-                const counsels = await getCounselInfo();
-                setAllTasks(counsels);
-            } catch (error) {
-                console.error("Failed to fetch counsels:", error);
-            }
-        };
+    const fetchCounsels = async () => {
+        try {
+            const qnas = await getQnaList(subjectId || '');
+            console.log(qnas);
+            setAllTasks(qnas);
+        } catch (error) {
+            console.error("Failed to fetch counsels:", error);
+        }
+    };
 
+    useEffect(() => {
         fetchCounsels();
-    }, [allTasks]);
+    }, []);
 
     const [teacherList, setTeacherList] = useState<any[]>([]);
     const [title, setTitle] = useState('');
@@ -91,22 +92,33 @@ const StudentQuestion = () => {
         fetchTeachers();
     }, []);
 
-    const tryCreateQuestion = async () => {
+    const tryRegisterCounsel = async () => {
         try {
-            const newQuestion = await createQuestion(params.title);
-            if (newQuestion) {
-                console.log('Question created successfully:', newQuestion);
-                // 추가적인 로직이 필요하다면 여기에 작성
+            if(params.subjectQuestionPostId){
+                await editQna(params.subjectQuestionPostId ,params.questionContent,'');
             }
+            else{
+                console.log(params.description);
+                await makeQna(params.questionContent, subjectId || '');
+            }
+            setAddTaskModal(false);
+            setTeacherId('');
+            setSelectedDate('');
+            await fetchCounsels();
         } catch (error) {
-            console.error('Failed to create question:', error);
+            console.error("Failed to register or edit counsel:", error);
         }
     };
-
+    
     const [searchTask, setSearchTask] = useState<any>('');
     const [selectedTask, setSelectedTask] = useState<any>(defaultParams);
     const [isPriorityMenu] = useState<any>(null);
     const [isTagMenu] = useState<any>(null);
+
+    const filteredTasks = allTasks.filter((task: any) => {
+        const questionContentMatch = task.questionContent.toLowerCase().includes(searchTask.toLowerCase());
+        return questionContentMatch;
+    });
 
     const [pager] = useState<any>({
         currentPage: 1,
@@ -126,29 +138,59 @@ const StudentQuestion = () => {
         setIsShowTaskMenu(false);
     };
 
-    const deleteTask = (counselId : number) => {
-        deleteCounsel(counselId);
-        alert("삭제 완료!");
+    const deleteTask = async (task : any) => {
+        try{
+            deleteQna(task.subjectQuestionPostId);
+            alert("삭제 완료!");
+            await fetchCounsels();
+        }
+        catch {
+            console.error("Failed to delete counsel");
+        }
     }
 
-    const viewTask = (item: any = null) => {
+    const viewTask = async (item: any = null) => {
         setSelectedTask(item);
         findTeacherName(item.answererId);
+        console.log(item.schedule);
         setTimeout(() => {
             setViewTaskModal(true);
         });
+        await fetchCounsels();
     };
 
-    const addEditTask = (task: any = null) => {
+    const addEditTask = async (task: any | null) => {
         setIsShowTaskMenu(false);
         let json = JSON.parse(JSON.stringify(defaultParams));
         setParams(json);
         if (task) {
-            let json1 = JSON.parse(JSON.stringify(task));
-            setParams(json1);
+            if(!task.isAnswered){
+                console.log("응애"+task);
+                let json1 = JSON.parse(JSON.stringify(task));
+                setParams(json1);
+            }
+            else {
+                alert("이미 답변 완료된 질문입니다.");
+                return;
+            }
         }
         setAddTaskModal(true);
     };
+
+    function stripHtmlTags(html : any) {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = html;
+        return tempDiv.textContent || tempDiv.innerText || "";
+    }
+
+    function processContent(content: any) {
+        const strippedContent = stripHtmlTags(content);
+        const firstLine = strippedContent.split('\n')[0]; // 첫 줄만 가져오기
+        if (firstLine.length > 30) {
+            return firstLine.substring(0, 30) + '...'; // 최대 40자까지 표시
+        }
+        return firstLine;
+    }
 
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -165,7 +207,7 @@ const StudentQuestion = () => {
                                 <div className="shrink-0">
                                     <IconClipboardText />
                                 </div>
-                                <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">학생 상담</h3>
+                                <h3 className="text-lg font-semibold ltr:ml-3 rtl:mr-3">학생 질문</h3>
                             </div>
                         </div>
                         <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b] mb-5"></div>
@@ -192,9 +234,9 @@ const StudentQuestion = () => {
                             </div>
                         </PerfectScrollbar>
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
-                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask()}>
+                            <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask(null)}>
                                 <IconPlus className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                상담 신청하기
+                                질문하기
                             </button>
                         </div>
                     </div>
@@ -211,7 +253,7 @@ const StudentQuestion = () => {
                                     <input
                                         type="text"
                                         className="form-input peer ltr:!pr-10 rtl:!pl-10"
-                                        placeholder="상담 검색"
+                                        placeholder="질문 검색"
                                         value={searchTask}
                                         onChange={(e) => setSearchTask(e.target.value)}
                                     />
@@ -222,94 +264,98 @@ const StudentQuestion = () => {
                             </div>
                         </div>
 
-                        {allTasks.length ? (
+                        {filteredTasks.length ? (
                             <div className="table-responsive grow overflow-y-auto sm:min-h-[300px] min-h-[400px]">
                                 <table className="table-hover">
                                     <tbody>
-                                        {allTasks.map((task: any) => {
-                                            return (
-                                                <tr className={`group cursor-pointer ${task.counselState == 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''} ${task.counselState == 2 ? 'line-through' : ''}`} key={task.counselId}>
-                                                    <td className="w-1">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={`chk-${task.counselId}`}
-                                                            className={`form-checkbox${task.counselState === 1 ? ' checked:bg-gray-700' : ''} disabled:opacity-50`}
-                                                            disabled={true}
-                                                            defaultChecked={task.counselState === 1}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <div onClick={() => viewTask(task)}>
-                                                            <div className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${task.counselState}`}>
-                                                                {task.category}
-                                                            </div>
+                                        {filteredTasks.reverse().map((task: any) => (
+                                            <tr
+                                                className={`group cursor-pointer ${
+                                                    task.counselState === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
+                                                } `}
+                                                key={task.subjectQuestionPostId}
+                                            >
+                                                <td className="w-1">
+                                                <input
+                                                   type="checkbox"
+                                                   id={`chk-${task.subjectQuestionPostId}`}
+                                                   className={`form-checkbox ${
+                                                        task.isAnswered === 1 ? 'checked:bg-blue-700' : (task.counselState === 2 ? 'checked:bg-red-700' : '')
+                                                    }`}
+                                                   defaultChecked={task.isAnswered == 1}
+                                                   disabled={true}
+                                                />
+                                                </td>
+                                                <td>
+                                                    <div onClick={() => viewTask(task)}>
+                                                        <div
+                                                            className={`group-hover:text-primary font-semibold text-base whitespace-nowrap ${task.counselState}`}
+                                                            dangerouslySetInnerHTML={{ __html: processContent(task.questionContent) }}
+                                                        >
                                                         </div>
-                                                    </td>
-                                                    <td className="w-1">
+                                                    </div>
+                                                </td>
+                                                <td className="w-full">
                                                     {task.schedule && (
-                                                            <p className={`whitespace-nowrap text-white-dark font-medium`}>상담 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일</p>
+                                                        <p className="whitespace-nowrap text-white-dark font-medium">
+                                                            질문 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
+                                                        </p>
                                                     )}
-                                                    </td>
-                                                    <td className="w-1">
-                                                        <div className="flex items-center justify-between w-max ltr:ml-auto rtl:mr-auto">
+                                                </td>
+                                                <td className="w-full">
+                                                    <div className="flex items-center justify-between w-full">
+                                                        <div className="flex items-center">
                                                             <div className="ltr:mr-2.5 rtl:ml-2.5 flex-shrink-0">
-                                                                {task.path && (
+                                                                {task.path ? (
                                                                     <div>
-                                                                        <img src={`/assets/images/${task.path}`} className="h-8 w-8 rounded-full object-cover" alt="avatar" />
+                                                                        <img
+                                                                            src={`/assets/images/${task.path}`}
+                                                                            className="h-8 w-8 rounded-full object-cover"
+                                                                            alt="avatar"
+                                                                        />
                                                                     </div>
-                                                                )}
-                                                                {!task.path && task.teacherId ? (
+                                                                ) : task.teacherId ? (
                                                                     <div className="grid place-content-center h-8 w-8 rounded-full bg-primary text-white text-sm font-semibold">
                                                                         {task.teacherId.charAt(0) + '' + task.teacherId.charAt(task.teacherId.indexOf(' ') + 1)}
                                                                     </div>
                                                                 ) : (
-                                                                    ''
-                                                                )}
-                                                                {!task.path && !task.teacherId ? (
                                                                     <div className="border border-gray-300 dark:border-gray-800 rounded-full grid place-content-center h-8 w-8">
                                                                         <IconUser className="w-4.5 h-4.5" />
                                                                     </div>
-                                                                ) : (
-                                                                    ''
                                                                 )}
                                                             </div>
-                                                            <div className="dropdown">
-                                                                <Dropdown
-                                                                    offset={[0, 5]}
-                                                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                                                    btnClassName="align-middle"
-                                                                    button={<IconHorizontalDots className="rotate-90 opacity-70" />}
-                                                                >
-                                                                    <ul className="whitespace-nowrap">
-                                                                        {selectedTab !== 'trash' && (
-                                                                            <>
-                                                                                <li>
-                                                                                    <button type="button" onClick={() => addEditTask(task.counselId)}>
-                                                                                        <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                                        수정
-                                                                                    </button>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <button type="button" onClick={() => deleteTask(task.counselId)}>
-                                                                                        <IconTrashLines className="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                                        삭제
-                                                                                    </button>
-                                                                                </li>
-                                                                            </>
-                                                                        )}
-                                                                    </ul>
-                                                                </Dropdown>
-                                                            </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="flex justify-end space-x-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => addEditTask(task)}
+                                                            className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-blue-600 text-blue-600 rounded hover:bg-blue-100"
+                                                        >
+                                                            <IconPencilPaper className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                            <span className="!no-underline">수정</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => deleteTask(task)}
+                                                            className="flex items-center justify-center px-4 py-2 min-w-[90px] border border-red-600 text-red-600 rounded hover:bg-red-100"
+                                                        >
+                                                            <IconTrashLines className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
+                                                            <span className="!no-underline">삭제</span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                 </table>
                             </div>
                         ) : (
-                            <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">상담이 없습니다.</div>
+                            <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">
+                                질문이 없습니다.
+                            </div>
                         )}
                     </div>
                 </div>
@@ -348,45 +394,32 @@ const StudentQuestion = () => {
                                             <IconX />
                                         </button>
                                         <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                            {params.id ? '상담 수정' : '상담 신청'}
+                                            {params.subjectQuestionPostId ? '질문 수정' : '질문 신청'}
                                         </div>
                                         <div className="p-5">
                                             <div className="mb-5">
-                                                <label htmlFor="title">제목</label>
-                                                <input id="title" type="text" placeholder="상담 제목을 입력해 주세요." className="form-input" value={params.title} onChange={(e) => changeValue(e)}/>
-                                            </div>
-                                            <div className="mb-5">
-                                                <label htmlFor="assignee">대상</label>
-                                                <select className="form-select" value={teacherId} onChange={(e) => handleTeacherId(e)}>
-                                                {teacherList.length > 0 ? (
-                                                    teacherList.map((teacher) => (
-                                                        <option key={teacher.userId} value={teacher.userId}>
-                                                            {teacher.name}
-                                                        </option>
-                                                    ))
-                                                ) : (
-                                                <option>상담 가능한 선생님이 없습니다.</option>
-                                                )}
-                                                </select>
-                                            </div>
-                                            <div className="mb-5 flex justify-between gap-4">
-                                                <div className="flex-1">
-                                                    <label htmlFor="tag">상담일자</label>
-                                                    <DatePicker
-                                                        selected={selectedDate}
-                                                        onChange={(date : any) => setSelectedDate(date)}
-                                                        dateFormat="yyyy/MM/dd"
-                                                        placeholderText="날짜를 선택하세요"
-                                                        className="form-input"/>
-                                                </div>
+                                                <label htmlFor="category">질문 내용</label>
+                                                <ReactQuill
+                                                    theme="snow"
+                                                    value={params.questionContent || ''}
+                                                    defaultValue={params.questionContent || ''}
+                                                    onChange={(content, delta, source, editor) => {
+                                                        params.questionContent = content;
+                                                        params.displayDescription = editor.getText();
+                                                        setParams({
+                                                            ...params,
+                                                        });
+                                                    }}
+                                                    style={{ minHeight: '250px' }}
+                                                />
                                             </div>
                                             <div className="ltr:text-right rtl:text-left flex justify-end items-center mt-8">
                                                 <button type="button" className="btn btn-outline-danger" onClick={() => setAddTaskModal(false)}>
                                                     취소
                                                 </button>
-                                                {/* <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
-                                                    {params.id ? '저장' : '저장'}
-                                                </button> */}
+                                                <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4" onClick={() => tryRegisterCounsel()}>
+                                                    {params.subjectQuestionPostId ? '수정' : '저장'}
+                                                </button>
                                             </div>
                                         </div>
                                     </Dialog.Panel>
@@ -430,43 +463,41 @@ const StudentQuestion = () => {
                                             <IconX />
                                         </button>
                                         <div className="flex items-center flex-wrap gap-2 text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">   
-                                            <div>상담 세부 내용</div>
+                                            <div>질문 세부 내용</div>
                                         </div>
                                         <div className="p-5">
                                             <div className="p-5">
                                                 <div className="mb-5">
-                                                    <label htmlFor="title">제목</label>
-                                                    <p id="title" className="form-input">{selectedTask.category}</p>
+                                                    <label htmlFor="category">질문 내용</label>
+                                                    <p id="category" className="form-input" dangerouslySetInnerHTML={{ __html: selectedTask.questionContent }} />
                                                 </div>
                                                 <div className="mb-5">
-                                                    <label htmlFor="assignee">대상</label>
-                                                    <p id="title" className="form-input">{teacherName} 선생님</p>
-                                                </div>
-                                                <div className="mb-5 flex justify-between gap-4">
-                                                    <div className="flex-1">
-                                                        <label htmlFor="tag">상담일자</label>
-                                                        {selectedTask.schedule && (
-                                                            <p id="title" className="form-input">{selectedTask.schedule[0]}년 {selectedTask.schedule[1]}월 {selectedTask.schedule[2]}일</p>
-                                                        )}
-                                                    </div>
+                                                <label htmlFor="category">답변 내용</label>
+                                                    {selectedTask.answerContent ? (
+                                                        <p id="category" className="form-input" dangerouslySetInnerHTML={{ __html: selectedTask.answerContent }} />
+                                                    ) : (
+                                                        <p id="category" className="form-input">아직 답변하지 않았습니다.</p>
+                                                    )}
                                                 </div>
                                                 <div className="mb-5">
-                                                    <label htmlFor="assigned">승인 여부</label>
-                                                    {selectedTask.counselState == 0 ? ( 
-                                                        <p id="title" className="form-input">신청 중</p>
+                                                    <label htmlFor="assigned">답변 여부</label>
+                                                    {selectedTask.isAnswered == 0 ? ( 
+                                                        <p id="category" className="form-input">답변 대기</p>
                                                     ) : (<></>
                                                     )}
-                                                    {selectedTask.counselState == 1 ? ( 
-                                                        <p id="title" className="form-input">승인</p>
-                                                    ) : (<></>
-                                                    )}
-                                                    {selectedTask.counselState == 2 ? ( 
-                                                        <p id="title" className="form-input">반려</p>
+                                                    {selectedTask.isAnswered == 1 ? ( 
+                                                        <p id="category" className="form-input">답변 완료</p>
                                                     ) : (<></>
                                                     )}
                                                 </div>
+                                                {selectedTask.isAnswered == 1 ? ( 
+                                                       <div className="mb-2">
+                                                       <label htmlFor="assigned">답변 선생님</label>
+                                                       <p id="category" className="form-input">{selectedTask.answerer.userName} 선생님</p>
+                                                       </div>
+                                                    ) : (<></>
+                                                )}
                                             </div>
-                                            <div className="text-base prose" dangerouslySetInnerHTML={{ __html: selectedTask.description }}></div>
                                             <div className="flex justify-end items-center mt-8">
                                                 <button type="button" className="btn btn-outline-danger" onClick={() => setViewTaskModal(false)}>
                                                     Close
