@@ -367,10 +367,36 @@ const Sidebar = () => {
                             </div>}
                             {accountTypes == "ROLE_ADMIN" && <div>
 
-                            <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                                <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
                                     <IconMinus className="w-4 h-5 flex-none hidden" />
                                     <span>{t('어드민')}</span>
                                 </h2>
+
+                                <li className="nav-item">
+                                    <NavLink to="/admin/home" className="group">
+                                        <div className="flex items-center">
+                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학교 관리')}</span>
+                                        </div>
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item">
+                                    <NavLink to="/admin/notice" className="group">
+                                        <div className="flex items-center">
+                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('공지 사항')}</span>
+                                        </div>
+                                    </NavLink>
+                                </li>
+
+                                <li className="nav-item">
+                                    <NavLink to="/admin/invoice/list" className="group">
+                                        <div className="flex items-center">
+                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('결제 관리')}</span>
+                                        </div>
+                                    </NavLink>
+                                </li>
 
                                 <li className="menu nav-item">
                                     <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>

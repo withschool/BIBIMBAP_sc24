@@ -34,6 +34,11 @@ import IconGithub from '../../components/Icon/IconGithub';
 
 import { getSchoolInfo } from '../../service/school';
 
+import { useSelector } from 'react-redux';
+import { setSchoolName } from '../../store/schoolSlice';
+import { IRootState } from '../../store';
+
+
 
 const ManageSchool = () => {
 
@@ -138,7 +143,7 @@ const ManageSchool = () => {
         newVariable = window.navigator;
 
         if (type === 'csv') {
-            let coldelimiter = ';';
+            let coldelimiter = ',';
             let linedelimiter = '\n';
             let result = columns
                 .map((d: any) => {
@@ -160,6 +165,9 @@ const ManageSchool = () => {
             });
 
             if (result == null) return;
+            const BOM = '\uFEFF'; // Byte Order Mark for UTF-8
+            result = BOM + result; // Add BOM to the beginning of the result string
+
             if (!result.match(/^data:text\/csv/i) && !newVariable.msSaveOrOpenBlob) {
                 var data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(result);
                 var link = document.createElement('a');
@@ -167,7 +175,7 @@ const ManageSchool = () => {
                 link.setAttribute('download', filename + '.csv');
                 link.click();
             } else {
-                var blob = new Blob([result]);
+                var blob = new Blob([result], { type: 'text/csv;charset=utf-8;' });
                 if (newVariable.msSaveOrOpenBlob) {
                     newVariable.msSaveBlob(blob, filename + '.csv');
                 }
@@ -257,8 +265,23 @@ const ManageSchool = () => {
                 // Optionally, you can refresh the user list after upload
                 const data = await getSchoolUsers();
                 setInitialRecords(sortBy(data, 'userName'));
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error uploading file:', error);
+                let errorMessage = '파일 업로드 중 오류가 발생했습니다.';
+                if (error.message.includes('too many user input')) {
+                    errorMessage = '플랜 한도를 초과한 유저 수 입니다.';
+                } else if (error.message.includes('CSV file got error when reading')) {
+                    errorMessage = 'CSV 파일을 읽는 중 오류가 발생했습니다.';
+                } else if (error.message.includes('not defined usertype')) {
+                    errorMessage = '정의되지 않은 사용자 유형입니다.';
+                } else if (error.message.includes("can't find school information")) {
+                    errorMessage = '학교 정보를 찾을 수 없습니다.';
+                } else if (error.message.includes("can't find class information")) {
+                    errorMessage = '반 정보를 찾을 수 없습니다.';
+                } else if (error.message.includes("can't find subjectInfo")) {
+                    errorMessage = '과목 정보를 찾을 수 없습니다.';
+                }
+                alert(errorMessage);
             }
         }
     };
@@ -392,21 +415,58 @@ const ManageSchool = () => {
         }
     };
 
-    const [schoolName, setSchoolName] = useState('');
+
+    //SCHUL_KND_SC_NM
 
     useEffect(() => {
         const fetchSchoolInfo = async () => {
             try {
                 const data = await getSchoolInfo('');
-                setSchoolName(data.SCHUL_NM);
+                dispatch(setSchoolName(data.SCHUL_NM));
+                setServiceType(data.serviceType);
+
+                // Set the number of grades based on school type
+                if (data.SCHUL_KND_SC_NM === '초등학교') {
+                    setNumGrades(6);
+                } else {
+                    setNumGrades(3); // Default to 3 grades for other school types
+                }
             } catch (error) {
                 console.error('학교 이름 안나오는 중', error);
             }
         };
         fetchSchoolInfo();
-    }, []);
+    }, [dispatch]);
+
+    const [totalRecords, setTotalRecords] = useState(0);
+
+    useEffect(() => {
+        setTotalRecords(initialRecords.length);
+    }, [initialRecords]);
+
+    const [serviceType, setServiceType] = useState<number>(0);
+
+    useEffect(() => {
+        dispatch(setPageTitle('학교 관리'));
+    }, [dispatch]);
 
 
+    const getTotalRecordsText = () => {
+        switch (serviceType) {
+            case 0:
+                return '300';
+            case 1:
+                return '700';
+            case 2:
+                return '∞';
+            case 9:
+                return '체험판을 이용중이오니 결제를 진행해 주세요.';
+            default:
+                return '';
+        }
+    };
+
+    const [numGrades, setNumGrades] = useState(3); // Default to 3 grades
 
     return (
         <div>
@@ -416,17 +476,14 @@ const ManageSchool = () => {
                         <div className="flex md:items-center justify-between md:flex-row flex-col mb-4.5 gap-5">
                             <div className="flex items-center flex-wrap">
 
-                                <h5 className="font-semibold text-lg dark:text-white-light">{schoolName}</h5>
-
-
                                 <button type="button" onClick={() => exportTable('csv')} className="btn btn-primary btn-sm m-1 ">
                                     <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
                                     CSV 출력
                                 </button>
-                                <button type="button" onClick={() => exportTable('txt')} className="btn btn-primary btn-sm m-1">
+                                {/* <button type="button" onClick={() => exportTable('txt')} className="btn btn-primary btn-sm m-1">
                                     <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
                                     TXT 출력
-                                </button>
+                                </button> */}
 
                                 <button type="button" className="btn btn-primary btn-sm m-1" onClick={handleDownloadExcel}>
                                     <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
@@ -438,6 +495,10 @@ const ManageSchool = () => {
                                     PRINT 하기
                                 </button>
                             </div>
+
+                            <h5 className="font-semibold text-lg dark:text-white-light">
+                                {serviceType === 9 ? getTotalRecordsText() : `전체 유저 목록 [${totalRecords}/${getTotalRecordsText()}]`}
+                            </h5>
                             <div className="flex items-center space-x-2">
                                 <input type="text" className="form-input w-auto" placeholder="검색하기" value={search} onChange={(e) => setSearch(e.target.value)} />
                                 <input
@@ -469,7 +530,7 @@ const ManageSchool = () => {
                                     { accessor: 'name', title: '유저 이름', sortable: true },
                                     { accessor: 'userCode', title: '유저 코드', sortable: true },
                                 ]}
-                                totalRecords={initialRecords.length}
+                                totalRecords={totalRecords}
                                 recordsPerPage={pageSize}
                                 page={page}
                                 onPageChange={(p) => setPage(p)}
@@ -555,7 +616,7 @@ const ManageSchool = () => {
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
-                                {[1, 2, 3].map((grade) => (
+                                {Array.from({ length: numGrades }, (_, i) => i + 1).map((grade) => (
                                     <div key={grade} className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
                                         <button
                                             type="button"
@@ -587,7 +648,6 @@ const ManageSchool = () => {
                                                         ) : (
                                                             <li>반 정보가 없습니다.</li>
                                                         )}
-
                                                     </ul>
                                                 </div>
                                             </AnimateHeight>
@@ -674,7 +734,7 @@ const ManageSchool = () => {
                         </div>
                         <div className="mb-5">
                             <div className="space-y-2 font-semibold">
-                                {[1, 2, 3].map((grade) => (
+                                {Array.from({ length: numGrades }, (_, i) => i + 1).map((grade) => (
                                     <div key={grade} className="border border-[#d3d3d3] rounded dark:border-[#1b2e4b]">
                                         <button
                                             type="button"
