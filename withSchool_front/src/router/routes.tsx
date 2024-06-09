@@ -20,7 +20,7 @@ const AdminNo = lazy(() => import('../pages/Admin/AdminNotice'));
 const InvoiceList = lazy(() => import('../pages/Admin/InvoiceList'));
 const InvoiceAdd = lazy(() => import('../pages/Admin/InvoiceAdd'));
 const SelectPlan = lazy(() => import('../pages/Admin/SelectPlan'));
-
+const CommunityAdmin = lazy(() => import('../pages/Admin/CommunityAdmin'));
 
 
 //Teacher
@@ -38,6 +38,7 @@ const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
 const Homework = lazy(() => import('../pages/Teacher/Homework'));
 const Score = lazy(() => import('../pages/Teacher/Score'));
 const ScoreClass = lazy(() => import('../pages/Teacher/ScoreClass'));
+const Answer = lazy(() => import('../pages/Teacher/Answer'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
@@ -57,6 +58,7 @@ const Assignment = lazy(() => import('../pages/Student/Assignment'));
 const LectureNoteStudent = lazy(() => import('../pages/Student/LectureNoteStudent'));
 const InvoicePreview = lazy(() => import('../pages/Admin/InvoicePreview'));
 const CheckGrade = lazy(() => import('../pages/Student/CheckGrade'));
+const Community = lazy(() => import('../pages/Student/Community'));
 
 //Components
 const Tabs = lazy(() => import('../pages/Components/Tabs'));
@@ -199,6 +201,10 @@ const routes = [
         path: '/users/user-account-settings',
         element: <AccountSetting />,
     },
+    {
+        path: '/teacher/subject/qna',
+        element: <Answer />,
+    },
 
 
     //Student
@@ -225,6 +231,10 @@ const routes = [
     {
         path: '/student/counsel',
         element: <Counsel />,
+    },
+    {
+        path: '/student/community',
+        element: <Community />,
     },
 
     {
@@ -298,6 +308,11 @@ const routes = [
     {
         path: '/admin/invoice/plan',
         element: <SelectPlan />,
+    },
+
+    {
+        path: '/admin/community',
+        element: <Community />,
     },
 
 
