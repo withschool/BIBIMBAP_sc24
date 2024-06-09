@@ -305,7 +305,7 @@ public class SubjectHomeworkService {
         return "Homework update successfully.";
     }
     public void deleteSubmit(Long homeworkSubmitId) {
-        this.deleteFileById(homeworkSubmitId);
+        this.deleteSubmitFileById(homeworkSubmitId);
         subjectHomeworkSubmitRepository.deleteById(homeworkSubmitId);
     }
     public void deleteSubmitFileById(Long homeworkSubmitId){
