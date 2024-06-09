@@ -10,53 +10,22 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconMail from '../../components/Icon/IconMail';
-import IconStar from '../../components/Icon/IconStar';
-import IconSend from '../../components/Icon/IconSend';
-import IconInfoHexagon from '../../components/Icon/IconInfoHexagon';
-import IconFile from '../../components/Icon/IconFile';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconCaretDown from '../../components/Icon/IconCaretDown';
-import IconArchive from '../../components/Icon/IconArchive';
-import IconBookmark from '../../components/Icon/IconBookmark';
-import IconVideo from '../../components/Icon/IconVideo';
-import IconChartSquare from '../../components/Icon/IconChartSquare';
-import IconUserPlus from '../../components/Icon/IconUserPlus';
-import IconPlus from '../../components/Icon/IconPlus';
-import IconRefresh from '../../components/Icon/IconRefresh';
-import IconWheel from '../../components/Icon/IconWheel';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-import IconOpenBook from '../../components/Icon/IconOpenBook';
-import IconBook from '../../components/Icon/IconBook';
-import IconTrash from '../../components/Icon/IconTrash';
-import IconRestore from '../../components/Icon/IconRestore';
-import { teacherNotice, getClassNotices, classNoticeEdit, deleteClassNotice, getClassNoticeDetail } from '../../service/form';
 import { getHomeworkList, makeHomework } from '../../service/wow';
 import { deleteHomework, editHomework } from '../../service/wow';
+import { isSumbitHomework, makeSubmitHomework, editSubmitHomework, deleteSubmitHomework } from '../../service/wow';
 import IconMenu from '../../components/Icon/IconMenu';
-import IconSearch from '../../components/Icon/IconSearch';
-import IconSettings from '../../components/Icon/IconSettings';
-import IconHelpCircle from '../../components/Icon/IconHelpCircle';
-import IconUser from '../../components/Icon/IconUser';
-import IconMessage2 from '../../components/Icon/IconMessage2';
-import IconUsers from '../../components/Icon/IconUsers';
-import IconTag from '../../components/Icon/IconTag';
 import IconPaperclip from '../../components/Icon/IconPaperclip';
 import IconArrowLeft from '../../components/Icon/IconArrowLeft';
-import IconPrinter from '../../components/Icon/IconPrinter';
-import IconArrowBackward from '../../components/Icon/IconArrowBackward';
-import IconArrowForward from '../../components/Icon/IconArrowForward';
 import IconGallery from '../../components/Icon/IconGallery';
 import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
-import { deleteAdminNotice } from '../../service/form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 
-const Homework = () => {
+const HomeworkStudent = () => {
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -103,6 +72,22 @@ const Homework = () => {
     }, [selectedTab, searchText, mailList]);
 
     const subjectId = localStorage.getItem('targetSubject');
+
+    const [submitHomeworkId, setSubmitHomeworkId] = useState();
+
+    const fetchSubmitHomeworkId = async () => {
+        try{
+            const num = await isSumbitHomework(selectedMail.id);
+            setSubmitHomeworkId(num);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+    
+    useEffect(() => {
+        fetchSubmitHomeworkId()
+    }, [selectedMail]);
 
     const fetchNotices = async () => {
         try {
@@ -254,20 +239,6 @@ const Homework = () => {
     const [isLoading, setIsLoading] = useState(false);
     
     const saveNotice = async (type: any, id: any) => {
-        if (!params.title) {
-            showMessage('제목을 작성해 주세요.', 'error');
-            return false;
-        }
-
-        if(!selectedDate ) {
-            showMessage('마감일자를 지정해주세요.', 'error');
-            return false;
-        }
-
-        if(selectedDate < new Date()){
-            showMessage('마감일자를 내일 이후로 지정해주세요.', 'error');
-            return false;
-        }
 
         let maxId = 0;
         if (!params.id) {
@@ -300,8 +271,7 @@ const Homework = () => {
         } else if (type === 'send' || type === 'reply' || type === 'forward') {
             try {
                 const formData = new FormData();
-                formData.append("id", subjectId !== null ? subjectId : 'mindong');
-                formData.append("title", params.title);
+                formData.append("homeworkId", selectedMail.id);
                 formData.append("content", params.description);
                 if (selectedFiles) {
                     Array.from(selectedFiles).forEach(file => {
@@ -309,11 +279,10 @@ const Homework = () => {
                         formData.append("files", file);
                     });
                 }
-                formData.append("due", format(selectedDate, "yyyy-MM-dd")+"T00:00:00")
                 setSelectedFiles(null);
                 setSelectedDate('');   
                 if(edit){
-                    const response = await editHomework(formData, id);
+                    const response = await editSubmitHomework(formData, id);
                     obj.type = 'sent_notice';
                     setMailList((prevMailList) => {
                         const newMailList = [obj, ...prevMailList];
@@ -325,14 +294,14 @@ const Homework = () => {
                     await fetchNotices();
                 }
                 else{
-                    const response = await makeHomework(formData);
+                    const response = await makeSubmitHomework(formData);
                     obj.type = 'sent_notice';
                     setMailList((prevMailList) => {
                         const newMailList = [obj, ...prevMailList];
                         return newMailList;
                     });
                     setIsLoading(false);
-                    showMessage('과제가 성공적으로 작성되었습니다.');
+                    showMessage('과제가 성공적으로 제출되었습니다.');
                     await fetchNotices();
                 }
 
@@ -346,7 +315,7 @@ const Homework = () => {
     };
 
     const deleteNotice = async (id: any) => {
-        await deleteHomework(id);
+        await deleteSubmitHomework(id);
         showMessage('과제가 성공적으로 삭제되었습니다.');
         searchMails();
         fetchNotices();
@@ -432,73 +401,18 @@ const Homework = () => {
                     className={`overlay bg-black/60 z-[5] w-full h-full rounded-md absolute hidden ${isShowMailMenu ? '!block xl:!hidden' : ''}`}
                     onClick={() => setIsShowMailMenu(!isShowMailMenu)}
                 ></div>
-                <div
-                    className={`panel xl:block p-4 dark:gray-50 w-[250px] max-w-full flex-none space-y-3 xl:relative absolute z-10 xl:h-auto h-full hidden ltr:xl:rounded-r-md ltr:rounded-r-none rtl:xl:rounded-l-md rtl:rounded-l-none overflow-hidden ${isShowMailMenu ? '!block' : ''
-                        }`}
-                >
-                    <div className="flex flex-col h-full pb-16">
-                        <div className="pb-5">
+                {/* <div className="pb-5">
                             <button className="btn btn-primary w-full" type="button" onClick={() => openMail('add', null)}>
                                 과제 작성하기
                             </button>
-                        </div>
-                        <PerfectScrollbar className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
-                            <div className="space-y-1">
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'inbox' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('inbox');
-                                        tabChanged('inbox');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconMail className="w-5 h-5 shrink-0" />
-                                        <div className="ltr:ml-3 rtl:mr-3">과제 목록</div>
-                                    </div>
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'list' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('list');
-                                        tabChanged('list');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconMail className="w-5 h-5 shrink-0" />
-                                        <div className="ltr:ml-3 rtl:mr-3">과제 조회</div>
-                                    </div>
-                                </button>
-                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                            </div>
-                        </PerfectScrollbar>
-                        
-                    </div>
-                </div>
-
+                        </div> */}
                 <div className="panel p-0 flex-1 overflow-x-hidden h-full">
                     {!selectedMail && !isEdit && (
                         <div className="flex flex-col h-full">
                             <div className="flex justify-between items-center flex-wrap-reverse gap-4 p-4">
                                 <div className="flex items-center sm:w-auto w-full">
-                                    <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
-                                        <IconMenu />
-                                    </button>
                                     <div className="relative group">
-                                        <input
-                                            type="text"
-                                            className="form-input ltr:pr-8 rtl:pl-8 peer"
-                                            placeholder="과제 검색하기"
-                                            value={searchText}
-                                            onChange={(e) => setSearchText(e.target.value)}
-                                            onKeyUp={() => searchMails()}
-                                        />
-                                        <div className="absolute ltr:right-[11px] rtl:left-[11px] top-1/2 -translate-y-1/2 peer-focus:text-primary">
-                                            <IconSearch />
-                                        </div>
+                                        <h5 className="font-bold text-lg ltr:pr-8 rtl:pl-8 pl-3 peer">과제 목록</h5>
                                     </div>
                                 </div>
                             </div>
@@ -581,21 +495,6 @@ const Homework = () => {
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div>
-                                        <div className="flex items-center justify-center space-x-3 rtl:space-x-reverse">                                     
-                                            <Tippy content="수정">
-                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1 mr-1" onClick={() => openMail('reply', selectedMail)}>
-                                                <IconPlus className="rtl:hidden" />
-                                            </button>
-                                            </Tippy>
-                                            <Tippy content="삭제">
-                                            <button type="button" className="hover:text-info border border-gray-300 rounded-md p-1" onClick={() => deleteNotice(selectedMail.id)}>
-                                                <IconTrash/>
-                                            </button>
-                                            </Tippy>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div
@@ -635,6 +534,44 @@ const Homework = () => {
                                         </div>
                                     </div>
                                 )}
+                                 <div className="mt-4">
+                                        <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                        <div className="flex items-center flex-wrap mt-6">
+                                        <div className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 pl-4 border border-white-light dark:border-[#1b2e4b] rounded-md">
+                                            제출상태 : {submitHomeworkId ?  <p className="px-4 py-2.5 text-primary">제출</p> :  <p className="px-4 py-2.5 text-warning">미제출</p>}
+                                        </div>
+                                        <div className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 pl-4 border border-white-light dark:border-[#1b2e4b] rounded-md">
+                                        {submitHomeworkId ? (
+                                            <button
+                                                type="button"
+                                                className="py-2.5 font-semibold rounded-md mr-4"
+                                                onClick={()=>openMail('reply', submitHomeworkId)}
+                                            >
+                                                수정하기
+                                            </button>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                className="py-2.5 font-semibold rounded-md mr-4"
+                                                onClick={()=>openMail('add', null)}
+                                            >
+                                                제출하기
+                                            </button>
+                                        )}
+                                        </div>
+                                        {submitHomeworkId !=0 && (
+                                            <div className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md">
+                                                <button
+                                                    type="button"
+                                                    className="px-4 py-2.5 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition-all duration-300"
+                                                    onClick={() => deleteNotice(submitHomeworkId)}
+                                                >
+                                                    삭제
+                                                </button>
+                                            </div>
+                                        )}
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                     )}
@@ -650,17 +587,10 @@ const Homework = () => {
                         ) : (
                             <div className="relative">
                                 <div className="py-4 px-6 flex items-center">
-                                    <button type="button" className="xl:hidden hover:text-primary block ltr:mr-3 rtl:ml-3" onClick={() => setIsShowMailMenu(!isShowMailMenu)}>
-                                        <IconMenu />
-                                    </button>
-                                    <h4 className="text-lg text-gray-600 dark:text-gray-400 font-medium">{edit ? '과제 수정하기' : '과제 작성하기'}</h4>
+                                    <h4 className="text-lg text-gray-600 dark:text-gray-400 font-medium">{edit ? '과제 수정하기' : '과제 제출하기'}</h4>
                                 </div>
                                 <div className="h-px bg-gradient-to-l from-indigo-900/20 via-black dark:via-white to-indigo-900/20 opacity-[0.1]"></div>
                                 <form className="p-6 grid gap-6">
-                                    <div>
-                                        <input id="title" type="text" className="form-input" placeholder="제목" defaultValue={params.title} onChange={(e) => changeValue(e)} />
-                                    </div>
-
                                     <div className="h-fit">
                                         <ReactQuill
                                             theme="snow"
@@ -688,23 +618,12 @@ const Homework = () => {
                                             onChange={(e) => setSelectedFiles(e.target.files)}
                                         />
                                     </div>
-                                    <div className="mb-5 flex justify-between gap-4">
-                                        <div className="flex-3">
-                                            <label htmlFor="tag">마감일자</label>
-                                            <DatePicker
-                                                selected={selectedDate}
-                                                onChange={(date : any) => setSelectedDate(date)}
-                                                dateFormat="yyyy-MM-dd"
-                                                placeholderText="날짜를 선택하세요"
-                                                className="form-input"/>
-                                        </div>
-                                    </div>
                                     <div className="flex items-center ltr:ml-auto rtl:mr-auto mt-8">
                                         <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
                                             취소
                                         </button>
-                                        <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', params.id)}>
-                                            {edit ? '과제 수정' : '과제 작성'}
+                                        <button type="button" className="btn btn-primary" onClick={() => saveNotice('send', submitHomeworkId)}>
+                                            {edit ? '과제 수정' : '과제 제출'}
                                         </button>
                                     </div>
                                 </form>
@@ -717,4 +636,4 @@ const Homework = () => {
     );
 };
 
-export default Homework;
+export default HomeworkStudent;

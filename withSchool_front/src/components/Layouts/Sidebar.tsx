@@ -218,9 +218,9 @@ const Sidebar = () => {
                                                     <li>
                                                         <NavLink to="/student/grade">{t('성적')}</NavLink>
                                                     </li>
-                                                    {/* <li>
-                                                        <NavLink to="/student/subject/choose">{t('과목 선택')}</NavLink>
-                                                    </li> */}
+                                                    <li>
+                                                        <NavLink to="/student/homework">{t('과제')}</NavLink>
+                                                    </li>
                                                 </ul>
                                             </AnimateHeight>
                                         </li>

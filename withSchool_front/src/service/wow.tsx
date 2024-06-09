@@ -34,7 +34,7 @@ export const makeHomework = async (formData: FormData): Promise<any> => {
         });
 
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -100,7 +100,7 @@ export const makeSubmitHomework = async (formData: FormData): Promise<any> => {
         });
 
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
@@ -160,12 +160,34 @@ export const getSubmitHomeworkList = async (homeworkId : string): Promise<any> =
         const response = await fetch(`${url}/subjects/students/submit-homeworks/list/${homeworkId}`, {
             method: 'GET',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
         });
 
         if (response.ok) {
             const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const isSumbitHomework = async (homeworkId : string): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects/students/homeworks/${homeworkId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();
