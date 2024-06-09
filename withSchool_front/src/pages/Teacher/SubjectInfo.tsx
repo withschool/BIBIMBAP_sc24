@@ -45,7 +45,7 @@ const SubjectInfo = () => {
                 const data = await getSubjectList();
                 setSubjectList(data);
                 console.log(data[0].subjectId);
-                setTargetSubject(data[0].subjectId);
+                setTargetSubject(localStorage.getItem("targetSubject") || '');
             } catch (error) {
                 console.error('Error fetching subject list:', error);
             }

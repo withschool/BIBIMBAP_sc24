@@ -225,7 +225,7 @@ const TeacherSubjectNotice = () => {
                     searchMails(false);
                 } else if (type === 'delete') {
                     try {
-                        await deleteAdminNotice(item.id);
+                        await deleteSubjectNotice(item.id);
                         setMailList((prevMailList) => prevMailList.filter((d: any) => d.id !== item.id));
                         showMessage(`${totalSelected} 공지가 영구적으로 삭제되었습니다.`);
                     } catch (error) {
