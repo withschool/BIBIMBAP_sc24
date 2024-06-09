@@ -183,7 +183,11 @@ const CommunityAdmin = () => {
     }, [page]);
 
     const handleAddComment = async () => {
-        const res = await makeReplyCommunity(post.postId, newComment);
+        if(newComment != null){
+            console.log("댓글:"+newComment);
+            const res = await makeReplyCommunity(post.postId, newComment);
+        }
+        else alert("댓글을 입력하세요.");
         setNewComment('');
         fetchCommentList();
         fetchPostList();
@@ -669,12 +673,18 @@ const CommunityAdmin = () => {
                                             )}
                                         </div>
                                         <div>
-                                            <label htmlFor="new-comment" className="block mb-2">댓글 작성</label>
-                                            <ReactQuill value={newComment} onChange={setNewComment} className="bg-white" style={{ height: '100px' }} />
-                                            <button onClick={handleAddComment} className="mt-14 btn btn-primary">댓글 달기</button>
+                                        <label htmlFor="new-comment" className="block mb-2">댓글 작성</label>
+                                            <input
+                                                type="text"
+                                                value={newComment}
+                                                onChange={(e) => setNewComment(e.target.value)}
+                                                className="bg-white p-2 border border-gray-300 rounded"
+                                                style={{ height: '100px', width: '100%' }}
+                                            />
+                                            <button onClick={handleAddComment} className="mt-5 btn btn-primary">댓글 달기</button>
                                         </div>
                                     </div>
-                                            <div className="flex justify-end items-center mt-8">
+                                            <div className="flex justify-end items-center mt-2">
                                                 <button type="button" className="btn btn-outline-danger" onClick={() => setViewTaskModal(false)}>
                                                     Close
                                                 </button>
