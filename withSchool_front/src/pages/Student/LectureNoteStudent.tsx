@@ -263,39 +263,39 @@ useEffect(() => {
                                                 </div>
                                                 <div className="absolute bottom-5 left-0 w-full px-5">
                                                 <div className="flex items-center justify-between mt-2">
-                                                    {note.filesURl && (
-                                                        <div className="mt-5">
-                                                            <br/>
-                                                            <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
-                                                            <div className="flex items-center flex-wrap mt-6">
-                                                                {note.filesURl.map((attachment: any, i: number) => {
-                                                                    <p>hi</p>
-                                                                    return (
-                                                                        <a 
-                                                                            href={attachment}
-                                                                            key={i}
-                                                                            type="button"
-                                                                            className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
-                                                                        >
-                                                                            {attachment.type === 'image' && <IconGallery />}
-                                                                            {attachment.type === 'folder' && <IconFolder />}
-                                                                            {attachment.type === 'zip' && <IconZipFile />}
-                                                                            {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+                                                   {note.filesURl && (
+                                                            <div className="mt-5">
+                                                                <br />
+                                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                                <div className="flex items-center flex-wrap mt-6">
+                                                                    {note.filesURl.map((attachment: any, i: number) => {
+                                                                        <p>hi</p>;
+                                                                        return (
+                                                                            <a
+                                                                                href={attachment}
+                                                                                key={i}
+                                                                                type="button"
+                                                                                className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                            >
+                                                                                {attachment.type === 'image' && <IconGallery />}
+                                                                                {attachment.type === 'folder' && <IconFolder />}
+                                                                                {attachment.type === 'zip' && <IconZipFile />}
+                                                                                {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
 
-                                                                            <div className="ltr:ml-3 rtl:mr-3">
-                                                                                <p className="text-xs text-primary font-semibold">{note.originalName}</p>
-                                                                                <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
-                                                                            </div>
-                                                                            <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
-                                                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
-                                                                                <IconDownload className="w-4.5 h-4.5" />
-                                                                            </div>
-                                                                        </a>
-                                                                    );
-                                                                })}
+                                                                                <div className="ltr:ml-3 rtl:mr-3">
+                                                                                <p className="text-xs text-primary font-semibold truncate max-w-24">{note.originalName}</p>
+                                                                                    <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                                </div>
+                                                                                <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                                    <IconDownload className="w-4.5 h-4.5" />
+                                                                                </div>
+                                                                            </a>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
+                                                        )}
                                                 </div>
                                             </div>
                                             </div>
