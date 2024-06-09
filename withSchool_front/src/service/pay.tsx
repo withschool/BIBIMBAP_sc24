@@ -139,3 +139,24 @@ export const fetchInvoices = async (schoolId: number) => {
         throw error;
     }
 };
+export const fetchCurrentPlan = async (schoolId: number) => {
+    try {
+        const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/currentPlan`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch current plan: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching current plan:', error);
+        throw error;
+    }
+};
