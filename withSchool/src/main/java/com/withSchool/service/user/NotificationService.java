@@ -1,5 +1,7 @@
 package com.withSchool.service.user;
 
+import com.withSchool.entity.payment.PaymentFail;
+import com.withSchool.entity.school.SchoolInformation;
 import com.withSchool.entity.user.User;
 import com.withSchool.service.mapping.StudentParentService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.List;
 public class NotificationService {
 
     private final StudentParentService studentParentService;
+    private final UserService userService;
 
 
     @Value("${coolsms-API-KEY}")
@@ -36,16 +39,16 @@ public class NotificationService {
 
     public void sendSMSGroup(List<User> userList, String type, String title, boolean onlyStudent) {
         for (User user : userList) {
-            sendSMS(user, type, title, onlyStudent );
+            sendSMS(user, type, title, onlyStudent);
         }
     }
+
     public void sendSMS(User user, String type, String title, boolean onlyStudent) {
-        if (!onlyStudent ) { // 학생+학부모
+        if (!onlyStudent) { // 학생+학부모
             try {
                 User parent = studentParentService.findParentByStudent(user);
                 sendSMS(parent, type, title, true);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.error("학부모 정보를 찾을 수 없습니다. 학생: " + user.getName());
             }
 
@@ -56,6 +59,23 @@ public class NotificationService {
         params.put("from", apiPhone);
         params.put("type", "SMS");
         params.put("text", "안녕하세요 " + user.getName() + "님.\n" + type + " 등록되었습니다. \n제목: " + title);
+        try {
+            message.send(params);
+        } catch (CoolsmsException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendPaymentFailure(PaymentFail paymentFail) {
+        Message message = new Message(apiKey, apiSecret);
+        HashMap<String, String> params = new HashMap<>();
+        SchoolInformation schoolInformation = paymentFail.getSubscription().getSchoolInformation();
+        User admin = userService.getAdmin(schoolInformation.getSchoolId());
+        params.put("to", admin.getPhoneNumber());
+        params.put("from", apiPhone);
+        params.put("type", "SMS");
+        params.put("text", "안녕하세요 " + admin.getName() + "님.\n" + schoolInformation.getSchulNm() + "의 결제에 실패했습니다. \n" +
+                "학교 관리자 페이지에서 확인해주세요.");
         try {
             message.send(params);
         } catch (CoolsmsException e) {

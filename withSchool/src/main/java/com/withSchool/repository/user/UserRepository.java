@@ -52,4 +52,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT count(*) FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.id IS NOT NULL")
     int findUsersCountBySchoolId(Long schoolId);
+
+    @Query("SELECT u FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.accountType = 3 AND u.id IS NOT NULL")
+    User getAdmin(Long schoolId);
 }
