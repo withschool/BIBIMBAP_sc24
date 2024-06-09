@@ -109,9 +109,12 @@ public class SchoolInformationService {
     public void saveFirstPlan(Long schoolId, ReqPlanDTO reqPlanDTO) {
         SchoolInformation schoolInformation = schoolInformationRepository.findById(schoolId)
                 .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
+        if(schoolInformation.getBillingKey()== null || schoolInformation.getBillingKey().isEmpty()){
+            throw new RuntimeException("빌링키가 존재하지 않습니다");
+        }
         Subscription subscription = Subscription.builder()
                 .plan(reqPlanDTO.getPlan())
-                .startDate(LocalDate.now().plusWeeks(2))
+                .startDate(schoolInformation.getRegDate().toLocalDate().plusWeeks(2))
                 .billingKey(schoolInformation.getBillingKey())
                 .schoolInformation(schoolInformation)
                 .build();
