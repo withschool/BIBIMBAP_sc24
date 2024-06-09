@@ -34,8 +34,8 @@ public class BillingService {
     private final SchoolInformationRepository schoolInformationRepository;
     private final PaymentRecordRepository paymentRecordRepository;
     private final PaymentFailRepository paymentFailRepository;
-    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    private final NotificationService notificationService;
 
     @Value("${portone.api.secret}")
     private String portOneApiSecret;
@@ -44,59 +44,46 @@ public class BillingService {
     private static final int INTERMEDIATE_DAILY_RATE = 150000;
     private static final int PREMIUM_DAILY_RATE = 200000;
 
-    private final NotificationService notificationService;
-
-    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 0시 0분에 실행
+    @Scheduled(cron = "0 0 0 1 * ?",zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
     @Transactional
     public void processMonthlyBilling() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
-        LocalDate now = LocalDate.now();
 
         for (Subscription subscription : subscriptions) {
-            if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(now)) {
+            if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(LocalDate.now())) {
                 SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                        .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
+                        .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
                 schoolInformation.setPaymentState(0);
                 schoolInformationRepository.save(schoolInformation);
                 continue;
             }
 
-            LocalDate startDate = subscription.getStartDate();
-            LocalDate lastBillingDate = subscription.getLastBillingDate();
-            if (lastBillingDate == null) {
-                lastBillingDate = startDate;
-            }
-
-            if (shouldProcessPayment(lastBillingDate, now)) {
-                int amount = calculateAmount(subscription, lastBillingDate, now);
-
-                try {
-                    processPayment(subscription, amount);
-                    subscription.setLastBillingDate(now);
-                    subscriptionRepository.save(subscription);
-                } catch (Exception e) {
-                    handlePaymentFailure(subscription, e);
-                }
+            int amount = calculateAmount(subscription);
+            try {
+                processPayment(subscription, amount);
+            } catch (Exception e) {
+                handlePaymentFailure(subscription, e);
             }
         }
     }
-    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 0시 0분에 실행
+    @Scheduled(cron = "0 0 0 * * ?",zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
     @Transactional
     public void retryFailedPayments() {
         LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
+
         List<PaymentFail> paymentFailList = paymentFailRepository.findAll();
 
         for (PaymentFail fail : paymentFailList) {
             Subscription subscription = fail.getSubscription();
             if (fail.getFailDate().isBefore(twoWeeksAgo) || fail.getAttempts() >= 14) {
                 SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                        .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
+                        .orElseThrow(()->new RuntimeException("해당하는 학교가 없습니다"));
                 schoolInformation.setPaymentState(0);
                 schoolInformationRepository.save(schoolInformation);
                 paymentFailRepository.delete(fail);
             } else {
                 try {
-                    int amount = calculateAmount(subscription, subscription.getLastBillingDate(), LocalDate.now());
+                    int amount = calculateAmount(subscription);
                     processPayment(subscription, amount);
                     paymentFailRepository.delete(fail);
                 } catch (Exception e) {
@@ -108,15 +95,24 @@ public class BillingService {
         }
     }
 
-    private boolean shouldProcessPayment(LocalDate lastBillingDate, LocalDate now) {
-        return lastBillingDate.plusMonths(1).isEqual(now) || lastBillingDate.plusMonths(1).isBefore(now);
-    }
+    private int calculateAmount(Subscription subscription) {
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = subscription.getStartDate();
+        LocalDate endDate = subscription.getEndDate() != null ? subscription.getEndDate() : now;
 
-    private int calculateAmount(Subscription subscription, LocalDate lastBillingDate, LocalDate now) {
-        LocalDate billingEnd = subscription.getEndDate() != null && subscription.getEndDate().isBefore(now) ? subscription.getEndDate() : now.minusDays(1);
-        long daysUsed = ChronoUnit.DAYS.between(lastBillingDate, billingEnd.plusDays(1));
+
+        LocalDate firstDayOfMonth = now.withDayOfMonth(1);
+        LocalDate lastDayOfMonth = now.withDayOfMonth(now.lengthOfMonth());
+
+
+        LocalDate billingStart = startDate.isBefore(firstDayOfMonth) ? firstDayOfMonth : startDate;
+        LocalDate billingEnd = endDate.isAfter(lastDayOfMonth) ? lastDayOfMonth : endDate;
+
+
+        long daysUsed = ChronoUnit.DAYS.between(billingStart, billingEnd.plusDays(1));
+
         int dailyRate = getDailyRate(subscription.getPlan());
-        return dailyRate * (int) daysUsed;
+        return dailyRate * (int)daysUsed;
     }
 
     private int getDailyRate(int plan) {
@@ -128,11 +124,11 @@ public class BillingService {
             case 2:
                 return PREMIUM_DAILY_RATE;
             default:
-                throw new IllegalArgumentException("Invalid plan: " + plan);
+                return 9;
         }
     }
-
     private void processPayment(Subscription subscription, int amount) {
+
         String paymentId = UUID.randomUUID().toString();
         String url = "https://api.portone.io/payments/" + paymentId + "/billing-key";
 
@@ -141,8 +137,8 @@ public class BillingService {
         headers.set("Content-Type", "application/json");
 
         Map<String, Object> paymentDetails = new HashMap<>();
-        paymentDetails.put("billingKey", subscription.getBillingKey());
-        paymentDetails.put("orderName", "월간 이용권 정기결제");
+        paymentDetails.put("billingKey", subscription.getBillingKey()+"1");
+        paymentDetails.put("orderName", "월간 이용권 정기결제 실패");
 
         Map<String, Object> amountDetails = new HashMap<>();
         amountDetails.put("total", amount);
@@ -166,34 +162,36 @@ public class BillingService {
 
         boolean success = response.getStatusCode().is2xxSuccessful();
 
+
         paymentRecord.setSuccess(success);
+
         paymentRecordRepository.save(paymentRecord);
 
         if (!success) {
             throw new RuntimeException("결제 실패: " + response.getStatusCode());
         }
     }
-
     private void handlePaymentFailure(Subscription subscription, Exception e) {
+
         PaymentFail paymentFail = PaymentFail.builder()
                 .failDate(LocalDate.now())
-                .failReason(e.getMessage().substring(0, 20))
+                .failReason(e.getMessage().substring(0,20))
                 .subscription(subscription)
                 .build();
 
         paymentFailRepository.save(paymentFail);
 
         notificationService.sendPaymentFailure(paymentFail);
-    }
 
-    @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Seoul")
+    }
     @Transactional
-    public void stopFreeVersion() {
+    @Scheduled(cron = "0 0 1 * * ?",zone = "Asia/Seoul")
+    public void stopFreeVersion(){
         LocalDate now = LocalDate.now();
-        LocalDate twoWeeksAgo = now.minusWeeks(2);
+        LocalDate twoWeeksAge = now.minusWeeks(2);
         List<SchoolInformation> schoolInformationList = schoolInformationRepository.findAll();
-        for (SchoolInformation s : schoolInformationList) {
-            if (s.getServiceType() == 9 && s.getRegDate().toLocalDate().isBefore(twoWeeksAgo)) {
+        for(SchoolInformation s : schoolInformationList){
+            if(s.getServiceType() == 9 && s.getRegDate().toLocalDate().isBefore(twoWeeksAge)){
                 s.setPaymentState(0);
                 schoolInformationRepository.save(s);
             }
@@ -204,7 +202,7 @@ public class BillingService {
         List<ResPaymentRecordDTO> resPaymentRecordDTOList = new ArrayList<>();
 
         List<PaymentRecord> paymentRecordList = paymentRecordRepository.findAllBySchoolId(schoolId);
-        for (PaymentRecord p : paymentRecordList) {
+        for(PaymentRecord p : paymentRecordList){
             ResPaymentRecordDTO resPaymentRecordDTO = ResPaymentRecordDTO.builder()
                     .paymentId(p.getPaymentId())
                     .plan(p.getPlan())
@@ -218,4 +216,3 @@ public class BillingService {
         return resPaymentRecordDTOList;
     }
 }
-

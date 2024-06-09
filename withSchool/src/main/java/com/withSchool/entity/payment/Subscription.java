@@ -21,7 +21,6 @@ public class Subscription {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDate lastBillingDate;
     private String billingKey;
 
     @ManyToOne
