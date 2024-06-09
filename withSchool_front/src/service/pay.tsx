@@ -1,7 +1,6 @@
 import * as PortOne from "@portone/browser-sdk/v2";
 
-const MY_SERVER_URL = 'http://your-server-url.com'; // Replace with your actual server URL
-const PROXY_URL = 'http://www.withschool.site:8080/'; // Replace with your actual proxy URL
+const MY_SERVER_URL = 'http://223.130.134.181:8080'; // Replace with your actual server URL
 
 export const issueBillingKey = async () => {
     try {
@@ -19,20 +18,30 @@ export const issueBillingKey = async () => {
         if (issueResponse) {
             console.log(`Billing Key: ${issueResponse.billingKey}`);
 
-            const response = await fetch(`${PROXY_URL}${MY_SERVER_URL}/billings`, {
+            const schoolId = localStorage.getItem('schoolId');
+            if (!schoolId) {
+                throw new Error('schoolId is not found in localStorage');
+            }
+            console.log(`스쿨아디 : ${schoolId}`);
+            const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/billingKey`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    billingKey: issueResponse.billingKey
-                })
+                body: issueResponse.billingKey // Send billingKey as a string
             });
 
             if (!response.ok) {
                 throw new Error(`Server responded with status: ${response.status} ${response.statusText}`);
             }
 
-            const data = await response.json();
-            return data;
+            const responseText = await response.text();
+            try {
+                const data = JSON.parse(responseText);
+                return data;
+            } catch (jsonError) {
+                console.error('Error parsing JSON:', jsonError);
+                console.error('Response text:', responseText);
+                throw new Error('Failed to parse JSON response');
+            }
         } else {
             throw new Error('issueResponse is undefined');
         }
