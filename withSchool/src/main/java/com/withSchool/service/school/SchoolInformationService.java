@@ -105,6 +105,7 @@ public class SchoolInformationService {
             return true;
         }
     }
+    @Transactional
     public void saveFirstPlan(Long schoolId, ReqPlanDTO reqPlanDTO) {
         SchoolInformation schoolInformation = schoolInformationRepository.findById(schoolId)
                 .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
@@ -115,7 +116,11 @@ public class SchoolInformationService {
                 .schoolInformation(schoolInformation)
                 .build();
         subscriptionRepository.save(subscription);
+
+        schoolInformation.setServiceType(reqPlanDTO.getPlan());
+        schoolInformationRepository.save(schoolInformation);
     }
+    @Transactional
     public void changePlan(Long schoolId, ReqPlanDTO reqPlanDTO) {
         SchoolInformation schoolInformation = schoolInformationRepository.findById(schoolId)
                 .orElseThrow(() -> new RuntimeException("해당하는 학교가 존재하지 않습니다"));
@@ -156,6 +161,9 @@ public class SchoolInformationService {
                 .schoolInformation(schoolInformation)
                 .build();
         subscriptionRepository.save(newSubscription);
+
+        schoolInformation.setServiceType(reqPlanDTO.getPlan());
+        schoolInformationRepository.save(schoolInformation);
     }
     public SchoolInformation dtoToEntity(SchoolInformationDTO dto) {
         return SchoolInformation.builder()
