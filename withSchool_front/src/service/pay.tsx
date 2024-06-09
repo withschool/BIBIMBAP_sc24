@@ -1,7 +1,6 @@
 import * as PortOne from "@portone/browser-sdk/v2";
 
 const MY_SERVER_URL = 'http://223.130.134.181:8080'; // Replace with your actual server URL
-
 export const issueBillingKey = async () => {
     try {
         const issueResponse = await PortOne.requestIssueBillingKey({
@@ -25,8 +24,11 @@ export const issueBillingKey = async () => {
             console.log(`스쿨아디 : ${schoolId}`);
             const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/billingKey`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: issueResponse.billingKey // Send billingKey as a string
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token')}` // Add Authorization header
+                },
+                body: JSON.stringify({ billingKey: issueResponse.billingKey }) // Send billingKey as JSON
             });
 
             if (!response.ok) {
@@ -34,19 +36,84 @@ export const issueBillingKey = async () => {
             }
 
             const responseText = await response.text();
-            try {
-                const data = JSON.parse(responseText);
-                return data;
-            } catch (jsonError) {
-                console.error('Error parsing JSON:', jsonError);
-                console.error('Response text:', responseText);
-                throw new Error('Failed to parse JSON response');
+            if (responseText) {
+                try {
+                    const data = JSON.parse(responseText);
+                    return data;
+                } catch (jsonError) {
+                    console.error('Error parsing JSON:', jsonError);
+                    console.error('Response text:', responseText);
+                    throw new Error('Failed to parse JSON response');
+                }
+            } else {
+                console.warn('Empty response text');
+                return null;
             }
         } else {
             throw new Error('issueResponse is undefined');
         }
     } catch (error) {
         console.error('Error issuing billing key:', error);
+        throw error;
+    }
+};
+
+
+export const checkBillingKey = async (schoolId: number): Promise<boolean> => {
+    try {
+        const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/billingKey`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return data == 1;
+        } else {
+            throw new Error('Failed to check billing key');
+        }
+    } catch (error) {
+        console.error('Error checking billing key:', error);
+        throw error;
+    }
+};
+
+export const registerFirstPlan = async (schoolId: number, plan: number): Promise<void> => {
+    try {
+        const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/subscriptions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ plan })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to register first plan');
+        }
+    } catch (error) {
+        console.error('Error registering first plan:', error);
+        throw error;
+    }
+};
+
+export const changePlan = async (schoolId: number, plan: number): Promise<void> => {
+    try {
+        const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/subscriptions/change`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ plan })
+        });
+        if (!response.ok) {
+            throw new Error('Failed to change plan');
+        }
+    } catch (error) {
+        console.error('Error changing plan:', error);
         throw error;
     }
 };

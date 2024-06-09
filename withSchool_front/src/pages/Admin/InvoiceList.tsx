@@ -22,6 +22,8 @@ import IconPhone from '../../components/Icon/IconPhone';
 import IconInfoCircle from '../../components/Icon/IconInfoCircle';
 import IconSettings from '../../components/Icon/IconSettings';
 // import { fetchInvoices } from '../../service/pay';
+import { checkBillingKey, registerFirstPlan, changePlan } from '../../service/pay';
+import { getSchoolInfo } from '../../service/school';
 
 
 
@@ -119,6 +121,40 @@ const InvoiceList = () => {
     const planNames = ['소규모', '중규모', '대규모', '체험판'];
 
 
+    const handleChangePlan = async (plan: number) => {
+        try {
+            const schoolId = localStorage.getItem('schoolId');
+
+            if (!schoolId) {
+                throw new Error('schoolId is not found in localStorage');
+            }
+
+            const schoolInfo = await getSchoolInfo(schoolId);
+            const isTrial = schoolInfo.serviceType == 9;
+
+            if (isTrial) {
+                const hasBillingKey = await checkBillingKey(Number(schoolId));
+                if (!hasBillingKey) {
+                    alert('카드 등록을 먼저 진행해주세요.');
+                    return;
+                }
+                await registerFirstPlan(Number(schoolId), plan);
+                alert('첫 플랜 등록이 성공하였습니다.');
+
+            } else {
+                await changePlan(Number(schoolId), plan);
+                alert('플랜 변경이 성공하였습니다.');
+
+            }
+
+        } catch (error) {
+            console.error('Error changing plan:', error);
+            alert('플랜 변경이 실패하였습니다.');
+        }
+    };
+
+
+
     return (
         <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
             <div className='flex gap-4'>
@@ -185,7 +221,7 @@ const InvoiceList = () => {
                                                                     <li>맞춤형 기능: 미제공</li>
                                                                 </ul>
                                                             </div>
-                                                            <button type="button" className="btn btn-dark w-full">
+                                                            <button type="button" className="btn btn-dark w-full" onClick={() => handleChangePlan(0)}>
                                                                 플랜 변경하기
                                                             </button>
                                                         </div>
@@ -204,7 +240,7 @@ const InvoiceList = () => {
                                                                     <li>맞춤형 기능: 미제공</li>
                                                                 </ul>
                                                             </div>
-                                                            <button type="button" className="btn btn-primary w-full">
+                                                            <button type="button" className="btn btn-primary w-full" onClick={() => handleChangePlan(1)}>
                                                                 플랜 변경하기
                                                             </button>
                                                         </div>
@@ -222,7 +258,7 @@ const InvoiceList = () => {
                                                                     <li>맞춤형 기능: 제공</li>
                                                                 </ul>
                                                             </div>
-                                                            <button type="button" className="btn btn-dark w-full">
+                                                            <button type="button" className="btn btn-dark w-full" onClick={() => handleChangePlan(2)}>
                                                                 플랜 변경하기
                                                             </button>
                                                         </div>
