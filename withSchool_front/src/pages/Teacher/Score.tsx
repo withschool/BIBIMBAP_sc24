@@ -274,7 +274,20 @@ useEffect(() => {
                                         <div className="ltr:ml-3 rtl:mr-3">수행평가</div>
                                     </div>
                                 </button>
+                                <button
+                                    type="button"
+                                    className={`w-full flex justify-between items-center p-2  hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${
+                                        selectedTab === 'total' && 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]'
+                                    }`}
+                                    onClick={() => tabChanged('total')}
+                                >
+                                    <div className="flex items-center">
+                                        <IconNotesEdit className="shrink-0" />
+                                        <div className="ltr:ml-3 rtl:mr-3">점수 조회</div>
+                                    </div>
+                                </button>
                                 <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                
                             </div>
                         </PerfectScrollbar>
                     </div>
@@ -400,7 +413,55 @@ useEffect(() => {
                                 </div>
                                 
                                 ) : (
+                                    <div>
+                                        {filterdNotesList.length && selectedTab == "total" ? (
+                                            <div className="table-responsive mb-5">
+                                            <p className='text-lg font-semibold ltr:ml-3 rtl:mr-3 pb-5'>전체 점수 조회</p>
+                                            <table className="table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th className="w-1/6">ID</th>
+                                                        <th className="w-1/6">이름</th>
+                                                        <th className="w-1/6 text-center">중간고사</th>
+                                                        <th className="w-1/6 text-center">기말고사</th>
+                                                        <th className="w-1/6 text-center">수행평가</th>
+                                                        <th className="w-1/6 text-center">총점</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {studentList.map((data : any) => {
+                                                        return (
+                                                            <tr key={data.studentSubjectId}>
+                                                                <td className="w-1/6">
+                                                                    <div className="whitespace-nowrap">{data.userId}</div>
+                                                                </td>
+                                                                <td className="w-1/6">
+                                                                    <div className="whitespace-nowrap">{data.userName}</div>
+                                                                </td>
+                                                                <td className="w-1/6 text-center">
+                                                                    <div className="whitespace-nowrap">{data.midtermScore}</div>
+                                                                </td>
+                                                                <td className="w-1/6 text-center">
+                                                                    <div className="whitespace-nowrap">{data.finalScore}</div>
+                                                                </td>
+                                                                <td className="w-1/6 text-center">
+                                                                    <div className="whitespace-nowrap">{data.activityScore}</div>
+                                                                </td>
+                                                                <td className="w-1/6 text-center">
+                                                                    <div className="whitespace-nowrap">{data.totalScore}</div>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                            <button className="mt-5 float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleActivitySubmit}>제출</button>
+                                        </div>
+                                    
+                                    ) : (
                                     <div className="flex justify-center items-center sm:min-h-[300px] min-h-[400px] font-semibold text-lg h-full">시험 종류를 선택해주세요.</div>
+                                    )}
+                                    </div>
                                 )}
                             </div>
                         )}
