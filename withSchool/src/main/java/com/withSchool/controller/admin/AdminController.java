@@ -236,8 +236,8 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
     @GetMapping("/schools/{schoolId}/billingKey")
-    @Operation(summary="빌링키가 있는지 확인.존재:1, 없음:0")
-    public ResponseEntity<Boolean> checkBillingKey(@PathVariable Long schoolId){
+    @Operation(summary="빌링키가 있는지 확인.존재:빌링키, 없음:null")
+    public ResponseEntity<String> checkBillingKey(@PathVariable Long schoolId){
         return ResponseEntity.ok().body(schoolInformationService.checkBillingKey(schoolId));
     }
     @PostMapping("/schools/{schoolId}/subscriptions")

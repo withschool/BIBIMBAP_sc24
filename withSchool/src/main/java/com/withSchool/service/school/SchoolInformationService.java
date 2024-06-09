@@ -95,14 +95,14 @@ public class SchoolInformationService {
         school.setBillingKey(billingKey);
         schoolInformationRepository.save(school);
     }
-    public Boolean checkBillingKey(Long schoolId) {
+    public String checkBillingKey(Long schoolId) {
         SchoolInformation school = schoolInformationRepository.findById(schoolId)
                 .orElseThrow(()->new RuntimeException("해당하는 학교가 존재하지 않습니다"));
         if(school.getBillingKey() == null){
-            return false;
+            return null;
         }
         else{
-            return true;
+            return school.getBillingKey();
         }
     }
     @Transactional
