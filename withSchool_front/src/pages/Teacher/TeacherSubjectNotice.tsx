@@ -50,6 +50,7 @@ import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
 import { deleteAdminNotice } from '../../service/form';
+import { deleteSubject } from '../../service/subject';
 
 const TeacherSubjectNotice = () => {
 
@@ -444,7 +445,7 @@ const TeacherSubjectNotice = () => {
                         formData.append("file", file);
                     });
                 }
-                setSelectedFiles(null);
+                    
                 if(edit){
                     const response = await subjectNoticeEdit(formData, id);
                     obj.type = 'sent_notice';
@@ -480,7 +481,7 @@ const TeacherSubjectNotice = () => {
     };
 
     const deleteNotice = async (id: any) => {
-        await deleteSubjectNotice(id);
+        await deleteSubject(id);
         showMessage('공지가 성공적으로 삭제되었습니다.');
         searchMails();
         fetchNotices();

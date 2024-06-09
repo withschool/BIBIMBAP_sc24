@@ -154,7 +154,7 @@ export const getSugangListStudent = async (childId : string): Promise<any> => {
 export const deleteSubject = async (subjectId: number): Promise<any> => {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${url}/admin/subjects/${subjectId}`, {
+        const response = await fetch(`${url}/subjects/notices/${subjectId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
