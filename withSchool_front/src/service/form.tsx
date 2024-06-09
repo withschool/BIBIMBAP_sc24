@@ -393,7 +393,7 @@ export const deleteSubjectNotice = async (noticeId: number): Promise<any> => {
 
       if (response.ok) {
           console.log('공지 삭제 완료');
-          return await response.json();
+          return await response.text();
       } else {
           const errorMessage = await response.text();
           console.error('공지 삭제 실패:', errorMessage);
