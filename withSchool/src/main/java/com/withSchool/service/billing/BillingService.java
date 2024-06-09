@@ -80,6 +80,33 @@ public class BillingService {
             }
         }
     }
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 0시 0분에 실행
+    @Transactional
+    public void retryFailedPayments() {
+        LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
+        List<PaymentFail> paymentFailList = paymentFailRepository.findAll();
+
+        for (PaymentFail fail : paymentFailList) {
+            Subscription subscription = fail.getSubscription();
+            if (fail.getFailDate().isBefore(twoWeeksAgo) || fail.getAttempts() >= 14) {
+                SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
+                        .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
+                schoolInformation.setPaymentState(0);
+                schoolInformationRepository.save(schoolInformation);
+                paymentFailRepository.delete(fail);
+            } else {
+                try {
+                    int amount = calculateAmount(subscription, subscription.getLastBillingDate(), LocalDate.now());
+                    processPayment(subscription, amount);
+                    paymentFailRepository.delete(fail);
+                } catch (Exception e) {
+                    fail.setAttempts(fail.getAttempts() + 1);
+                    fail.setFailReason(e.getMessage());
+                    paymentFailRepository.save(fail);
+                }
+            }
+        }
+    }
 
     private boolean shouldProcessPayment(LocalDate lastBillingDate, LocalDate now) {
         return lastBillingDate.plusMonths(1).isEqual(now) || lastBillingDate.plusMonths(1).isBefore(now);
