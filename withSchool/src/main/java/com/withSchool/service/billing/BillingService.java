@@ -34,7 +34,7 @@ public class BillingService {
     private final SchoolInformationRepository schoolInformationRepository;
     private final PaymentRecordRepository paymentRecordRepository;
     private final PaymentFailRepository paymentFailRepository;
-    private final UserRepository userRepository;  // 추가
+    private final UserRepository userRepository;
     private final RestTemplate restTemplate;
 
     @Value("${portone.api.secret}")
@@ -46,14 +46,14 @@ public class BillingService {
 
     private final NotificationService notificationService;
 
-    @Scheduled(cron = "0 0 0 1 * ?", zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 0시 0분에 실행
     @Transactional
     public void processMonthlyBilling() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
+        LocalDate now = LocalDate.now();
 
         for (Subscription subscription : subscriptions) {
-
-            if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(LocalDate.now())) {
+            if (subscription.getEndDate() != null && subscription.getEndDate().isBefore(now)) {
                 SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
                         .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
                 schoolInformation.setPaymentState(0);
@@ -61,67 +61,36 @@ public class BillingService {
                 continue;
             }
 
-            int amount = calculateAmount(subscription);
-
-            try {
-                processPayment(subscription, amount);
-            } catch (Exception e) {
-                handlePaymentFailure(subscription, e);
+            LocalDate startDate = subscription.getStartDate();
+            LocalDate lastBillingDate = subscription.getLastBillingDate();
+            if (lastBillingDate == null) {
+                lastBillingDate = startDate;
             }
-        }
-    }
 
-    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
-    @Transactional
-    public void retryFailedPayments() {
-        LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
+            if (shouldProcessPayment(lastBillingDate, now)) {
+                int amount = calculateAmount(subscription, lastBillingDate, now);
 
-        List<PaymentFail> paymentFailList = paymentFailRepository.findAll();
-
-        for (PaymentFail fail : paymentFailList) {
-            Subscription subscription = fail.getSubscription();
-            if (fail.getFailDate().isBefore(twoWeeksAgo) || fail.getAttempts() >= 14) {
-                SchoolInformation schoolInformation = schoolInformationRepository.findById(subscription.getSchoolInformation().getSchoolId())
-                        .orElseThrow(() -> new RuntimeException("해당하는 학교가 없습니다"));
-                schoolInformation.setPaymentState(0);
-                schoolInformationRepository.save(schoolInformation);
-                paymentFailRepository.delete(fail);
-            } else {
                 try {
-                    int amount = calculateAmount(subscription);
                     processPayment(subscription, amount);
-                    paymentFailRepository.delete(fail);
+                    subscription.setLastBillingDate(now);
+                    subscriptionRepository.save(subscription);
                 } catch (Exception e) {
-                    fail.setAttempts(fail.getAttempts() + 1);
-                    fail.setFailReason(e.getMessage());
-                    paymentFailRepository.save(fail);
+                    handlePaymentFailure(subscription, e);
                 }
             }
         }
     }
 
-    private int calculateAmount(Subscription subscription) {
-
-        LocalDate now = LocalDate.now().withDayOfMonth(1);
-
-        LocalDate firstDayOfPreviousMonth = now.minusMonths(1).withDayOfMonth(1);
-        LocalDate lastDayOfPreviousMonth = now.minusDays(1);
-
-        LocalDate startDate = subscription.getStartDate();
-        LocalDate endDate = subscription.getEndDate() != null ? subscription.getEndDate() : LocalDate.now();
-
-
-        LocalDate billingStart = startDate.isBefore(firstDayOfPreviousMonth) ? firstDayOfPreviousMonth : startDate;
-
-        LocalDate billingEnd = endDate.isAfter(lastDayOfPreviousMonth) ? lastDayOfPreviousMonth : endDate;
-
-
-        long daysUsed = ChronoUnit.DAYS.between(billingStart, billingEnd.plusDays(1));
-
-        int dailyRate = getDailyRate(subscription.getPlan());
-        return dailyRate * (int)daysUsed;
+    private boolean shouldProcessPayment(LocalDate lastBillingDate, LocalDate now) {
+        return lastBillingDate.plusMonths(1).isEqual(now) || lastBillingDate.plusMonths(1).isBefore(now);
     }
 
+    private int calculateAmount(Subscription subscription, LocalDate lastBillingDate, LocalDate now) {
+        LocalDate billingEnd = subscription.getEndDate() != null && subscription.getEndDate().isBefore(now) ? subscription.getEndDate() : now.minusDays(1);
+        long daysUsed = ChronoUnit.DAYS.between(lastBillingDate, billingEnd.plusDays(1));
+        int dailyRate = getDailyRate(subscription.getPlan());
+        return dailyRate * (int) daysUsed;
+    }
 
     private int getDailyRate(int plan) {
         switch (plan) {
@@ -137,7 +106,6 @@ public class BillingService {
     }
 
     private void processPayment(Subscription subscription, int amount) {
-
         String paymentId = UUID.randomUUID().toString();
         String url = "https://api.portone.io/payments/" + paymentId + "/billing-key";
 
@@ -180,7 +148,6 @@ public class BillingService {
     }
 
     private void handlePaymentFailure(Subscription subscription, Exception e) {
-
         PaymentFail paymentFail = PaymentFail.builder()
                 .failDate(LocalDate.now())
                 .failReason(e.getMessage().substring(0, 20))
@@ -189,12 +156,11 @@ public class BillingService {
 
         paymentFailRepository.save(paymentFail);
 
-        // 관리자 또는 사용자에게 알림 전송 (이메일, SMS 등)
         notificationService.sendPaymentFailure(paymentFail);
     }
 
-    @Transactional
     @Scheduled(cron = "0 0 1 * * ?", zone = "Asia/Seoul")
+    @Transactional
     public void stopFreeVersion() {
         LocalDate now = LocalDate.now();
         LocalDate twoWeeksAgo = now.minusWeeks(2);
@@ -225,3 +191,4 @@ public class BillingService {
         return resPaymentRecordDTOList;
     }
 }
+
