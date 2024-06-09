@@ -60,15 +60,39 @@ public class UserService {
         return user.orElse(null);
     }
 
-    public List<ResUserUsercodeDTO> findAllBySchool_SchoolId() {
+    public List<ResUserInfoDTO> findAllBySchool_SchoolId() {
         Long schoolId = getCurrentUserSchoolId();
         List<User> res = userRepository.findAllBySchoolInformation_SchoolId(schoolId);
 
-        List<ResUserUsercodeDTO> dtos = new ArrayList<>();
+        List<ResUserInfoDTO> dtos = new ArrayList<>();
         for (User u : res) {
-            dtos.add(u.toResUserUsercodeDTO());
+            if(u.getClassInformation() == null){
+                ResUserInfoDTO resUserInfoDTO = ResUserInfoDTO.builder()
+                        .id(u.getId())
+                        .name(u.getName())
+                        .phoneNumber(u.getPhoneNumber())
+                        .accountType(u.getAccountType())
+                        .grade(null)
+                        .inClass(null)
+                        .userCode(u.getUserCode())
+                        .build();
+                dtos.add(resUserInfoDTO);
+            }
+            else{
+                ClassInformation classInformation = classRepository.findById(u.getClassInformation().getClassId())
+                        .orElseThrow(()->new RuntimeException("해당하는 반이 없습니다"));
+                ResUserInfoDTO resUserInfoDTO = ResUserInfoDTO.builder()
+                        .id(u.getId())
+                        .name(u.getName())
+                        .phoneNumber(u.getPhoneNumber())
+                        .accountType(u.getAccountType())
+                        .grade(classInformation.getGrade())
+                        .inClass(classInformation.getInClass())
+                        .userCode(u.getUserCode())
+                        .build();
+                dtos.add(resUserInfoDTO);
+            }
         }
-
         return dtos;
     }
 
