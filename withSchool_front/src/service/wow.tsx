@@ -155,6 +155,28 @@ export const editSubmitHomework = async (formData: FormData, subjectHomeworkSubm
     }
 };
 
+export const getSubmitHomework = async (homeworkId : string): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/subjects/students/submit-homeworks/${homeworkId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const getSubmitHomeworkList = async (homeworkId : string): Promise<any> => {
     try {
         const response = await fetch(`${url}/subjects/students/submit-homeworks/list/${homeworkId}`, {

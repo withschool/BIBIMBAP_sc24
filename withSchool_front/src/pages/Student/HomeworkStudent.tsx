@@ -12,7 +12,7 @@ import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { getHomeworkList, makeHomework } from '../../service/wow';
 import { deleteHomework, editHomework } from '../../service/wow';
-import { isSumbitHomework, makeSubmitHomework, editSubmitHomework, deleteSubmitHomework } from '../../service/wow';
+import { isSumbitHomework, makeSubmitHomework, editSubmitHomework, deleteSubmitHomework, getSubmitHomework} from '../../service/wow';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconPaperclip from '../../components/Icon/IconPaperclip';
 import IconArrowLeft from '../../components/Icon/IconArrowLeft';
@@ -24,6 +24,8 @@ import IconTxtFile from '../../components/Icon/IconTxtFile';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
 
 const HomeworkStudent = () => {
 
@@ -59,6 +61,7 @@ const HomeworkStudent = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     const [selectedDate, setSelectedDate] = useState<any>();
 
+
     const [pager] = useState<any>({
         currentPage: 1,
         totalPages: 0,
@@ -74,11 +77,17 @@ const HomeworkStudent = () => {
     const subjectId = localStorage.getItem('targetSubject');
 
     const [submitHomeworkId, setSubmitHomeworkId] = useState();
+    const [submitHomeworkInfo, setSubmitHomeworkInfo] = useState<any>([]);
 
     const fetchSubmitHomeworkId = async () => {
         try{
             const num = await isSumbitHomework(selectedMail.id);
             setSubmitHomeworkId(num);
+            if(num != 0){
+                const info = await getSubmitHomework(num);
+                console.log(info);
+                setSubmitHomeworkInfo(info);
+            }
         }
         catch (error) {
             console.log(error);
@@ -151,7 +160,9 @@ const HomeworkStudent = () => {
         }
     };
 
-    const [fileExists, setFileExists] = useState<(boolean | 0)[]>([]);
+    const [modal2, setModal2] = useState(false);
+
+
 
     const openMail = (type: string, item: any) => {
         if (type === 'add') {
@@ -560,19 +571,110 @@ const HomeworkStudent = () => {
                                         )}
                                         </div>
                                         {submitHomeworkId !=0 && (
-                                            <div className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md">
-                                                <button
-                                                    type="button"
-                                                    className="px-4 py-2.5 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition-all duration-300"
-                                                    onClick={() => deleteNotice(submitHomeworkId)}
-                                                >
-                                                    삭제
-                                                </button>
+                                            <div className="flex flex-wrap">
+                                                <div className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md">
+                                                    <button
+                                                        type="button"
+                                                        className="px-4 py-2.5 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition-all duration-300"
+                                                        onClick={() =>setModal2(true)}
+                                                    >
+                                                        조회하기
+                                                    </button>
+                                                </div>
+                                                <div className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md">
+                                                    <button
+                                                        type="button"
+                                                        className="px-4 py-2.5 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600 transition-all duration-300"
+                                                        onClick={() => deleteNotice(submitHomeworkId)}
+                                                    >
+                                                        삭제하기
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                         </div>
                                     </div>
                             </div>
+                            <Transition appear show={modal2} as={Fragment}>
+                                <Dialog as="div" open={modal2} onClose={() => setModal2(false)}>
+                                    <Transition.Child
+                                        as={Fragment}
+                                        enter="ease-out duration-300"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="ease-in duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <div className="fixed inset-0" />
+                                    </Transition.Child>
+                                    <div className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
+                                        <div className="flex items-center justify-center min-h-screen px-4">
+                                            <Transition.Child
+                                                as={Fragment}
+                                                enter="ease-out duration-300"
+                                                enterFrom="opacity-0 scale-95"
+                                                enterTo="opacity-100 scale-100"
+                                                leave="ease-in duration-200"
+                                                leaveFrom="opacity-100 scale-100"
+                                                leaveTo="opacity-0 scale-95"
+                                            >
+                                                <Dialog.Panel as="div" className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg my-8 text-black dark:text-white-dark">
+                           
+                                                    <div className="p-5">
+                                                        <div className="text-lg font-bold mt-5 mb-4">제출 과제 조회</div>
+                                                        <div className="mt-5 mb-5">
+                                                            <div className="text-base mt-5 mb-4">과제 내용</div>
+                                                            <p id="category" className="form-input">
+                                                                <div className="text-base prose" dangerouslySetInnerHTML={{ __html: submitHomeworkInfo.content }}></div>
+                                                            </p>
+                                                        </div>
+                                                        {(submitHomeworkInfo.filesURl != '' )&& (
+                                                            <div className="mt-8">
+                                                                <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
+                                                                <div className="text-base mt-5 mb-4">첨부파일</div>
+                                                                <div className="flex items-center flex-wrap mt-6">
+                                                                    {submitHomeworkInfo.filesURl.map((attachment: any, i: number) => {
+                                                                        return (
+                                                                            <a
+                                                                                href={attachment}
+                                                                                key={i}
+                                                                                type="button"
+                                                                                className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                            >
+                                                                                {attachment.type === 'image' && <IconGallery />}
+                                                                                {attachment.type === 'folder' && <IconFolder />}
+                                                                                {attachment.type === 'zip' && <IconZipFile />}
+                                                                                {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+
+                                                                                <div className="ltr:ml-3 rtl:mr-3">
+                                                                                    <p className="text-xs text-primary font-semibold">{submitHomeworkInfo.originalName}</p>
+                                                                                    <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                                </div>
+                                                                                <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                                    <IconDownload className="w-4.5 h-4.5" />
+                                                                                </div>
+                                                                            </a>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="p-5">
+                                                        <div className="flex justify-end items-center">
+                                                            <button type="button" className="btn btn-outline-danger" onClick={() => setModal2(false)}>
+                                                                닫기
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </Dialog.Panel>
+                                            </Transition.Child>
+                                        </div>
+                                    </div>
+                                </Dialog>
+                            </Transition>
                         </div>
                     )}
 
