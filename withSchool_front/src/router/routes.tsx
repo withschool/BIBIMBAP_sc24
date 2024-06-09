@@ -37,6 +37,7 @@ const LectureNote = lazy(() => import('../pages/Teacher/LectureNote'));
 const Homework = lazy(() => import('../pages/Teacher/Homework'));
 const Score = lazy(() => import('../pages/Teacher/Score'));
 const ScoreClass = lazy(() => import('../pages/Teacher/ScoreClass'));
+const Answer = lazy(() => import('../pages/Teacher/Answer'));
 
 //Parent
 const ParentHome = lazy(() => import('../pages/Parent/ParentHome'));
@@ -194,6 +195,10 @@ const routes = [
     {
         path: '/users/user-account-settings',
         element: <AccountSetting />,
+    },
+    {
+        path: '/teacher/subject/qna',
+        element: <Answer />,
     },
 
 
