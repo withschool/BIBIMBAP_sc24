@@ -96,6 +96,8 @@ const Answer = () => {
         try {
             if(params.subjectQuestionPostId){
                 await editQna(params.subjectQuestionPostId ,'', params.answerContent);
+                alert("답변되었습니다.");
+
             }
             else{
                 console.log(params.description);
@@ -105,6 +107,7 @@ const Answer = () => {
             setTeacherId('');
             setSelectedDate('');
             await fetchCounsels();
+            window.location.reload();
         } catch (error) {
             console.error("Failed to register or edit counsel:", error);
         }
@@ -165,9 +168,9 @@ const Answer = () => {
         setParams(json);
         if (task) {
             if(!task.isAnswered){
-                console.log("응애"+task);
                 let json1 = JSON.parse(JSON.stringify(task));
                 setParams(json1);
+                setSelectedTask(json1);
             }
             else {
                 alert("이미 답변 완료된 질문입니다.");
@@ -265,7 +268,7 @@ const Answer = () => {
                                         {filteredTasks.reverse().map((task: any) => (
                                             <tr
                                                 className={`group cursor-pointer ${
-                                                    task.counselState === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
+                                                    task.isAnswered === 1 ? 'bg-white-light/30 dark:bg-[#1a2941]' : ''
                                                 } `}
                                                 key={task.subjectQuestionPostId}
                                             >
@@ -295,6 +298,11 @@ const Answer = () => {
                                                             질문 일시 : {task.schedule[0]}년 {task.schedule[1]}월 {task.schedule[2]}일
                                                         </p>
                                                     )}
+                                                </td>
+                                                <td className="w-full">
+                                                    <p className="whitespace-nowrap text-white-dark font-medium">
+                                                        질문자 : {task.questioner.name}
+                                                    </p>
                                                 </td>
                                                 <td className="w-full">
                                                     <div className="flex items-center justify-between w-full">

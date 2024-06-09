@@ -455,7 +455,6 @@ useEffect(() => {
                                                     })}
                                                 </tbody>
                                             </table>
-                                            <button className="mt-5 float-right bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4" onClick={handleActivitySubmit}>제출</button>
                                         </div>
                                     
                                     ) : (

@@ -25,6 +25,12 @@ const AccountSetting = () => {
         setTabs(name);
     };
 
+    function validatePassword(password: string): boolean {
+        const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+        return regex.test(password);
+    }
+
+
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
@@ -77,11 +83,16 @@ const AccountSetting = () => {
     }
 
     const getcertify = async() => {
-        const logined = await login(userinfo.id, password);
-        if(logined.accessToken){
-            setIslogined(true);
+        try{
+            const logined = await login(userinfo.id, password);
+            if(logined.accessToken){
+                setIslogined(true);
+            }
+            setPassword('');
         }
-        setPassword('');
+        catch(error){
+            alert("비밀번호가 일치하지 않습니다.")
+        }
     }
 
     return (
@@ -195,16 +206,20 @@ const AccountSetting = () => {
                                             <input id="checkpassword" type="password" value={checkPassword} onChange={handleCheckPassword} placeholder='변경할 비밀번호를 재입력하세요.' className="form-input" />
                                         </div>
                                         <div className='mt-5'>
-                                        {password ? ( password.length >= 6 && checkPassword.length >= 6 ? (
-                                            password === checkPassword ? (
-                                                <p className="text-xs text-blue-500">비밀번호가 일치합니다.</p>
+                                        {password && (
+                                            password.length >= 8 ? (
+                                                validatePassword(password) ? (
+                                                    password === checkPassword ? (
+                                                        <p className="text-xs text-blue-500">비밀번호가 일치합니다.</p>
+                                                    ) : (
+                                                        <p className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+                                                    )
                                                 ) : (
-                                                    <p className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+                                                    <p className="text-xs text-red-500">비밀번호는 영문, 숫자, 특수문자를 모두 포함하고 최소 8자 이상이어야 합니다.</p>
                                                 )
                                             ) : (
-                                                <p className="text-xs text-red-500">비밀번호는 최소 6자 이상이어야 합니다.</p>
-                                            )) : (
-                                                <></>
+                                                <p className="text-xs text-red-500">비밀번호는 최소 8자 이상이어야 합니다.</p>
+                                            )
                                         )}
                                         </div>
                                         
