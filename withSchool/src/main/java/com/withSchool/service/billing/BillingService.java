@@ -43,7 +43,7 @@ public class BillingService {
     private static final int INTERMEDIATE_DAILY_RATE = 150000;
     private static final int PREMIUM_DAILY_RATE = 200000;
 
-    @Scheduled(cron = "20 55 1 * * ?",zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 1 * ?",zone = "Asia/Seoul") // 매월 1일 0시 0분 0초에 실행
     @Transactional
     public void processMonthlyBilling() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
@@ -59,7 +59,7 @@ public class BillingService {
             }
         }
     }
-    @Scheduled(cron = "0 * * * * ?",zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
+    @Scheduled(cron = "0 0 0 * * ?",zone = "Asia/Seoul") // 매일 0시 0분 0초에 실행
     @Transactional
     public void retryFailedPayments() {
         LocalDate twoWeeksAgo = LocalDate.now().minusWeeks(2);
