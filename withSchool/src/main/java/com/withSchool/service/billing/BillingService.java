@@ -113,7 +113,8 @@ public class BillingService {
                 return 9;
         }
     }
-    private void processPayment(Subscription subscription, int amount) {
+    @Transactional
+    protected void processPayment(Subscription subscription, int amount) {
 
         String paymentId = UUID.randomUUID().toString();
         String url = "https://api.portone.io/payments/" + paymentId + "/billing-key";
@@ -152,9 +153,6 @@ public class BillingService {
         paymentRecord.setSuccess(success);
 
         paymentRecordRepository.save(paymentRecord);
-        if(subscription.getEndDate() != null){
-            subscriptionRepository.delete(subscription);
-        }
 
     }
     private void handlePaymentFailure(Subscription subscription, Exception e) {
