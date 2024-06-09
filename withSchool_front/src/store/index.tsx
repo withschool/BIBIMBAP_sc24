@@ -1,15 +1,12 @@
-import { configureStore } from '@reduxjs/toolkit';
-import schoolReducer from './schoolSlice';
-import themeConfigReducer from './themeConfigSlice'; // 기존에 있는 리듀서
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import themeConfigSlice from './themeConfigSlice';
 
-const store = configureStore({
-    reducer: {
-        school: schoolReducer,
-        themeConfig: themeConfigReducer, // 기존에 있는 리듀서
-    },
+const rootReducer = combineReducers({
+    themeConfig: themeConfigSlice,
 });
 
-export type IRootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export default configureStore({
+    reducer: rootReducer,
+});
 
-export default store;
+export type IRootState = ReturnType<typeof rootReducer>;

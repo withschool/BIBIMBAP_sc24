@@ -19,7 +19,6 @@ const AdminMain = lazy(() => import('../pages/Admin/ManageSchool'));
 const AdminNo = lazy(() => import('../pages/Admin/AdminNotice'));
 const InvoiceList = lazy(() => import('../pages/Admin/InvoiceList'));
 const InvoiceAdd = lazy(() => import('../pages/Admin/InvoiceAdd'));
-const SelectPlan = lazy(() => import('../pages/Admin/SelectPlan'));
 const CommunityAdmin = lazy(() => import('../pages/Admin/CommunityAdmin'));
 
 
@@ -304,10 +303,6 @@ const routes = [
     {
         path: '/admin/invoice/add',
         element: <InvoiceAdd />,
-    },
-    {
-        path: '/admin/invoice/plan',
-        element: <SelectPlan />,
     },
 
     {

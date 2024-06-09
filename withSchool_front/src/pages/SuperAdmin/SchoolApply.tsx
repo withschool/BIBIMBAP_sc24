@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import IconXCircle from '../../components/Icon/IconXCircle';
 import { fetchSchoolApplications } from '../../service/apply';
 import { updateSchoolApplicationState, deleteSchoolApplication } from '../../service/apply';
-import { registerSchool } from '../../service/school';
 
 
 interface SchoolApplication {
@@ -18,7 +17,6 @@ interface SchoolApplication {
     schoolAdminName: string;
     schoolAdminEmail: string;
     state: number;
-    sd_SCHUL_CODE: string;
 }
 
 const SchoolApply = () => {
@@ -37,6 +35,7 @@ const SchoolApply = () => {
         columnAccessor: 'schoolName',
         direction: 'asc',
     });
+
 
 
     useEffect(() => {
@@ -95,16 +94,9 @@ const SchoolApply = () => {
             setInitialRecords(updatedRecords);
             setRecordsData(updatedRecords.slice((page - 1) * pageSize, page * pageSize));
 
+            // Show alert when state is changed to "처리 완료" or "반려"
             if (newState === 2) {
-                const application = updatedRecords.find(record => record.schoolApplicationId === schoolApplicationId);
-                if (application) {
-                    alert('학교 생성 및 이메일 전달이 완료되었습니다.');
-                    const schoolDetails = await fetchSchoolDetailsFromNeis(application.sd_SCHUL_CODE);
-                    await registerSchool({
-                        ...schoolDetails,
-                        adminEmail: application.schoolAdminEmail
-                    });
-                }
+                alert('처리 완료 상태로 변경되었습니다.');
             } else if (newState === 3) {
                 alert('반려 상태로 변경되었습니다.');
             }
@@ -120,27 +112,6 @@ const SchoolApply = () => {
             setRecordsData(updatedRecords.slice((page - 1) * pageSize, page * pageSize));
         } catch (error) {
             console.error('Error deleting school application:', error);
-        }
-    };
-
-    const fetchSchoolDetailsFromNeis = async (sd_SCHUL_CODE: string) => {
-        const apiUrl = `https://open.neis.go.kr/hub/schoolInfo?KEY=215a0c0d1fd74b64946efdc0ef79bc04&Type=json&pIndex=1&pSize=1&SD_SCHUL_CODE=${sd_SCHUL_CODE}`;
-        try {
-            const response = await fetch(apiUrl);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.schoolInfo && data.schoolInfo[1] && data.schoolInfo[1].row) {
-                    return data.schoolInfo[1].row[0];
-                } else {
-                    throw new Error('Unexpected API response structure');
-                }
-            } else {
-                const errorMessage = await response.text();
-                throw new Error(errorMessage);
-            }
-        } catch (error) {
-            console.error('Error fetching school details from NEIS:', error);
-            throw error;
         }
     };
 
@@ -171,7 +142,7 @@ const SchoolApply = () => {
                                         value={state}
                                         onChange={(e) => handleChangeState(schoolApplicationId, Number(e.target.value))}
                                         className={`badge bg-${getStatusColor(state)}`}
-                                    // disabled={state !== 0}
+                                        disabled={state !== 0}
                                     >
                                         <option value={1}>처리 중</option>
                                         <option value={2}>처리 완료</option>
