@@ -154,6 +154,7 @@ public class SchoolInformationService {
         subscriptionRepository.save(currentSubscription);
 
         // 새로운 구독 생성
+        if(now.isBefore(currentSubscription.getStartDate())) now = currentSubscription.getStartDate();
         Subscription newSubscription = Subscription.builder()
                 .plan(reqPlanDTO.getPlan())
                 .startDate(now)
