@@ -46,6 +46,17 @@ const HomeworkStudent = () => {
         displayDescription: '',
     };
 
+    const [late, setLate] = useState(false);
+
+    const checkLate = () => {
+        if (selectedMail) {
+            const dueDate = new Date(selectedMail.due[0], selectedMail.due[1] - 1, selectedMail.due[2]);
+            const currentDate = new Date();
+            const isLate = dueDate < currentDate;
+            console.log(isLate);
+            setLate(isLate);
+        }
+    };
 
     const [mailList, setMailList] = useState<any[]>([]);
     const [filteredMailList, setFilteredMailList] = useState<any[]>([]);
@@ -165,6 +176,10 @@ const HomeworkStudent = () => {
 
 
     const openMail = (type: string, item: any) => {
+        if(late){
+            alert("마감되었습니다.")
+            return;
+        }
         if (type === 'add') {
             setEdit(false);
             setIsShowMailMenu(false);
@@ -246,6 +261,10 @@ const HomeworkStudent = () => {
         }
         clearSelection();
     };
+
+    useEffect(() => {
+        checkLate();
+    }, [selectedMail]);
 
     const [isLoading, setIsLoading] = useState(false);
     
@@ -331,6 +350,10 @@ const HomeworkStudent = () => {
     };
 
     const deleteNotice = async (id: any) => {
+        if(late){
+            alert("마감되었습니다.")
+            return;
+        }
         await deleteSubmitHomework(id);
         showMessage('과제가 성공적으로 삭제되었습니다.');
         searchMails();

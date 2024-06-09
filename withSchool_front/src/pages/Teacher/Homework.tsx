@@ -467,20 +467,6 @@ const Homework = () => {
                                         <div className="ltr:ml-3 rtl:mr-3">과제 목록</div>
                                     </div>
                                 </button>
-                                <button
-                                    type="button"
-                                    className={`w-full flex justify-between items-center p-2 hover:bg-white-dark/10 rounded-md dark:hover:text-primary hover:text-primary dark:hover:bg-[#181F32] font-medium h-10 ${!isEdit && selectedTab === 'list' ? 'bg-gray-100 dark:text-primary text-primary dark:bg-[#181F32]' : ''
-                                        }`}
-                                    onClick={() => {
-                                        setSelectedTab('list');
-                                        tabChanged('list');
-                                    }}
-                                >
-                                    <div className="flex items-center">
-                                        <IconMail className="w-5 h-5 shrink-0" />
-                                        <div className="ltr:ml-3 rtl:mr-3">과제 조회</div>
-                                    </div>
-                                </button>
                                 <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                             </div>
                         </PerfectScrollbar>
@@ -663,7 +649,7 @@ const Homework = () => {
                                             return (
                                                 <tr key={data.id}>
                                                     <td>
-                                                        <div className="whitespace-nowrap">{data.id}</div>
+                                                        <div className="whitespace-nowrap">{data.studentName}</div>
                                                     </td>
                                                     <div
                                                         className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
