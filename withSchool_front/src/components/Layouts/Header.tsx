@@ -59,6 +59,7 @@ const Header = () => {
         if(ismaped) { 
             alert("학생 연결이 완료되었습니다.");
             await fetchStudents();
+            window.location.reload();
             setModal21(false);
         }
         else alert("학생 연결에 실패하였습니다.");
