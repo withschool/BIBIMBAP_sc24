@@ -251,6 +251,11 @@ const HomeworkStudent = () => {
     
     const saveNotice = async (type: any, id: any) => {
 
+        if(!(params.description ||selectedFiles)){
+            showMessage('입력 후 시도하세요.', 'error');
+            return;
+        }
+
         let maxId = 0;
         if (!params.id) {
             maxId = mailList.length ? mailList.reduce((max, character) => (character.id && character.id > max ? character.id : max), 0) : 0;
@@ -440,7 +445,7 @@ const HomeworkStudent = () => {
                                         </tr>
                                     </thead>
                                         <tbody>
-                                            {mailList.map((mail: any) => {
+                                            {mailList && mailList.map((mail: any) => {
                                                 return (
                                                     <tr key={mail.id} className="cursor-pointer" onClick={() => selectMail(mail)}>
                                                         <td className='w-1/3'>
@@ -518,7 +523,7 @@ const HomeworkStudent = () => {
                                         <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                                         <div className="text-base mt-5 mb-4">첨부파일</div>
                                         <div className="flex items-center flex-wrap mt-6">
-                                            {selectedMail.filesURl.map((attachment: any, i: number) => {
+                                            {selectedMail.filesURl && selectedMail.filesURl.map((attachment: any, i: number) => {
                                                 return (
                                                     <a
                                                         href={attachment}
@@ -623,18 +628,20 @@ const HomeworkStudent = () => {
                            
                                                     <div className="p-5">
                                                         <div className="text-lg font-bold mt-5 mb-4">제출 과제 조회</div>
+                                                        {submitHomeworkInfo.content && 
                                                         <div className="mt-5 mb-5">
                                                             <div className="text-base mt-5 mb-4">과제 내용</div>
                                                             <p id="category" className="form-input">
                                                                 <div className="text-base prose" dangerouslySetInnerHTML={{ __html: submitHomeworkInfo.content }}></div>
                                                             </p>
                                                         </div>
+                                                        }
                                                         {(submitHomeworkInfo.filesURl != '' )&& (
                                                             <div className="mt-8">
                                                                 <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                                                                 <div className="text-base mt-5 mb-4">첨부파일</div>
                                                                 <div className="flex items-center flex-wrap mt-6">
-                                                                    {submitHomeworkInfo.filesURl.map((attachment: any, i: number) => {
+                                                                    {submitHomeworkInfo.filesURl && submitHomeworkInfo.filesURl.map((attachment: any, i: number) => {
                                                                         return (
                                                                             <a
                                                                                 href={attachment}

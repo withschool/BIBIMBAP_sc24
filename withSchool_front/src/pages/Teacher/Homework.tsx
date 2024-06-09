@@ -32,7 +32,7 @@ import IconTrash from '../../components/Icon/IconTrash';
 import IconRestore from '../../components/Icon/IconRestore';
 import { teacherNotice, getClassNotices, classNoticeEdit, deleteClassNotice, getClassNoticeDetail } from '../../service/form';
 import { getHomeworkList, makeHomework } from '../../service/wow';
-import { deleteHomework, editHomework } from '../../service/wow';
+import { deleteHomework, editHomework, getSubmitHomeworkList} from '../../service/wow';
 import IconMenu from '../../components/Icon/IconMenu';
 import IconSearch from '../../components/Icon/IconSearch';
 import IconSettings from '../../components/Icon/IconSettings';
@@ -98,9 +98,17 @@ const Homework = () => {
         endIndex: 0,
     });
 
+    const [submitHomeworkList, setSubmitHomeworkList] = useState<any>([]);
+
+    const fetchSubmitHomework = async () => {
+        const req = await getSubmitHomeworkList(selectedMail.id);
+        console.log(req);
+        setSubmitHomeworkList(req);
+    }
+
     useEffect(() => {
-        searchMails();
-    }, [selectedTab, searchText, mailList]);
+        fetchSubmitHomework();
+    }, [selectedMail]);
 
     const subjectId = localStorage.getItem('targetSubject');
 
@@ -338,6 +346,7 @@ const Homework = () => {
 
             } catch (error) {
                 showMessage('과제 작성에 실패했습니다.', 'error');
+                setIsLoading(false);
             }
         }
 
@@ -635,6 +644,63 @@ const Homework = () => {
                                         </div>
                                     </div>
                                 )}
+                                <div className="h-px pt-5 mb-5 border-b border-white-light dark:border-[#1b2e4b]"></div>
+
+                                <div className="table-responsive mb-5">
+                                <div className="text-lg ltr:mr-4 rtl:ml-4 mb-3 whitespace-nowrap">
+                                    과제 제출 목록
+                                </div>
+                                <table className="table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>이름</th>
+                                            <th className='w-1/2 text-center' >내용</th>
+                                            <th className='w-1/3 text-center'>파일</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {submitHomeworkList && submitHomeworkList.map((data : any) => {
+                                            return (
+                                                <tr key={data.id}>
+                                                    <td>
+                                                        <div className="whitespace-nowrap">{data.id}</div>
+                                                    </td>
+                                                    <div
+                                                        className="mt-8 prose dark:prose-p:text-white prose-p:text-sm md:prose-p:text-sm max-w-full prose-img:inline-block prose-img:m-0"
+                                                        dangerouslySetInnerHTML={{ __html: data.content }}
+                                                    ></div>
+                                                    <td className="text-center">
+                                                        {data.filesURl && data.filesURl.map((attachment: any, i: number) => {
+                                                            return (
+                                                                <a
+                                                                    href={attachment}
+                                                                    key={i}
+                                                                    type="button"
+                                                                    className="flex items-center ltr:mr-4 rtl:ml-4 mb-4 border border-white-light dark:border-[#1b2e4b] rounded-md hover:text-primary hover:border-primary transition-all duration-300 px-4 py-2.5 relative group"
+                                                                >
+                                                                    {attachment.type === 'image' && <IconGallery />}
+                                                                    {attachment.type === 'folder' && <IconFolder />}
+                                                                    {attachment.type === 'zip' && <IconZipFile />}
+                                                                    {attachment.type !== 'zip' && attachment.type !== 'image' && attachment.type !== 'folder' && <IconTxtFile className="w-5 h-5" />}
+
+                                                                    <div className="ltr:ml-3 rtl:mr-3">
+                                                                        <p className="text-xs text-primary font-semibold">{data.originalName}</p>
+                                                                        <p className="text-[11px] text-gray-400 dark:text-gray-600">{attachment.size}</p>
+                                                                    </div>
+                                                                    <div className="bg-dark-light/40 z-[5] w-full h-full absolute ltr:left-0 rtl:right-0 top-0 rounded-md hidden group-hover:block"></div>
+                                                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full p-1 btn btn-primary hidden group-hover:block z-10">
+                                                                        <IconDownload className="w-4.5 h-4.5" />
+                                                                    </div>
+                                                                </a>
+                                                            );
+                                                        })}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
                             </div>
                         </div>
                     )}
