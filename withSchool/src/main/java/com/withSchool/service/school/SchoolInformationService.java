@@ -266,6 +266,9 @@ public class SchoolInformationService {
         if (currentSubscription != null) {
             nextBillingDate = calculateNextBillingDate(currentSubscription.getStartDate());
         }
+        else if(school.getServiceType()==9){ //학교의 plan이 9이면
+            nextBillingDate = school.getRegDate().toLocalDate().plusWeeks(2);
+        }
 
         return ResCurrentPlanDTO.builder()
                 .plan(currentSubscription != null ? currentSubscription.getPlan() : 9)
