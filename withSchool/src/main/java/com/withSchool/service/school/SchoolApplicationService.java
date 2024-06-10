@@ -62,7 +62,7 @@ public class SchoolApplicationService {
                 .schoolName(schoolApplication.getSchoolName())
                 .schoolAdminEmail(schoolApplication.getSchoolAdminEmail())
                 .schoolPhoneNumber(schoolApplication.getSchoolPhoneNumber())
-                .schoolAdminName(schoolApplication.getSchoolName())
+                .schoolAdminName(schoolApplication.getSchoolAdminName())
                 .state(state)
                 .regDate(schoolApplication.getRegDate())
                 .SD_SCHUL_CODE(schoolApplication.getSD_SCHUL_CODE())
