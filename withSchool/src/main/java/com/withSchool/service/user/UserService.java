@@ -121,7 +121,7 @@ public class UserService {
         if(result.isPresent()) {
             SchoolInformation schoolInformation = result.get();
             User admin = User.builder()
-                    .id(schoolInformation.getSdSchulCode() + "_admin")
+                    .id(schoolInformation.getSdSchulCode() + "admin")
                     .password(passwordEncoder.encode(rawPassword))  // 초기 비밀번호 설정이여서 암호화 필요없을듯
                     .name("관리자")
                     .accountType(3)
