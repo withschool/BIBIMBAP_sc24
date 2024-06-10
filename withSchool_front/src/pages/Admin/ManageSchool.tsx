@@ -10,8 +10,7 @@ import IconCaretDown from '../../components/Icon/IconCaretDown';
 import IconAirplay from '../../components/Icon/IconAirplay';
 import IconBox from '../../components/Icon/IconBox';
 import IconLayout from '../../components/Icon/IconLayout';
-
-
+import { getUserInfobyId } from '../../service/auth';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { downloadExcel } from 'react-export-table-to-excel';
@@ -37,6 +36,10 @@ import { getSchoolInfo } from '../../service/school';
 import { useSelector } from 'react-redux';
 import { setSchoolName } from '../../store/schoolSlice';
 import { IRootState } from '../../store';
+
+
+import { isPasswordModified, updatePassword } from '../../service/admin';
+
 
 
 
@@ -70,6 +73,11 @@ const ManageSchool = () => {
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
     const [search, setSearch] = useState('');
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'userName', direction: 'asc' });
+
+
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
 
     interface Record {
@@ -467,7 +475,46 @@ const ManageSchool = () => {
     };
 
     const [numGrades, setNumGrades] = useState(3); // Default to 3 grades
+    useEffect(() => {
+        dispatch(setPageTitle('학교 관리'));
 
+        const checkPasswordModified = async () => {
+            try {
+                const modified = await isPasswordModified();
+                if (modified) {
+                    setIsPasswordModalOpen(true);
+                }
+            } catch (error) {
+                console.error('비밀번호 수정 확인 실패:', error);
+            }
+        };
+
+        checkPasswordModified();
+    }, [dispatch]);
+
+    const handlePasswordChange = async () => {
+        if (newPassword !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) {
+                throw new Error('User ID not found in localStorage');
+            }
+
+            const userInfo = await getUserInfobyId(id);
+            const userId = userInfo.userId;
+
+            await updatePassword(userId, newPassword);
+            alert('비밀번호가 성공적으로 변경되었습니다.');
+            setIsPasswordModalOpen(false);
+        } catch (error) {
+            console.error('비밀번호 수정 실패:', error);
+            alert('비밀번호 수정에 실패했습니다.');
+        }
+    };
     return (
         <div>
             <div className="pb-5 space-y-8">
@@ -600,7 +647,23 @@ const ManageSchool = () => {
                                                                     </span>
                                                                     <input type="text" placeholder="대상 반" className="form-input ltr:pl-10 rtl:pr-10" id="targetClass" />
                                                                 </div>
-                                                                <button type="button" className="btn btn-primary w-full" onClick={handleCreateClass}>
+                                                                <button type="button" className="btn btn-primary w-full" onClick={() => {
+                                                                    const gradeInput = document.getElementById('targetGrade') as HTMLInputElement;
+                                                                    const classInput = document.getElementById('targetClass') as HTMLInputElement;
+
+                                                                    const grade = parseInt(gradeInput.value);
+                                                                    const inClass = parseInt(classInput.value);
+
+                                                                    if (isNaN(grade) || isNaN(inClass) || grade >= 7 || inClass >= 20) {
+                                                                        alert('정상적인 값을 입력해 주세요');
+                                                                        return;
+                                                                    } else {
+
+                                                                        handleCreateClass();
+                                                                        alert(`${grade}학년 ${inClass}반이 생성되었습니다.`);
+
+                                                                    }
+                                                                }}>
                                                                     반 만들기
                                                                 </button>
                                                             </form>
@@ -716,6 +779,14 @@ const ManageSchool = () => {
                                                                 </div>
 
                                                                 <button type="button" className="btn btn-primary w-full" onClick={async () => {
+                                                                    const subjectGradeInput = document.getElementById('subjectGrade') as HTMLInputElement;
+                                                                    const subjectGrade = parseInt(subjectGradeInput.value);
+
+                                                                    if (isNaN(subjectGrade) || subjectGrade >= 7) {
+                                                                        alert('정상적인 값을 입력해 주세요');
+                                                                        return;
+                                                                    }
+
                                                                     await handleCreateSubject();
                                                                     window.location.reload();
                                                                 }}>
@@ -781,7 +852,77 @@ const ManageSchool = () => {
 
 
             </div>
-
+            <Transition appear show={isPasswordModalOpen} as={Fragment}>
+                <Dialog as="div" open={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                        <div className="flex min-h-screen items-start justify-center px-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
+                                    <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
+                                        <h5>새로 로그인 하셨습니다.<br />비밀번호를 변경해 주세요.</h5>
+                                    </div>
+                                    <div className="p-5">
+                                        <form>
+                                            <div className="relative mb-4">
+                                                <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                    <IconLock className="w-5 h-5" />
+                                                </span>
+                                                <input
+                                                    type="password"
+                                                    placeholder="새 비밀번호"
+                                                    className="form-input ltr:pl-10 rtl:pr-10"
+                                                    value={newPassword}
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="relative mb-4">
+                                                <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                    <IconLock className="w-5 h-5" />
+                                                </span>
+                                                <input
+                                                    type="password"
+                                                    placeholder="비밀번호 확인"
+                                                    className="form-input ltr:pl-10 rtl:pr-10"
+                                                    value={confirmPassword}
+                                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={handlePasswordChange}
+                                                >
+                                                    비밀번호 변경
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </div>
     );
 };

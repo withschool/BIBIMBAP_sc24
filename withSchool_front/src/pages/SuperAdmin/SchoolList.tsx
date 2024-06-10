@@ -16,6 +16,9 @@ import IconX from "../../components/Icon/IconX";
 import IconXCircle from "../../components/Icon/IconXCircle";
 import IconUser from "../../components/Icon/IconUser";
 import IconAt from "../../components/Icon/IconAt";
+import { updateSchoolPaymentState } from "../../service/school";
+
+
 import {
     getSchoolList,
     getSchoolListFromNeis,
@@ -267,6 +270,19 @@ const SchoolList = () => {
         }
     };
 
+    const handleTogglePaymentState = async (school: School) => {
+        const updatedPaymentState = school.paymentState === 0 ? 1 : 0;
+        try {
+            await updateSchoolPaymentState(school.schoolId, updatedPaymentState);
+            setInitialRecords((prevRecords) =>
+                prevRecords.map((item) =>
+                    item.schoolId == school.schoolId ? { ...item, paymentState: updatedPaymentState } : item
+                )
+            );
+        } catch (error) {
+            console.error("Failed to update payment state:", error);
+        }
+    };
 
     const handleDeleteSchool = async (schoolId: number) => {
         if (window.confirm("정말로 이 학교를 삭제하시겠습니까?")) {
@@ -468,11 +484,12 @@ const SchoolList = () => {
                                 title: "서비스 상태",
                                 sortable: true,
                                 render: (school) => {
-                                    const status = school.paymentState === 1 ? { tooltip: '정상', color: 'success' } : { tooltip: '중지', color: 'danger' };
+                                    const status = school.paymentState == 1 ? { tooltip: '정상', color: 'success' } : { tooltip: '중지', color: 'danger' };
                                     return (
                                         <span
                                             className={`badge badge-outline-${status.color}`}
                                             style={{ cursor: 'pointer' }}
+                                            onClick={() => handleTogglePaymentState(school)}
                                         >
                                             {status.tooltip}
                                         </span>
@@ -492,7 +509,7 @@ const SchoolList = () => {
                         paginationText={({ from, to, totalRecords }) =>
                             `${totalRecords}개의 항목 중 ${from}에서 ${to}까지 표시`
                         }
-                        // onRowClick={(school) => } // 학교 클릭 시 호출
+                    // onRowClick={(school) => } // 학교 클릭 시 호출
                     />
                 </div>
             </div>

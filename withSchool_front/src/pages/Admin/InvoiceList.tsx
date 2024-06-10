@@ -106,8 +106,24 @@ const InvoiceList = () => {
     });
 
     useEffect(() => {
-        const billingKey = 'billing-key-018ffb24-227a-fa4c-a7e8-f5644c85ea54'; // Replace with actual billing key
-        fetchCardDetails(billingKey);
+        const fetchAndSetCardDetails = async () => {
+            try {
+                const schoolId = localStorage.getItem('schoolId');
+                if (!schoolId) {
+                    throw new Error('schoolId is not found in localStorage');
+                }
+                const billingKey = await checkBillingKey(Number(schoolId));
+                if (billingKey) {
+                    fetchCardDetails(billingKey);
+                } else {
+                    console.warn('No billing key found');
+                }
+            } catch (error) {
+                console.error('Error fetching billing key:', error);
+            }
+        };
+
+        fetchAndSetCardDetails();
     }, []);
 
 
@@ -175,6 +191,7 @@ const InvoiceList = () => {
                     throw new Error('schoolId is not found in localStorage');
                 }
                 const planDetails = await fetchCurrentPlan(Number(schoolId));
+                console.log(`머고고곡 ${planDetails.plan}`)
                 setCurrentPlan(planDetails);
             } catch (error) {
                 console.error('Error fetching current plan details:', error);
@@ -255,8 +272,7 @@ const InvoiceList = () => {
                                                         </div>
                                                         <div className="flex-1 font-semibold">
                                                             <h6 className="mb-1 text-base">사용중인 플랜</h6>
-                                                            <p>{currentPlan ? `${planNames[currentPlan.plan]} 플랜` : '체험판 플랜'}</p>
-                                                        </div>
+                                                            <p>{currentPlan ? (currentPlan.plan == 9 ? '체험판 플랜' : `${planNames[currentPlan.plan]} 플랜`) : '체험판 플랜'}</p>                                                        </div>
                                                     </div>
                                                     <div className="flex border-b border-white-light dark:border-[#1b2e4b] px-4 py-2.5 hover:bg-[#eee] dark:hover:bg-[#eee]/10">
                                                         <div className="ltr:mr-2 rtl:ml-2.5 mt-0.5 text-primary">
