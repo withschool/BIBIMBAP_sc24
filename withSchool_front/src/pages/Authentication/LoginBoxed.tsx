@@ -89,7 +89,7 @@ const LoginBoxed = () => {
                     navigate('/parent/home');
                 }
                 else if (localStorage.getItem('accountType') == "ROLE_STUDENT") {
-                    navigate('/student/calendar');
+                    navigate('/student/schoolnotice');
                 }
 
             } else {
