@@ -58,8 +58,7 @@ export const issueBillingKey = async () => {
     }
 };
 
-
-export const checkBillingKey = async (schoolId: number): Promise<boolean> => {
+export const checkBillingKey = async (schoolId: number): Promise<string | null> => {
     try {
         const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/billingKey`, {
             method: 'GET',
@@ -68,12 +67,13 @@ export const checkBillingKey = async (schoolId: number): Promise<boolean> => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
-        if (response.ok) {
-            const data = await response.json();
-            return data == 1;
-        } else {
-            throw new Error('Failed to check billing key');
+
+        if (!response.ok) {
+            throw new Error(`Failed to check billing key: ${response.status} ${response.statusText}`);
         }
+
+        const data = await response.text();
+        return data; // Assuming the API returns the billing key as a string or null
     } catch (error) {
         console.error('Error checking billing key:', error);
         throw error;
@@ -114,6 +114,49 @@ export const changePlan = async (schoolId: number, plan: number): Promise<void> 
         }
     } catch (error) {
         console.error('Error changing plan:', error);
+        throw error;
+    }
+};
+
+export const fetchInvoices = async (schoolId: number) => {
+    try {
+        const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch invoices: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching invoices:', error);
+        throw error;
+    }
+};
+export const fetchCurrentPlan = async (schoolId: number) => {
+    try {
+        const response = await fetch(`${MY_SERVER_URL}/admin/schools/${schoolId}/currentPlan`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch current plan: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching current plan:', error);
         throw error;
     }
 };

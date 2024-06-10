@@ -24,57 +24,126 @@ import IconSettings from '../../components/Icon/IconSettings';
 // import { fetchInvoices } from '../../service/pay';
 import { checkBillingKey, registerFirstPlan, changePlan } from '../../service/pay';
 import { getSchoolInfo } from '../../service/school';
+import { format } from 'date-fns';
+import { fetchInvoices } from '../../service/pay';
 
+import { fetchCurrentPlan } from '../../service/pay';
+
+import { getCardDetails } from '../../service/portone';
 
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
+import IconMenuMailbox from '../../components/Icon/Menu/IconMenuMailbox';
+import IconBook from '../../components/Icon/IconBook';
+
+interface Invoice {
+    paymentId: string;
+    plan: number;
+    paymentDate: string;
+    amount: number;
+    success: boolean;
+}
 
 const InvoiceList = () => {
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Invoice List'));
-    });
-    const [items, setItems] = useState([
-        {
-            id: 1,
-            invoice: '081451',
-            date: '2024.02.01',
-            amount: '389만 2,700원',
-            status: { tooltip: '결제 완료', color: 'success' },
-        },
-        {
-            id: 2,
-            invoice: '081452',
-            date: '2024.03.01',
-            amount: '209만 5,400원',
-            status: { tooltip: '결제 완료', color: 'success' },
-        },
-        {
-            id: 3,
-            invoice: '081681',
-            date: '2024.04.01',
-            amount: '183만 1,800원',
-            status: { tooltip: '결제 실패', color: 'danger' },
-        },
-    ]);
 
+
+
+    const [items, setItems] = useState<Invoice[]>([]);
+    const [initialRecords, setInitialRecords] = useState<Invoice[]>([]);
+
+    const formatAmount = (amount: number) => {
+        return `${Math.floor(amount / 10000)}만원`;
+    };
+
+
+    const dispatch = useDispatch();
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState(sortBy(items, 'invoice'));
-    const [records, setRecords] = useState(initialRecords);
-    const [selectedRecords, setSelectedRecords] = useState<any>([]);
-
+    const [records, setRecords] = useState<Invoice[]>([]); const [selectedRecords, setSelectedRecords] = useState<any>([]);
     const [search, setSearch] = useState('');
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-        columnAccessor: 'firstName',
+        columnAccessor: 'paymentId',
         direction: 'asc',
     });
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const schoolId = localStorage.getItem('schoolId');
+                if (!schoolId) {
+                    throw new Error('schoolId is not found in localStorage');
+                }
+                const data = await fetchInvoices(Number(schoolId));
+
+                // Sort data by paymentDate and add orders field
+                const sortedData = sortBy(data, 'paymentDate');
+                const dataWithOrders = sortedData.map((item, index) => ({
+                    ...item,
+                    orders: index + 1,
+                }));
+
+                setItems(dataWithOrders);
+                setInitialRecords(sortBy(dataWithOrders, 'paymentId'));
+            } catch (error) {
+                console.error('Error fetching invoices:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const [card, setCard] = useState({
+        publisher: '',
+        issuer: '',
+        brand: '',
+        type: '',
+        ownerType: '',
+        bin: '',
+        name: '',
+        number: ''
+    });
+
+    useEffect(() => {
+        const fetchAndSetCardDetails = async () => {
+            try {
+                const schoolId = localStorage.getItem('schoolId');
+                if (!schoolId) {
+                    throw new Error('schoolId is not found in localStorage');
+                }
+                const billingKey = await checkBillingKey(Number(schoolId));
+                if (billingKey) {
+                    fetchCardDetails(billingKey);
+                } else {
+                    console.warn('No billing key found');
+                }
+            } catch (error) {
+                console.error('Error fetching billing key:', error);
+            }
+        };
+
+        fetchAndSetCardDetails();
+    }, []);
+
+
+    const fetchCardDetails = async (billingKey: string) => {
+        try {
+            const cardDetails = await getCardDetails(billingKey, "store-b2c528ec-59c4-420b-8e47-5aac076f4573");
+            setCard(cardDetails);
+        } catch (error) {
+            console.error('Error fetching card details:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        dispatch(setPageTitle('결제 내역'));
+    }, [dispatch]);
+
+
+    useEffect(() => {
         setPage(1);
-        /* eslint-disable react-hooks/exhaustive-deps */
     }, [pageSize]);
 
     useEffect(() => {
@@ -87,20 +156,20 @@ const InvoiceList = () => {
         setInitialRecords(() => {
             return items.filter((item) => {
                 return (
-                    item.invoice.toLowerCase().includes(search.toLowerCase()) ||
-                    item.date.toLowerCase().includes(search.toLowerCase()) ||
-                    item.amount.toLowerCase().includes(search.toLowerCase()) ||
-                    item.status.tooltip.toLowerCase().includes(search.toLowerCase())
+                    item.paymentId.toLowerCase().includes(search.toLowerCase()) ||
+                    item.paymentDate.toLowerCase().includes(search.toLowerCase()) ||
+                    formatAmount(item.amount).toLowerCase().includes(search.toLowerCase()) ||
+                    (item.success ? '성공' : '실패').toLowerCase().includes(search.toLowerCase())
                 );
             });
         });
-    }, [search]);
+    }, [search, items]);
 
     useEffect(() => {
         const data2 = sortBy(initialRecords, sortStatus.columnAccessor);
         setRecords(sortStatus.direction === 'desc' ? data2.reverse() : data2);
         setPage(1);
-    }, [sortStatus]);
+    }, [sortStatus, initialRecords]);
 
     //결제 관련 코드
 
@@ -112,6 +181,25 @@ const InvoiceList = () => {
             console.error('Payment test failed:', error);
         }
     };
+    const [currentPlan, setCurrentPlan] = useState<{ plan: number, userCount: number, nextBillingDate: string | null } | null>(null);
+
+    useEffect(() => {
+        const fetchPlanDetails = async () => {
+            try {
+                const schoolId = localStorage.getItem('schoolId');
+                if (!schoolId) {
+                    throw new Error('schoolId is not found in localStorage');
+                }
+                const planDetails = await fetchCurrentPlan(Number(schoolId));
+                console.log(`머고고곡 ${planDetails.plan}`)
+                setCurrentPlan(planDetails);
+            } catch (error) {
+                console.error('Error fetching current plan details:', error);
+            }
+        };
+
+        fetchPlanDetails();
+    }, []);
 
 
     const [codeArr, setCodeArr] = useState<string[]>([]);
@@ -119,7 +207,6 @@ const InvoiceList = () => {
     const [yearlyPrice, setYearlyPrice] = useState<any>(false);
 
     const planNames = ['소규모', '중규모', '대규모', '체험판'];
-
 
     const handleChangePlan = async (plan: number) => {
         try {
@@ -129,21 +216,25 @@ const InvoiceList = () => {
                 throw new Error('schoolId is not found in localStorage');
             }
 
-            const schoolInfo = await getSchoolInfo(schoolId);
+            const schoolInfo = await getSchoolInfo('');
             const isTrial = schoolInfo.serviceType == 9;
+            if (schoolInfo.serviceType != plan) {
+                if (isTrial) {
+                    const hasBillingKey = await checkBillingKey(Number(schoolId));
+                    if (!hasBillingKey) {
+                        alert('카드 등록을 먼저 진행해주세요.');
+                        return;
+                    }
+                    await registerFirstPlan(Number(schoolId), plan);
+                    alert('첫 플랜 등록이 성공하였습니다.');
 
-            if (isTrial) {
-                const hasBillingKey = await checkBillingKey(Number(schoolId));
-                if (!hasBillingKey) {
-                    alert('카드 등록을 먼저 진행해주세요.');
-                    return;
+                } else {
+                    await changePlan(Number(schoolId), plan);
+                    alert('플랜 변경이 성공하였습니다.');
                 }
-                await registerFirstPlan(Number(schoolId), plan);
-                alert('첫 플랜 등록이 성공하였습니다.');
-
-            } else {
-                await changePlan(Number(schoolId), plan);
-                alert('플랜 변경이 성공하였습니다.');
+            }
+            else {
+                alert('같은 플랜을 선택하셨습니다. 다른 플랜을 입력해 주세요.');
 
             }
 
@@ -152,7 +243,6 @@ const InvoiceList = () => {
             alert('플랜 변경이 실패하였습니다.');
         }
     };
-
 
 
     return (
@@ -170,34 +260,89 @@ const InvoiceList = () => {
 
                             <Tab.Panels className="w-full">
                                 <Tab.Panel className="w-full">
-                                    <div className="flex w-full">
+                                    <div className="flex w-full h-full gap-4">
+                                        <div className="panel w-1/2 h-full flex flex-col justify-between">
+                                        <h5 className="text-lg font-semibold dark:text-white-light">결제 기본 정보</h5>
 
-                                        <div
-                                            className="panel h-full overflow-hidden before:bg-[#1937cc] before:absolute before:-right-44 before:top-0 before:bottom-0 before:m-auto before:rounded-full before:w-96 before:h-96 flex-1"
-                                            style={{ background: 'linear-gradient(0deg,#00c6fb -227%,#005bea)' }}
-                                        >
-                                            <div className="flex items-start justify-between text-white-light mb-16 z-[7]">
-                                                <h5 className="font-semibold text-lg">결제 설정</h5>
-
-                                                <div className="relative text-xl whitespace-nowrap">
-                                                    <span className="table text-[#d3d3d3] bg-[#4361ee] rounded p-1 text-xs mt-1 ltr:ml-auto rtl:mr-auto">+ 명</span>
+                                            <div className="flex items-center justify-between mb-5">
+                                            </div>
+                                            <div className="mb-5 flex-1">
+                                                <div className="flex flex-col rounded-md border border-white-light dark:border-[#1b2e4b] h-full">
+                                                    <div className="flex border-b border-white-light dark:border-[#1b2e4b] px-4 py-2.5 hover:bg-[#eee] dark:hover:bg-[#eee]/10">
+                                                        <div className="ltr:mr-2 rtl:ml-2.5 mt-0.5 text-primary">
+                                                            <IconHome className="w-5 h-5" />
+                                                        </div>
+                                                        <div className="flex-1 font-semibold">
+                                                            <h6 className="mb-1 text-base">사용중인 플랜</h6>
+                                                            <p>{currentPlan ? (currentPlan.plan == 9 ? '체험판 플랜' : `${planNames[currentPlan.plan]} 플랜`) : '체험판 플랜'}</p>                                                        </div>
+                                                    </div>
+                                                    <div className="flex border-b border-white-light dark:border-[#1b2e4b] px-4 py-2.5 hover:bg-[#eee] dark:hover:bg-[#eee]/10">
+                                                        <div className="ltr:mr-2 rtl:ml-2.5 mt-0.5 text-primary">
+                                                            <IconHome className="w-5 h-5" />
+                                                        </div>
+                                                        <div className="flex-1 font-semibold">
+                                                            <h6 className="mb-1 text-base">사용 인원</h6>
+                                                            <p>
+                                                                {currentPlan ? `${currentPlan.userCount} / ${currentPlan.plan === 0 ? '300' : currentPlan.plan === 1 ? '700' : '∞'}` : '0 / 300'}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex border-b border-white-light dark:border-[#1b2e4b] px-4 py-2.5 hover:bg-[#eee] dark:hover:bg-[#eee]/10">
+                                                        <div className="ltr:mr-2 rtl:ml-2.5 mt-0.5 text-primary">
+                                                            <IconBook className="w-5 h-5" />
+                                                        </div>
+                                                        <div className="flex-1 font-semibold">
+                                                            <h6 className="mb-1 text-base">다음 결제일 (사용 기한)</h6>
+                                                            <p>
+                                                                {currentPlan ? (currentPlan.nextBillingDate ? new Date(currentPlan.nextBillingDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A') : ''}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center justify-between z-10">
-                                                <div className="flex items-center justify-between">
-                                                    <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2">
-                                                        <IconPlus />
-                                                    </button>
-                                                    <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] grid place-content-center">
-                                                        <IconCreditCard />
+                                        </div>
+                                        <div className="panel w-1/2 h-full flex flex-col justify-between">
+                                            <div
+                                                className="panel h-full overflow-hidden relative flex flex-col justify-between"
+                                                style={{ background: 'linear-gradient(0deg,#00c6fb -227%,#005bea)' }}
+                                            >
+                                                <div className="flex items-start justify-between text-white-light z-[7]">
+                                                    <h5 className="font-semibold text-lg">결제 설정</h5>
+                                                    <div className="relative text-xl whitespace-nowrap">
+
+                                                        <span className="table text-[#d3d3d3] bg-[#4361ee] rounded p-1 text-xs mt-1 ltr:ml-auto rtl:mr-auto">
+                                                            마지막 결제일 : {currentPlan && currentPlan.nextBillingDate ? new Date(new Date(currentPlan.nextBillingDate).setMonth(new Date(currentPlan.nextBillingDate).getMonth() - 1)).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                                                        </span>                                                    </div>
+
+                                                </div>
+                                                <div className="mt-4 text-white-light mt-4 mb-4">
+                                                    <p><strong>발행사 코드:</strong> {card.publisher || 'N/A'}</p>
+                                                    <p><strong>발급사 코드:</strong> {card.issuer || 'N/A'}</p>
+                                                    <p><strong>카드 브랜드:</strong> {card.brand || 'N/A'}</p>
+                                                    <p><strong>카드 유형:</strong> {card.type || 'N/A'}</p>
+                                                    <p><strong>카드 소유주 유형:</strong> {card.ownerType || 'N/A'}</p>
+                                                    <p><strong>BIN:</strong> {card.bin || 'N/A'}</p>
+                                                    <p><strong>카드 상품명:</strong> {card.name || 'N/A'}</p>
+                                                    <p><strong>마스킹된 카드 번호:</strong> {card.number || 'N/A'}</p>
+                                                </div>
+                                                <div className="flex items-center justify-between z-10">
+                                                    <div className="flex items-center justify-between">
+                                                        <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] place-content-center ltr:mr-2 rtl:ml-2" onClick={handlePaymentTest}>
+                                                            <IconPlus />
+                                                        </button>
+                                                        <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#1937cc] grid place-content-center" onClick={handlePaymentTest}>
+                                                            <IconCreditCard />
+                                                        </button>
+                                                    </div>
+                                                    <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#4361ee] z-10" onClick={handlePaymentTest}>
+                                                        카드 변경
                                                     </button>
                                                 </div>
-                                                <button type="button" className="shadow-[0_0_2px_0_#bfc9d4] rounded p-1 text-white-light hover:bg-[#4361ee] z-10">
-                                                    카드 변경
-                                                </button>
+
                                             </div>
                                         </div>
                                     </div>
+
                                 </Tab.Panel>
                                 <Tab.Panel className="w-full">
                                     <div className="flex w-full">
@@ -226,7 +371,7 @@ const InvoiceList = () => {
                                                             </button>
                                                         </div>
                                                         <div className="relative flex-1 p-4 pt-14 lg:p-9 border border-white-light dark:border-[#1b2e4b] transition-all duration-300 rounded-t-md">
-                                                            <div className="absolute top-0 md:-top-[30px] inset-x-0 bg-primary text-white h-10 flex items-center justify-center text-base rounded-t-md">현재 사용중인 플랜</div>
+                                                            <div className="absolute top-0 md:-top-[30px] inset-x-0 bg-primary text-white h-10 flex items-center justify-center text-base rounded-t-md">추천 플랜 </div>
                                                             <h3 className="text-xl mb-5 font-semibold text-black dark:text-white-light">중규모 학교</h3>
                                                             <p>중간 규모 학교에게 적합한 플랜으로, 적합한 가격으로 서비스를 이용하실 수 있습니다.</p>
                                                             <div className="my-7 p-2.5 text-center text-lg">
@@ -276,8 +421,8 @@ const InvoiceList = () => {
                                 <Tab as={Fragment}>
                                     {({ selected }) => (
                                         <button
-                                            className={`${selected ? '!bg-success text-white !outline-none' : ''}
-                                                    hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)]' flex flex-col items-center justify-center rounded-lg bg-[#f1f2f3] p-7 py-3 hover:!bg-success hover:text-white dark:bg-[#191e3a]`}
+                                            className={`${selected ? '!bg-primary text-white !outline-none' : ''}
+                                                    hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)]' flex flex-col items-center justify-center rounded-lg bg-[#f1f2f3] p-7 py-3 hover:!bg-primary hover:text-white dark:bg-[#191e3a]`}
                                         >
                                             <IconUser className="w-5 h-5 mb-1" />
                                             결제 관리
@@ -287,8 +432,8 @@ const InvoiceList = () => {
                                 <Tab as={Fragment}>
                                     {({ selected }) => (
                                         <button
-                                            className={`${selected ? '!bg-success text-white !outline-none' : ''}
-                                                    hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)]' flex flex-col items-center justify-center rounded-lg bg-[#f1f2f3] p-7 py-3 hover:!bg-success hover:text-white dark:bg-[#191e3a]`}
+                                            className={`${selected ? '!bg-primary text-white !outline-none' : ''}
+                                                    hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)]' flex flex-col items-center justify-center rounded-lg bg-[#f1f2f3] p-7 py-3 hover:!bg-primary hover:text-white dark:bg-[#191e3a]`}
                                         >
                                             <IconSettings className="w-5 h-5 mb-1" />
                                             플랜 관리
@@ -306,71 +451,68 @@ const InvoiceList = () => {
             <div className="invoice-table mt-10">
                 <div className="mb-4.5 px-5 flex md:items-center md:flex-row flex-col gap-5">
 
-                    <button type="button" className="btn btn-primary btn-sm m-1" onClick={handlePaymentTest}>
-                        <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
-                        결제 테스트
-                    </button>
+
                     <div className="ltr:ml-auto rtl:mr-auto">
                         <input type="text" className="form-input w-auto" placeholder="검색" value={search} onChange={(e) => setSearch(e.target.value)} />
 
                     </div>
                 </div>
-
                 <div className="datatables pagination-padding">
                     <DataTable
                         className="whitespace-nowrap table-hover invoice-table"
                         records={records}
+                        withBorder={true}
                         columns={[
                             {
-                                accessor: 'invoice',
-                                title: '결제 ID',
+                                accessor: 'orders',
+                                title: '결제 순서',
                                 textAlignment: 'center',
                                 sortable: true,
-                                render: ({ invoice }) => (
-                                    <NavLink to="/apps/invoice/preview">
-                                        <div className="text-primary underline hover:no-underline font-semibold">{`#${invoice}`}</div>
-                                    </NavLink>
-                                ),
                             },
                             {
-                                accessor: 'date',
-                                title: '날짜',
+                                accessor: 'plan',
+                                title: '사용 중인 플랜',
                                 textAlignment: 'center',
                                 sortable: true,
+                                render: ({ plan }) => {
+                                    const planNames = ['소규모', '중규모', '대규모', '체험판'];
+                                    return <div>{planNames[plan]}</div>;
+                                },
+                            },
+                            {
+                                accessor: 'paymentDate',
+                                title: '결제 시도일',
+                                textAlignment: 'center',
+                                sortable: true,
+                                render: ({ paymentDate }) => <div>{paymentDate[0]}년 {paymentDate[1]}월 {paymentDate[2]}일 {paymentDate[3]}시 {paymentDate[4]}분</div>,
                             },
                             {
                                 accessor: 'amount',
-                                title: '결제 금액',
+                                title: '결제 시도 금액',
                                 sortable: true,
                                 textAlignment: 'center',
-                                render: ({ amount, id }) => <div className="font-semibold">{`${amount}`}</div>,
+                                render: ({ amount }) => <div className="font-semibold">{formatAmount(amount)}</div>,
                             },
                             {
-                                accessor: 'status',
+                                accessor: 'success',
                                 title: '결제 상태',
                                 sortable: true,
                                 textAlignment: 'center',
-                                render: ({ status }) => <span className={`badge badge-outline-${status.color} `}>{status.tooltip}</span>,
+                                render: ({ success }) => (
+                                    <span className={`badge badge-outline-${success ? 'success' : 'danger'}`}>
+                                        {success ? '성공' : '실패'}
+                                    </span>
+                                ),
                             },
                             {
-                                accessor: 'action',
-                                title: '기능',
-                                sortable: false,
+                                accessor: 'paymentId',
+                                title: '결제 ID',
                                 textAlignment: 'center',
-                                render: ({ id }) => (
-                                    <div className="flex gap-4 items-center w-max mx-auto">
-                                        <Tippy content="결제 수정">
-                                            <NavLink to="/apps/invoice/edit" className="flex hover:text-info">
-                                                <IconEdit className="w-4.5 h-4.5" />
-                                            </NavLink>
-                                        </Tippy>
-                                        <Tippy content="세부 내용">
-                                            <NavLink to="/apps/invoice/preview" className="flex hover:text-primary">
-                                                <IconEye />
-                                            </NavLink>
-                                        </Tippy>
-
-                                    </div>
+                                sortable: true,
+                                render: ({ paymentId }) => (
+                                    <NavLink to="">
+                                        <div className="text-primary underline hover:no-underline font-semibold">{`#${paymentId}`}</div>
+                                    </NavLink>
                                 ),
                             },
                         ]}
@@ -383,7 +525,6 @@ const InvoiceList = () => {
                         onRecordsPerPageChange={setPageSize}
                         sortStatus={sortStatus}
                         onSortStatusChange={setSortStatus}
-                        selectedRecords={selectedRecords}
                         onSelectedRecordsChange={setSelectedRecords}
                         paginationText={({ from, to, totalRecords }) => `${totalRecords}개의 항목 중 ${from}에서 ${to}까지 표시`}
                     />

@@ -10,8 +10,7 @@ import IconCaretDown from '../../components/Icon/IconCaretDown';
 import IconAirplay from '../../components/Icon/IconAirplay';
 import IconBox from '../../components/Icon/IconBox';
 import IconLayout from '../../components/Icon/IconLayout';
-
-
+import { getUserInfobyId } from '../../service/auth';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import sortBy from 'lodash/sortBy';
 import { downloadExcel } from 'react-export-table-to-excel';
@@ -37,6 +36,10 @@ import { getSchoolInfo } from '../../service/school';
 import { useSelector } from 'react-redux';
 import { setSchoolName } from '../../store/schoolSlice';
 import { IRootState } from '../../store';
+
+
+import { isPasswordModified, updatePassword } from '../../service/admin';
+
 
 
 
@@ -72,6 +75,11 @@ const ManageSchool = () => {
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'userName', direction: 'asc' });
 
 
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+
     interface Record {
         userId: number;
         userName: string;
@@ -87,13 +95,28 @@ const ManageSchool = () => {
         const fetchData = async () => {
             try {
                 const data = await getSchoolUsers();
-                setInitialRecords(sortBy(data, 'userName'));
+                const mappedData = data.map((user: any) => ({
+                    ...user,
+                    accountType: mapAccountType(user.accountType),
+                }));
+                setInitialRecords(sortBy(mappedData, 'name'));
             } catch (error) {
                 console.error('Error fetching school users:', error);
             }
         };
         fetchData();
     }, []);
+    
+    const mapAccountType = (type: number) => {
+        switch (type) {
+            case 0: return '학생';
+            case 1: return '학부모';
+            case 2: return '교사';
+            case 3: return '어드민';
+            case 4: return '슈퍼 어드민';
+            default: return '알 수 없음';
+        }
+    };
 
     useEffect(() => {
         const from = (page - 1) * pageSize;
@@ -467,7 +490,47 @@ const ManageSchool = () => {
     };
 
     const [numGrades, setNumGrades] = useState(3); // Default to 3 grades
+    useEffect(() => {
+        dispatch(setPageTitle('학교 관리'));
 
+        const checkPasswordModified = async () => {
+            try {
+                const modified = await isPasswordModified();
+                console.log(modified);
+                if (modified === "false") {
+                    setIsPasswordModalOpen(true);
+                }
+            } catch (error) {
+                console.error('비밀번호 수정 확인 실패:', error);
+            }
+        };
+
+        checkPasswordModified();
+    }, [dispatch]);
+
+    const handlePasswordChange = async () => {
+        if (newPassword !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        try {
+            const id = localStorage.getItem('id');
+            if (!id) {
+                throw new Error('User ID not found in localStorage');
+            }
+
+            const userInfo = await getUserInfobyId(id);
+            const userId = userInfo.userId;
+
+            await updatePassword(userId, newPassword);
+            alert('비밀번호가 성공적으로 변경되었습니다.');
+            setIsPasswordModalOpen(false);
+        } catch (error) {
+            console.error('비밀번호 수정 실패:', error);
+            alert('비밀번호 수정에 실패했습니다.');
+        }
+    };
     return (
         <div>
             <div className="pb-5 space-y-8">
@@ -525,10 +588,13 @@ const ManageSchool = () => {
                                 className="whitespace-nowrap table-hover"
                                 records={recordsData}
                                 columns={[
-                                    { accessor: 'userId', title: '유저 고유값', sortable: true },
-                                    { accessor: 'userName', title: '유저 아이디', sortable: true },
-                                    { accessor: 'name', title: '유저 이름', sortable: true },
-                                    { accessor: 'userCode', title: '유저 코드', sortable: true },
+                                    { accessor: 'name', title: '이름', sortable: true },
+                                    { accessor: 'id', title: '아이디', sortable: true },
+                                    { accessor: 'phoneNumber', title: '전화번호', sortable: true },
+                                    { accessor: 'accountType', title: '상태값', sortable: true },
+                                    { accessor: 'grade', title: '학년', sortable: true },
+                                    { accessor: 'inClass', title: '반', sortable: true },
+                                    { accessor: 'userCode', title: '고유값', sortable: true },
                                 ]}
                                 totalRecords={totalRecords}
                                 recordsPerPage={pageSize}
@@ -600,7 +666,23 @@ const ManageSchool = () => {
                                                                     </span>
                                                                     <input type="text" placeholder="대상 반" className="form-input ltr:pl-10 rtl:pr-10" id="targetClass" />
                                                                 </div>
-                                                                <button type="button" className="btn btn-primary w-full" onClick={handleCreateClass}>
+                                                                <button type="button" className="btn btn-primary w-full" onClick={() => {
+                                                                    const gradeInput = document.getElementById('targetGrade') as HTMLInputElement;
+                                                                    const classInput = document.getElementById('targetClass') as HTMLInputElement;
+
+                                                                    const grade = parseInt(gradeInput.value);
+                                                                    const inClass = parseInt(classInput.value);
+
+                                                                    if (isNaN(grade) || isNaN(inClass) || grade >= 7 || inClass >= 20) {
+                                                                        alert('정상적인 값을 입력해 주세요');
+                                                                        return;
+                                                                    } else {
+
+                                                                        handleCreateClass();
+                                                                        alert(`${grade}학년 ${inClass}반이 생성되었습니다.`);
+
+                                                                    }
+                                                                }}>
                                                                     반 만들기
                                                                 </button>
                                                             </form>
@@ -716,6 +798,14 @@ const ManageSchool = () => {
                                                                 </div>
 
                                                                 <button type="button" className="btn btn-primary w-full" onClick={async () => {
+                                                                    const subjectGradeInput = document.getElementById('subjectGrade') as HTMLInputElement;
+                                                                    const subjectGrade = parseInt(subjectGradeInput.value);
+
+                                                                    if (isNaN(subjectGrade) || subjectGrade >= 7) {
+                                                                        alert('정상적인 값을 입력해 주세요');
+                                                                        return;
+                                                                    }
+
                                                                     await handleCreateSubject();
                                                                     window.location.reload();
                                                                 }}>
@@ -781,7 +871,77 @@ const ManageSchool = () => {
 
 
             </div>
-
+            <Transition appear show={isPasswordModalOpen} as={Fragment}>
+                <Dialog as="div" open={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                        <div className="flex min-h-screen items-start justify-center px-4">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="panel my-8 w-full max-w-sm overflow-hidden rounded-lg border-0 py-1 px-4 text-black dark:text-white-dark">
+                                    <div className="flex items-center justify-between p-5 text-lg font-semibold dark:text-white">
+                                        <h5>새로 로그인 하셨습니다.<br />비밀번호를 변경해 주세요.</h5>
+                                    </div>
+                                    <div className="p-5">
+                                        <form>
+                                            <div className="relative mb-4">
+                                                <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                    <IconLock className="w-5 h-5" />
+                                                </span>
+                                                <input
+                                                    type="password"
+                                                    placeholder="새 비밀번호"
+                                                    className="form-input ltr:pl-10 rtl:pr-10"
+                                                    value={newPassword}
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="relative mb-4">
+                                                <span className="absolute top-1/2 -translate-y-1/2 ltr:left-3 rtl:right-3 dark:text-white-dark">
+                                                    <IconLock className="w-5 h-5" />
+                                                </span>
+                                                <input
+                                                    type="password"
+                                                    placeholder="비밀번호 확인"
+                                                    className="form-input ltr:pl-10 rtl:pr-10"
+                                                    value={confirmPassword}
+                                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={handlePasswordChange}
+                                                >
+                                                    비밀번호 변경
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </div>
     );
 };

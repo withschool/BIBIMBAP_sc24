@@ -12,7 +12,15 @@ export const getSchoolUsers = async (): Promise<any> => {
         });
         if (response.ok) {
             const data = await response.json();
-            return data;
+            return data.map((user: any) => ({
+                id: user.id,
+                name: user.name,
+                phoneNumber: user.phoneNumber,
+                accountType: user.accountType,
+                grade: user.grade,
+                inClass: user.inClass,
+                userCode: user.userCode,
+            }));
         } else {
             const errorMessage = await response.text();
             console.error('전체 유저 가져오기 실패:', errorMessage);
@@ -86,7 +94,7 @@ export const createClass = async (grade: number, inClass: number): Promise<any> 
     try {
 
         const token = localStorage.getItem('token');
-        const schoolId = parseInt(localStorage.getItem('schoolId')?? '0');
+        const schoolId = parseInt(localStorage.getItem('schoolId') ?? '0');
 
         const response = await fetch(`${url}/admin/classes`, {
             method: 'POST',
@@ -96,9 +104,9 @@ export const createClass = async (grade: number, inClass: number): Promise<any> 
             },
             body: JSON.stringify({
                 year: 2024,
-                grade : grade,
-                inClass : inClass,
-                schoolId : schoolId
+                grade: grade,
+                inClass: inClass,
+                schoolId: schoolId
             })
         });
 
@@ -134,6 +142,58 @@ export const deleteClass = async (classId: number): Promise<any> => {
         }
     } catch (error) {
         console.error('반 삭제 API 실패', error);
+        throw error;
+    }
+};
+
+const proxyUrl = 'http://www.withschool.site:8080/';
+
+
+export const isPasswordModified = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${proxyUrl}${url}/admin/users/is-modififed`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (response.ok) {
+            const data = await response.text();
+            return data;
+        } else {
+            const errorMessage = await response.text();
+            console.error('비밀번호 수정 확인 실패:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('비밀번호 수정 확인 API 실패', error);
+        throw error;
+    }
+};
+
+export const updatePassword = async (userId: number, password: string): Promise<any> => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${url}/users/password`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId, password })
+        });
+
+        if (response.ok) {
+            return response;
+        } else {
+            const errorMessage = await response.text();
+            console.error('비밀번호 수정 실패:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('비밀번호 수정 API 실패', error);
         throw error;
     }
 };

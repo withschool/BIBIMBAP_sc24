@@ -6,6 +6,7 @@ import contact from "../assets/images/contact.png";
 import { submitSchoolApplication } from '../service/apply';
 import { getSchoolListFromNeis } from '../service/school';
 import './Contact.css'; // Import the CSS file
+import { Button } from "reactstrap";
 
 interface ContactState {
   schoolName: string;
@@ -15,6 +16,8 @@ interface ContactState {
   dropdownOpen: boolean;
   filteredSchools: { schoolName: string, sd_SCHUL_CODE: string }[];
   sd_SCHUL_CODE: string;
+  isSubmitting: boolean; // Add this line
+
 }
 
 export default class Contact extends Component<{}, ContactState> {
@@ -27,9 +30,16 @@ export default class Contact extends Component<{}, ContactState> {
       schoolAdminEmail: '',
       dropdownOpen: false,
       filteredSchools: [],
-      sd_SCHUL_CODE: ''
+      sd_SCHUL_CODE: '',
+      isSubmitting: false
     };
   }
+
+  toggleDropdown = () => {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  };
 
 
   handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,14 +67,25 @@ export default class Contact extends Component<{}, ContactState> {
   handleSelectSchool = (school: { schoolName: string, sd_SCHUL_CODE: string }) => {
     this.setState({ schoolName: school.schoolName, sd_SCHUL_CODE: school.sd_SCHUL_CODE, dropdownOpen: false });
   };
+
   handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const { schoolName, schoolPhoneNumber, schoolAdminName, schoolAdminEmail } = this.state;
+
+    if (!schoolName || !schoolPhoneNumber || !schoolAdminName || !schoolAdminEmail) {
+      alert('모든 항목을 입력해 주세요.');
+      return;
+    }
+
+    this.setState({ isSubmitting: true }); // Disable the button
+
     try {
       const applicationData = {
-        schoolName: this.state.schoolName,
-        schoolPhoneNumber: this.state.schoolPhoneNumber,
-        schoolAdminName: this.state.schoolAdminName,
-        schoolAdminEmail: this.state.schoolAdminEmail,
+        schoolName,
+        schoolPhoneNumber,
+        schoolAdminName,
+        schoolAdminEmail,
         serviceType: 0, // Assuming serviceType is 0, adjust as needed
         sd_SCHUL_CODE: this.state.sd_SCHUL_CODE
       };
@@ -77,18 +98,14 @@ export default class Contact extends Component<{}, ContactState> {
         schoolAdminName: '',
         schoolAdminEmail: '',
         sd_SCHUL_CODE: '',
-        filteredSchools: []
+        filteredSchools: [],
+        isSubmitting: false // Re-enable the button
       });
     } catch (error) {
       console.error('Error submitting application:', error);
       alert('문의 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      this.setState({ isSubmitting: false }); // Re-enable the button
     }
-  };
-
-  toggleDropdown = () => {
-    this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
-    }));
   };
 
   render() {
@@ -202,13 +219,14 @@ export default class Contact extends Component<{}, ContactState> {
                     <Row>
                       <Col sm={12}>
                         <div className="d-grid">
-                          <Input
+                          <Button
                             type="submit"
-                            id="submit"
-                            name="send"
-                            className="submitBnt btn btn-primary btn-block"
-                            value="문의하기"
-                          />
+                            color="primary"
+                            className="btn"
+                            disabled={this.state.isSubmitting} // Disable the button when submitting
+                          >
+                            {this.state.isSubmitting ? '문의 중...' : '문의하기'}
+                          </Button>
                         </div>
                       </Col>
                     </Row>

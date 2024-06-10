@@ -226,3 +226,25 @@ export const getClassNotices = async (childId: number): Promise<any> => {
         console.error('공지 리스트 조회 실패:', errorss);
     }
 };
+export const updateSchoolPaymentState = async (reqSchoolInformationChangePaymentStateDTO: { schoolId: number, paymentState: number }): Promise<any> => {
+    try {
+        const response = await fetch(`${url}/super/schools/payment-state`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(reqSchoolInformationChangePaymentStateDTO)
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const errorMessage = await response.text();
+            console.error('Failed to update school payment state:', errorMessage);
+            throw new Error(errorMessage);
+        }
+    } catch (error) {
+        console.error('Error updating school payment state:', error);
+        throw error;
+    }
+};
