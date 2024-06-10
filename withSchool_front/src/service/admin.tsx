@@ -144,7 +144,7 @@ const proxyUrl = 'http://www.withschool.site:8080/';
 export const isPasswordModified = async () => {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${proxyUrl}${url}/admin/users/is-modififed`, {
+        const response = await fetch(`${proxyUrl}${url}/admin/users/is-modified`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
