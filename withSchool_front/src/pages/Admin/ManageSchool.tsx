@@ -128,9 +128,8 @@ const ManageSchool = () => {
                 (item.name && item.name.toLowerCase().includes(search.toLowerCase()))
             );
         });
-        const sortedRecords = sortBy(filteredRecords, sortStatus.columnAccessor);
-        setRecordsData(sortStatus.direction === 'desc' ? sortedRecords.reverse() : sortedRecords.slice(from, to));
-    }, [search, page, pageSize, initialRecords, sortStatus]);
+        setRecordsData(filteredRecords.slice(from, to));
+    }, [search, page, pageSize, initialRecords]);
 
     useEffect(() => {
         const data = sortBy(initialRecords, sortStatus.columnAccessor);
@@ -498,7 +497,7 @@ const ManageSchool = () => {
             try {
                 const modified = await isPasswordModified();
                 console.log(modified);
-                if (modified === "false") {
+                if (modified == "false") {
                     setIsPasswordModalOpen(true);
                 }
             } catch (error) {
@@ -522,6 +521,7 @@ const ManageSchool = () => {
             }
 
             const userInfo = await getUserInfobyId(id);
+            console.log("부르는중" + userInfo);
             const userId = userInfo.userId;
 
             await updatePassword(userId, newPassword);
@@ -873,7 +873,7 @@ const ManageSchool = () => {
 
             </div>
             <Transition appear show={isPasswordModalOpen} as={Fragment}>
-                <Dialog as="div" open={isPasswordModalOpen} onClose={() => {}} static>
+                <Dialog as="div" open={isPasswordModalOpen} onClose={isPasswordModalOpen ? () => { } : () => setIsPasswordModalOpen(false)}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -883,7 +883,7 @@ const ManageSchool = () => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed"/>
+                        <div className="fixed inset-0" />
                     </Transition.Child>
                     <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
                         <div className="flex min-h-screen items-start justify-center px-4">

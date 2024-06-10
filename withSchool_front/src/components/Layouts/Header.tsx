@@ -678,7 +678,7 @@ const Header = () => {
                                                     {userName}
                                                     <span className={`text-xs rounded px-1 ltr:ml-2 rtl:ml-2 ${userTypeInfo.className}`}>{userTypeInfo.label}</span>                                                </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    {userEmail}
+                                                    {localStorage.getItem('id')}
                                                 </button>
                                             </div>
                                         </div>
