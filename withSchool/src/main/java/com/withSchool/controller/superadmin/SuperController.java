@@ -96,7 +96,7 @@ public class SuperController {
 
     @PatchMapping("/schools/payment-state")
     @Operation(summary = "슈퍼 어드민이 강제로 학교 모델의 결제 상태 변경")
-    public ResponseEntity<SchoolInformationDTO> changeSchoolPaymentState(ReqSchoolInformationChangePaymentStateDTO reqSchoolInformationChangePaymentStateDTO) {
+    public ResponseEntity<SchoolInformationDTO> changeSchoolPaymentState(@RequestBody ReqSchoolInformationChangePaymentStateDTO reqSchoolInformationChangePaymentStateDTO) {
         SchoolInformationDTO dto = schoolInformationService.changePaymentState(reqSchoolInformationChangePaymentStateDTO);
         return ResponseEntity.ok().body(dto);
     }
