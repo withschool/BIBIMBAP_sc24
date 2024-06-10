@@ -39,15 +39,16 @@ const navigate = useNavigate();
 const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
 
+const fetchLectureNote = async () => {
+    try {
+        const studentList = await getStudentList(localStorage.getItem("targetSubject"));
+        setStudentList(studentList);
+    } catch (error) {
+        console.error("Failed to fetch lectureNotes:", error);
+    }
+};
+
 useEffect(() => {
-    const fetchLectureNote = async () => {
-        try {
-            const studentList = await getStudentList(localStorage.getItem("targetSubject"));
-            setStudentList(studentList);
-        } catch (error) {
-            console.error("Failed to fetch lectureNotes:", error);
-        }
-    };
     fetchLectureNote();
 }, []);
 
@@ -72,7 +73,7 @@ useEffect(() => {
 
     const searchNotes = () => {
         if (selectedTab !== 'fav') {
-            if (selectedTab !== 'mid' || selectedTab === 'final') {
+            if (selectedTab !== 'mid' || selectedTab === 'final' || selectedTab === 'activity') {
             } else {
                 setFilterdNotesList(studentList);
             }
@@ -96,6 +97,7 @@ useEffect(() => {
         try{
             enrollScore("mid", transformedObject);
             alert("성적이 등록되었습니다");
+            window.location.reload();
         }
         catch(error){
             alert("유효하지 않은 입력값입니다.");
@@ -111,6 +113,8 @@ useEffect(() => {
         console.log(transformedObject);
         enrollScore("final", transformedObject);
         alert("성적이 등록되었습니다");
+        fetchLectureNote();
+        window.location.reload();
     }
 
     const handleActivitySubmit = () => {
@@ -122,6 +126,8 @@ useEffect(() => {
         console.log(transformedObject);
         enrollScore("activity", transformedObject);
         alert("성적이 등록되었습니다");
+        fetchLectureNote();
+        window.location.reload();
     }
 
     interface Student {

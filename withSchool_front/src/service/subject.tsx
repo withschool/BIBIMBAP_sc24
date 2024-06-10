@@ -334,7 +334,7 @@ export const enrollScore = async (type: String, userScoreList : any[]): Promise<
             })
         });
         if (response.ok) {
-            const data = await response.json();
+            const data = await response.text();
             return data;
         } else {
             const errorMessage = await response.text();

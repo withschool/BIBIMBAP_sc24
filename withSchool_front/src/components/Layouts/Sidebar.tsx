@@ -134,14 +134,14 @@ const Sidebar = () => {
 
                                 <li className="nav-item">
                                     <ul>
-                                        <li className="nav-item">
+                                        {/* <li className="nav-item">
                                             <NavLink to="/parent/home" className="group">
                                                 <div className="flex items-center">
                                                     <IconMenuChat className="group-hover:!text-primary shrink-0" />
                                                     <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('메인')}</span>
                                                 </div>
                                             </NavLink>
-                                        </li>
+                                        </li> */}
                                         <li className="nav-item">
                                             <NavLink to="/parent/studentinfo" className="group">
                                                 <div className="flex items-center">
