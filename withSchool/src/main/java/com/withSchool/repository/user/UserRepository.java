@@ -50,7 +50,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByClassInformation_ClassIdAndAccountTypeAndIdIsNotNull(Long classId, int accountType);
 
-    @Query("SELECT count(*) FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.id IS NOT NULL")
+    @Query("SELECT count(*) FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.accountType != 4")
     int findUsersCountBySchoolId(Long schoolId);
 
     @Query("SELECT u FROM User u WHERE u.schoolInformation.schoolId = :schoolId AND u.accountType = 3 AND u.id IS NOT NULL")
