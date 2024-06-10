@@ -226,8 +226,7 @@ export const getClassNotices = async (childId: number): Promise<any> => {
         console.error('공지 리스트 조회 실패:', errorss);
     }
 };
-
-export const updateSchoolPaymentState = async (schoolId: number, paymentState: number): Promise<any> => {
+export const updateSchoolPaymentState = async (reqSchoolInformationChangePaymentStateDTO: { schoolId: number, paymentState: number }): Promise<any> => {
     try {
         const response = await fetch(`${url}/super/schools/payment-state`, {
             method: 'PATCH',
@@ -235,10 +234,7 @@ export const updateSchoolPaymentState = async (schoolId: number, paymentState: n
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify({
-                schoolId,
-                paymentState
-            })
+            body: JSON.stringify(reqSchoolInformationChangePaymentStateDTO)
         });
         if (response.ok) {
             return await response.json();

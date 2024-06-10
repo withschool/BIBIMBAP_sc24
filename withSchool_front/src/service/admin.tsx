@@ -12,7 +12,15 @@ export const getSchoolUsers = async (): Promise<any> => {
         });
         if (response.ok) {
             const data = await response.json();
-            return data;
+            return data.map((user: any) => ({
+                id: user.id,
+                name: user.name,
+                phoneNumber: user.phoneNumber,
+                accountType: user.accountType,
+                grade: user.grade,
+                inClass: user.inClass,
+                userCode: user.userCode,
+            }));
         } else {
             const errorMessage = await response.text();
             console.error('전체 유저 가져오기 실패:', errorMessage);
@@ -144,7 +152,7 @@ const proxyUrl = 'http://www.withschool.site:8080/';
 export const isPasswordModified = async () => {
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${proxyUrl}${url}/admin/users/is-modified`, {
+        const response = await fetch(`${proxyUrl}${url}/admin/users/is-modififed`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -273,6 +273,7 @@ const SchoolList = () => {
     const handleTogglePaymentState = async (school: School) => {
         const updatedPaymentState = school.paymentState === 0 ? 1 : 0;
         try {
+            console.log(`아아악 ${school.schoolId},${updatedPaymentState} `);
             await updateSchoolPaymentState(school.schoolId, updatedPaymentState);
             setInitialRecords((prevRecords) =>
                 prevRecords.map((item) =>
@@ -509,7 +510,7 @@ const SchoolList = () => {
                         paginationText={({ from, to, totalRecords }) =>
                             `${totalRecords}개의 항목 중 ${from}에서 ${to}까지 표시`
                         }
-                    // onRowClick={(school) => } // 학교 클릭 시 호출
+                        // onRowClick={(school) => } // 학교 클릭 시 호출
                     />
                 </div>
             </div>

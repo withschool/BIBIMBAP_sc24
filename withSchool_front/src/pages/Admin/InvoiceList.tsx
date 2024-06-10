@@ -262,6 +262,8 @@ const InvoiceList = () => {
                                 <Tab.Panel className="w-full">
                                     <div className="flex w-full h-full gap-4">
                                         <div className="panel w-1/2 h-full flex flex-col justify-between">
+                                        <h5 className="text-lg font-semibold dark:text-white-light">결제 기본 정보</h5>
+
                                             <div className="flex items-center justify-between mb-5">
                                             </div>
                                             <div className="mb-5 flex-1">
@@ -307,8 +309,10 @@ const InvoiceList = () => {
                                                 <div className="flex items-start justify-between text-white-light z-[7]">
                                                     <h5 className="font-semibold text-lg">결제 설정</h5>
                                                     <div className="relative text-xl whitespace-nowrap">
-                                                        <span className="table text-[#d3d3d3] bg-[#4361ee] rounded p-1 text-xs mt-1 ltr:ml-auto rtl:mr-auto">마지막 결제일 : 2024년 06월 10일</span>
-                                                    </div>
+
+                                                        <span className="table text-[#d3d3d3] bg-[#4361ee] rounded p-1 text-xs mt-1 ltr:ml-auto rtl:mr-auto">
+                                                            마지막 결제일 : {currentPlan && currentPlan.nextBillingDate ? new Date(new Date(currentPlan.nextBillingDate).setMonth(new Date(currentPlan.nextBillingDate).getMonth() - 1)).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                                                        </span>                                                    </div>
 
                                                 </div>
                                                 <div className="mt-4 text-white-light mt-4 mb-4">
@@ -506,7 +510,7 @@ const InvoiceList = () => {
                                 textAlignment: 'center',
                                 sortable: true,
                                 render: ({ paymentId }) => (
-                                    <NavLink to="/apps/invoice/preview">
+                                    <NavLink to="">
                                         <div className="text-primary underline hover:no-underline font-semibold">{`#${paymentId}`}</div>
                                     </NavLink>
                                 ),

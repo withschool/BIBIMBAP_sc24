@@ -95,13 +95,28 @@ const ManageSchool = () => {
         const fetchData = async () => {
             try {
                 const data = await getSchoolUsers();
-                setInitialRecords(sortBy(data, 'userName'));
+                const mappedData = data.map((user: any) => ({
+                    ...user,
+                    accountType: mapAccountType(user.accountType),
+                }));
+                setInitialRecords(sortBy(mappedData, 'name'));
             } catch (error) {
                 console.error('Error fetching school users:', error);
             }
         };
         fetchData();
     }, []);
+    
+    const mapAccountType = (type: number) => {
+        switch (type) {
+            case 0: return '학생';
+            case 1: return '학부모';
+            case 2: return '교사';
+            case 3: return '어드민';
+            case 4: return '슈퍼 어드민';
+            default: return '알 수 없음';
+        }
+    };
 
     useEffect(() => {
         const from = (page - 1) * pageSize;
@@ -481,7 +496,8 @@ const ManageSchool = () => {
         const checkPasswordModified = async () => {
             try {
                 const modified = await isPasswordModified();
-                if (modified) {
+                console.log(modified);
+                if (modified === "false") {
                     setIsPasswordModalOpen(true);
                 }
             } catch (error) {
@@ -572,10 +588,13 @@ const ManageSchool = () => {
                                 className="whitespace-nowrap table-hover"
                                 records={recordsData}
                                 columns={[
-                                    { accessor: 'userId', title: '유저 고유값', sortable: true },
-                                    { accessor: 'userName', title: '유저 아이디', sortable: true },
-                                    { accessor: 'name', title: '유저 이름', sortable: true },
-                                    { accessor: 'userCode', title: '유저 코드', sortable: true },
+                                    { accessor: 'name', title: '이름', sortable: true },
+                                    { accessor: 'id', title: '아이디', sortable: true },
+                                    { accessor: 'phoneNumber', title: '전화번호', sortable: true },
+                                    { accessor: 'accountType', title: '상태값', sortable: true },
+                                    { accessor: 'grade', title: '학년', sortable: true },
+                                    { accessor: 'inClass', title: '반', sortable: true },
+                                    { accessor: 'userCode', title: '고유값', sortable: true },
                                 ]}
                                 totalRecords={totalRecords}
                                 recordsPerPage={pageSize}
