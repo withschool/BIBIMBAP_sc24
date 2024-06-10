@@ -82,10 +82,36 @@ const Sidebar = () => {
             >
                 <div className="bg-white dark:bg-black h-full">
                     <div className="flex justify-between items-center px-4 py-3">
-                        <NavLink to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('withSchool')}</span>
-                        </NavLink>
+                    {accountTypes == "SUPER" && (
+                            <NavLink to="/super/home" className="main-logo flex items-center shrink-0">
+                                <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
+                                <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('withSchool')}</span>
+                            </NavLink>
+                        )}
+                        {accountTypes == "ROLE_ADMIN" && (
+                            <NavLink to="/admin/home" className="main-logo flex items-center shrink-0">
+                                <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
+                                <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('withSchool')}</span>
+                            </NavLink>
+                        )}
+                        {accountTypes == "ROLE_PARENT" && (
+                            <NavLink to="/users/user-account-settings" className="main-logo flex items-center shrink-0">
+                                <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
+                                <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('withSchool')}</span>
+                            </NavLink>
+                        )}
+                        {accountTypes == "ROLE_STUDENT" && (
+                            <NavLink to="/student/schoolnotice" className="main-logo flex items-center shrink-0">
+                                <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
+                                <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('withSchool')}</span>
+                            </NavLink>
+                        )}
+                        {accountTypes == "ROLE_TEACHER" && (
+                            <NavLink to="/teacher/class/notice" className="main-logo flex items-center shrink-0">
+                                <img className="w-8 ml-[5px] flex-none" src="/assets/images/logo.svg" alt="logo" />
+                                <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">{t('withSchool')}</span>
+                            </NavLink>
+                        )}
 
                         <button
                             type="button"
@@ -205,12 +231,6 @@ const Sidebar = () => {
                                                 <ul className="sub-menu text-gray-500">
                                                     <li>
                                                         <NavLink to="/student/lecturenote">{t('강의 노트')}</NavLink>
-                                                    </li>
-                                                    <li>
-                                                        <NavLink to="/student/calendar">{t('일정')}</NavLink>
-                                                    </li>
-                                                    <li>
-                                                        <NavLink to="/student/scrumboard">{t('칼반 보드')}</NavLink>
                                                     </li>
                                                     <li>
                                                         <NavLink to="/student/question">{t('Q & A')}</NavLink>
@@ -396,63 +416,6 @@ const Sidebar = () => {
                                             <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('결제 관리')}</span>
                                         </div>
                                     </NavLink>
-                                </li>
-
-                                <li className="menu nav-item">
-                                    <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
-                                        <div className="flex items-center">
-                                            <IconMenuDashboard
-                                                className="group-hover:!text-primary shrink-0" />
-                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('관리')}</span>
-                                        </div>
-
-                                        <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                            <IconCaretDown />
-                                        </div>
-                                    </button>
-
-                                    <AnimateHeight duration={300} height={currentMenu === 'dashboard' ? 'auto' : 0}>
-                                        <ul className="sub-menu text-gray-500">
-                                            <li>
-                                                <NavLink to="/admin/home">{t('학교 관리')}</NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to="/admin/notice">{t('공지 작성하기')}</NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to="/admin/schoolnotice">{t('공지 확인하기')}</NavLink>
-                                            </li>
-
-
-                                        </ul>
-                                    </AnimateHeight>
-
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'class' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('class')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('결제')}</span>
-                                            </div>
-
-                                            <div className={currentMenu !== 'class' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'class' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <NavLink to="/admin/invoice/list">{t('결제 목록')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/admin/invoice/preview">{t('결제 정보 조회')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/admin/invoice/add">{t('결제 진행')}</NavLink>
-                                                </li>
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li>
                                 </li>
 
                                 <li className="nav-item">
