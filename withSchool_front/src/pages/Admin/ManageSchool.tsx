@@ -497,7 +497,7 @@ const ManageSchool = () => {
             try {
                 const modified = await isPasswordModified();
                 console.log(modified);
-                if (modified === "false") {
+                if (modified == "false") {
                     setIsPasswordModalOpen(true);
                 }
             } catch (error) {
@@ -521,6 +521,7 @@ const ManageSchool = () => {
             }
 
             const userInfo = await getUserInfobyId(id);
+            console.log("부르는중"+userInfo);
             const userId = userInfo.userId;
 
             await updatePassword(userId, newPassword);
