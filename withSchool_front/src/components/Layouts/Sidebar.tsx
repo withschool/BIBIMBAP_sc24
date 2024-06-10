@@ -31,6 +31,8 @@ import IconMenuUsers from '../Icon/Menu/IconMenuUsers';
 import IconMenuPages from '../Icon/Menu/IconMenuPages';
 import IconMenuAuthentication from '../Icon/Menu/IconMenuAuthentication';
 import IconMenuDocumentation from '../Icon/Menu/IconMenuDocumentation';
+import IconNotes from '../Icon/IconNotes';
+import IconChatDot from '../Icon/IconChatDot';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -395,7 +397,7 @@ const Sidebar = () => {
                                 <li className="nav-item">
                                     <NavLink to="/admin/home" className="group">
                                         <div className="flex items-center">
-                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <IconMenuCharts className="group-hover:!text-primary shrink-0" />
                                             <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('학교 관리')}</span>
                                         </div>
                                     </NavLink>
@@ -403,7 +405,7 @@ const Sidebar = () => {
                                 <li className="nav-item">
                                     <NavLink to="/admin/notice" className="group">
                                         <div className="flex items-center">
-                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <IconNotes className="group-hover:!text-primary shrink-0" />
                                             <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('공지 사항')}</span>
                                         </div>
                                     </NavLink>
@@ -412,7 +414,7 @@ const Sidebar = () => {
                                 <li className="nav-item">
                                     <NavLink to="/admin/invoice/list" className="group">
                                         <div className="flex items-center">
-                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <IconMenuDatatables className="group-hover:!text-primary shrink-0" />
                                             <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('결제 관리')}</span>
                                         </div>
                                     </NavLink>
@@ -421,7 +423,7 @@ const Sidebar = () => {
                                 <li className="nav-item">
                                     <NavLink to="/admin/community" className="group">
                                         <div className="flex items-center">
-                                            <IconMenuScrumboard className="group-hover:!text-primary shrink-0" />
+                                            <IconMenuChat className="group-hover:!text-primary shrink-0" />
                                             <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('커뮤니티')}</span>
                                         </div>
                                     </NavLink>
