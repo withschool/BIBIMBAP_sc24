@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@portone/browser-sdk": "^0.0.7",
     "base-64": "^1.0.0",
     "date-fns": "^3.6.0",
     "react-datepicker": "^6.9.0",
