@@ -127,6 +127,7 @@ public class UserService {
                     .accountType(3)
                     .email(adminEmail)
                     .schoolInformation(schoolInformation)
+                    .sex(true)
                     .build();
             userRepository.save(admin);
 
