@@ -135,6 +135,7 @@ public class BillingService {
 
         PaymentRecord paymentRecord = PaymentRecord.builder()
                 .paymentId(paymentId)
+                .plan(subscription.getPlan())
                 .amount(amount)
                 .paymentDate(LocalDateTime.now())
                 .subscription(subscription)
